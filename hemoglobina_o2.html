@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transporte de O₂ na Hemoglobina</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@300;400&display=swap');
+
+  :root {
+    --blood-dark: #1a0505;
+    --blood-mid: #3d0b0b;
+    --blood-red: #8b1a1a;
+    --oxy-red: #e8392a;
+    --oxy-bright: #ff6b5b;
+    --deoxy-blue: #1a3a6b;
+    --deoxy-purple: #4a2080;
+    --o2-blue: #4fc3f7;
+    --o2-bright: #81d4fa;
+    --gold: #c9a84c;
+    --cream: #f5ede0;
+    --muted: #a08878;
+    --bg: #0d0305;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Crimson Pro', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated blood vessel background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 40% at 50% 50%, #1a0808 0%, transparent 70%),
+      radial-gradient(ellipse 40% 80% at 20% 30%, #2a0505 0%, transparent 60%),
+      radial-gradient(ellipse 40% 80% at 80% 70%, #150310 0%, transparent 60%);
+    z-index: -1;
+  }
+
+  header {
+    text-align: center;
+    padding: 3rem 2rem 1.5rem;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 1.5rem auto 0;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+    text-shadow: 0 0 40px rgba(232, 57, 42, 0.4);
+  }
+
+  h1 em {
+    color: var(--oxy-bright);
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  /* Main layout */
+  .main-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 3rem;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.6rem 1.4rem;
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn:hover::before { opacity: 1; }
+
+  .btn-oxy {
+    border-color: var(--oxy-red);
+    color: var(--oxy-bright);
+  }
+  .btn-oxy::before { background: rgba(232, 57, 42, 0.15); }
+  .btn-oxy:hover { box-shadow: 0 0 20px rgba(232, 57, 42, 0.4); }
+
+  .btn-deoxy {
+    border-color: var(--deoxy-blue);
+    color: #7eb3ff;
+  }
+  .btn-deoxy::before { background: rgba(26, 58, 107, 0.3); }
+  .btn-deoxy:hover { box-shadow: 0 0 20px rgba(79, 195, 247, 0.3); }
+
+  .btn-reset {
+    border-color: var(--muted);
+    color: var(--muted);
+  }
+  .btn-reset::before { background: rgba(160, 136, 120, 0.1); }
+
+  .btn-auto {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .btn-auto::before { background: rgba(201, 168, 76, 0.1); }
+  .btn-auto:hover { box-shadow: 0 0 20px rgba(201, 168, 76, 0.3); }
+
+  .btn.active-btn {
+    background: rgba(201, 168, 76, 0.2);
+    box-shadow: 0 0 15px rgba(201, 168, 76, 0.4);
+  }
+
+  /* Scene */
+  .scene {
+    position: relative;
+    background: rgba(10, 2, 2, 0.6);
+    border: 1px solid rgba(139, 26, 26, 0.3);
+    border-radius: 2px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Vessel SVG */
+  #vessel-svg {
+    width: 100%;
+    height: 120px;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  /* Hemoglobin molecule */
+  .hemo-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+  }
+
+  .molecule-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .molecule-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  #hemo-svg {
+    width: 260px;
+    height: 260px;
+    filter: drop-shadow(0 0 20px rgba(139, 26, 26, 0.5));
+    transition: filter 0.8s ease;
+  }
+
+  #hemo-svg.oxygenated {
+    filter: drop-shadow(0 0 30px rgba(232, 57, 42, 0.7));
+  }
+
+  #hemo-svg.deoxygenated {
+    filter: drop-shadow(0 0 25px rgba(74, 32, 128, 0.6));
+  }
+
+  /* O2 molecules floating */
+  .o2-pool {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .o2-molecules {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    width: 100px;
+    justify-content: center;
+  }
+
+  .o2-mol {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, var(--o2-bright), var(--o2-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: #001f3a;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 8px rgba(79, 195, 247, 0.5);
+    animation: float 3s ease-in-out infinite;
+    user-select: none;
+  }
+
+  .o2-mol:nth-child(2) { animation-delay: 0.5s; }
+  .o2-mol:nth-child(3) { animation-delay: 1s; }
+  .o2-mol:nth-child(4) { animation-delay: 1.5s; }
+
+  .o2-mol:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 16px rgba(79, 195, 247, 0.9);
+  }
+
+  .o2-mol.used {
+    opacity: 0.2;
+    pointer-events: none;
+    animation: none;
+    transform: scale(0.8);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* Status bar */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(139, 26, 26, 0.2);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transition: background 0.5s, box-shadow 0.5s;
+  }
+
+  .dot-state {
+    background: var(--deoxy-purple);
+    box-shadow: 0 0 6px var(--deoxy-purple);
+  }
+
+  .dot-state.oxy {
+    background: var(--oxy-red);
+    box-shadow: 0 0 10px var(--oxy-bright);
+  }
+
+  .saturation-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .sat-track {
+    width: 120px;
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--deoxy-purple), var(--oxy-red), var(--oxy-bright));
+    border-radius: 3px;
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+
+  .sat-value {
+    color: var(--cream);
+    min-width: 36px;
+  }
+
+  /* Info panels */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .info-card {
+    border: 1px solid rgba(139, 26, 26, 0.25);
+    padding: 1.2rem;
+    background: rgba(10, 2, 2, 0.5);
+    position: relative;
+    transition: border-color 0.3s;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+  }
+
+  .info-card.lung::before { background: var(--o2-blue); }
+  .info-card.blood::before { background: var(--oxy-red); }
+  .info-card.tissue::before { background: var(--gold); }
+
+  .info-card:hover {
+    border-color: rgba(201, 168, 76, 0.4);
+  }
+
+  .card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+  }
+
+  .card-body {
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: rgba(245, 237, 224, 0.85);
+  }
+
+  .card-body strong {
+    color: var(--oxy-bright);
+    font-weight: 600;
+  }
+
+  .card-body .highlight-blue {
+    color: var(--o2-blue);
+    font-weight: 600;
+  }
+
+  .card-body .highlight-gold {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* Curve section */
+  .curve-section {
+    border: 1px solid rgba(139, 26, 26, 0.25);
+    padding: 1.5rem;
+    background: rgba(10, 2, 2, 0.5);
+    margin-bottom: 1.5rem;
+  }
+
+  .curve-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  #curve-svg {
+    width: 100%;
+    max-width: 500px;
+    height: 220px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Message overlay */
+  .message {
+    text-align: center;
+    padding: 0.6rem;
+    font-size: 1rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    min-height: 2rem;
+    transition: color 0.5s;
+  }
+
+  .message.active {
+    color: var(--cream);
+  }
+
+  /* Cycle steps */
+  .steps {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(139, 26, 26, 0.25);
+  }
+
+  .step {
+    flex: 1;
+    padding: 0.8rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    border-right: 1px solid rgba(139, 26, 26, 0.2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .step:last-child { border-right: none; }
+
+  .step:hover { background: rgba(139, 26, 26, 0.1); color: var(--cream); }
+
+  .step.active-step {
+    background: rgba(139, 26, 26, 0.25);
+    color: var(--oxy-bright);
+    font-weight: 400;
+  }
+
+  .step-num {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+    color: var(--gold);
+  }
+
+  /* Animations for O2 travel */
+  @keyframes o2-travel-in {
+    0% { opacity: 0; transform: translate(-80px, 0) scale(0.5); }
+    60% { opacity: 1; transform: translate(0, 0) scale(1.2); }
+    100% { transform: translate(0, 0) scale(1); }
+  }
+
+  @keyframes o2-release {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(80px, 20px) scale(0.4); }
+  }
+
+  @keyframes pulse-heme {
+    0%, 100% { r: 18; }
+    50% { r: 22; }
+  }
+
+  @keyframes vessel-flow {
+    0% { stroke-dashoffset: 200; }
+    100% { stroke-dashoffset: 0; }
+  }
+
+  @keyframes rbc-move {
+    0% { transform: translateX(-300px); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(300px); opacity: 0; }
+  }
+
+  .rbc-moving {
+    animation: rbc-move 4s ease-in-out;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    color: rgba(160, 136, 120, 0.4);
+    border-top: 1px solid rgba(139, 26, 26, 0.15);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Transporte de <em>O₂</em><br>na Hemoglobina</h1>
+  <p class="subtitle">Fisiologia Respiratória · Eritrócito · Curva de Dissociação</p>
+</header>
+
+<div class="main-container">
+
+  <!-- Step indicators -->
+  <div class="steps">
+    <div class="step active-step" id="step-1" onclick="goToStep(1)">
+      <span class="step-num">①</span>Pulmões
+    </div>
+    <div class="step" id="step-2" onclick="goToStep(2)">
+      <span class="step-num">②</span>Ligação O₂
+    </div>
+    <div class="step" id="step-3" onclick="goToStep(3)">
+      <span class="step-num">③</span>Circulação
+    </div>
+    <div class="step" id="step-4" onclick="goToStep(4)">
+      <span class="step-num">④</span>Libertação
+    </div>
+    <div class="step" id="step-5" onclick="goToStep(5)">
+      <span class="step-num">⑤</span>Tecidos
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn btn-oxy" onclick="oxygenate()">▲ Oxigenar (Pulmões)</button>
+    <button class="btn btn-deoxy" onclick="deoxygenate()">▼ Libertar (Tecidos)</button>
+    <button class="btn btn-auto" id="btn-auto" onclick="toggleAuto()">⟳ Ciclo Automático</button>
+    <button class="btn btn-reset" onclick="resetAll()">↺ Reiniciar</button>
+  </div>
+
+  <!-- Main Scene -->
+  <div class="scene">
+    <!-- Blood vessel animation -->
+    <svg id="vessel-svg" viewBox="0 0 800 120">
+      <defs>
+        <linearGradient id="vesselGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#3d0b0b;stop-opacity:0.3"/>
+          <stop offset="50%" style="stop-color:#8b1a1a;stop-opacity:0.5"/>
+          <stop offset="100%" style="stop-color:#3d0b0b;stop-opacity:0.3"/>
+        </linearGradient>
+        <filter id="blur-vessel">
+          <feGaussianBlur stdDeviation="2"/>
+        </filter>
+      </defs>
+      <!-- Vessel walls -->
+      <path d="M 0,20 Q 200,10 400,20 Q 600,30 800,20" stroke="#5a1010" stroke-width="2" fill="none" opacity="0.6"/>
+      <path d="M 0,100 Q 200,110 400,100 Q 600,90 800,100" stroke="#5a1010" stroke-width="2" fill="none" opacity="0.6"/>
+      <!-- Blood flow -->
+      <path d="M 0,60 Q 200,50 400,60 Q 600,70 800,60" stroke="url(#vesselGrad)" stroke-width="40" fill="none" opacity="0.4"/>
+      <!-- Flow particles -->
+      <g id="flow-particles"></g>
+      <!-- RBC group -->
+      <g id="rbc-group" transform="translate(400,60)">
+        <ellipse cx="0" cy="0" rx="28" ry="16" fill="#8b1a1a" opacity="0.9"/>
+        <ellipse cx="0" cy="0" rx="14" ry="7" fill="#6a0f0f" opacity="0.6"/>
+        <text x="0" y="4" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#ffaa88" opacity="0.9">Hb</text>
+      </g>
+    </svg>
+
+    <!-- Hemoglobin + O2 pool -->
+    <div class="hemo-stage">
+
+      <!-- O2 molecules pool (lungs) -->
+      <div class="o2-pool" id="o2-pool-left">
+        <div class="molecule-label">O₂ disponível<br>(alvéolos)</div>
+        <div class="o2-molecules" id="o2-molecules">
+          <div class="o2-mol" onclick="addO2(0)">O₂</div>
+          <div class="o2-mol" onclick="addO2(1)">O₂</div>
+          <div class="o2-mol" onclick="addO2(2)">O₂</div>
+          <div class="o2-mol" onclick="addO2(3)">O₂</div>
+        </div>
+      </div>
+
+      <!-- Hemoglobin molecule SVG -->
+      <div class="molecule-wrapper">
+        <div class="molecule-label" id="hemo-state-label">Desoxihemoglobina (T)</div>
+        <svg id="hemo-svg" viewBox="0 0 260 260" class="deoxygenated">
+          <defs>
+            <radialGradient id="subunitGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#6b1515"/>
+              <stop offset="100%" stop-color="#2a0505"/>
+            </radialGradient>
+            <radialGradient id="subunitGradOxy" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#c0392b"/>
+              <stop offset="100%" stop-color="#6b0f0f"/>
+            </radialGradient>
+            <radialGradient id="hemeGrad" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#4a2080"/>
+              <stop offset="100%" stop-color="#1a0a30"/>
+            </radialGradient>
+            <radialGradient id="hemeGradOxy" cx="40%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#ff6b5b"/>
+              <stop offset="100%" stop-color="#8b1a1a"/>
+            </radialGradient>
+            <radialGradient id="o2Grad" cx="35%" cy="30%" r="65%">
+              <stop offset="0%" stop-color="#81d4fa"/>
+              <stop offset="100%" stop-color="#0288d1"/>
+            </radialGradient>
+            <filter id="glow-red">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <filter id="glow-blue">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Central connector -->
+          <line x1="130" y1="90" x2="130" y2="170" stroke="#5a1010" stroke-width="4" opacity="0.5"/>
+          <line x1="70" y1="130" x2="190" y2="130" stroke="#5a1010" stroke-width="4" opacity="0.5"/>
+
+          <!-- 4 Subunidades (α1, β1, α2, β2) -->
+          <!-- α1 — top-left -->
+          <g class="subunit" id="sub-0">
+            <circle cx="75" cy="80" r="42" fill="url(#subunitGrad)" id="sub-circle-0" stroke="#5a1010" stroke-width="1.5"/>
+            <circle cx="75" cy="80" r="18" fill="url(#hemeGrad)" id="heme-circle-0" class="heme-circle"/>
+            <text x="75" y="75" text-anchor="middle" font-family="Crimson Pro,serif" font-size="11" fill="#c9a84c" opacity="0.9">α1</text>
+            <text x="75" y="87" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#a08878">heme</text>
+            <!-- O2 binding site -->
+            <circle cx="75" cy="80" r="7" fill="none" stroke="#4a2080" stroke-width="1.5" stroke-dasharray="3,2" id="site-0" opacity="0.8"/>
+            <!-- O2 molecule (hidden by default) -->
+            <g id="o2-bound-0" opacity="0" transform="translate(75,80)">
+              <circle cx="0" cy="-12" r="7" fill="url(#o2Grad)" filter="url(#glow-blue)"/>
+              <text x="0" y="-9" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#001f3a">O₂</text>
+            </g>
+          </g>
+
+          <!-- β1 — top-right -->
+          <g class="subunit" id="sub-1">
+            <circle cx="185" cy="80" r="42" fill="url(#subunitGrad)" id="sub-circle-1" stroke="#5a1010" stroke-width="1.5"/>
+            <circle cx="185" cy="80" r="18" fill="url(#hemeGrad)" id="heme-circle-1" class="heme-circle"/>
+            <text x="185" y="75" text-anchor="middle" font-family="Crimson Pro,serif" font-size="11" fill="#c9a84c" opacity="0.9">β1</text>
+            <text x="185" y="87" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#a08878">heme</text>
+            <circle cx="185" cy="80" r="7" fill="none" stroke="#4a2080" stroke-width="1.5" stroke-dasharray="3,2" id="site-1" opacity="0.8"/>
+            <g id="o2-bound-1" opacity="0" transform="translate(185,80)">
+              <circle cx="0" cy="-12" r="7" fill="url(#o2Grad)" filter="url(#glow-blue)"/>
+              <text x="0" y="-9" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#001f3a">O₂</text>
+            </g>
+          </g>
+
+          <!-- α2 — bottom-left -->
+          <g class="subunit" id="sub-2">
+            <circle cx="75" cy="180" r="42" fill="url(#subunitGrad)" id="sub-circle-2" stroke="#5a1010" stroke-width="1.5"/>
+            <circle cx="75" cy="180" r="18" fill="url(#hemeGrad)" id="heme-circle-2" class="heme-circle"/>
+            <text x="75" y="175" text-anchor="middle" font-family="Crimson Pro,serif" font-size="11" fill="#c9a84c" opacity="0.9">α2</text>
+            <text x="75" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#a08878">heme</text>
+            <circle cx="75" cy="180" r="7" fill="none" stroke="#4a2080" stroke-width="1.5" stroke-dasharray="3,2" id="site-2" opacity="0.8"/>
+            <g id="o2-bound-2" opacity="0" transform="translate(75,180)">
+              <circle cx="0" cy="-12" r="7" fill="url(#o2Grad)" filter="url(#glow-blue)"/>
+              <text x="0" y="-9" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#001f3a">O₂</text>
+            </g>
+          </g>
+
+          <!-- β2 — bottom-right -->
+          <g class="subunit" id="sub-3">
+            <circle cx="185" cy="180" r="42" fill="url(#subunitGrad)" id="sub-circle-3" stroke="#5a1010" stroke-width="1.5"/>
+            <circle cx="185" cy="180" r="18" fill="url(#hemeGrad)" id="heme-circle-3" class="heme-circle"/>
+            <text x="185" y="175" text-anchor="middle" font-family="Crimson Pro,serif" font-size="11" fill="#c9a84c" opacity="0.9">β2</text>
+            <text x="185" y="187" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#a08878">heme</text>
+            <circle cx="185" cy="180" r="7" fill="none" stroke="#4a2080" stroke-width="1.5" stroke-dasharray="3,2" id="site-3" opacity="0.8"/>
+            <g id="o2-bound-3" opacity="0" transform="translate(185,180)">
+              <circle cx="0" cy="-12" r="7" fill="url(#o2Grad)" filter="url(#glow-blue)"/>
+              <text x="0" y="-9" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#001f3a">O₂</text>
+            </g>
+          </g>
+
+          <!-- Fe²⁺ label in center -->
+          <circle cx="130" cy="130" r="14" fill="#1a0a30" stroke="#c9a84c" stroke-width="1" opacity="0.7"/>
+          <text x="130" y="127" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#c9a84c">Fe²⁺</text>
+          <text x="130" y="138" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="5.5" fill="#a08878">ferro</text>
+        </svg>
+        <div class="molecule-label" id="hemo-structure-label">Estrutura T (tensa) · baixa afinidade</div>
+      </div>
+
+      <!-- Released O2 pool (tissues) -->
+      <div class="o2-pool" id="o2-pool-right">
+        <div class="molecule-label">O₂ libertado<br>(tecidos)</div>
+        <div class="o2-molecules" id="o2-released">
+          <!-- O2 appear here when released -->
+        </div>
+      </div>
+
+    </div>
+
+    <div class="message" id="message">Clique em "Oxigenar" ou numa molécula de O₂ para iniciar</div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <div class="status-item">
+      <div class="status-dot dot-state" id="state-dot"></div>
+      <span id="state-text" style="color:var(--muted)">Desoxihemoglobina</span>
+    </div>
+    <div class="saturation-bar">
+      <span>Saturação O₂</span>
+      <div class="sat-track">
+        <div class="sat-fill" id="sat-fill"></div>
+      </div>
+      <span class="sat-value" id="sat-value">0%</span>
+    </div>
+    <div class="status-item" style="color:var(--muted); font-size:0.65rem;">
+      Sites ocupados: <span id="sites-count" style="color:var(--cream)">0</span>/4
+    </div>
+  </div>
+
+  <!-- Info cards -->
+  <div class="info-grid">
+    <div class="info-card lung">
+      <div class="card-title">🫁 Nos Pulmões</div>
+      <div class="card-body">
+        Alta pO₂ (~100 mmHg). O O₂ difunde dos alvéolos para os glóbulos vermelhos.
+        O <strong>Fe²⁺</strong> do grupo heme liga-se ao O₂,
+        convertendo a Hb na forma <strong>R (relaxada)</strong>
+        de alta afinidade — <span class="highlight-blue">oxihemoglobina</span>.
+      </div>
+    </div>
+    <div class="info-card blood">
+      <div class="card-title">🩸 No Sangue Arterial</div>
+      <div class="card-body">
+        Cada Hb transporta até <strong>4 moléculas de O₂</strong>
+        (uma por subunidade α1β1α2β2).
+        A cooperatividade garante que a ligação
+        do 1.º O₂ aumenta a afinidade para os seguintes
+        — efeito <span class="highlight-gold">sigmoide</span>.
+      </div>
+    </div>
+    <div class="info-card tissue">
+      <div class="card-title">🦵 Nos Tecidos</div>
+      <div class="card-body">
+        Baixa pO₂, pH ácido e ↑CO₂
+        (<strong>Efeito Bohr</strong>) reduzem a afinidade.
+        A Hb liberta O₂ e regressa à forma <strong>T (tensa)</strong>
+        — <span class="highlight-gold">desoxihemoglobina</span> — de cor vermelho-escuro.
+      </div>
+    </div>
+  </div>
+
+  <!-- Dissociation Curve -->
+  <div class="curve-section">
+    <div class="curve-title">Curva de Dissociação O₂-Hemoglobina (Sigmoide)</div>
+    <svg id="curve-svg" viewBox="0 0 500 220">
+      <defs>
+        <linearGradient id="curveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#4a2080"/>
+          <stop offset="50%" stop-color="#c0392b"/>
+          <stop offset="100%" stop-color="#ff6b5b"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Grid -->
+      <line x1="50" y1="10" x2="50" y2="190" stroke="#5a1010" stroke-width="1" opacity="0.5"/>
+      <line x1="50" y1="190" x2="480" y2="190" stroke="#5a1010" stroke-width="1" opacity="0.5"/>
+
+      <!-- Grid lines -->
+      <line x1="50" y1="50" x2="480" y2="50" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+      <line x1="50" y1="100" x2="480" y2="100" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+      <line x1="50" y1="150" x2="480" y2="150" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+      <line x1="160" y1="10" x2="160" y2="190" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+      <line x1="270" y1="10" x2="270" y2="190" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+      <line x1="375" y1="10" x2="375" y2="190" stroke="#5a1010" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
+
+      <!-- Axis labels -->
+      <text x="265" y="210" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a08878">pO₂ (mmHg)</text>
+      <text x="15" y="105" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a08878" transform="rotate(-90,15,105)">Saturação (%)</text>
+
+      <!-- Axis ticks -->
+      <text x="50" y="203" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">0</text>
+      <text x="160" y="203" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">26</text>
+      <text x="270" y="203" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">50</text>
+      <text x="375" y="203" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">75</text>
+      <text x="480" y="203" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">100</text>
+
+      <text x="42" y="193" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">0</text>
+      <text x="42" y="153" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">25</text>
+      <text x="42" y="103" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">50</text>
+      <text x="42" y="53" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">75</text>
+      <text x="42" y="18" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">100</text>
+
+      <!-- Sigmoid curve path -->
+      <path d="M 50,190 C 80,188 110,183 130,175 S 155,155 165,140 S 185,105 210,80 S 250,30 290,20 S 380,15 480,13"
+        stroke="url(#curveGrad)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- P50 marker -->
+      <line x1="160" y1="100" x2="160" y2="190" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+      <line x1="50" y1="100" x2="160" y2="100" stroke="#c9a84c" stroke-width="1" stroke-dasharray="3,3" opacity="0.7"/>
+      <circle cx="160" cy="100" r="4" fill="#c9a84c" opacity="0.9"/>
+      <text x="168" y="95" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#c9a84c">P₅₀ ≈ 26 mmHg</text>
+
+      <!-- Lung point -->
+      <circle cx="480" cy="13" r="5" fill="#ff6b5b" opacity="0.9"/>
+      <text x="432" y="10" font-family="JetBrains Mono,monospace" font-size="7" fill="#ff6b5b">Pulmões</text>
+      <text x="432" y="20" font-family="JetBrains Mono,monospace" font-size="7" fill="#ff6b5b">~97%</text>
+
+      <!-- Tissue point -->
+      <circle cx="200" cy="85" r="5" fill="#4fc3f7" opacity="0.9"/>
+      <text x="205" y="83" font-family="JetBrains Mono,monospace" font-size="7" fill="#4fc3f7">Tecidos</text>
+      <text x="205" y="93" font-family="JetBrains Mono,monospace" font-size="7" fill="#4fc3f7">~25 mmHg</text>
+
+      <!-- Moving dot on curve -->
+      <circle id="curve-dot" cx="50" cy="190" r="6" fill="white" opacity="0.9"
+        filter="url(#glow-red)"/>
+
+      <!-- Bohr arrows -->
+      <text x="300" y="60" font-family="Crimson Pro,serif" font-size="9" fill="#a08878" font-style="italic">Efeito Bohr →</text>
+      <text x="300" y="72" font-family="JetBrains Mono,monospace" font-size="7" fill="#5a4040">↑CO₂, ↓pH shift right</text>
+    </svg>
+  </div>
+
+</div>
+
+<footer>
+  Hemoglobina · Proteína tetramérica · 4 subunidades (2α + 2β) · 4 grupos heme · Fe²⁺
+</footer>
+
+<script>
+  // State
+  let boundO2 = [false, false, false, false];
+  let autoMode = false;
+  let autoInterval = null;
+  let currentStep = 1;
+
+  const messages = {
+    start: 'Clique em "Oxigenar" ou numa molécula de O₂ para iniciar',
+    oxygenating: 'O O₂ difunde dos alvéolos → Fe²⁺ do grupo heme captura o O₂',
+    fullyOxy: 'Oxihemoglobina (R): 4 O₂ ligados — máxima cooperatividade atingida',
+    releasing: 'Nos tecidos: ↓pO₂, ↑CO₂, ↓pH → Efeito Bohr → libertação de O₂',
+    fullyDeoxy: 'Desoxihemoglobina (T): pronta para novo ciclo nos pulmões',
+    partial: 'Cooperatividade: cada O₂ ligado aumenta a afinidade pelos seguintes',
+  };
+
+  function countBound() { return boundO2.filter(Boolean).length; }
+
+  function updateUI() {
+    const n = countBound();
+    const sat = Math.round((n / 4) * 100);
+
+    // Saturation bar
+    document.getElementById('sat-fill').style.width = sat + '%';
+    document.getElementById('sat-value').textContent = sat + '%';
+    document.getElementById('sites-count').textContent = n;
+
+    // State dot & text
+    const dot = document.getElementById('state-dot');
+    const txt = document.getElementById('state-text');
+    if (n === 4) {
+      dot.classList.add('oxy');
+      txt.textContent = 'Oxihemoglobina (R)';
+      txt.style.color = 'var(--oxy-bright)';
+      document.getElementById('hemo-svg').className = 'oxygenated';
+      document.getElementById('hemo-state-label').textContent = 'Oxihemoglobina (R)';
+      document.getElementById('hemo-structure-label').textContent = 'Estrutura R (relaxada) · alta afinidade';
+    } else if (n === 0) {
+      dot.classList.remove('oxy');
+      txt.textContent = 'Desoxihemoglobina (T)';
+      txt.style.color = 'var(--muted)';
+      document.getElementById('hemo-svg').className = 'deoxygenated';
+      document.getElementById('hemo-state-label').textContent = 'Desoxihemoglobina (T)';
+      document.getElementById('hemo-structure-label').textContent = 'Estrutura T (tensa) · baixa afinidade';
+    } else {
+      dot.classList.remove('oxy');
+      txt.textContent = `Hemoglobina parcial (${n}/4 O₂)`;
+      txt.style.color = 'var(--gold)';
+      document.getElementById('hemo-svg').className = '';
+      document.getElementById('hemo-state-label').textContent = `Hemoglobina (${n}/4 O₂)`;
+      document.getElementById('hemo-structure-label').textContent = 'Transição T→R · afinidade crescente';
+    }
+
+    // Update subunits visual
+    for (let i = 0; i < 4; i++) {
+      const subCircle = document.getElementById(`sub-circle-${i}`);
+      const hemeCircle = document.getElementById(`heme-circle-${i}`);
+      const site = document.getElementById(`site-${i}`);
+      const o2bound = document.getElementById(`o2-bound-${i}`);
+
+      if (boundO2[i]) {
+        subCircle.setAttribute('fill', 'url(#subunitGradOxy)');
+        hemeCircle.setAttribute('fill', 'url(#hemeGradOxy)');
+        site.setAttribute('stroke', '#ff6b5b');
+        o2bound.setAttribute('opacity', '1');
+      } else {
+        subCircle.setAttribute('fill', 'url(#subunitGrad)');
+        hemeCircle.setAttribute('fill', 'url(#hemeGrad)');
+        site.setAttribute('stroke', '#4a2080');
+        o2bound.setAttribute('opacity', '0');
+      }
+    }
+
+    // Update curve dot
+    // x: 50 (pO2=0) to 480 (pO2=100); y: 190 (0%) to 13 (100%)
+    const pO2 = [0, 20, 40, 65, 100][n]; // approximate pO2 for each saturation
+    const curveX = 50 + (pO2 / 100) * 430;
+    // Sigmoid y approximation
+    const satY = 190 - (sat / 100) * 177;
+    const curveDot = document.getElementById('curve-dot');
+    curveDot.setAttribute('cx', curveX);
+    curveDot.setAttribute('cy', satY);
+    curveDot.setAttribute('fill', sat > 50 ? '#ff6b5b' : '#4fc3f7');
+  }
+
+  function setMessage(msg) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.classList.add('active');
+  }
+
+  function addO2(idx) {
+    if (boundO2[idx]) return;
+
+    // Mark O2 molecule in pool as used
+    const mols = document.querySelectorAll('.o2-mol');
+    const available = Array.from(mols).filter(m => !m.classList.contains('used'));
+    if (available.length > 0) {
+      available[0].classList.add('used');
+    }
+
+    boundO2[idx] = true;
+    const n = countBound();
+
+    if (n === 4) {
+      setMessage(messages.fullyOxy);
+    } else if (n === 1) {
+      setMessage(messages.oxygenating);
+    } else {
+      setMessage(messages.partial);
+    }
+
+    updateUI();
+    animateRBC('oxy');
+  }
+
+  function oxygenate() {
+    // Find first unbound
+    const firstFree = boundO2.findIndex(b => !b);
+    if (firstFree === -1) {
+      setMessage(messages.fullyOxy);
+      return;
+    }
+
+    // Use up one O2 mol from pool
+    const mols = document.querySelectorAll('.o2-mol');
+    const available = Array.from(mols).filter(m => !m.classList.contains('used'));
+    if (available.length > 0) available[0].classList.add('used');
+
+    boundO2[firstFree] = true;
+    const n = countBound();
+
+    if (n === 4) setMessage(messages.fullyOxy);
+    else setMessage(messages.oxygenating + ` (${n}/4)`);
+
+    updateUI();
+    animateRBC('oxy');
+    goToStep(n <= 2 ? 2 : 3);
+  }
+
+  function deoxygenate() {
+    // Find last bound
+    let lastBound = -1;
+    for (let i = 3; i >= 0; i--) {
+      if (boundO2[i]) { lastBound = i; break; }
+    }
+    if (lastBound === -1) {
+      setMessage(messages.fullyDeoxy);
+      return;
+    }
+
+    boundO2[lastBound] = false;
+    const n = countBound();
+
+    // Add released O2 to right pool
+    const relPool = document.getElementById('o2-released');
+    const o2el = document.createElement('div');
+    o2el.className = 'o2-mol';
+    o2el.textContent = 'O₂';
+    o2el.style.animation = 'float 2.5s ease-in-out infinite';
+    relPool.appendChild(o2el);
+
+    // Restore one O2 in left pool
+    const mols = document.querySelectorAll('#o2-molecules .o2-mol');
+    const used = Array.from(mols).filter(m => m.classList.contains('used'));
+    if (used.length > 0) used[used.length-1].classList.remove('used');
+
+    if (n === 0) setMessage(messages.fullyDeoxy);
+    else setMessage(messages.releasing + ` (${n}/4 restantes)`);
+
+    updateUI();
+    animateRBC('deoxy');
+    goToStep(n === 0 ? 5 : 4);
+  }
+
+  function resetAll() {
+    boundO2 = [false, false, false, false];
+    // Reset O2 molecules
+    document.querySelectorAll('.o2-mol').forEach(m => m.classList.remove('used'));
+    // Clear released
+    document.getElementById('o2-released').innerHTML = '';
+    setMessage(messages.start);
+    updateUI();
+    goToStep(1);
+    if (autoMode) toggleAuto();
+  }
+
+  function goToStep(n) {
+    currentStep = n;
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById(`step-${i}`);
+      el.classList.toggle('active-step', i === n);
+    }
+  }
+
+  function toggleAuto() {
+    autoMode = !autoMode;
+    const btn = document.getElementById('btn-auto');
+    if (autoMode) {
+      btn.classList.add('active-btn');
+      btn.textContent = '⏸ Pausar Ciclo';
+      runAutoCycle();
+    } else {
+      btn.classList.remove('active-btn');
+      btn.textContent = '⟳ Ciclo Automático';
+      if (autoInterval) clearInterval(autoInterval);
+    }
+  }
+
+  async function runAutoCycle() {
+    // Oxygenate phase
+    for (let i = 0; i < 4; i++) {
+      if (!autoMode) return;
+      await sleep(700);
+      oxygenate();
+    }
+    // Pause at full
+    await sleep(1200);
+    goToStep(3);
+    setMessage('Sangue arterial: transportando O₂ para os tecidos...');
+    animateRBC('oxy');
+    await sleep(1500);
+    // Deoxygenate phase
+    for (let i = 0; i < 4; i++) {
+      if (!autoMode) return;
+      await sleep(700);
+      deoxygenate();
+    }
+    // Pause at empty
+    await sleep(1200);
+    goToStep(1);
+    setMessage('Retornando aos pulmões para nova carga...');
+    animateRBC('deoxy');
+    await sleep(1500);
+
+    // Clear released and restart
+    document.getElementById('o2-released').innerHTML = '';
+    document.querySelectorAll('.o2-mol').forEach(m => m.classList.remove('used'));
+
+    if (autoMode) runAutoCycle();
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function animateRBC(type) {
+    const rbc = document.getElementById('rbc-group');
+    rbc.style.transition = 'transform 1.5s ease';
+    if (type === 'oxy') {
+      rbc.querySelector('ellipse').setAttribute('fill', '#c0392b');
+    } else {
+      rbc.querySelector('ellipse').setAttribute('fill', '#5a1010');
+    }
+  }
+
+  // Vessel flow animation
+  function initVesselParticles() {
+    const g = document.getElementById('flow-particles');
+    for (let i = 0; i < 6; i++) {
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cy", "60");
+      circle.setAttribute("r", "4");
+      circle.setAttribute("fill", "#8b1a1a");
+      circle.setAttribute("opacity", "0.4");
+      g.appendChild(circle);
+      animateParticle(circle, i * 600);
+    }
+  }
+
+  function animateParticle(el, delay) {
+    function run() {
+      el.style.transition = 'none';
+      el.setAttribute("cx", -10);
+      setTimeout(() => {
+        el.style.transition = `cx ${2 + Math.random()}s linear`;
+        el.setAttribute("cx", 810);
+      }, 50);
+      setTimeout(run, 3000 + delay * 0.1 + Math.random()*500);
+    }
+    setTimeout(run, delay);
+  }
+
+  // Init
+  initVesselParticles();
+  updateUI();
+</script>
+</body>
+</html>

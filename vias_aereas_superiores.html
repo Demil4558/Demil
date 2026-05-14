@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VÍA AÉREA — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700;900&family=Bangers&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050810;
+  --neon-cyan: #00f5ff;
+  --neon-pink: #ff007f;
+  --neon-yellow: #ffe000;
+  --neon-green: #39ff14;
+  --neon-orange: #ff6a00;
+  --neon-purple: #bf00ff;
+  --panel-bg: rgba(255,255,255,0.03);
+  --border-glow: rgba(0,245,255,0.3);
+  --text: #e8f4f8;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ===== CUSTOM CURSOR ===== */
+.cursor {
+  width: 16px; height: 16px;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s, border-color 0.2s;
+  mix-blend-mode: screen;
+}
+.cursor-trail {
+  width: 6px; height: 6px;
+  background: var(--neon-pink);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: all 0.15s ease;
+}
+
+/* ===== STARFIELD ===== */
+.stars {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--dur, 3s) infinite var(--delay, 0s);
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* ===== FLOATING MOLECULES ===== */
+.molecule-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.molecule {
+  position: absolute;
+  animation: floatMolecule var(--dur, 12s) ease-in-out infinite var(--delay, 0s);
+}
+.mol-circle {
+  width: var(--sz, 12px);
+  height: var(--sz, 12px);
+  border-radius: 50%;
+  background: var(--col, var(--neon-cyan));
+  box-shadow: 0 0 8px var(--col, var(--neon-cyan));
+  position: relative;
+}
+.mol-circle::before, .mol-circle::after {
+  content: '';
+  position: absolute;
+  width: calc(var(--sz, 12px) * 0.6);
+  height: calc(var(--sz, 12px) * 0.6);
+  border-radius: 50%;
+  background: var(--col2, var(--neon-pink));
+  box-shadow: 0 0 6px var(--col2, var(--neon-pink));
+}
+.mol-circle::before { top: -60%; left: 80%; }
+.mol-circle::after { top: 80%; left: -40%; }
+@keyframes floatMolecule {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(var(--mx, 30px), var(--my, -40px)) rotate(90deg); }
+  50% { transform: translate(var(--mx2, -20px), var(--my2, 20px)) rotate(180deg); }
+  75% { transform: translate(var(--mx3, 40px), var(--my3, -10px)) rotate(270deg); }
+}
+
+/* ===== SCROLL PROGRESS ===== */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+  z-index: 1000;
+  transition: width 0.1s;
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed;
+  top: 10px; right: 20px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.nav-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--neon-cyan);
+  cursor: pointer;
+  transition: all 0.3s;
+  background: transparent;
+}
+.nav-dot:hover, .nav-dot.active {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 12px var(--neon-cyan);
+  transform: scale(1.4);
+}
+.nav-dot[data-label]::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 20px;
+  font-size: 10px;
+  color: var(--neon-cyan);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-family: 'Orbitron', sans-serif;
+}
+.nav-dot:hover[data-label]::after { opacity: 1; }
+
+/* ===== SECTIONS ===== */
+section {
+  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 40px;
+  overflow: hidden;
+}
+
+/* ===== HERO ===== */
+#hero {
+  background: radial-gradient(ellipse at center, #0a1628 0%, #050810 70%);
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+.hero-badge {
+  display: inline-block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--neon-cyan);
+  border: 1px solid var(--neon-cyan);
+  padding: 6px 20px;
+  margin-bottom: 20px;
+  animation: pulseBorder 2s infinite;
+}
+@keyframes pulseBorder {
+  0%, 100% { box-shadow: 0 0 5px var(--neon-cyan); }
+  50% { box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 10px rgba(0,245,255,0.1); }
+}
+.hero-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 1;
+  color: #fff;
+  text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px rgba(0,245,255,0.3);
+  animation: titlePulse 3s ease-in-out infinite;
+  margin-bottom: 10px;
+}
+@keyframes titlePulse {
+  0%, 100% { text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px rgba(0,245,255,0.3); }
+  50% { text-shadow: 0 0 50px var(--neon-cyan), 0 0 100px rgba(0,245,255,0.5), 0 0 150px rgba(0,245,255,0.2); }
+}
+.hero-subtitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(0.8rem, 2vw, 1.3rem);
+  color: var(--neon-pink);
+  letter-spacing: 3px;
+  margin-bottom: 30px;
+  animation: slideIn 1s ease-out 0.5s both;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-desc {
+  max-width: 600px;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 40px;
+  line-height: 1.8;
+  animation: slideIn 1s ease-out 1s both;
+}
+.btn-start {
+  display: inline-block;
+  padding: 14px 40px;
+  background: transparent;
+  border: 2px solid var(--neon-pink);
+  color: var(--neon-pink);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  animation: slideIn 1s ease-out 1.5s both;
+}
+.btn-start::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: var(--neon-pink);
+  transition: left 0.3s;
+  z-index: -1;
+}
+.btn-start:hover { color: #000; }
+.btn-start:hover::before { left: 0; }
+
+/* ===== BREATHING LUNGS SVG ===== */
+.lungs-hero {
+  width: 200px;
+  margin: 30px auto;
+  animation: breathe 4s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+/* ===== CHAPTER HEADER ===== */
+.chapter-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+.chapter-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 5px;
+  margin-bottom: 10px;
+}
+.chapter-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
+}
+.chapter-line {
+  height: 3px;
+  width: 100px;
+  margin: 15px auto;
+  border-radius: 2px;
+}
+
+/* ===== MANGA PANELS ===== */
+.manga-grid {
+  display: grid;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-glow);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+.panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px rgba(0,245,255,0.2);
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(135deg, rgba(0,245,255,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+.panel-accent {
+  position: absolute;
+  top: 0; right: 0;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 30px 30px 0;
+}
+.panel h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+.panel p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.85);
+}
+
+/* ===== ANATOMY SECTION ===== */
+#anatomia { background: linear-gradient(160deg, #060d1a 0%, #050810 100%); }
+#anatomia .chapter-num { color: var(--neon-cyan); }
+#anatomia .chapter-title { color: #fff; }
+#anatomia .chapter-line { background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink)); }
+
+.anatomy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+@media(max-width:700px) { .anatomy-grid { grid-template-columns: 1fr; } }
+
+/* ===== INTERACTIVE AIRWAY SVG ===== */
+.airway-diagram {
+  max-width: 500px;
+  margin: 0 auto 40px;
+  position: relative;
+}
+.airway-diagram svg { width: 100%; height: auto; }
+.airway-hotspot {
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.airway-hotspot:hover circle { r: 12; }
+.tooltip-box {
+  position: absolute;
+  background: rgba(5,8,16,0.95);
+  border: 1px solid var(--neon-cyan);
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  max-width: 220px;
+  display: none;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 0 20px rgba(0,245,255,0.3);
+}
+.tooltip-box.show { display: block; animation: fadeIn 0.2s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== HISTOLOGY SECTION ===== */
+#histologia { background: linear-gradient(160deg, #0d0616 0%, #050810 100%); }
+#histologia .chapter-num { color: var(--neon-purple); }
+#histologia .chapter-title { color: #fff; }
+#histologia .chapter-line { background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink)); }
+
+.histo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.cell-card {
+  background: rgba(191,0,255,0.05);
+  border: 1px solid rgba(191,0,255,0.3);
+  padding: 24px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%);
+}
+.cell-card:hover {
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 25px rgba(191,0,255,0.25);
+  transform: scale(1.02);
+}
+.cell-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+  display: block;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.cell-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  color: var(--neon-purple);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.cell-desc { font-size: 0.88rem; line-height: 1.7; color: rgba(255,255,255,0.8); }
+
+/* ===== ANIMATED MUCOSA ===== */
+.mucosa-anim {
+  max-width: 700px;
+  margin: 40px auto;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(191,0,255,0.3);
+  padding: 20px;
+  border-radius: 4px;
+  text-align: center;
+}
+.mucosa-anim canvas { display: block; margin: 0 auto; border-radius: 4px; }
+.mucosa-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: var(--neon-purple);
+  margin-top: 12px;
+}
+
+/* ===== PHYSIOLOGY SECTION ===== */
+#fisiologia { background: linear-gradient(160deg, #060d10 0%, #050810 100%); }
+#fisiologia .chapter-num { color: var(--neon-green); }
+#fisiologia .chapter-title { color: #fff; }
+#fisiologia .chapter-line { background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)); }
+
+.physio-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: rgba(57,255,20,0.04);
+  border: 1px solid rgba(57,255,20,0.2);
+  padding: 22px;
+  position: relative;
+  transition: all 0.3s;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+.flow-step:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 20px rgba(57,255,20,0.15);
+}
+.flow-step::after {
+  content: '▼';
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--neon-green);
+  font-size: 1rem;
+  animation: bounce 1s infinite;
+  z-index: 10;
+}
+.flow-step:last-child::after { display: none; }
+@keyframes bounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(4px); }
+}
+.flow-num {
+  font-family: 'Bangers', cursive;
+  font-size: 2.5rem;
+  color: var(--neon-green);
+  min-width: 50px;
+  line-height: 1;
+  text-shadow: 0 0 10px var(--neon-green);
+}
+.flow-content h4 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  color: var(--neon-green);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.flow-content p { font-size: 0.9rem; line-height: 1.7; color: rgba(255,255,255,0.8); }
+
+/* ===== ADULT vs CHILD SECTION ===== */
+#comparacao { background: linear-gradient(160deg, #100808 0%, #050810 100%); }
+#comparacao .chapter-num { color: var(--neon-yellow); }
+#comparacao .chapter-title { color: #fff; }
+#comparacao .chapter-line { background: linear-gradient(90deg, var(--neon-yellow), var(--neon-orange)); }
+
+.versus-container {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: start;
+}
+@media(max-width:700px) {
+  .versus-container { grid-template-columns: 1fr; }
+  .vs-divider { display: none; }
+}
+.vs-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.vs-header {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  text-align: center;
+  padding: 16px;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.adult-side .vs-header { color: var(--neon-cyan); border-bottom: 2px solid var(--neon-cyan); }
+.child-side .vs-header { color: var(--neon-pink); border-bottom: 2px solid var(--neon-pink); }
+.vs-item {
+  padding: 14px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  border-left: 3px solid;
+  padding-left: 16px;
+  transition: all 0.3s;
+  background: rgba(255,255,255,0.02);
+}
+.adult-side .vs-item { border-color: var(--neon-cyan); }
+.adult-side .vs-item:hover { background: rgba(0,245,255,0.05); box-shadow: inset 0 0 10px rgba(0,245,255,0.05); }
+.child-side .vs-item { border-color: var(--neon-pink); }
+.child-side .vs-item:hover { background: rgba(255,0,127,0.05); box-shadow: inset 0 0 10px rgba(255,0,127,0.05); }
+.vs-item strong {
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.adult-side .vs-item strong { color: var(--neon-cyan); }
+.child-side .vs-item strong { color: var(--neon-pink); }
+.vs-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 80px;
+  gap: 8px;
+}
+.vs-text {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  color: var(--neon-yellow);
+  text-shadow: 0 0 20px var(--neon-yellow);
+  animation: vsGlow 2s ease-in-out infinite;
+}
+@keyframes vsGlow {
+  0%, 100% { text-shadow: 0 0 20px var(--neon-yellow); }
+  50% { text-shadow: 0 0 40px var(--neon-yellow), 0 0 80px rgba(255,224,0,0.3); }
+}
+.vs-line {
+  width: 2px;
+  flex: 1;
+  background: linear-gradient(to bottom, var(--neon-yellow), transparent);
+}
+
+/* ===== QUIZ SECTION ===== */
+#quiz { background: linear-gradient(160deg, #080d0d 0%, #050810 100%); }
+#quiz .chapter-num { color: var(--neon-orange); }
+#quiz .chapter-title { color: #fff; }
+#quiz .chapter-line { background: linear-gradient(90deg, var(--neon-orange), var(--neon-pink)); }
+
+.quiz-box {
+  max-width: 700px;
+  margin: 0 auto;
+  background: rgba(255,106,0,0.04);
+  border: 1px solid rgba(255,106,0,0.3);
+  padding: 32px;
+  clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
+}
+.quiz-q-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  color: var(--neon-orange);
+  margin-bottom: 10px;
+}
+.quiz-question {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.5;
+  color: #fff;
+}
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.quiz-opt {
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,106,0,0.25);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  text-align: left;
+  color: rgba(255,255,255,0.85);
+  font-family: 'Nunito', sans-serif;
+}
+.quiz-opt:hover { border-color: var(--neon-orange); background: rgba(255,106,0,0.1); color: #fff; }
+.quiz-opt.correct { border-color: var(--neon-green); background: rgba(57,255,20,0.1); color: var(--neon-green); }
+.quiz-opt.wrong { border-color: var(--neon-pink); background: rgba(255,0,127,0.1); color: var(--neon-pink); }
+.quiz-feedback {
+  padding: 14px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  display: none;
+  border-left: 3px solid var(--neon-green);
+  background: rgba(57,255,20,0.05);
+}
+.quiz-feedback.show { display: block; animation: fadeIn 0.3s; }
+.quiz-feedback.wrong-fb { border-color: var(--neon-pink); background: rgba(255,0,127,0.05); }
+.quiz-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.quiz-btn {
+  padding: 10px 24px;
+  background: transparent;
+  border: 1px solid var(--neon-orange);
+  color: var(--neon-orange);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.quiz-btn:hover { background: var(--neon-orange); color: #000; }
+.quiz-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.quiz-score {
+  text-align: center;
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  color: var(--neon-yellow);
+  margin-top: 10px;
+}
+
+/* ===== TIMELINE SECTION ===== */
+#cronologia { background: linear-gradient(160deg, #0a0a05 0%, #050810 100%); }
+#cronologia .chapter-num { color: var(--neon-yellow); }
+#cronologia .chapter-title { color: #fff; }
+#cronologia .chapter-line { background: linear-gradient(90deg, var(--neon-yellow), var(--neon-cyan)); }
+
+.timeline {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+  box-shadow: 0 0 10px rgba(0,245,255,0.3);
+}
+.tl-item {
+  position: relative;
+  padding: 20px 20px 20px 20px;
+  margin-bottom: 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+  transition: all 0.3s;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.5s, transform 0.5s, box-shadow 0.3s;
+}
+.tl-item.visible { opacity: 1; transform: translateX(0); }
+.tl-item:hover { box-shadow: 0 0 20px rgba(0,245,255,0.1); }
+.tl-dot {
+  position: absolute;
+  left: -34px;
+  top: 22px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: var(--bg);
+}
+.tl-phase {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+.tl-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+.tl-content { font-size: 0.88rem; line-height: 1.7; color: rgba(255,255,255,0.8); }
+
+/* ===== SCROLL REVEAL ===== */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ===== SPEECH BUBBLE ===== */
+.speech-bubble {
+  position: relative;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid var(--neon-cyan);
+  padding: 16px 20px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin: 0 auto 30px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,245,255,0.2);
+}
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-top-color: var(--neon-cyan);
+}
+.guide-char {
+  font-size: 3rem;
+  text-align: center;
+  display: block;
+  margin-bottom: 10px;
+  animation: floatIcon 2s ease-in-out infinite;
+}
+
+/* ===== PARTICLE BURST ===== */
+.particle {
+  position: fixed;
+  pointer-events: none;
+  border-radius: 50%;
+  z-index: 999;
+  animation: particleFly 0.8s ease-out forwards;
+}
+@keyframes particleFly {
+  0% { opacity: 1; transform: translate(0,0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+}
+
+/* ===== FOOTER ===== */
+footer {
+  position: relative;
+  z-index: 2;
+  background: #020508;
+  border-top: 1px solid rgba(0,245,255,0.15);
+  padding: 50px 40px 30px;
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 20px var(--neon-cyan);
+  margin-bottom: 8px;
+}
+.footer-uni {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 5px;
+}
+.footer-year {
+  font-family: 'Bangers', cursive;
+  font-size: 2rem;
+  color: var(--neon-pink);
+  margin: 10px 0;
+}
+.footer-line {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
+  margin: 20px auto;
+  max-width: 400px;
+}
+.footer-credit { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+
+/* ===== SECTION DECORATIONS ===== */
+.section-bg-num {
+  position: absolute;
+  right: -20px; top: 50%;
+  transform: translateY(-50%);
+  font-family: 'Bangers', cursive;
+  font-size: 20rem;
+  color: rgba(255,255,255,0.02);
+  pointer-events: none;
+  line-height: 1;
+  z-index: 0;
+  user-select: none;
+}
+.speed-lines {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.speed-line {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+  width: 100%;
+}
+
+/* Key facts highlight */
+.key-fact {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-weight: 700;
+}
+.kf-cyan { background: rgba(0,245,255,0.15); color: var(--neon-cyan); }
+.kf-pink { background: rgba(255,0,127,0.15); color: var(--neon-pink); }
+.kf-green { background: rgba(57,255,20,0.15); color: var(--neon-green); }
+.kf-yellow { background: rgba(255,224,0,0.15); color: var(--neon-yellow); }
+.kf-purple { background: rgba(191,0,255,0.15); color: var(--neon-purple); }
+
+/* Neon glow text utilities */
+.glow-cyan { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+.glow-pink { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
+.glow-green { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+.glow-yellow { color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); }
+.glow-purple { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+/* ===== ALERT BOX ===== */
+.alert-box {
+  border: 2px solid var(--neon-yellow);
+  background: rgba(255,224,0,0.05);
+  padding: 16px 20px;
+  margin: 20px auto;
+  max-width: 700px;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+}
+.alert-box::before {
+  content: '⚡ ATENÇÃO CLÍNICA';
+  display: block;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  color: var(--neon-yellow);
+  margin-bottom: 8px;
+}
+.alert-box p { font-size: 0.9rem; line-height: 1.6; color: rgba(255,255,255,0.85); }
+
+/* ===== PROGRESS DOTS ===== */
+.progress-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 30px 0;
+}
+.prog-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.3s;
+}
+.prog-dot.done { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.prog-dot.current {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+  transform: scale(1.3);
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- STARFIELD -->
+<div class="stars" id="stars"></div>
+
+<!-- FLOATING MOLECULES -->
+<div class="molecule-container" id="molecules"></div>
+
+<!-- NAV DOTS -->
+<nav id="nav-dots">
+  <div class="nav-dot active" data-section="hero" data-label="INÍCIO"></div>
+  <div class="nav-dot" data-section="anatomia" data-label="ANATOMIA"></div>
+  <div class="nav-dot" data-section="histologia" data-label="HISTOLOGIA"></div>
+  <div class="nav-dot" data-section="fisiologia" data-label="FISIOLOGIA"></div>
+  <div class="nav-dot" data-section="comparacao" data-label="ADULTO vs CRIANÇA"></div>
+  <div class="nav-dot" data-section="cronologia" data-label="CRONOLOGIA"></div>
+  <div class="nav-dot" data-section="quiz" data-label="QUIZ"></div>
+</nav>
+
+<!-- TOOLTIP -->
+<div class="tooltip-box" id="tooltip"></div>
+
+<!-- ==================== HERO ==================== -->
+<section id="hero">
+  <div class="speed-lines">
+    <div class="speed-line" style="top:20%; animation: none;"></div>
+    <div class="speed-line" style="top:40%;"></div>
+    <div class="speed-line" style="top:60%;"></div>
+    <div class="speed-line" style="top:80%;"></div>
+  </div>
+  
+  <div class="hero-badge">DEMILMED-UL · 2026 · ANATOMIA & FISIOLOGIA</div>
+  <div class="lungs-hero">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Trachea -->
+      <rect x="93" y="10" width="14" height="60" rx="7" fill="#00f5ff" filter="url(#glow)" opacity="0.9"/>
+      <!-- Bronchi -->
+      <path d="M100 68 Q80 80 65 100" stroke="#00f5ff" stroke-width="5" fill="none" filter="url(#glow)" stroke-linecap="round"/>
+      <path d="M100 68 Q120 80 135 100" stroke="#00f5ff" stroke-width="5" fill="none" filter="url(#glow)" stroke-linecap="round"/>
+      <!-- Left Lung -->
+      <ellipse cx="60" cy="135" rx="42" ry="52" fill="rgba(255,0,127,0.15)" stroke="#ff007f" stroke-width="1.5" filter="url(#glow)">
+        <animate attributeName="ry" values="52;58;52" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="42;46;42" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Right Lung -->
+      <ellipse cx="140" cy="135" rx="42" ry="52" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow)">
+        <animate attributeName="ry" values="52;58;52" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="42;46;42" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Pulse dots -->
+      <circle cx="60" cy="130" r="4" fill="#ff007f" opacity="0.8">
+        <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="140" cy="130" r="4" fill="#00f5ff" opacity="0.8">
+        <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+    </svg>
+  </div>
+  <h1 class="hero-title">VIAS AÉREAS<br>SUPERIORES</h1>
+  <p class="hero-subtitle">ANATOMIA · HISTOLOGIA · FISIOLOGIA</p>
+  <p class="hero-desc">
+    Uma odisseia visual pelos caminhos do ar.<br>
+    Do nariz até à laringe — descubra a arquitectura do sistema respiratório como nunca viu antes.
+  </p>
+  <a href="#anatomia" class="btn-start">▶ INICIAR MISSÃO</a>
+  
+  <div style="margin-top:50px;">
+    <div class="progress-dots">
+      <div class="prog-dot current"></div>
+      <div class="prog-dot"></div>
+      <div class="prog-dot"></div>
+      <div class="prog-dot"></div>
+      <div class="prog-dot"></div>
+      <div class="prog-dot"></div>
+      <div class="prog-dot"></div>
+    </div>
+    <p style="text-align:center; font-family:'Orbitron',sans-serif; font-size:0.65rem; letter-spacing:3px; color:rgba(255,255,255,0.3);">SCROLL PARA AVANÇAR</p>
+  </div>
+</section>
+
+<!-- ==================== ANATOMIA ==================== -->
+<section id="anatomia">
+  <div class="section-bg-num">01</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-cyan">◆ CAPÍTULO 01</div>
+    <div class="chapter-title" style="color:#fff;">
+      <span class="glow-cyan">ANATOMIA</span> das<br>Vias Aéreas Superiores
+    </div>
+    <div class="chapter-line"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:600px; margin:0 auto;">
+      As vias aéreas superiores formam a entrada do sistema respiratório — conduzindo, filtrando, aquecendo e humidificando o ar antes de chegar aos pulmões.
+    </p>
+  </div>
+
+  <div class="speech-bubble reveal" style="margin-bottom:30px;">
+    <span class="guide-char">🫁</span>
+    <em>"Bem-vindo, explorador! Sou o Dr. Pneumo. Vou guiar-te através das vias aéreas. Prepara-te — é uma viagem de 24 cm repleta de mistérios anatómicos!"</em>
+  </div>
+
+  <!-- INTERACTIVE SVG DIAGRAM -->
+  <div class="airway-diagram reveal">
+    <svg viewBox="0 0 320 520" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:420px; display:block; margin:0 auto;">
+      <defs>
+        <filter id="glow2"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="airGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#ff007f" stop-opacity="0.8"/>
+        </linearGradient>
+      </defs>
+      
+      <!-- Head silhouette -->
+      <ellipse cx="160" cy="80" rx="90" ry="75" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      
+      <!-- Nasal cavity -->
+      <ellipse cx="160" cy="65" rx="55" ry="28" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow2)"/>
+      <text x="160" y="68" text-anchor="middle" fill="#00f5ff" font-size="10" font-family="Orbitron">NARIZ</text>
+      
+      <!-- Nasal septum -->
+      <line x1="160" y1="40" x2="160" y2="90" stroke="rgba(0,245,255,0.4)" stroke-width="1" stroke-dasharray="3,2"/>
+      
+      <!-- Oral cavity -->
+      <ellipse cx="160" cy="105" rx="50" ry="20" fill="rgba(255,0,127,0.08)" stroke="#ff007f" stroke-width="1.2" stroke-dasharray="4,2"/>
+      <text x="160" y="108" text-anchor="middle" fill="#ff007f" font-size="9" font-family="Orbitron">BOCA</text>
+      
+      <!-- Nasopharynx -->
+      <rect x="118" y="128" width="84" height="38" rx="4" fill="rgba(191,0,255,0.1)" stroke="#bf00ff" stroke-width="1.5"/>
+      <text x="160" y="151" text-anchor="middle" fill="#bf00ff" font-size="9" font-family="Orbitron">NASOFARINGE</text>
+      
+      <!-- Oropharynx -->
+      <rect x="118" y="172" width="84" height="36" rx="4" fill="rgba(255,106,0,0.1)" stroke="#ff6a00" stroke-width="1.5"/>
+      <text x="160" y="193" text-anchor="middle" fill="#ff6a00" font-size="9" font-family="Orbitron">OROFARINGE</text>
+      
+      <!-- Hypopharynx -->
+      <rect x="120" y="214" width="80" height="32" rx="4" fill="rgba(255,224,0,0.08)" stroke="#ffe000" stroke-width="1.5"/>
+      <text x="160" y="233" text-anchor="middle" fill="#ffe000" font-size="9" font-family="Orbitron">HIPOFARINGE</text>
+      
+      <!-- Epiglottis -->
+      <path d="M140 248 Q160 242 180 248 Q175 265 160 268 Q145 265 140 248Z" fill="rgba(57,255,20,0.15)" stroke="#39ff14" stroke-width="1.5"/>
+      <text x="207" y="258" fill="#39ff14" font-size="8" font-family="Orbitron">EPIGLOTE</text>
+      <line x1="182" y1="256" x2="204" y2="255" stroke="#39ff14" stroke-width="0.8"/>
+      
+      <!-- Larynx -->
+      <rect x="130" y="272" width="60" height="55" rx="6" fill="rgba(0,245,255,0.08)" stroke="#00f5ff" stroke-width="2" filter="url(#glow2)"/>
+      <text x="160" y="295" text-anchor="middle" fill="#00f5ff" font-size="9" font-family="Orbitron">LARINGE</text>
+      <!-- Vocal cords -->
+      <line x1="133" y1="310" x2="187" y2="310" stroke="#00f5ff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+      <text x="207" y="313" fill="#00f5ff" font-size="8" font-family="Orbitron">CORDAS</text>
+      <text x="207" y="322" fill="#00f5ff" font-size="8" font-family="Orbitron">VOCAIS</text>
+      <line x1="187" y1="310" x2="205" y2="314" stroke="#00f5ff" stroke-width="0.8"/>
+      
+      <!-- Subglottis -->
+      <rect x="140" y="327" width="40" height="22" rx="3" fill="rgba(191,0,255,0.1)" stroke="#bf00ff" stroke-width="1.2"/>
+      <text x="160" y="341" text-anchor="middle" fill="#bf00ff" font-size="7" font-family="Orbitron">SUBGLOTE</text>
+      
+      <!-- Trachea -->
+      <rect x="148" y="350" width="24" height="60" rx="5" fill="rgba(0,245,255,0.12)" stroke="#00f5ff" stroke-width="1.5"/>
+      <!-- Tracheal rings -->
+      <line x1="148" y1="365" x2="172" y2="365" stroke="rgba(0,245,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="148" y1="378" x2="172" y2="378" stroke="rgba(0,245,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="148" y1="391" x2="172" y2="391" stroke="rgba(0,245,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="148" y1="404" x2="172" y2="404" stroke="rgba(0,245,255,0.5)" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="185" y="382" fill="#00f5ff" font-size="8" font-family="Orbitron">TRAQUEIA</text>
+      <line x1="172" y1="380" x2="183" y2="380" stroke="#00f5ff" stroke-width="0.8"/>
+      
+      <!-- Air flow arrow -->
+      <path d="M90 55 Q75 55 75 80 Q75 105 75 130 Q75 200 75 270 Q75 340 75 415" stroke="url(#airGrad)" stroke-width="2" fill="none" stroke-dasharray="6,4" opacity="0.6">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="1s" repeatCount="indefinite"/>
+      </path>
+      <text x="50" y="230" fill="rgba(0,245,255,0.5)" font-size="8" font-family="Orbitron" transform="rotate(-90 50 230)">FLUXO DE AR</text>
+      
+      <!-- Hotspot labels left side -->
+      <g class="airway-hotspot" onclick="showAnatInfo('nariz')" style="cursor:pointer">
+        <circle cx="50" cy="65" r="8" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5"/>
+        <text x="50" y="68" text-anchor="middle" fill="#00f5ff" font-size="9">?</text>
+        <line x1="58" y1="65" x2="107" y2="65" stroke="#00f5ff" stroke-width="0.8" stroke-dasharray="2,2"/>
+      </g>
+      <g class="airway-hotspot" onclick="showAnatInfo('faringe')" style="cursor:pointer">
+        <circle cx="50" cy="190" r="8" fill="rgba(255,106,0,0.2)" stroke="#ff6a00" stroke-width="1.5"/>
+        <text x="50" y="193" text-anchor="middle" fill="#ff6a00" font-size="9">?</text>
+        <line x1="58" y1="190" x2="118" y2="190" stroke="#ff6a00" stroke-width="0.8" stroke-dasharray="2,2"/>
+      </g>
+      <g class="airway-hotspot" onclick="showAnatInfo('laringe')" style="cursor:pointer">
+        <circle cx="50" cy="300" r="8" fill="rgba(57,255,20,0.2)" stroke="#39ff14" stroke-width="1.5"/>
+        <text x="50" y="303" text-anchor="middle" fill="#39ff14" font-size="9">?</text>
+        <line x1="58" y1="300" x2="130" y2="300" stroke="#39ff14" stroke-width="0.8" stroke-dasharray="2,2"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="anatomy-grid reveal">
+    <!-- NARIZ -->
+    <div class="panel" style="border-color:rgba(0,245,255,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-cyan) transparent transparent;"></div>
+      <h3 class="glow-cyan">👃 CAVIDADE NASAL</h3>
+      <p>Dividida pelo <span class="key-fact kf-cyan">septo nasal</span>, a cavidade apresenta as <strong>conchas nasais</strong> (inferior, média e superior) que aumentam a superfície de contacto. O ar percorre os <span class="key-fact kf-cyan">meatos</span> entre as conchas, onde é aquecido e humidificado.</p>
+      <br>
+      <p><strong>Dimensões:</strong> comprimento ≈ <span class="key-fact kf-green">7–8 cm</span>; volume ≈ <span class="key-fact kf-green">15–20 mL</span></p>
+      <br>
+      <p>O <span class="key-fact kf-yellow">vestíbulo nasal</span> (entrada) possui pelos — <em>vibrissas</em> — que filtram partículas grosseiras. A região olfativa ocupa a concha superior e septo adjacente, contendo os <strong>receptores olfactivos</strong>.</p>
+    </div>
+    
+    <!-- SEIOS PARANASAIS -->
+    <div class="panel" style="border-color:rgba(191,0,255,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-purple) transparent transparent;"></div>
+      <h3 class="glow-purple">🏛️ SEIOS PARANASAIS</h3>
+      <p>Cavidades pneumatizadas nos ossos do crânio, comunicam com a cavidade nasal:</p>
+      <br>
+      <p>🔹 <span class="key-fact kf-purple">Maxilares</span> — os maiores; drenam para o meato médio<br>
+      🔹 <span class="key-fact kf-purple">Frontais</span> — desenvolvem-se na puberdade<br>
+      🔹 <span class="key-fact kf-purple">Etmoidais</span> — células aéreas (3–18 por lado)<br>
+      🔹 <span class="key-fact kf-purple">Esfenoidais</span> — relação com o seio cavernoso</p>
+      <br>
+      <p><strong>Funções:</strong> aligeirar o crânio, ressonância vocal, produção de muco.</p>
+    </div>
+    
+    <!-- FARINGE -->
+    <div class="panel" style="border-color:rgba(255,106,0,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-orange) transparent transparent;"></div>
+      <h3 class="glow-yellow">🔻 FARINGE</h3>
+      <p>Tubo muscular com ≈ <span class="key-fact kf-yellow">12–14 cm</span>, dividido em 3 segmentos:</p>
+      <br>
+      <p><strong style="color:var(--neon-cyan)">Nasofaringe</strong> — acima do palato mole; contém as <em>adenóides</em> (tonsila faríngea) e as <em>tubas auditivas</em> (Eustáquio)<br><br>
+      <strong style="color:var(--neon-orange)">Orofaringe</strong> — da úvula à epiglote; contém as <em>tonsilas palatinas</em><br><br>
+      <strong style="color:var(--neon-pink)">Hipofaringe (laringo)</strong> — da epiglote até ao esófago; divisão das vias aéreas e digestivas</p>
+    </div>
+    
+    <!-- LARINGE -->
+    <div class="panel" style="border-color:rgba(0,245,255,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-cyan) transparent transparent;"></div>
+      <h3 class="glow-cyan">🎙️ LARINGE</h3>
+      <p>Localizada entre C3–C6 no adulto. Constituída por <span class="key-fact kf-cyan">9 cartilagens</span>:</p>
+      <br>
+      <p><strong>Pares:</strong> aritenóides, cuneiformes, corniculadas<br>
+      <strong>Ímpares:</strong> tiróide (pomo de adão), cricóide (único anel completo), epiglote</p>
+      <br>
+      <p>Contém as <span class="key-fact kf-green">cordas vocais</span> (pregas vocais verdadeiras) responsáveis pela fonação. O <em>espaço subglótico</em> é o ponto mais estreito da via aérea na criança. A <span class="key-fact kf-pink">epiglote</span> protege a via aérea durante a deglutição.</p>
+    </div>
+  </div>
+
+  <div class="alert-box reveal" style="margin-top:30px;">
+    <p>A <strong>cartilagem cricóide</strong> é o único anel cartilaginoso completo da laringe, formando um anel rígido. Na criança, esta é a zona mais estreita da via aérea superior — com implicações críticas na escolha do tubo endotraqueal sem cuff.</p>
+  </div>
+</section>
+
+<!-- ==================== HISTOLOGIA ==================== -->
+<section id="histologia">
+  <div class="section-bg-num">02</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-purple">◆ CAPÍTULO 02</div>
+    <div class="chapter-title"><span class="glow-purple">HISTOLOGIA</span><br>O Mundo Microscópico</div>
+    <div class="chapter-line"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:600px; margin:0 auto;">
+      Mergulha no universo celular das vias aéreas — onde epitélios, células e muco trabalham em sinfonia perfeita.
+    </p>
+  </div>
+
+  <div class="speech-bubble reveal">
+    <span class="guide-char">🔬</span>
+    <em>"Agora entramos no nível micro! Aqui é onde a magia acontece. Cada célula tem uma missão. Cada camada tem um propósito. Vamos desvendar tudo!"</em>
+  </div>
+
+  <!-- ANIMATED MUCOSA CANVAS -->
+  <div class="mucosa-anim reveal">
+    <canvas id="mucosaCanvas" width="650" height="200" style="max-width:100%;"></canvas>
+    <div class="mucosa-label">◆ EPITÉLIO PSEUDOESTRATIFICADO COLUNAR CILIADO — ANIMAÇÃO EM TEMPO REAL ◆</div>
+  </div>
+
+  <div class="histo-grid reveal">
+    <div class="cell-card">
+      <span class="cell-icon">🏛️</span>
+      <div class="cell-name">CÉLULAS COLUNARES CILIADAS</div>
+      <div class="cell-desc">Células altas com cílios na superfície apical. Cada célula possui <span style="color:var(--neon-purple);">~200 cílios</span> que batem de forma coordenada (~12–15 Hz), movendo o muco em direcção à faringe — é o <em>clearance mucociliar</em>.</div>
+    </div>
+    <div class="cell-card">
+      <span class="cell-icon">🫧</span>
+      <div class="cell-name">CÉLULAS CALICIFORMES</div>
+      <div class="cell-desc">Secretam <span style="color:var(--neon-purple);">muco</span> (glicoproteínas — mucinas). Representam 20–30% das células epiteliais. O muco forma duas camadas: <em>sol</em> (periciliar, aquosa) e <em>gel</em> (superficial, viscosa) — juntas perfazem ~5 µm de espessura total.</div>
+    </div>
+    <div class="cell-card">
+      <span class="cell-icon">🪜</span>
+      <div class="cell-name">CÉLULAS BASAIS</div>
+      <div class="cell-desc">Células-stem do epitélio respiratório. Não atingem a superfície luminal (daí o nome "pseudoestratificado"). Regeneram o epitélio após lesão. Possuem <span style="color:var(--neon-purple);">queratina 5/14</span> como marcadores.</div>
+    </div>
+    <div class="cell-card">
+      <span class="cell-icon">⚡</span>
+      <div class="cell-name">CÉLULAS DE CLUB (ex-Clara)</div>
+      <div class="cell-desc">Presentes nos bronquíolos. Secretam proteínas surfactantes e enzimas metabolizadoras. Participam na desintoxicação e possuem capacidade regenerativa para o epitélio bronquiolar.</div>
+    </div>
+    <div class="cell-card">
+      <span class="cell-icon">🕵️</span>
+      <div class="cell-name">CÉLULAS DE KULCHITSKY</div>
+      <div class="cell-desc">Células neuroendócrinas (APUD). Produzem <span style="color:var(--neon-purple);">serotonina, dopamina e bombesina</span>. Envolvidas na regulação do tónus vascular e na resposta à hipóxia. São precursoras do carcinóide pulmonar.</div>
+    </div>
+    <div class="cell-card">
+      <span class="cell-icon">🛡️</span>
+      <div class="cell-name">CÉLULAS DE DENDRITI / MACRÓFAGOS</div>
+      <div class="cell-desc">Células imunitárias residentes da mucosa. As células dendríticas apresentam antígenos aos linfócitos. Os macrófagos eliminam partículas e microorganismos que escapam ao clearance ciliar.</div>
+    </div>
+  </div>
+
+  <div class="manga-grid reveal" style="margin-top:30px; grid-template-columns: 1fr 1fr;">
+    <div class="panel" style="border-color:rgba(191,0,255,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-purple) transparent transparent;"></div>
+      <h3 class="glow-purple">🏗️ ESTRATIGRAFIA DA MUCOSA</h3>
+      <p>De superficial para profundo:<br><br>
+      <span class="key-fact kf-purple">1. Epitélio</span> — pseudoestratificado colunar ciliado (mucosa respiratória); estratificado pavimentoso (nasofaringe posterior, epiglote face lingual, cordas vocais)<br><br>
+      <span class="key-fact kf-purple">2. Lâmina própria</span> — tecido conjuntivo frouxo com glândulas mucosas e serosas, vasos e nervos<br><br>
+      <span class="key-fact kf-purple">3. Submucosa</span> — tecido conjuntivo denso, glândulas mistas<br><br>
+      <span class="key-fact kf-purple">4. Pericôndrio/Periósteo</span> — sobre cartilagem ou osso</p>
+    </div>
+    <div class="panel" style="border-color:rgba(255,0,127,0.3);">
+      <div class="panel-accent" style="border-color: transparent var(--neon-pink) transparent transparent;"></div>
+      <h3 class="glow-pink">🔀 TRANSIÇÕES EPITELIAIS</h3>
+      <p>O epitélio varia conforme a região e a exposição a forças mecânicas:<br><br>
+      <span class="key-fact kf-pink">Vestíbulo nasal</span> — estratificado pavimentoso queratinizado<br><br>
+      <span class="key-fact kf-pink">Cavidade nasal</span> — pseudoestratificado colunar ciliado (mucosa de Schneiderian)<br><br>
+      <span class="key-fact kf-pink">Região olfatória</span> — epitélio olfatório especializado (neurónios bipolares)<br><br>
+      <span class="key-fact kf-pink">Cordas vocais</span> — estratificado pavimentoso não queratinizado (resistência mecânica)<br><br>
+      <span class="key-fact kf-pink">Subglote/traqueia</span> — volta ao pseudoestratificado colunar ciliado</p>
+    </div>
+  </div>
+
+  <div class="alert-box reveal" style="border-color:var(--neon-purple); background:rgba(191,0,255,0.05);">
+    <p style="margin-top:-5px; font-size:0.72rem; font-family:'Orbitron'; letter-spacing:3px; color:var(--neon-purple);">⚡ CONCEITO CHAVE — MUCOSA DE SCHNEIDERIAN</p>
+    <p>A mucosa respiratória nasal (mucosa de Schneiderian) possui <strong>plexo vascular cavernoso</strong> (sinusóides venosos) que permite o ingurgitamento cíclico das conchas — o chamado <em>ciclo nasal</em> de ~2–7 horas, regulado pelo sistema nervoso autónomo. Isto altera alternadamente a resistência ao fluxo aéreo entre as narinas.</p>
+  </div>
+</section>
+
+<!-- ==================== FISIOLOGIA ==================== -->
+<section id="fisiologia">
+  <div class="section-bg-num">03</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-green">◆ CAPÍTULO 03</div>
+    <div class="chapter-title"><span class="glow-green">FISIOLOGIA</span><br>O Sistema em Acção</div>
+    <div class="chapter-line"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:600px; margin:0 auto;">
+      Cinco funções vitais realizadas em milissegundos a cada respiração.
+    </p>
+  </div>
+
+  <div class="speech-bubble reveal">
+    <span class="guide-char">⚡</span>
+    <em>"Cada segundo que respiras, este sistema realiza 5 funções em simultâneo. É como um computador quântico biológico — vamos ver como funciona!"</em>
+  </div>
+
+  <div class="physio-flow reveal">
+    <div class="flow-step">
+      <div class="flow-num">01</div>
+      <div class="flow-content">
+        <h4>CONDUÇÃO DO AR</h4>
+        <p>A via aérea superior constitui a zona de <span class="key-fact kf-green">espaço morto anatómico</span> (~150 mL), onde o ar flui mas não há trocas gasosas. O nariz oferece maior resistência (~50% da resistência total das vias aéreas) — essencial para criar pressão positiva que mantém os alvéolos abertos. O fluxo é <strong>laminar</strong> nas vias superiores e pode tornar-se turbulento nas conchas nasais, o que favorece a deposição de partículas.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-content">
+        <h4>FILTRAÇÃO</h4>
+        <p>As <span class="key-fact kf-green">vibrissas</span> retêm partículas >10 µm. O muco nasal captura partículas 1–10 µm por impacto inercial e sedimentação. O clearance mucociliar remove partículas 0.1–10 µm. O anel de Waldeyer (adenóides + tonsilas palatinas + tonsilas linguais) providencia defesa imunológica. Partículas &lt;1 µm chegam aos alvéolos.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-content">
+        <h4>AQUECIMENTO E HUMIDIFICAÇÃO</h4>
+        <p>O nariz aquece o ar inspirado até <span class="key-fact kf-green">32–34°C</span> e humidifica até >90% de humidade relativa ao nível da nasofaringe. Ao nível da traqueia, o ar atingiu praticamente <span class="key-fact kf-green">37°C e 100% de humidade</span>. Este condicionamento é vital — o epitélio ciliado funciona apenas a 37°C e requer humidade adequada. Na inspiração bucal este processo é ineficiente.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div class="flow-content">
+        <h4>FONAÇÃO E PROTECÇÃO</h4>
+        <p>As <span class="key-fact kf-green">cordas vocais verdadeiras</span> vibram por pressão subglótica (efeito Bernoulli). Frequência fundamental: 85–180 Hz (homem), 165–255 Hz (mulher). A <span class="key-fact kf-green">epiglote</span> inclina-se para trás durante a deglutição, protegendo a via aérea — reflexo mediado pelo nervo laríngeo superior (aferente) e vago (eferente). O reflexo de tosse limpa partículas que escapam este mecanismo.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">05</div>
+      <div class="flow-content">
+        <h4>OLFACÇÃO E REFLEXOS</h4>
+        <p>Os <span class="key-fact kf-green">neurónios olfatórios bipolares</span> do epitélio olfatório transmitem ao bulbo olfatório (nervo I). O humano detecta ~10.000 odores diferentes. Reflexos vitais incluem o <em>espirro</em> (irritação nasal), o <em>laringospasmo</em> (protecção por irritantes), a <em>apneia reflexa</em> (estimulação da face em RN) e o <em>reflexo de imersão</em> (bradicardia + vasoconstrição).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEARANCE MUCOCILIAR VISUAL -->
+  <div class="mucosa-anim reveal" style="margin-top:40px; border-color:rgba(57,255,20,0.3);">
+    <canvas id="clearanceCanvas" width="650" height="120" style="max-width:100%;"></canvas>
+    <div class="mucosa-label" style="color:var(--neon-green);">◆ CLEARANCE MUCOCILIAR — TRANSPORTE DE MUCO EM DIRECÇÃO À FARINGE ◆</div>
+  </div>
+</section>
+
+<!-- ==================== COMPARACAO ==================== -->
+<section id="comparacao">
+  <div class="section-bg-num">04</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-yellow">◆ CAPÍTULO 04</div>
+    <div class="chapter-title"><span class="glow-yellow">ADULTO</span> <span style="color:#fff;">vs</span> <span class="glow-pink">CRIANÇA</span></div>
+    <div class="chapter-line"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:700px; margin:0 auto;">
+      As diferenças anatómicas e fisiológicas entre adultos e crianças têm implicações críticas na clínica. Conhecê-las é uma questão de vida ou morte.
+    </p>
+  </div>
+
+  <div class="speech-bubble reveal">
+    <span class="guide-char">⚔️</span>
+    <em>"Este capítulo é o MAIS importante para a tua prática clínica! As diferenças não são triviais — são as razões pelas quais a abordagem pediátrica é completamente diferente. Prepara-te para a batalha do conhecimento!"</em>
+  </div>
+
+  <div class="versus-container reveal">
+    <!-- ADULTO -->
+    <div class="vs-column adult-side">
+      <div class="vs-header">👨 ADULTO</div>
+      
+      <div class="vs-item">
+        <strong>LÍNGUA</strong>
+        Proporcionalmente pequena em relação à cavidade oral. Facilita a laringoscopia e a visualização das cordas vocais.
+      </div>
+      <div class="vs-item">
+        <strong>LOCALIZAÇÃO DA LARINGE</strong>
+        Laringe em C4–C6. Posição mais baixa no pescoço permite melhor separação das funções respiratória e deglutição.
+      </div>
+      <div class="vs-item">
+        <strong>EPIGLOTE</strong>
+        Plana, relativamente pequena, fácil de elevar com lâmina curva durante laringoscopia.
+      </div>
+      <div class="vs-item">
+        <strong>PONTO MAIS ESTREITO</strong>
+        Glote (cordas vocais) — ≈ 9 × 14 mm no adulto médio.
+      </div>
+      <div class="vs-item">
+        <strong>ÂNGULO GLOTO-TRAQUEAL</strong>
+        Glote mais horizontal — melhor visibilidade durante laringoscopia directa.
+      </div>
+      <div class="vs-item">
+        <strong>TONSILAS / ADENÓIDES</strong>
+        Involuídas após puberdade. Obstrução rara.
+      </div>
+      <div class="vs-item">
+        <strong>CARTILAGENS</strong>
+        Rígidas, calcificadas gradualmente. Laringe estável durante manipulação.
+      </div>
+      <div class="vs-item">
+        <strong>TUBO ENDOTRAQUEAL</strong>
+        Com cuff — permite vedação adequada na glote (ponto estreito).
+      </div>
+      <div class="vs-item">
+        <strong>FREQUÊNCIA RESPIRATÓRIA</strong>
+        12–20 ciclos/min. Volumes correntes maiores (500 mL).
+      </div>
+      <div class="vs-item">
+        <strong>RESERVA DE O₂</strong>
+        Capacidade funcional residual maior. Maior tolerância à apneia (~8 min com pré-oxigenação).
+      </div>
+    </div>
+    
+    <!-- VS -->
+    <div class="vs-divider">
+      <div class="vs-line"></div>
+      <div class="vs-text">VS</div>
+      <div class="vs-line"></div>
+    </div>
+    
+    <!-- CRIANÇA -->
+    <div class="vs-column child-side">
+      <div class="vs-header">👶 CRIANÇA</div>
+      
+      <div class="vs-item">
+        <strong>LÍNGUA</strong>
+        Proporcionalmente GRANDE. Principal causa de obstrução da via aérea em crianças inconscientes. Complica a laringoscopia.
+      </div>
+      <div class="vs-item">
+        <strong>LOCALIZAÇÃO DA LARINGE</strong>
+        Laringe em C2–C3 (RN: C3–C4). Posição ANTERIOR e SUPERIOR — dificulta a visualização e intubação.
+      </div>
+      <div class="vs-item">
+        <strong>EPIGLOTE</strong>
+        Em forma de Ω (ómega), estreita, longa, rígida e angulada. Difícil de elevar — requer lâmina RECTA (Miller) para intubação.
+      </div>
+      <div class="vs-item">
+        <strong>PONTO MAIS ESTREITO</strong>
+        <span style="color:var(--neon-pink); font-weight:700;">SUBGLOTE / cricóide</span> — não as cordas! Implica usar tubo sem cuff em &lt;8 anos.
+      </div>
+      <div class="vs-item">
+        <strong>ÂNGULO GLOTO-TRAQUEAL</strong>
+        Glote mais ANTERIOR e angulada — dificulta a visibilidade. A traqueia é mais curta (~4–5 cm no RN vs 12 cm no adulto).
+      </div>
+      <div class="vs-item">
+        <strong>TONSILAS / ADENÓIDES</strong>
+        Hipertrofiadas entre 2–8 anos. Causa frequente de SAOS pediátrico e obstrução nasal crónica.
+      </div>
+      <div class="vs-item">
+        <strong>CARTILAGENS</strong>
+        Moles, complacentes. Facilmente comprimíveis — risco de colapso da via aérea em decúbito dorsal.
+      </div>
+      <div class="vs-item">
+        <strong>TUBO ENDOTRAQUEAL</strong>
+        Sem cuff (&lt;8 anos) — ou com cuff de baixa pressão. Fórmula: diâmetro = (idade/4) + 4 mm.
+      </div>
+      <div class="vs-item">
+        <strong>FREQUÊNCIA RESPIRATÓRIA</strong>
+        RN: 40–60/min; 1–5 anos: 20–30/min. Volumes correntes menores, maior trabalho respiratório relativo.
+      </div>
+      <div class="vs-item">
+        <strong>RESERVA DE O₂</strong>
+        CRF muito menor + consumo O₂ 2× maior. Desatura em <span style="color:var(--neon-pink); font-weight:700;">segundos</span>! Janela de apneia segura: RN ~90 seg.
+      </div>
+    </div>
+  </div>
+
+  <!-- CRITICAL DIFFERENCES TABLE -->
+  <div style="max-width:1000px; margin:40px auto 0;" class="reveal">
+    <h3 style="font-family:'Bangers',cursive; font-size:2rem; text-align:center; color:var(--neon-yellow); margin-bottom:20px;">
+      ⚡ IMPLICAÇÕES CLÍNICAS CRÍTICAS
+    </h3>
+    <div class="manga-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="panel" style="border-color:rgba(255,0,127,0.3); text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🚨</div>
+        <h3 class="glow-pink" style="font-size:1.2rem;">APNEIA PERIGOSA</h3>
+        <p>Em RN e lactentes, a dessaturação após apneia ocorre em <strong>30–90 segundos</strong>. Pré-oxigenação é OBRIGATÓRIA antes de qualquer procedimento.</p>
+      </div>
+      <div class="panel" style="border-color:rgba(255,224,0,0.3); text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:10px;">📏</div>
+        <h3 class="glow-yellow" style="font-size:1.2rem;">TAMANHO DO TUBO</h3>
+        <p>Fórmula pediátrica: <strong>(idade em anos ÷ 4) + 4</strong> para diâmetro interno. Um tubo 0.5 mm maior pode causar edema subglótico e estridor pós-extubação.</p>
+      </div>
+      <div class="panel" style="border-color:rgba(0,245,255,0.3); text-align:center;">
+        <div style="font-size:2.5rem; margin-bottom:10px;">🎯</div>
+        <h3 class="glow-cyan" style="font-size:1.2rem;">POSIÇÃO DE INTUBAÇÃO</h3>
+        <p>Adulto: posição de "sniffing" (flectir pescoço, extender cabeça). Criança: almofada sob OMBROS (cabeça proporcionalmente grande), posição neutra em RN.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CRONOLOGIA ==================== -->
+<section id="cronologia">
+  <div class="section-bg-num">05</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-yellow">◆ CAPÍTULO 05</div>
+    <div class="chapter-title"><span class="glow-cyan">CRONOLOGIA</span><br>do Desenvolvimento</div>
+    <div class="chapter-line"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:600px; margin:0 auto;">
+      Da 4ª semana de gestação até à vida adulta — como se forma e matura a via aérea superior.
+    </p>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-item" style="--delay:0">
+      <div class="tl-dot" style="border-color:var(--neon-cyan); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-cyan)">⬡ SEMANA 4 DE GESTAÇÃO</div>
+      <div class="tl-title" style="color:var(--neon-cyan)">Formação dos Arcos Branquiais</div>
+      <div class="tl-content">Aparecimento dos <strong>5 arcos branquiais</strong> (faríngeos). O 1.º arco (mandibular) dará origem à mandíbula, martelo e bigorna. O 2.º arco (hioidal) forma o estribo, estiloide e corno menor do hióide. Desenvolvimento inicial da fosseta nasal a partir das placódas olfatórias.</div>
+    </div>
+    
+    <div class="tl-item" style="--delay:0.1s">
+      <div class="tl-dot" style="border-color:var(--neon-purple); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-purple)">⬡ SEMANAS 5–7</div>
+      <div class="tl-title" style="color:var(--neon-purple)">Separação das Vias Aérea e Digestiva</div>
+      <div class="tl-content">O <strong>septo traqueoesofágico</strong> divide o intestino anterior primitivo em traqueia (ventral) e esófago (dorsal). Falhas nesta separação causam <em>fístula traqueoesofágica</em> (1:3500 nascimentos). A <strong>laringe primitiva</strong> forma-se a partir das pregas aritenóides e epiglótica.</div>
+    </div>
+    
+    <div class="tl-item" style="--delay:0.2s">
+      <div class="tl-dot" style="border-color:var(--neon-green); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-green)">⬡ SEMANAS 8–12</div>
+      <div class="tl-title" style="color:var(--neon-green)">Histogénese do Epitélio Respiratório</div>
+      <div class="tl-content">O epitélio passa de estratificado para <strong>pseudoestratificado colunar</strong>. Surgem as primeiras células ciliadas. As <strong>glândulas submucosas</strong> começam a desenvolver-se. Formam-se as conchas nasais a partir de condensações do ectoderma. Os <strong>seios paranasais</strong> são apenas pequenas invaginações — apenas os maxilares estão presentes ao nascimento.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-yellow); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-yellow)">⬡ SEMANAS 13–28</div>
+      <div class="tl-title" style="color:var(--neon-yellow)">Maturação Canalicular</div>
+      <div class="tl-content">A laringe tem lúmen próprio depois de um período de obliteração epitelial. As <strong>cordas vocais verdadeiras</strong> diferenciam-se. Produção de <strong>surfactante alveolar</strong> começa ~semana 24 (tipo II pneumócitos). O feto realiza movimentos respiratórios intrauterinos — essenciais para o desenvolvimento pulmonar.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-pink); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-pink)">⬡ NASCIMENTO</div>
+      <div class="tl-title" style="color:var(--neon-pink)">RN — Via Aérea "Obrigatoriamente Nasal"</div>
+      <div class="tl-content">O recém-nascido é um <strong>respirador nasal obrigatório</strong> até aos ~3–6 meses (posição alta da laringe). A epiglote está em contacto com o palato mole — permite respirar e mamar simultaneamente! Qualquer obstrução nasal (ex: atresia de coanas bilateral) é emergência imediata. A laringe está em C3–C4, muito superior vs adulto.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-orange); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-orange)">⬡ 0–2 ANOS</div>
+      <div class="tl-title" style="color:var(--neon-orange)">Descida da Laringe</div>
+      <div class="tl-content">A laringe <strong>desce progressivamente</strong> no pescoço. Aos 2 anos está em C3–C4, separando-se do palato mole. Esta descida é pré-requisito para a <em>linguagem articulada</em> humana (cria o espaço supra-laríngeo). Paradoxalmente, também torna o humano mais susceptível a aspiração.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-purple); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-purple)">⬡ 2–8 ANOS</div>
+      <div class="tl-title" style="color:var(--neon-purple)">Hipertrofia Linfo-Adenoidal</div>
+      <div class="tl-content">Período de <strong>máxima actividade das tonsilas</strong> e adenóides (anel de Waldeyer). Adenóides podem obstruir completamente a nasofaringe. SAOS pediátrico tem pico nesta fase. A adenoamigdalectomia é a 2.ª cirurgia mais comum na pediatria. Seios frontais e etmoidais em expansão.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-green); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-green)">⬡ PUBERDADE</div>
+      <div class="tl-title" style="color:var(--neon-green)">Maturação Final — Dimorfismo Sexual</div>
+      <div class="tl-content">A <strong>cartilagem tiróide</strong> cresce mais nos rapazes (testosterona) — forma o "pomo de adão". As cordas vocais alongam de ~8 mm (criança) para 15–17 mm (mulher) e 17–23 mm (homem). A voz muda de frequência. A laringe atinge posição adulta final em C4–C6. Os seios paranasais completam a pneumatização.</div>
+    </div>
+    
+    <div class="tl-item">
+      <div class="tl-dot" style="border-color:var(--neon-cyan); background:#050810;"></div>
+      <div class="tl-phase" style="color:var(--neon-cyan)">⬡ ENVELHECIMENTO</div>
+      <div class="tl-title" style="color:var(--neon-cyan)">Via Aérea do Idoso</div>
+      <div class="tl-content">Calcificação progressiva das cartilagens. Atrofia da mucosa com redução do clearance mucociliar. Redução da força muscular faríngea → ↑ risco de apneia. Reflexos laríngeos (tosse, deglutição) tornam-se mais lentos → ↑ risco de aspiração. A complacência da via aérea superior diminui — roncopatia e SAOS mais frequentes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUIZ ==================== -->
+<section id="quiz">
+  <div class="section-bg-num">06</div>
+  
+  <div class="chapter-header reveal">
+    <div class="chapter-num glow-yellow" style="color:var(--neon-orange);">◆ CAPÍTULO 06</div>
+    <div class="chapter-title"><span class="glow-yellow">QUIZ</span> <span style="color:#fff;">BOSS</span></div>
+    <div class="chapter-line" style="background:linear-gradient(90deg, var(--neon-orange), var(--neon-pink))"></div>
+    <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; max-width:600px; margin:0 auto;">
+      Chegaste ao chefe final! Testa os teus conhecimentos em 10 questões de alta voltagem.
+    </p>
+  </div>
+
+  <div class="speech-bubble reveal">
+    <span class="guide-char">🏆</span>
+    <em>"Esta é a tua hora da verdade, guerreiro! Cada resposta correcta = 10 pontos. Podes fazê-lo!"</em>
+  </div>
+
+  <div class="quiz-box reveal" id="quizBox">
+    <div class="quiz-q-num" id="quizNum">QUESTÃO 01 / 10</div>
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <div class="quiz-nav">
+      <div class="quiz-score" id="quizScore">PONTOS: 0</div>
+      <button class="quiz-btn" id="quizNext" onclick="nextQuestion()">PRÓXIMA ▶</button>
+    </div>
+  </div>
+  
+  <div id="quizResult" style="display:none; text-align:center; max-width:600px; margin:40px auto;">
+    <div style="font-family:'Bangers',cursive; font-size:4rem; margin-bottom:10px;" id="resultEmoji">🏆</div>
+    <div style="font-family:'Bangers',cursive; font-size:3rem; color:var(--neon-yellow);" id="resultTitle"></div>
+    <div style="font-family:'Orbitron',sans-serif; font-size:1.5rem; color:var(--neon-cyan); margin:15px 0;" id="resultScore"></div>
+    <div style="font-size:0.95rem; color:rgba(255,255,255,0.7); margin-bottom:25px;" id="resultMsg"></div>
+    <button class="quiz-btn" onclick="restartQuiz()" style="border-color:var(--neon-green); color:var(--neon-green);">↺ RECOMEÇAR</button>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-logo">DemilMed</div>
+  <div class="footer-uni">UNIVERSIDADE LICUNGO — UL</div>
+  <div style="color:rgba(255,255,255,0.4); font-family:'Orbitron',sans-serif; font-size:0.65rem; letter-spacing:2px; margin-bottom:5px;">CURSO DE MEDICINA · CIÊNCIAS MORFOFISIOLÓGICAS</div>
+  <div class="footer-line"></div>
+  <div class="footer-year">2026</div>
+  <div class="footer-credit">Vias Aéreas Superiores: Anatomia, Histologia e Fisiologia<br>Diferenças entre Adultos e Crianças · Material Educativo Interactivo</div>
+  <div style="margin-top:20px; color:rgba(255,255,255,0.15); font-size:0.75rem;">
+    Criado com ❤️ para estudantes de medicina · DemilMed-UL © 2026
+  </div>
+</footer>
+
+<script>
+// ===== CURSOR =====
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+let mx = 0, my = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx - 8 + 'px';
+  cursor.style.top = my - 8 + 'px';
+  setTimeout(() => {
+    trail.style.left = mx - 3 + 'px';
+    trail.style.top = my - 3 + 'px';
+  }, 80);
+});
+document.addEventListener('click', e => {
+  for(let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const angle = (i / 8) * 360;
+    const dist = 40 + Math.random() * 40;
+    p.style.cssText = `width:5px;height:5px;left:${e.clientX}px;top:${e.clientY}px;background:${['#00f5ff','#ff007f','#ffe000','#39ff14'][i%4]};--dx:${Math.cos(angle*Math.PI/180)*dist}px;--dy:${Math.sin(angle*Math.PI/180)*dist}px;`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  }
+});
+
+// ===== STARS =====
+const starField = document.getElementById('stars');
+for(let i = 0; i < 120; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*4}s;--delay:${Math.random()*4}s;opacity:${0.1+Math.random()*0.6}`;
+  starField.appendChild(s);
+}
+
+// ===== MOLECULES =====
+const molContainer = document.getElementById('molecules');
+const molColors = ['#00f5ff','#ff007f','#39ff14','#ffe000','#bf00ff','#ff6a00'];
+for(let i = 0; i < 18; i++) {
+  const m = document.createElement('div');
+  m.className = 'molecule';
+  const c1 = molColors[Math.floor(Math.random()*molColors.length)];
+  const c2 = molColors[Math.floor(Math.random()*molColors.length)];
+  const sz = 8 + Math.random() * 14;
+  m.style.cssText = `left:${Math.random()*95}%;top:${Math.random()*95}%;--dur:${8+Math.random()*12}s;--delay:${-Math.random()*10}s;--mx:${(-1+Math.random()*2)*60}px;--my:${(-1+Math.random()*2)*80}px;--mx2:${(-1+Math.random()*2)*40}px;--my2:${(-1+Math.random()*2)*50}px;--mx3:${(-1+Math.random()*2)*70}px;--my3:${(-1+Math.random()*2)*30}px;opacity:0.4;`;
+  const mc = document.createElement('div');
+  mc.className = 'mol-circle';
+  mc.style.cssText = `--sz:${sz}px;--col:${c1};--col2:${c2};`;
+  m.appendChild(mc);
+  molContainer.appendChild(m);
+}
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.body.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (scrolled/total*100) + '%';
+  updateNavDots();
+  revealElements();
+});
+
+// ===== NAV DOTS =====
+const sections = ['hero','anatomia','histologia','fisiologia','comparacao','cronologia','quiz'];
+const dots = document.querySelectorAll('.nav-dot');
+dots.forEach((dot, i) => {
+  dot.addEventListener('click', () => {
+    document.getElementById(sections[i]).scrollIntoView({behavior:'smooth'});
+  });
+});
+function updateNavDots() {
+  const scrollY = window.scrollY + window.innerHeight/2;
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if(el) {
+      const top = el.offsetTop;
+      const bot = top + el.offsetHeight;
+      dots[i].classList.toggle('active', scrollY >= top && scrollY < bot);
+    }
+  });
+}
+
+// ===== SCROLL REVEAL =====
+function revealElements() {
+  document.querySelectorAll('.reveal, .tl-item').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+}
+setTimeout(revealElements, 100);
+
+// ===== ANATOMY TOOLTIPS =====
+const anatInfo = {
+  nariz: {
+    title: '👃 Cavidade Nasal',
+    text: 'Filtra, aquece e humidifica o ar. Conchas nasais aumentam a superfície de contacto. Volume ~15-20mL. Mucosa altamente vascularizada.'
+  },
+  faringe: {
+    title: '🔻 Faringe',
+    text: '3 segmentos: Nasofaringe (adenóides, tubas de Eustáquio), Orofaringe (tonsilas palatinas), Hipofaringe. Total ~14cm.'
+  },
+  laringe: {
+    title: '🎙️ Laringe',
+    text: '9 cartilagens, cordas vocais, epiglote. Adulto: C4-C6. Criança: C2-C3. Ponto estreito no adulto = glote; na criança = subglote (cricóide).'
+  }
+};
+function showAnatInfo(key) {
+  const info = anatInfo[key];
+  const tip = document.getElementById('tooltip');
+  tip.innerHTML = `<strong style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:0.75rem;">${info.title}</strong><br><br>${info.text}`;
+  tip.style.left = mx + 15 + 'px';
+  tip.style.top = my + 15 + 'px';
+  tip.classList.add('show');
+  setTimeout(() => tip.classList.remove('show'), 3500);
+}
+
+// ===== MUCOSA ANIMATION =====
+const mc = document.getElementById('mucosaCanvas');
+if(mc) {
+  const ctx = mc.getContext('2d');
+  const W = mc.width, H = mc.height;
+  let t = 0;
+  
+  function drawMucosa() {
+    ctx.clearRect(0, 0, W, H);
+    
+    // Background
+    ctx.fillStyle = 'rgba(5,8,16,0.8)';
+    ctx.fillRect(0,0,W,H);
+    
+    const cellW = 32;
+    const numCells = Math.ceil(W / cellW) + 1;
+    const baseY = H * 0.65;
+    
+    // Muco layer (gel)
+    ctx.fillStyle = 'rgba(0,245,255,0.08)';
+    ctx.fillRect(0, baseY - 28, W, 28);
+    ctx.fillStyle = 'rgba(191,0,255,0.05)';
+    ctx.fillRect(0, baseY - 50, W, 22);
+    
+    // Muco particles moving
+    for(let i = 0; i < 12; i++) {
+      const x = ((i * 55 + t * 0.8) % (W + 20)) - 10;
+      const y = baseY - 15 - Math.sin(x * 0.02 + t * 0.05) * 8;
+      ctx.beginPath();
+      ctx.arc(x, y, 3 + Math.sin(i)*1, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(0,245,255,0.4)';
+      ctx.fill();
+    }
+    
+    // Cells
+    for(let i = 0; i < numCells; i++) {
+      const x = i * cellW;
+      const cellH = 80 + Math.sin(i * 0.7) * 15;
+      const isCalic = i % 5 === 2;
+      const isBasal = false;
+      
+      // Cell body
+      ctx.fillStyle = isCalic ? 'rgba(191,0,255,0.15)' : 'rgba(0,245,255,0.08)';
+      ctx.strokeStyle = isCalic ? 'rgba(191,0,255,0.5)' : 'rgba(0,245,255,0.3)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.rect(x + 2, baseY - cellH, cellW - 4, cellH);
+      ctx.fill();
+      ctx.stroke();
+      
+      // Nucleus
+      ctx.fillStyle = isCalic ? 'rgba(191,0,255,0.4)' : 'rgba(0,245,255,0.25)';
+      ctx.beginPath();
+      ctx.ellipse(x + cellW/2, baseY - 12, 8, 6, 0, 0, Math.PI*2);
+      ctx.fill();
+      
+      if(!isCalic) {
+        // Cilia
+        for(let c = 0; c < 5; c++) {
+          const cx = x + 5 + c * 5.5;
+          const phase = t * 0.08 + i * 0.5 + c * 0.4;
+          const tipX = cx + Math.sin(phase) * 8;
+          const tipY = baseY - cellH - 20;
+          const midX = cx + Math.sin(phase) * 4;
+          const midY = baseY - cellH - 10;
+          
+          ctx.beginPath();
+          ctx.moveTo(cx, baseY - cellH);
+          ctx.quadraticCurveTo(midX, midY, tipX, tipY);
+          ctx.strokeStyle = 'rgba(0,245,255,0.7)';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+          
+          // Cilia tip dot
+          ctx.fillStyle = '#00f5ff';
+          ctx.beginPath();
+          ctx.arc(tipX, tipY, 1.5, 0, Math.PI*2);
+          ctx.fill();
+        }
+      } else {
+        // Goblet mucus
+        ctx.fillStyle = 'rgba(191,0,255,0.3)';
+        ctx.beginPath();
+        ctx.ellipse(x + cellW/2, baseY - cellH/2, 8, 12, 0, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    
+    // Basement membrane
+    ctx.fillStyle = 'rgba(255,106,0,0.2)';
+    ctx.fillRect(0, baseY, W, 8);
+    
+    // Labels
+    ctx.fillStyle = 'rgba(0,245,255,0.6)';
+    ctx.font = '10px Orbitron, sans-serif';
+    ctx.fillText('CÉLULA COLUNAR CILIADA', 10, 18);
+    ctx.fillStyle = 'rgba(191,0,255,0.7)';
+    ctx.fillText('CÉLULA CALICIFORME', 220, 18);
+    ctx.fillStyle = 'rgba(255,106,0,0.7)';
+    ctx.fillText('MEMBRANA BASAL', 10, H - 5);
+    
+    t++;
+    requestAnimationFrame(drawMucosa);
+  }
+  drawMucosa();
+}
+
+// ===== CLEARANCE CANVAS =====
+const cc = document.getElementById('clearanceCanvas');
+if(cc) {
+  const ctx2 = cc.getContext('2d');
+  const W2 = cc.width, H2 = cc.height;
+  let t2 = 0;
+  const particles2 = [];
+  for(let i = 0; i < 20; i++) {
+    particles2.push({
+      x: Math.random() * W2,
+      y: 20 + Math.random() * 40,
+      r: 3 + Math.random() * 5,
+      color: ['rgba(0,245,255,0.6)','rgba(191,0,255,0.5)','rgba(57,255,20,0.5)'][Math.floor(Math.random()*3)]
+    });
+  }
+  
+  function drawClearance() {
+    ctx2.clearRect(0, 0, W2, H2);
+    ctx2.fillStyle = 'rgba(5,8,16,0.9)';
+    ctx2.fillRect(0,0,W2,H2);
+    
+    // Epithelium surface
+    for(let x = 0; x < W2; x += 20) {
+      const y = 70 + Math.sin(x * 0.05 + t2 * 0.02) * 3;
+      const phase = t2 * 0.1 + x * 0.08;
+      
+      // Cilia
+      ctx2.beginPath();
+      ctx2.moveTo(x + 10, y);
+      ctx2.quadraticCurveTo(
+        x + 10 + Math.sin(phase) * 10,
+        y - 20,
+        x + 10 + Math.sin(phase + 0.5) * 15,
+        y - 35
+      );
+      ctx2.strokeStyle = 'rgba(57,255,20,0.5)';
+      ctx2.lineWidth = 1.5;
+      ctx2.stroke();
+    }
+    
+    // Mucus layer
+    ctx2.fillStyle = 'rgba(0,245,255,0.08)';
+    ctx2.fillRect(0, 50, W2, 20);
+    
+    // Moving particles (being transported)
+    particles2.forEach(p => {
+      p.x -= 1.5;
+      if(p.x < -p.r * 2) p.x = W2 + p.r;
+      p.y = 55 + Math.sin(p.x * 0.03) * 8;
+      
+      ctx2.beginPath();
+      ctx2.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx2.fillStyle = p.color;
+      ctx2.fill();
+    });
+    
+    // Direction arrow
+    ctx2.fillStyle = 'rgba(57,255,20,0.4)';
+    ctx2.font = '11px Orbitron';
+    ctx2.fillText('◀ FARINGE', 10, H2 - 8);
+    ctx2.fillText('PARTÍCULAS ▶', W2 - 120, H2 - 8);
+    
+    // Cell body base
+    ctx2.fillStyle = 'rgba(0,100,150,0.15)';
+    ctx2.fillRect(0, 70, W2, H2 - 70);
+    ctx2.fillStyle = 'rgba(255,106,0,0.15)';
+    ctx2.fillRect(0, H2 - 15, W2, 15);
+    
+    t2++;
+    requestAnimationFrame(drawClearance);
+  }
+  drawClearance();
+}
+
+// ===== QUIZ =====
+const quizData = [
+  {
+    q: "Qual é a estrutura anatómica responsável por proteger a via aérea durante a deglutição?",
+    opts: ["Cordas vocais", "Epiglote", "Úvula", "Palato mole"],
+    correct: 1,
+    feedback: "A epiglote é uma cartilagem que se dobra para trás durante a deglutição, cobrindo a glote e impedindo que os alimentos entrem na via aérea. Este reflexo é mediado pelo nervo laríngeo superior (aferente) e pelo nervo vago (eferente)."
+  },
+  {
+    q: "Qual é a diferença CRÍTICA entre o ponto mais estreito da via aérea em adultos vs crianças?",
+    opts: [
+      "Em adultos é a nasofaringe; em crianças é a orofaringe",
+      "Em adultos é a glote (cordas vocais); em crianças é o subglote/cricóide",
+      "Em adultos é o subglote; em crianças é a glote",
+      "Não existe diferença — ambos é ao nível da glote"
+    ],
+    correct: 1,
+    feedback: "FUNDAMENTAL: No adulto, o ponto mais estreito é a glote. Na criança (<8 anos), é o subglote ao nível da cartilagem cricóide. Isto explica porque se usa tubo endotraqueal SEM cuff em crianças — qualquer pressão excessiva nesta área causa edema grave e obstrução!"
+  },
+  {
+    q: "O epitélio das cordas vocais verdadeiras é:",
+    opts: [
+      "Pseudoestratificado colunar ciliado",
+      "Estratificado pavimentoso queratinizado",
+      "Estratificado pavimentoso NÃO queratinizado",
+      "Simples cúbico"
+    ],
+    correct: 2,
+    feedback: "As cordas vocais verdadeiras são revestidas por epitélio estratificado pavimentoso NÃO queratinizado — resistente à abrasão mecânica causada pela vibração. Toda a restante mucosa respiratória é pseudoestratificada colunar ciliada, mas as zonas sujeitas a grande stress mecânico apresentam este tipo especial."
+  },
+  {
+    q: "O recém-nascido é descrito como 'respirador nasal obrigatório'. Qual das seguintes afirmações justifica esta característica?",
+    opts: [
+      "Os pulmões do RN só funcionam com fluxo nasal",
+      "A epiglote está em contacto com o palato mole, permitindo respirar e mamar simultaneamente",
+      "As narinas do RN são proporcionalmente maiores que no adulto",
+      "O RN tem paralisia temporária da musculatura faríngea"
+    ],
+    correct: 1,
+    feedback: "No RN, a laringe está em posição muito alta (C3-C4) e a epiglote faz contacto com o palato mole — criando uma via directa nariz-laringe. Isto permite sugar e respirar em simultâneo. Esta disposição torna qualquer obstrução nasal (ex: atresia bilateral de coanas) numa emergência respiratória imediata!"
+  },
+  {
+    q: "Qual a função das células caliciformes na mucosa respiratória?",
+    opts: [
+      "Produzir surfactante alveolar",
+      "Apresentar antígenos aos linfócitos",
+      "Secretar muco (mucinas/glicoproteínas)",
+      "Bater os cílios para transportar partículas"
+    ],
+    correct: 2,
+    feedback: "As células caliciformes secretam muco rico em glicoproteínas (mucinas). O muco forma a camada gel superficial (viscosa) que aprisiona partículas e microrganismos. Sob esta camada existe a camada sol (periciliar, aquosa) onde os cílios batem livremente. Juntas formam o sistema de clearance mucociliar."
+  },
+  {
+    q: "A cartilagem cricóide distingue-se das outras cartilagens laríngeas porque:",
+    opts: [
+      "É a maior cartilagem da laringe",
+      "É o único anel cartilaginoso COMPLETO",
+      "É a única que contém tecido muscular",
+      "É a única cartilagem elástica da laringe"
+    ],
+    correct: 1,
+    feedback: "A cartilagem cricóide é o ÚNICO anel cartilaginoso completo de toda a via aérea (laringe + traqueia). As cartilagens traqueais são incompletas posteriormente. Esta característica tem implicações clínicas: é o ponto de referência para a cricotirotomia de emergência e é o ponto mais estreito da via aérea pediátrica."
+  },
+  {
+    q: "Por que razão se prefere lâmina RECTA (Miller) para intubação pediátrica vs curva (Macintosh) no adulto?",
+    opts: [
+      "Porque a traqueia da criança é mais larga",
+      "Porque a epiglote da criança é plana e fácil de elevar",
+      "Porque a epiglote da criança tem forma de Ω, é longa, rígida e angulada — difícil de elevar indiretamente",
+      "Porque a laringe da criança é mais posterior"
+    ],
+    correct: 2,
+    feedback: "A epiglote pediátrica tem forma de Ω (ómega), é longa, estreita, rígida e angulada — muito diferente da epiglote adulta (plana). A lâmina curva de Macintosh eleva a epiglote indiretamente (vallécula). Na criança, esta manobra é ineficaz. A lâmina recta de Miller eleva directamente a epiglote, permitindo visualizar a glote."
+  },
+  {
+    q: "Qual dos seios paranasais está presente ao nascimento?",
+    opts: [
+      "Frontal e etmoidal",
+      "Apenas o maxilar (rudimentar)",
+      "Todos os seios estão presentes ao nascimento",
+      "Apenas o esfenoidal"
+    ],
+    correct: 1,
+    feedback: "Os seios maxilares estão presentes ao nascimento como pequenas cavidades rudimentares. Os seios frontais apenas começam a desenvolver-se aos 2 anos e atingem tamanho significativo na puberdade. Os seios etmoidais estão presentes em forma de pequenas células. Esta informação é relevante para a sinusite em pediatria — não se deve esperar sinusite frontal em crianças pequenas."
+  },
+  {
+    q: "O 'ciclo nasal' refere-se a:",
+    opts: [
+      "O ciclo respiratório de inspiração e expiração",
+      "O ingurgitamento cíclico alternado das conchas nasais (~2-7h), regulado pelo SNA",
+      "O ciclo de produção e drenagem do muco nasal (24h)",
+      "O ciclo circadiano do reflexo de espirro"
+    ],
+    correct: 1,
+    feedback: "O ciclo nasal é um fenómeno fisiológico em que as conchas nasais ingurgitam alternadamente de cada lado, regulado pelo sistema nervoso autónomo simpático. A mucosa nasal possui sinusóides venosos (plexo cavernoso) que se enchem e essvaziam, alterando a resistência ao fluxo aéreo entre as narinas. Dura ~2-7 horas por ciclo e é responsável pela sensação de 'nariz alternado'."
+  },
+  {
+    q: "Em termos de reserva de oxigénio e tolerância à apneia, qual a diferença mais crítica entre RN e adulto?",
+    opts: [
+      "O RN tem maior reserva de O₂ pois os pulmões são mais complacentes",
+      "Não há diferença significativa na prática clínica",
+      "O RN tem CRF muito menor + consumo O₂ 2× maior → dessatura em segundos (janela segura ~90 seg vs ~8 min no adulto pré-oxigenado)",
+      "O adulto dessatura mais rápido devido à maior actividade metabólica"
+    ],
+    correct: 2,
+    feedback: "CRÍTICO: O RN tem Capacidade Funcional Residual (CFR) muito pequena (reserva alveolar de O₂ mínima) E um consumo metabólico de O₂ duas vezes superior ao adulto (por kg). Resultado: dessatura em 30-90 segundos de apneia! No adulto pré-oxigenado, a janela de apneia segura é de ~8 minutos. Esta diferença justifica a urgência extrema nas vias aéreas pediátricas."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+  const q = quizData[currentQ];
+  document.getElementById('quizNum').textContent = `QUESTÃO ${String(currentQ+1).padStart(2,'0')} / ${quizData.length}`;
+  document.getElementById('quizQuestion').textContent = q.q;
+  
+  const optContainer = document.getElementById('quizOptions');
+  optContainer.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${['A','B','C','D'][i]}. ${opt}`;
+    btn.onclick = () => selectAnswer(i, btn);
+    optContainer.appendChild(btn);
+  });
+  
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('quizNext').disabled = true;
+  answered = false;
+}
+
+function selectAnswer(idx, btn) {
+  if(answered) return;
+  answered = true;
+  const q = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  
+  if(idx === q.correct) {
+    btn.classList.add('correct');
+    score += 10;
+    document.getElementById('quizScore').textContent = `PONTOS: ${score}`;
+    document.getElementById('quizFeedback').textContent = `✅ CORRECTO! ${q.feedback}`;
+    document.getElementById('quizFeedback').className = 'quiz-feedback show';
+  } else {
+    btn.classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    document.getElementById('quizFeedback').textContent = `❌ INCORRECTO. ${q.feedback}`;
+    document.getElementById('quizFeedback').className = 'quiz-feedback show wrong-fb';
+  }
+  document.getElementById('quizNext').disabled = false;
+}
+
+function nextQuestion() {
+  currentQ++;
+  if(currentQ >= quizData.length) {
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quizBox').style.display = 'none';
+  const result = document.getElementById('quizResult');
+  result.style.display = 'block';
+  
+  const pct = score / (quizData.length * 10) * 100;
+  let emoji, title, msg;
+  
+  if(pct >= 90) {
+    emoji = '🏆'; title = 'MESTRE DAS VIAS AÉREAS!';
+    msg = 'Impressionante! Dominas a anatomia, histologia e fisiologia das vias aéreas superiores com perfeição. Estás pronto para a prática clínica!';
+  } else if(pct >= 70) {
+    emoji = '⭐'; title = 'EXCELENTE MÉDICO!';
+    msg = 'Muito bom resultado! Tens uma sólida base de conhecimentos. Revê as questões que erraste para atingir a perfeição.';
+  } else if(pct >= 50) {
+    emoji = '📚'; title = 'BOM ESFORÇO!';
+    msg = 'Estás no caminho certo! Algumas lacunas a corrigir. Revê os capítulos de histologia e as diferenças adulto/criança.';
+  } else {
+    emoji = '💪'; title = 'CONTINUA A ESTUDAR!';
+    msg = 'Não desistas! As vias aéreas são um tema complexo. Relê os capítulos com atenção e tenta novamente. Cada tentativa é aprendizagem!';
+  }
+  
+  document.getElementById('resultEmoji').textContent = emoji;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultScore').textContent = `${score} / ${quizData.length * 10} PONTOS (${pct}%)`;
+  document.getElementById('resultMsg').textContent = msg;
+  result.style.animation = 'fadeIn 0.5s';
+}
+
+function restartQuiz() {
+  currentQ = 0; score = 0; answered = false;
+  document.getElementById('quizBox').style.display = 'block';
+  document.getElementById('quizResult').style.display = 'none';
+  document.getElementById('quizScore').textContent = 'PONTOS: 0';
+  loadQuestion();
+}
+
+loadQuestion();
+
+// ===== TIMELINE REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) e.target.classList.add('visible');
+  });
+}, {threshold: 0.1});
+
+document.querySelectorAll('.tl-item').forEach((el, i) => {
+  el.style.transitionDelay = `${i * 0.08}s`;
+  observer.observe(el);
+});
+
+// Initial reveal
+setTimeout(revealElements, 200);
+</script>
+</body>
+</html>

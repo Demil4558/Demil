@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RESPIRADORES — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Exo+2:ital,wght@0,300;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --panel: #0a0a14;
+    --cyan: #00fff7;
+    --magenta: #ff00cc;
+    --yellow: #ffe600;
+    --orange: #ff6b00;
+    --green: #00ff88;
+    --red: #ff2244;
+    --blue: #3366ff;
+    --white: #f0f0ff;
+    --gray: #888aaa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ======= PROGRESS BAR ======= */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 4px; width: 0%;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--yellow));
+    z-index: 9999;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--cyan);
+  }
+
+  /* ======= NAV ======= */
+  nav {
+    position: fixed; top: 0; right: 0;
+    z-index: 1000;
+    padding: 12px 20px;
+    display: flex; gap: 10px;
+    flex-wrap: wrap; justify-content: flex-end;
+  }
+  nav a {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    color: var(--gray);
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #222;
+    border-radius: 3px;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  nav a:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  /* ======= HERO / ABERTURA ======= */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 60%, #0a0028 0%, #050508 70%);
+  }
+
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,247,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,247,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+
+  .scan-line {
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,255,247,0.02) 2px, rgba(0,255,247,0.02) 4px
+    );
+    pointer-events: none;
+  }
+
+  .hero-content { position: relative; z-index: 2; text-align: center; padding: 20px; }
+
+  .hero-episode {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--cyan); margin-bottom: 20px;
+    animation: blink 2s infinite;
+  }
+  @keyframes blink {
+    0%,100%{opacity:1} 50%{opacity:0.4}
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(60px, 12vw, 140px);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 50%, var(--yellow) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(0,255,247,0.5));
+    animation: titlePulse 3s ease-in-out infinite;
+  }
+  @keyframes titlePulse {
+    0%,100%{filter:drop-shadow(0 0 30px rgba(0,255,247,0.5))}
+    50%{filter:drop-shadow(0 0 60px rgba(255,0,204,0.7))}
+  }
+
+  .hero-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(12px, 2.5vw, 20px);
+    letter-spacing: 6px; color: var(--yellow);
+    margin-top: 10px; text-transform: uppercase;
+  }
+
+  .hero-tagline {
+    font-family: 'Exo 2', sans-serif;
+    font-size: clamp(14px, 2vw, 18px);
+    color: var(--gray); margin-top: 20px;
+    font-style: italic; max-width: 600px; margin-inline: auto;
+    line-height: 1.6;
+  }
+
+  .hero-lungs-svg {
+    width: min(400px, 85vw); margin-top: 40px;
+    filter: drop-shadow(0 0 25px rgba(0,255,247,0.4));
+    animation: lungs-float 4s ease-in-out infinite;
+  }
+  @keyframes lungs-float {
+    0%,100%{transform:translateY(0) scale(1)}
+    50%{transform:translateY(-15px) scale(1.02)}
+  }
+
+  .start-btn {
+    display: inline-block; margin-top: 40px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px; letter-spacing: 3px;
+    padding: 16px 50px;
+    background: transparent;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    cursor: pointer;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: all 0.3s;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+  }
+  .start-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--cyan);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .start-btn:hover::before { transform: translateX(0); }
+  .start-btn:hover { color: var(--bg); box-shadow: 0 0 30px var(--cyan); }
+
+  /* ======= PANELS / CHAPTERS ======= */
+  .chapter {
+    min-height: 100vh;
+    padding: 80px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter-header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+  }
+  .chapter-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px; letter-spacing: 5px;
+    color: var(--magenta); display: block;
+    margin-bottom: 10px;
+  }
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(40px, 7vw, 90px);
+    line-height: 1;
+    letter-spacing: 3px;
+  }
+  .chapter-desc {
+    font-size: 16px; color: var(--gray);
+    font-style: italic; margin-top: 10px;
+    font-family: 'Exo 2', sans-serif;
+  }
+
+  /* ======= MANGA PANELS ======= */
+  .manga-grid {
+    display: grid;
+    gap: 4px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .manga-grid-2 { grid-template-columns: 1fr 1fr; }
+  .manga-grid-3 { grid-template-columns: 2fr 1fr; }
+  .manga-grid-4 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+  .manga-grid-hero { grid-template-columns: 3fr 2fr; }
+
+  .manga-panel {
+    background: var(--panel);
+    border: 2px solid #1a1a2e;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .manga-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(0,255,247,0.03));
+    pointer-events: none;
+  }
+  .manga-panel:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,255,247,0.15), inset 0 0 20px rgba(0,255,247,0.03);
+    transform: scale(1.005);
+  }
+
+  .panel-accent {
+    position: absolute; top: 0; left: 0;
+    width: 4px; height: 100%;
+  }
+
+  .panel-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px; letter-spacing: 3px;
+    position: absolute; top: 12px; right: 15px;
+    opacity: 0.4;
+  }
+
+  .panel-muscle-name {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(28px, 4vw, 48px);
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .panel-latin {
+    font-family: 'Exo 2', sans-serif;
+    font-style: italic;
+    font-size: 13px;
+    margin-bottom: 15px;
+    opacity: 0.6;
+  }
+
+  .panel-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #cccde8;
+  }
+  .panel-body strong { color: var(--yellow); }
+  .panel-body em { color: var(--cyan); font-style: normal; }
+
+  /* ======= ETYM BADGE ======= */
+  .etym {
+    display: inline-block;
+    background: rgba(255,230,0,0.1);
+    border: 1px solid rgba(255,230,0,0.3);
+    color: var(--yellow);
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+    font-family: 'Exo 2', sans-serif;
+    font-style: italic;
+  }
+
+  /* ======= MOLECULE CANVAS ======= */
+  .molecule-container {
+    width: 100%; height: 200px;
+    position: relative;
+    overflow: hidden;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #1a1a2e;
+    border-radius: 4px;
+    margin: 20px 0;
+  }
+
+  /* ======= SPEECH BUBBLE ======= */
+  .speech-bubble {
+    background: #0f0f20;
+    border: 2px solid var(--cyan);
+    border-radius: 4px 20px 20px 20px;
+    padding: 15px 20px;
+    position: relative;
+    margin: 20px 0;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--white);
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: -10px; left: 20px;
+    border: 10px solid transparent;
+    border-bottom-color: var(--cyan);
+    border-top: none;
+  }
+
+  .thought-bubble {
+    background: rgba(255,0,204,0.08);
+    border: 2px dashed var(--magenta);
+    border-radius: 20px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    font-style: italic;
+    color: #ddccff;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ======= CHARACTER ======= */
+  .character-box {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px 0;
+  }
+  .character-avatar {
+    width: 80px; flex-shrink: 0;
+    text-align: center;
+  }
+  .character-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px; letter-spacing: 2px;
+    margin-top: 5px;
+    opacity: 0.7;
+  }
+
+  /* ======= INFO CARD ======= */
+  .info-card {
+    background: linear-gradient(135deg, rgba(0,255,247,0.05), rgba(255,0,204,0.05));
+    border: 1px solid rgba(0,255,247,0.2);
+    padding: 20px 25px;
+    margin: 15px 0;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  }
+  .info-card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--cyan); margin-bottom: 8px;
+  }
+
+  /* ======= INNERVATION BADGE ======= */
+  .innervation {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,102,0,0.1);
+    border: 1px solid rgba(255,102,0,0.4);
+    color: var(--orange);
+    padding: 6px 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px; letter-spacing: 1px;
+    margin: 5px 3px;
+    border-radius: 3px;
+  }
+  .innervation::before { content: '⚡'; }
+
+  .origin-insertion {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px; margin: 15px 0;
+  }
+  .oi-box {
+    background: rgba(255,255,255,0.03);
+    border-top: 2px solid;
+    padding: 12px 15px;
+  }
+  .oi-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    opacity: 0.5; margin-bottom: 6px;
+  }
+  .oi-text { font-size: 14px; line-height: 1.5; }
+
+  /* ======= SFX ======= */
+  .sfx {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(50px, 8vw, 100px);
+    letter-spacing: 4px;
+    display: block;
+    text-align: center;
+    margin: 20px 0;
+    line-height: 1;
+    position: relative;
+  }
+
+  /* ======= TIMELINE ======= */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+    margin: 20px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 8px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--magenta), var(--yellow));
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+    padding-left: 20px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s;
+  }
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .timeline-dot {
+    position: absolute; left: -27px; top: 4px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    background: var(--bg);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  .timeline-ms {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px; color: var(--cyan);
+    letter-spacing: 2px; margin-bottom: 4px;
+  }
+  .timeline-text {
+    font-size: 14px; line-height: 1.6; color: #cccde8;
+  }
+
+  /* ======= CHAPTER BACKGROUNDS ======= */
+  #ch1 { background: radial-gradient(ellipse at 30% 50%, #001a2e 0%, var(--bg) 60%); }
+  #ch2 { background: radial-gradient(ellipse at 70% 30%, #1a0028 0%, var(--bg) 60%); }
+  #ch3 { background: radial-gradient(ellipse at 50% 70%, #002800 0%, var(--bg) 60%); }
+  #ch4 { background: radial-gradient(ellipse at 20% 40%, #1a1a00 0%, var(--bg) 60%); }
+  #ch5 { background: radial-gradient(ellipse at 80% 60%, #1a0000 0%, var(--bg) 60%); }
+  #ch6 { background: radial-gradient(ellipse at 40% 30%, #000a1a 0%, var(--bg) 60%); }
+
+  /* ======= MUSCLE DIAGRAM SVG ======= */
+  .diagram-wrap {
+    display: flex; justify-content: center;
+    margin: 30px 0;
+  }
+
+  /* ======= ACCORDION ======= */
+  .accordion-item {
+    border-bottom: 1px solid #1a1a2e;
+    overflow: hidden;
+  }
+  .accordion-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px;
+    cursor: pointer;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px; letter-spacing: 2px;
+    transition: color 0.2s;
+  }
+  .accordion-header:hover { color: var(--cyan); }
+  .accordion-icon { transition: transform 0.3s; font-size: 20px; }
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    padding: 0 20px;
+    font-size: 14px; line-height: 1.8; color: #cccde8;
+  }
+  .accordion-item.open .accordion-content { max-height: 500px; padding: 0 20px 20px; }
+  .accordion-item.open .accordion-icon { transform: rotate(45deg); }
+
+  /* ======= QUIZ ======= */
+  .quiz-section {
+    background: var(--panel);
+    border: 2px solid var(--yellow);
+    padding: 30px;
+    max-width: 700px;
+    margin: 40px auto;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+  }
+  .quiz-q {
+    font-family: 'Exo 2', sans-serif;
+    font-size: 17px; line-height: 1.6;
+    margin-bottom: 20px; color: var(--white);
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #333;
+    padding: 12px 18px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px; font-family: 'Rajdhani', sans-serif;
+    color: var(--white);
+    transition: all 0.2s;
+    border-radius: 3px;
+  }
+  .quiz-btn:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(255,230,0,0.05); }
+  .quiz-btn.correct { border-color: var(--green); background: rgba(0,255,136,0.1); color: var(--green); }
+  .quiz-btn.wrong { border-color: var(--red); background: rgba(255,34,68,0.1); color: var(--red); }
+  .quiz-feedback {
+    margin-top: 15px; font-size: 14px; display: none;
+    padding: 12px; border-radius: 3px; line-height: 1.6;
+  }
+
+  /* ======= TABLE ======= */
+  .muscle-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; margin: 20px 0;
+  }
+  .muscle-table th {
+    background: rgba(0,255,247,0.1);
+    color: var(--cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    padding: 12px 15px; text-align: left;
+    border-bottom: 2px solid var(--cyan);
+  }
+  .muscle-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #1a1a2e;
+    color: #cccde8;
+    vertical-align: top;
+  }
+  .muscle-table tr:hover td { background: rgba(0,255,247,0.03); }
+
+  /* ======= FLOATING PARTICLES ======= */
+  .particles-canvas {
+    position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  }
+
+  /* ======= FULLSCREEN SVG MUSCLE DIAGRAM ======= */
+  #diagram-section {
+    background: #020212;
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  /* ======= FOOTER ======= */
+  footer {
+    background: #02020a;
+    border-top: 1px solid #1a1a2e;
+    padding: 50px 20px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 50px;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .footer-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px; letter-spacing: 4px;
+    color: var(--gray); margin-top: 8px;
+  }
+  .footer-credit {
+    margin-top: 25px;
+    font-size: 13px; color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  /* ======= RESPONSIVENESS ======= */
+  @media (max-width: 768px) {
+    .manga-grid-2, .manga-grid-3, .manga-grid-4, .manga-grid-hero {
+      grid-template-columns: 1fr;
+    }
+    .origin-insertion { grid-template-columns: 1fr; }
+  }
+
+  /* ======= SCROLL ANIMATION ======= */
+  .fade-in {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  .slide-in-left {
+    opacity: 0; transform: translateX(-50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .slide-in-left.visible { opacity: 1; transform: translateX(0); }
+
+  .slide-in-right {
+    opacity: 0; transform: translateX(50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .slide-in-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* ======= MOLECULE ANIM ======= */
+  @keyframes orbit { from{transform:rotate(0deg) translateX(40px)} to{transform:rotate(360deg) translateX(40px)} }
+  @keyframes orbit2 { from{transform:rotate(120deg) translateX(60px)} to{transform:rotate(480deg) translateX(60px)} }
+  @keyframes orbit3 { from{transform:rotate(240deg) translateX(30px)} to{transform:rotate(600deg) translateX(30px)} }
+  @keyframes pulse-atom { 0%,100%{r:6} 50%{r:9} }
+  @keyframes flow-dash { from{stroke-dashoffset:0} to{stroke-dashoffset:-30} }
+
+  /* Glow classes */
+  .glow-cyan { text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan); }
+  .glow-magenta { text-shadow: 0 0 10px var(--magenta), 0 0 20px var(--magenta); }
+  .glow-yellow { text-shadow: 0 0 10px var(--yellow); }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px; letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin: 2px;
+    border: 1px solid;
+  }
+  .tag-insp { color: var(--cyan); border-color: var(--cyan); background: rgba(0,255,247,0.07); }
+  .tag-exp { color: var(--magenta); border-color: var(--magenta); background: rgba(255,0,204,0.07); }
+  .tag-acc { color: var(--orange); border-color: var(--orange); background: rgba(255,107,0,0.07); }
+  .tag-phrenic { color: var(--green); border-color: var(--green); background: rgba(0,255,136,0.07); }
+
+  .highlight-box {
+    background: linear-gradient(90deg, rgba(0,255,247,0.08), transparent);
+    border-left: 3px solid var(--cyan);
+    padding: 12px 18px;
+    margin: 12px 0;
+    font-size: 14px; line-height: 1.7;
+  }
+
+  /* breathing animation on key element */
+  .breathing-ring {
+    display: inline-block;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    animation: breathe 3s ease-in-out infinite;
+    vertical-align: middle; margin: 0 8px;
+  }
+  @keyframes breathe {
+    0%,100%{transform:scale(1); opacity:0.5}
+    50%{transform:scale(1.8); opacity:1; box-shadow:0 0 15px var(--cyan)}
+  }
+
+  /* chapter bg decoration */
+  .corner-deco {
+    position: absolute;
+    font-family: 'Bangers', cursive;
+    font-size: 200px;
+    opacity: 0.02;
+    user-select: none; pointer-events: none;
+  }
+  .corner-deco.top-right { top: -30px; right: -20px; }
+  .corner-deco.bottom-left { bottom: -30px; left: -20px; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<nav>
+  <a href="#hero">INÍCIO</a>
+  <a href="#ch1">DIAFRAGMA</a>
+  <a href="#ch2">INTERCOSTAIS</a>
+  <a href="#ch3">ACESSÓRIOS</a>
+  <a href="#ch4">EXPIRAÇÃO</a>
+  <a href="#ch5">MECANISMO</a>
+  <a href="#ch6">REVISÃO</a>
+</nav>
+
+<!-- ============================== HERO ============================== -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="scan-line"></div>
+  <canvas class="particles-canvas" id="particles1"></canvas>
+
+  <div class="hero-content">
+    <span class="hero-episode">— DEMILMED-UL PRESENTS — EPISÓDIO I —</span>
+
+    <h1 class="hero-title">RESPIRADORES</h1>
+    <p class="hero-subtitle">Os Guerreiros do Ar</p>
+    <p class="hero-tagline">
+      Uma epopeia molecular sobre os músculos que te mantêm vivo — <br>
+      cada inspiração, uma batalha. Cada expiração, uma vitória.
+      <span class="breathing-ring"></span>
+    </p>
+
+    <!-- Lungs SVG -->
+    <svg class="hero-lungs-svg" viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="lungL" cx="40%" cy="40%">
+          <stop offset="0%" stop-color="#00fff7" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#3366ff" stop-opacity="0.2"/>
+        </radialGradient>
+        <radialGradient id="lungR" cx="60%" cy="40%">
+          <stop offset="0%" stop-color="#ff00cc" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#3366ff" stop-opacity="0.2"/>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Trachea -->
+      <line x1="150" y1="10" x2="150" y2="70" stroke="#00fff7" stroke-width="4" opacity="0.8"/>
+      <line x1="150" y1="70" x2="100" y2="100" stroke="#00fff7" stroke-width="3" opacity="0.7"/>
+      <line x1="150" y1="70" x2="200" y2="100" stroke="#ff00cc" stroke-width="3" opacity="0.7"/>
+      <!-- Left lung -->
+      <ellipse cx="85" cy="155" rx="60" ry="75" fill="url(#lungL)" filter="url(#glow)" opacity="0.8">
+        <animate attributeName="ry" values="75;85;75" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="60;67;60" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Right lung -->
+      <ellipse cx="215" cy="155" rx="60" ry="75" fill="url(#lungR)" filter="url(#glow)" opacity="0.8">
+        <animate attributeName="ry" values="75;85;75" dur="3s" begin="0.3s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="60;67;60" dur="3s" begin="0.3s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Bronchi branches -->
+      <g stroke="#00fff7" stroke-width="1.5" opacity="0.4" fill="none">
+        <line x1="100" y1="100" x2="70" y2="120"/>
+        <line x1="100" y1="100" x2="90" y2="125"/>
+        <line x1="100" y1="100" x2="110" y2="115"/>
+        <line x1="70" y1="120" x2="55" y2="140"/>
+        <line x1="70" y1="120" x2="68" y2="145"/>
+      </g>
+      <g stroke="#ff00cc" stroke-width="1.5" opacity="0.4" fill="none">
+        <line x1="200" y1="100" x2="230" y2="120"/>
+        <line x1="200" y1="100" x2="210" y2="125"/>
+        <line x1="200" y1="100" x2="190" y2="115"/>
+        <line x1="230" y1="120" x2="245" y2="140"/>
+        <line x1="230" y1="120" x2="232" y2="145"/>
+      </g>
+      <!-- Diaphragm dome -->
+      <path d="M 30 220 Q 150 190 270 220" stroke="#ffe600" stroke-width="3" fill="none" opacity="0.9">
+        <animate attributeName="d" 
+          values="M 30 220 Q 150 190 270 220;M 30 230 Q 150 215 270 230;M 30 220 Q 150 190 270 220"
+          dur="3s" repeatCount="indefinite"/>
+      </path>
+      <text x="150" y="242" text-anchor="middle" fill="#ffe600" font-family="Orbitron" font-size="9" opacity="0.8">DIAFRAGMA</text>
+    </svg>
+
+    <a href="#ch1" class="start-btn">▶ INICIAR MISSÃO</a>
+  </div>
+</section>
+
+<!-- ============================== CH 1: DIAFRAGMA ============================== -->
+<section id="ch1" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--cyan)">1</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO I —</span>
+    <h2 class="chapter-title glow-cyan" style="color:var(--cyan)">O SUPREMO<br>DIAFRAGMA</h2>
+    <p class="chapter-desc">O Chefe da Respiração. O Músculo Imortal.</p>
+  </div>
+
+  <div class="manga-grid manga-grid-hero" style="max-width:1200px;margin:0 auto;gap:4px">
+
+    <!-- PANEL 1: BIG -->
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--cyan)"></div>
+      <span class="panel-label">FICHA TÉCNICA</span>
+
+      <div class="etym">📖 Do grego διάφραγμα (diáphragma) = "partição", "parede divisória"</div>
+
+      <h3 class="panel-muscle-name" style="color:var(--cyan)">DIAFRAGMA</h3>
+      <p class="panel-latin">Musculus diaphragma</p>
+
+      <div class="tag tag-insp">INSPIRAÇÃO PRINCIPAL</div>
+      <div class="tag tag-phrenic">NERVO FRÉNICO C3–C5</div>
+
+      <div class="panel-body" style="margin-top:15px">
+        <p>O diafragma é o <strong>maior músculo respiratório</strong> do corpo humano, responsável por <em>70–80% do trabalho respiratório</em> em repouso. Separa a cavidade torácica da abdominal como uma cúpula musculotendinosa.</p>
+      </div>
+
+      <!-- SVG Diaphragm Anatomy -->
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 400 220" width="100%" max-width="400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="diaGrad" cx="50%" cy="30%">
+              <stop offset="0%" stop-color="#00fff7" stop-opacity="0.4"/>
+              <stop offset="100%" stop-color="#3366ff" stop-opacity="0.1"/>
+            </radialGradient>
+            <filter id="glow2"><feGaussianBlur stdDeviation="2"/></filter>
+          </defs>
+          <!-- Ribs outline -->
+          <g stroke="#333" stroke-width="1" fill="none">
+            <ellipse cx="200" cy="100" rx="180" ry="80" opacity="0.3"/>
+            <ellipse cx="200" cy="110" rx="160" ry="70" opacity="0.2"/>
+          </g>
+          <!-- Diaphragm dome - animated -->
+          <path d="M 30 130 Q 100 80 200 75 Q 300 80 370 130 Q 300 140 200 145 Q 100 140 30 130Z" 
+                fill="url(#diaGrad)" stroke="#00fff7" stroke-width="2">
+            <animate attributeName="d"
+              values="M 30 130 Q 100 80 200 75 Q 300 80 370 130 Q 300 140 200 145 Q 100 140 30 130Z;
+                      M 30 145 Q 100 105 200 102 Q 300 105 370 145 Q 300 155 200 158 Q 100 155 30 145Z;
+                      M 30 130 Q 100 80 200 75 Q 300 80 370 130 Q 300 140 200 145 Q 100 140 30 130Z"
+              dur="3s" repeatCount="indefinite"/>
+          </path>
+          <!-- Central tendon -->
+          <ellipse cx="200" cy="112" rx="50" ry="28" fill="rgba(255,230,0,0.2)" stroke="#ffe600" stroke-width="1.5">
+            <animate attributeName="cy" values="112;125;112" dur="3s" repeatCount="indefinite"/>
+          </ellipse>
+          <text x="200" y="117" text-anchor="middle" fill="#ffe600" font-size="8" font-family="Orbitron">TENDÃO CENTRAL</text>
+          <!-- Foramen labels -->
+          <circle cx="200" cy="100" r="4" fill="#ff00cc">
+            <animate attributeName="cy" values="100;113;100" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <text x="215" y="102" fill="#ff00cc" font-size="7" font-family="Rajdhani">Aorta (T12)</text>
+          <circle cx="195" cy="95" r="3" fill="#00ff88">
+            <animate attributeName="cy" values="95;108;95" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <text x="155" y="90" fill="#00ff88" font-size="7" font-family="Rajdhani">VCI (T8)</text>
+          <circle cx="200" cy="102" r="3" fill="#ff6b00">
+            <animate attributeName="cy" values="102;115;102" dur="3s" repeatCount="indefinite"/>
+          </circle>
+          <text x="215" y="110" fill="#ff6b00" font-size="7" font-family="Rajdhani">Esófago (T10)</text>
+          <!-- Arrow inspire -->
+          <text x="200" y="190" text-anchor="middle" fill="#00fff7" font-size="9" font-family="Orbitron">↓ INSPIRA → DESCE</text>
+        </svg>
+      </div>
+
+      <div class="origin-insertion">
+        <div class="oi-box" style="border-color:var(--cyan)">
+          <div class="oi-label">ORIGEM</div>
+          <div class="oi-text">Processo xifóide, cartilagens costais 7–12, vértebras L1–L3 (pilares)</div>
+        </div>
+        <div class="oi-box" style="border-color:var(--magenta)">
+          <div class="oi-label">INSERÇÃO</div>
+          <div class="oi-text">Tendão central (centro frênico) — estrutura aponeurótica em forma de trevo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: Mechanism + Speech -->
+    <div style="display:flex;flex-direction:column;gap:4px">
+
+      <div class="manga-panel slide-in-right">
+        <div class="panel-accent" style="background:var(--magenta)"></div>
+        <span class="sfx" style="color:var(--cyan);font-size:60px">WHOOOM!</span>
+        <div class="speech-bubble">
+          <strong style="color:var(--cyan)">DIAFRAGMA:</strong><br>
+          Quando me contrair, as minhas fibras musculares encurtam e a minha cúpula desce. A cavidade torácica expande. A pressão cai. O ar entra. <em>Eu sou a razão pela qual estás vivo agora mesmo.</em>
+        </div>
+        <div class="innervation">NERVO FRÉNICO — C3, C4, C5</div>
+        <div class="highlight-box">
+          <strong style="color:var(--yellow)">Lei de Boyle (1662):</strong> P·V = constante. Quando o diafragma desce ↓ volume ↑ → pressão ↓ → ar flui de fora para dentro (gradiente de pressão). <em>Física elegante a serviço da vida.</em>
+        </div>
+      </div>
+
+      <div class="manga-panel slide-in-right">
+        <div class="panel-accent" style="background:var(--yellow)"></div>
+        <p class="info-card-title" style="color:var(--yellow);font-family:Orbitron;font-size:10px;letter-spacing:3px;margin-bottom:10px">⚠ CLÍNICA VITAL</p>
+        <div class="panel-body">
+          <p><strong>Soluços (singultus):</strong> contração involuntária súbita do diafragma + fechamento glótico. O arco reflexo envolve o nervo vago e o nervo frénico.</p><br>
+          <p><strong>Paralisia frénica:</strong> lesão acima de C3 → apneia → ventilação mecânica obrigatória. A frase <em>"C3, 4, 5 keeps the diaphragm alive"</em> é um mnemónico canónico.</p><br>
+          <p><strong>Hérnia diafragmática congênita (HDC):</strong> falha no desenvolvimento do diafragma → vísceras abdominais no tórax → hipoplasia pulmonar.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Timeline mecanismo diafragma -->
+  <div style="max-width:800px;margin:40px auto;padding:0 20px" class="fade-in">
+    <h4 style="font-family:Orbitron;font-size:12px;letter-spacing:3px;color:var(--cyan);margin-bottom:25px">CRONOLOGIA DA CONTRAÇÃO — ms = milissegundos</h4>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-ms">T = 0 ms</div>
+        <div class="timeline-text"><strong style="color:var(--cyan)">Potencial de ação nervoso</strong> — O nervo frénico (C3–C5) dispara um PA (Potencial de Ação). O sinal desce pela medula → ramos do n. frénico → placa motora do diafragma.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="border-color:var(--magenta);box-shadow:0 0 8px var(--magenta)"></div>
+        <div class="timeline-ms" style="color:var(--magenta)">T = 1–2 ms</div>
+        <div class="timeline-text"><strong style="color:var(--magenta)">Liberação de acetilcolina (ACh)</strong> na junção neuromuscular → ligação a receptores nicotínicos (nAChR) → influxo de Na⁺ → despolarização da fibra muscular.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="border-color:var(--yellow);box-shadow:0 0 8px var(--yellow)"></div>
+        <div class="timeline-ms" style="color:var(--yellow)">T = 5–10 ms</div>
+        <div class="timeline-text"><strong style="color:var(--yellow)">Acoplamento excitação-contração</strong> — PA propaga-se pelo túbulo T → ativa receptor de rianodina (RyR1) → liberação de Ca²⁺ do retículo sarcoplasmático.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="border-color:var(--green);box-shadow:0 0 8px var(--green)"></div>
+        <div class="timeline-ms" style="color:var(--green)">T = 10–20 ms</div>
+        <div class="timeline-text"><strong style="color:var(--green)">Ca²⁺ liga-se à troponina C</strong> → mudança conformacional → tropomiosina descobre os sítios de ligação da actina → pontes cruzadas actomiosina → contração.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="border-color:var(--orange);box-shadow:0 0 8px var(--orange)"></div>
+        <div class="timeline-ms" style="color:var(--orange)">T = 50–200 ms</div>
+        <div class="timeline-text"><strong style="color:var(--orange)">Contração do diafragma</strong> — cúpula desce 1,5–7 cm. Volume torácico ↑ 500 mL (VT normal). Pressão intrapleural cai de −5 para −8 cmH₂O. Ar entra nos pulmões.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot" style="border-color:var(--blue);box-shadow:0 0 8px var(--blue)"></div>
+        <div class="timeline-ms" style="color:var(--blue)">T = 2–3 s</div>
+        <div class="timeline-text"><strong style="color:var(--blue)">Relaxamento passivo</strong> — cessa o estímulo → Ca²⁺ rebombeado para o RS pela SERCA → tropomiosina rebloqueia actina → diafragma sobe → expiração passiva.</div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CH 2: INTERCOSTAIS ============================== -->
+<section id="ch2" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--magenta)">2</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO II —</span>
+    <h2 class="chapter-title glow-magenta" style="color:var(--magenta)">OS IRMÃOS<br>INTERCOSTAIS</h2>
+    <p class="chapter-desc">Entre Costela e Costela — Uma Guerra de Posições</p>
+  </div>
+
+  <div class="manga-grid manga-grid-2" style="max-width:1200px;margin:0 auto;gap:4px">
+
+    <!-- Externos -->
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--green)"></div>
+      <span class="panel-label">EXTERNO</span>
+      <div class="etym">📖 Latim: inter (entre) + costa (costela) + externus (externo)</div>
+      <h3 class="panel-muscle-name" style="color:var(--green)">INTERCOSTAIS<br>EXTERNOS</h3>
+      <p class="panel-latin">Musculi intercostales externi (11 pares)</p>
+      <div class="tag tag-insp">INSPIRAÇÃO</div>
+      <div class="tag" style="color:var(--blue);border-color:var(--blue);background:rgba(51,102,255,0.07)">N. INTERCOSTAL T1–T11</div>
+
+      <!-- SVG intercostal direction -->
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 280 180" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ribs -->
+          <path d="M 30 40 Q 140 20 250 40" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 30 90 Q 140 70 250 90" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 30 140 Q 140 120 250 140" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <!-- Fibers (oblique down-forward) -->
+          <g stroke="#00ff88" stroke-width="2" opacity="0.8">
+            <line x1="60" y1="45" x2="80" y2="85"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/></line>
+            <line x1="100" y1="38" x2="120" y2="78"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.2s" repeatCount="indefinite"/></line>
+            <line x1="140" y1="33" x2="160" y2="73"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.4s" repeatCount="indefinite"/></line>
+            <line x1="180" y1="38" x2="200" y2="78"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.6s" repeatCount="indefinite"/></line>
+            <line x1="220" y1="43" x2="240" y2="83"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.8s" repeatCount="indefinite"/></line>
+            <!-- 2nd space -->
+            <line x1="60" y1="95" x2="80" y2="135"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.1s" repeatCount="indefinite"/></line>
+            <line x1="100" y1="88" x2="120" y2="128"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.3s" repeatCount="indefinite"/></line>
+            <line x1="140" y1="83" x2="160" y2="123"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.5s" repeatCount="indefinite"/></line>
+            <line x1="180" y1="88" x2="200" y2="128"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.7s" repeatCount="indefinite"/></line>
+            <line x1="220" y1="93" x2="240" y2="133"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.9s" repeatCount="indefinite"/></line>
+          </g>
+          <!-- Direction arrow -->
+          <text x="30" y="170" fill="#00ff88" font-size="9" font-family="Rajdhani">↘ Fibras: Superior-Anterior → Inferior-Posterior</text>
+          <text x="100" y="15" fill="#00ff88" font-size="10" font-family="Orbitron" text-anchor="middle">ELEVA COSTELAS ↑</text>
+        </svg>
+      </div>
+
+      <div class="panel-body">
+        <p>As fibras dos externos correm <strong>obliquamente para baixo e para frente</strong> (como cruzar os braços na barriga). Ao contair-se, <em>elevam as costelas</em> → o diâmetro torácico aumenta → inspiração.</p>
+      </div>
+
+      <div class="origin-insertion">
+        <div class="oi-box" style="border-color:var(--green)">
+          <div class="oi-label">ORIGEM</div>
+          <div class="oi-text">Margem inferior da costela superior</div>
+        </div>
+        <div class="oi-box" style="border-color:var(--cyan)">
+          <div class="oi-label">INSERÇÃO</div>
+          <div class="oi-text">Margem superior da costela inferior</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Internos -->
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--magenta)"></div>
+      <span class="panel-label">INTERNO</span>
+      <div class="etym">📖 Latim: internus = "que está dentro, interior"</div>
+      <h3 class="panel-muscle-name" style="color:var(--magenta)">INTERCOSTAIS<br>INTERNOS</h3>
+      <p class="panel-latin">Musculi intercostales interni (11 pares)</p>
+      <div class="tag tag-exp">EXPIRAÇÃO FORÇADA</div>
+      <div class="tag" style="color:var(--blue);border-color:var(--blue);background:rgba(51,102,255,0.07)">N. INTERCOSTAL T1–T11</div>
+
+      <div class="diagram-wrap">
+        <svg viewBox="0 0 280 180" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 30 40 Q 140 20 250 40" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 30 90 Q 140 70 250 90" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 30 140 Q 140 120 250 140" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+          <!-- Fibers (oblique down-backward = opposite direction) -->
+          <g stroke="#ff00cc" stroke-width="2" opacity="0.8">
+            <line x1="80" y1="45" x2="60" y2="85"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/></line>
+            <line x1="120" y1="38" x2="100" y2="78"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.2s" repeatCount="indefinite"/></line>
+            <line x1="160" y1="33" x2="140" y2="73"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.4s" repeatCount="indefinite"/></line>
+            <line x1="200" y1="38" x2="180" y2="78"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.6s" repeatCount="indefinite"/></line>
+            <line x1="240" y1="43" x2="220" y2="83"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.8s" repeatCount="indefinite"/></line>
+            <line x1="80" y1="95" x2="60" y2="135"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.1s" repeatCount="indefinite"/></line>
+            <line x1="120" y1="88" x2="100" y2="128"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.3s" repeatCount="indefinite"/></line>
+            <line x1="160" y1="83" x2="140" y2="123"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.5s" repeatCount="indefinite"/></line>
+            <line x1="200" y1="88" x2="180" y2="128"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.7s" repeatCount="indefinite"/></line>
+            <line x1="240" y1="93" x2="220" y2="133"><animate attributeName="opacity" values="0.8;1;0.8" dur="2s" begin="0.9s" repeatCount="indefinite"/></line>
+          </g>
+          <text x="30" y="170" fill="#ff00cc" font-size="9" font-family="Rajdhani">↙ Fibras: Direção OPOSTA aos externos</text>
+          <text x="100" y="15" fill="#ff00cc" font-size="10" font-family="Orbitron" text-anchor="middle">DEPRIME COSTELAS ↓</text>
+        </svg>
+      </div>
+
+      <div class="panel-body">
+        <p>Fibras em direção <strong>oposta</strong> aos externos — correm para baixo e para trás. Em respiração forçada, <em>deprimem as costelas</em> → reduz volume torácico → expiração ativa.</p>
+        <br>
+        <p>Na respiração tranquila, funcionam sobretudo como <strong>estabilizadores</strong> do espaço intercostal para evitar o seu colapso durante a inspiração.</p>
+      </div>
+
+      <div class="thought-bubble">
+        💭 Regra de ouro: os externos inspiram, os internos expiram forcosamente. Mas ambos são irmãos que protegem o espaço entre costelas!
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Intercostais íntimos -->
+  <div style="max-width:1200px;margin:4px auto">
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--blue)"></div>
+      <span class="panel-label">ÍNTIMOS</span>
+      <h3 class="panel-muscle-name" style="color:var(--blue)">INTERCOSTAIS ÍNTIMOS (INTIMI)</h3>
+      <div class="panel-body">
+        <p>Camada mais profunda, separada dos internos pelo feixe vasculonervoso intercostal (<em>veia, artéria, nervo — VAN</em> — de cima para baixo). <strong>Mesma ação dos internos.</strong> A sua relevância clínica é crucial: os bloqueios intercostais e drenagens torácicas devem ser feitos na <em>margem superior da costela inferior</em> para evitar lesão do feixe VAN que corre no sulco subcostal.</p>
+      </div>
+      <div class="highlight-box">
+        <strong style="color:var(--orange)">Regra da Drenagem Torácica:</strong> "Sempre acima da costela inferior do espaço escolhido" → evitar o nervo intercostal → evitar neuralgia intercostal iatrogénica.
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CH 3: ACESSÓRIOS INSPIRAÇÃO ============================== -->
+<section id="ch3" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--green)">3</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO III —</span>
+    <h2 class="chapter-title" style="color:var(--green)">OS AUXILIARES<br>DA INSPIRAÇÃO</h2>
+    <p class="chapter-desc">Quando o ar escasseia, eles entram em combate</p>
+  </div>
+
+  <div class="manga-grid manga-grid-4" style="max-width:1200px;margin:0 auto;gap:4px">
+
+    <!-- Esternocleidomastóideo -->
+    <div class="manga-panel slide-in-left">
+      <div class="panel-accent" style="background:var(--yellow)"></div>
+      <div class="etym">📖 Grego: stérnon (esterno) + kleís (clavícula) + mastoeidḗs (mastóide)</div>
+      <h3 class="panel-muscle-name" style="color:var(--yellow)">ESTERNOCLEI-<br>DOMASTÓIDEO</h3>
+      <p class="panel-latin">M. sternocleidomastoideus (ECM)</p>
+      <div class="tag tag-acc">ACESSÓRIO INSPIRAÇÃO</div>
+      <div class="innervation">N. ACESSÓRIO (XI) + C2–C3</div>
+      <div class="panel-body">
+        <p>O <strong>ECM</strong> liga o manúbrio do esterno e a clavícula ao processo mastóide. Ao fixar a cabeça (pela contração bilateral), <em>eleva o esterno e costelas superiores</em>.</p><br>
+        <p>Quando o verás no pescoço do doente com DPOC? Quando ele estiver em <strong>uso de musculatura acessória</strong> — sinal de trabalho respiratório aumentado!</p>
+      </div>
+      <div class="speech-bubble" style="border-color:var(--yellow)">
+        <strong style="color:var(--yellow)">ECM:</strong> "Normalmente torço o pescoço, mas em apuro, levanto o seu tórax inteiro!"
+      </div>
+    </div>
+
+    <!-- Escalenos -->
+    <div class="manga-panel slide-in-right">
+      <div class="panel-accent" style="background:var(--orange)"></div>
+      <div class="etym">📖 Grego: skalēnós = "triângulo escaleno, irregular, desigual"</div>
+      <h3 class="panel-muscle-name" style="color:var(--orange)">ESCALENOS</h3>
+      <p class="panel-latin">Mm. scaleni anterior, medius, posterior</p>
+      <div class="tag tag-acc">ACESSÓRIO INSPIRAÇÃO</div>
+      <div class="innervation">PLEXO CERVICAL C3–C8</div>
+      <div class="panel-body">
+        <p>Três músculos que descem das vértebras cervicais (C2–C7) para as <strong>1ª e 2ª costelas</strong>. Elevam as costelas superiores e estabilizam a coluna cervical.</p><br>
+        <p><strong>Síndrome do estreito superior do tórax:</strong> hipertrofia dos escalenos comprime o plexo braquial e a artéria subclávia → parestesias no membro superior!</p>
+      </div>
+      <div class="info-card">
+        <div class="info-card-title">TRIÂNGULO ESCALENO ANTERIOR</div>
+        <p style="font-size:13px;color:#cccde8">Artéria subclávia + Plexo braquial passam no espaço entre escaleno anterior e médio. Relevância cirúrgica enorme.</p>
+      </div>
+    </div>
+
+    <!-- Peitoral menor + Serrátil anterior -->
+    <div class="manga-panel slide-in-left">
+      <div class="panel-accent" style="background:var(--blue)"></div>
+      <div class="etym">📖 Pectoralis minor: latim pectus = "peito" + minor = "menor"</div>
+      <h3 class="panel-muscle-name" style="color:var(--blue)">PEITORAL MENOR<br><span style="font-size:0.5em;color:var(--cyan)">+</span><br>SERRÁTIL ANTERIOR</h3>
+      <p class="panel-latin">M. pectoralis minor / M. serratus anterior</p>
+      <div class="tag tag-acc">ACESSÓRIO INSPIRAÇÃO</div>
+      <div class="panel-body">
+        <p><strong>Peitoral menor:</strong> quando o membro superior está fixo, eleva costelas 3–5. Inervado pelo n. peitoral medial (C8–T1).</p><br>
+        <p><strong>Serrátil anterior:</strong> insere-se em costelas 1–9, traccionando-as. Em ortopneia (dificuldade em deitar), os doentes apoiam-se nos braços para fixar o peitoral maior — permitindo mais eficácia dos acessórios.</p>
+      </div>
+    </div>
+
+    <!-- Outros acessórios -->
+    <div class="manga-panel slide-in-right">
+      <div class="panel-accent" style="background:var(--red)"></div>
+      <h3 class="panel-muscle-name" style="color:var(--red)">OUTROS<br>ALIADOS</h3>
+      <div class="panel-body" style="font-size:14px">
+        <p><strong style="color:var(--cyan)">▸ Subclávio:</strong> estabiliza e deprime a clavícula. Pode elevar a 1ª costela em esforço.</p><br>
+        <p><strong style="color:var(--magenta)">▸ Elevadores das costelas (Levatores costarum):</strong> 12 pares, C7–T11, elevam costelas diretamente. Inervados pelos n. intercostais.</p><br>
+        <p><strong style="color:var(--yellow)">▸ Serrátil posterior superior:</strong> eleva costelas 2–5. Inervado por T1–T4. Muscúlo fino, profundo, raramente avaliado isoladamente.</p><br>
+        <p><strong style="color:var(--green)">▸ Ileocostal:</strong> parte do erector spinae, pode elevar costelas quando a coluna está fixada.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Molecule animation: ATP -->
+  <div style="max-width:900px;margin:40px auto;padding:0 20px">
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--cyan)"></div>
+      <h4 style="font-family:Bangers;font-size:35px;color:var(--cyan);letter-spacing:2px;margin-bottom:15px">⚡ A MOLÉCULA QUE MOVE TUDO: ATP</h4>
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+        <!-- ATP SVG -->
+        <svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+          <defs>
+            <radialGradient id="atpCenter"><stop offset="0%" stop-color="#ffe600"/><stop offset="100%" stop-color="#ff6b00"/></radialGradient>
+          </defs>
+          <!-- Center atom -->
+          <circle cx="100" cy="100" r="18" fill="url(#atpCenter)">
+            <animate attributeName="r" values="18;22;18" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="100" y="105" text-anchor="middle" fill="#000" font-size="9" font-family="Orbitron" font-weight="bold">ATP</text>
+          <!-- Orbiting electrons -->
+          <g transform="translate(100,100)">
+            <circle r="6" fill="#00fff7" cx="0" cy="0" transform="rotate(0)">
+              <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="cx" values="0" dur="0s"/>
+            </circle>
+          </g>
+          <!-- Phosphate bonds -->
+          <line x1="100" y1="82" x2="100" y2="42" stroke="#ff2244" stroke-width="3" stroke-dasharray="5,3">
+            <animate attributeName="stroke-dashoffset" values="0;-16" dur="0.5s" repeatCount="indefinite"/>
+          </line>
+          <circle cx="100" cy="35" r="10" fill="#ff2244" opacity="0.9">
+            <animate attributeName="opacity" values="0.9;0.5;0.9" dur="1s" repeatCount="indefinite"/>
+          </circle>
+          <text x="100" y="39" text-anchor="middle" fill="white" font-size="8" font-family="Orbitron">Pᵢ</text>
+          <!-- Orbit paths -->
+          <ellipse cx="100" cy="100" rx="55" ry="25" fill="none" stroke="rgba(0,255,247,0.2)" stroke-width="1"/>
+          <ellipse cx="100" cy="100" rx="25" ry="55" fill="none" stroke="rgba(255,0,204,0.2)" stroke-width="1"/>
+          <!-- orbiting particles -->
+          <circle r="5" fill="#00fff7">
+            <animateMotion dur="2s" repeatCount="indefinite">
+              <mpath href="#orbitPath1"/>
+            </animateMotion>
+          </circle>
+          <circle r="5" fill="#ff00cc">
+            <animateMotion dur="3s" repeatCount="indefinite" begin="1s">
+              <mpath href="#orbitPath2"/>
+            </animateMotion>
+          </circle>
+          <ellipse id="orbitPath1" cx="100" cy="100" rx="55" ry="25" fill="none"/>
+          <ellipse id="orbitPath2" cx="100" cy="100" rx="25" ry="55" fill="none"/>
+        </svg>
+        <div class="panel-body" style="flex:1;min-width:250px">
+          <p><strong>ATP (Adenosine Triphosphate — Trifosfato de Adenosina)</strong> é a "moeda energética" de toda a contração muscular respiratória.</p><br>
+          <p>A hidrólise ATP → ADP + Pᵢ libera <em>~30,5 kJ/mol</em>. Este energia move a cabeça de miosina — o "remo molecular" — ao longo da actina.</p><br>
+          <p>Durante hipóxia severa, a falência de ATP → <strong>fadiga dos músculos respiratórios</strong> → colapso ventilatório. É por isso que a ventilação mecânica invasiva poupa o doente crítico.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CH 4: EXPIRAÇÃO ============================== -->
+<section id="ch4" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--yellow)">4</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO IV —</span>
+    <h2 class="chapter-title glow-yellow" style="color:var(--yellow)">A FORCA<br>DA EXPIRAÇÃO</h2>
+    <p class="chapter-desc">Em repouso, o silêncio. Em esforço, o poder abdominal.</p>
+  </div>
+
+  <div class="manga-grid manga-grid-2" style="max-width:1200px;margin:0 auto;gap:4px">
+
+    <!-- Abdominais -->
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--orange)"></div>
+      <div class="etym">📖 Latim: abdomen = "ventre" (talvez de abdere = "esconder", pois abriga vísceras)</div>
+      <h3 class="panel-muscle-name" style="color:var(--orange)">OS 4 GUERREIROS<br>ABDOMINAIS</h3>
+      <div class="tag tag-exp">EXPIRAÇÃO FORÇADA</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:15px 0">
+        <div style="background:rgba(255,107,0,0.08);border:1px solid rgba(255,107,0,0.3);padding:12px;border-radius:3px">
+          <div style="color:var(--orange);font-family:Orbitron;font-size:9px;letter-spacing:2px;margin-bottom:6px">RETO ABDOMINAL</div>
+          <div style="font-size:12px;color:#cccde8">Do processo xifóide às costas do púbis. Fibras verticais. Deprime o tórax inferior com força máxima.</div>
+          <div class="innervation" style="font-size:9px;margin-top:5px">T5–T12</div>
+        </div>
+        <div style="background:rgba(255,0,204,0.08);border:1px solid rgba(255,0,204,0.3);padding:12px;border-radius:3px">
+          <div style="color:var(--magenta);font-family:Orbitron;font-size:9px;letter-spacing:2px;margin-bottom:6px">OBLÍQUO EXTERNO</div>
+          <div style="font-size:12px;color:#cccde8">Fibras oblíquas para baixo e medialmente. Comprime o abdómen, deprime o tórax.</div>
+          <div class="innervation" style="font-size:9px;margin-top:5px">T5–T12</div>
+        </div>
+        <div style="background:rgba(0,255,247,0.08);border:1px solid rgba(0,255,247,0.3);padding:12px;border-radius:3px">
+          <div style="color:var(--cyan);font-family:Orbitron;font-size:9px;letter-spacing:2px;margin-bottom:6px">OBLÍQUO INTERNO</div>
+          <div style="font-size:12px;color:#cccde8">Fibras em direção oposta ao externo. Com o externo = compressão abdominal circular eficiente.</div>
+          <div class="innervation" style="font-size:9px;margin-top:5px">T10–L1</div>
+        </div>
+        <div style="background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);padding:12px;border-radius:3px">
+          <div style="color:var(--green);font-family:Orbitron;font-size:9px;letter-spacing:2px;margin-bottom:6px">TRANSVERSO</div>
+          <div style="font-size:12px;color:#cccde8">Fibras horizontais. O mais profundo. <strong>Mais importante para gerar pressão positiva intra-abdominal.</strong></div>
+          <div class="innervation" style="font-size:9px;margin-top:5px">T6–L1</div>
+        </div>
+      </div>
+
+      <div class="speech-bubble" style="border-color:var(--orange)">
+        <strong style="color:var(--orange)">TRANSVERSO DO ABDÓMEN:</strong><br>
+        "Eu sou a faixa de compressão natural do teu corpo. Quando me contrair, empurro as vísceras para cima → o diafragma sobe → o volume pulmonar diminui → o ar sai à força!"
+      </div>
+
+      <div class="highlight-box">
+        <strong style="color:var(--yellow)">Manobra de Valsalva:</strong> contração simultânea dos abdominais + glote fechada → pressão intratorácica muito ↑ → reduz retorno venoso → ↓ débito cardíaco transitoriamente. Clínica: síncope no esforço de defecação, teste cardíaco diagnóstico.
+      </div>
+    </div>
+
+    <!-- Intercostais internos + músculo subcostal e transverso do tórax -->
+    <div style="display:flex;flex-direction:column;gap:4px">
+
+      <div class="manga-panel slide-in-right">
+        <div class="panel-accent" style="background:var(--red)"></div>
+        <h3 class="panel-muscle-name" style="color:var(--red)">SERRÁTIL POSTERIOR<br>INFERIOR</h3>
+        <p class="panel-latin">M. serratus posterior inferior</p>
+        <div class="tag tag-exp">EXPIRAÇÃO ACESSÓRIA</div>
+        <div class="innervation">T9–T12</div>
+        <div class="panel-body">
+          <p>Desce das vértebras T11–L2 para as <strong>costelas 9–12</strong>, deprimindo-as. Opõe-se à elevação excessiva das costelas inferiores durante a expiração vigorosa (tosse, espirro).</p>
+        </div>
+      </div>
+
+      <div class="manga-panel slide-in-right">
+        <div class="panel-accent" style="background:var(--blue)"></div>
+        <h3 class="panel-muscle-name" style="color:var(--blue)">TRANSVERSO<br>DO TÓRAX</h3>
+        <p class="panel-latin">M. transversus thoracis (triangular do esterno)</p>
+        <div class="tag tag-exp">EXPIRAÇÃO FORÇADA</div>
+        <div class="innervation">N. INTERCOSTAIS T2–T6</div>
+        <div class="panel-body">
+          <p>Na face interna do esterno e cartilagens costais. Deprime as cartilagens costais 2–6. Frequentemente ignorado, mas <strong>ativo durante expiração forçada e tosse</strong>.</p>
+        </div>
+      </div>
+
+      <div class="manga-panel slide-in-right">
+        <div class="panel-accent" style="background:var(--magenta)"></div>
+        <h3 class="panel-muscle-name" style="color:var(--magenta)">SUBCOSTAIS</h3>
+        <p class="panel-latin">Mm. subcostales</p>
+        <div class="tag tag-exp">EXPIRAÇÃO</div>
+        <div class="panel-body">
+          <p>Fibras análogas aos intercostais íntimos mas que saltam sobre 1–2 costelas. Localização: face interna do tórax inferior. Deprimem as costelas. Inervados pelos nervos intercostais.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Quadrado lombar + cinturas escapulares -->
+  <div style="max-width:1200px;margin:4px auto">
+    <div class="manga-panel fade-in">
+      <div class="panel-accent" style="background:var(--cyan)"></div>
+      <h3 class="panel-muscle-name" style="color:var(--cyan)">QUADRADO LOMBAR — O Estabilizador das Últimas Costelas</h3>
+      <p class="panel-latin">M. quadratus lumborum</p>
+      <div class="tag tag-exp">EXPIRAÇÃO ACESSÓRIA</div>
+      <div class="innervation">T12, L1–L4</div>
+      <div class="panel-body">
+        <p>Liga a crista ilíaca e o ligamento iliolumbar às <strong>costelas 12 e vértebras L1–L4</strong>. A sua contração <em>fixa a 12ª costela</em>, impedindo que seja puxada para cima pelo diafragma durante a inspiração — servindo assim como ponto de fixação para o diafragma trabalhar mais eficazmente. Em expiração forçada, deprime a 12ª costela.</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CH 5: MECANISMO INTEGRADO ============================== -->
+<section id="ch5" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--red)">5</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO V —</span>
+    <h2 class="chapter-title" style="color:var(--red)">O MECANISMO<br>COMPLETO</h2>
+    <p class="chapter-desc">Do nervo ao ar — a sinfonia da ventilação</p>
+  </div>
+
+  <!-- Full mechanism diagram -->
+  <div class="diagram-wrap fade-in">
+    <svg viewBox="0 0 800 500" width="100%" max-width="800" xmlns="http://www.w3.org/2000/svg" style="max-width:800px">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#00fff7"/>
+        </marker>
+        <marker id="arrowM" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#ff00cc"/>
+        </marker>
+        <marker id="arrowY" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#ffe600"/>
+        </marker>
+      </defs>
+
+      <!-- Background -->
+      <rect width="800" height="500" fill="#08081a" rx="4"/>
+
+      <!-- Title -->
+      <text x="400" y="30" text-anchor="middle" fill="#00fff7" font-family="Orbitron" font-size="12" letter-spacing="3">CICLO RESPIRATÓRIO COMPLETO</text>
+
+      <!-- INSPIRAÇÃO side -->
+      <text x="200" y="65" text-anchor="middle" fill="#00fff7" font-family="Bangers" font-size="22" letter-spacing="2">INSPIRAÇÃO</text>
+
+      <!-- Box: Córtex/Bulbo -->
+      <rect x="100" y="80" width="200" height="50" fill="rgba(0,255,247,0.08)" stroke="#00fff7" stroke-width="1" rx="2"/>
+      <text x="200" y="100" text-anchor="middle" fill="#00fff7" font-family="Orbitron" font-size="9">CENTRO RESPIRATÓRIO</text>
+      <text x="200" y="118" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Bulbo (DRG/VRG) + Ponte (PBC)</text>
+
+      <line x1="200" y1="130" x2="200" y2="160" stroke="#00fff7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="90" y="160" width="220" height="45" fill="rgba(0,255,247,0.05)" stroke="#00fff7" stroke-width="1" rx="2"/>
+      <text x="200" y="178" text-anchor="middle" fill="#00fff7" font-family="Orbitron" font-size="9">NERVO FRÉNICO (C3–C5)</text>
+      <text x="200" y="195" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">+ Nervos Intercostais (T1–T11)</text>
+
+      <line x1="200" y1="205" x2="200" y2="235" stroke="#00fff7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="80" y="235" width="240" height="45" fill="rgba(0,255,247,0.05)" stroke="#00fff7" stroke-width="1" rx="2"/>
+      <text x="200" y="253" text-anchor="middle" fill="#00fff7" font-family="Orbitron" font-size="9">DIAFRAGMA CONTRAI ↓</text>
+      <text x="200" y="270" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">+ Intercostais externos ↑ costelas</text>
+
+      <line x1="200" y1="280" x2="200" y2="310" stroke="#00fff7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="80" y="310" width="240" height="45" fill="rgba(0,255,247,0.05)" stroke="#00fff7" stroke-width="1" rx="2"/>
+      <text x="200" y="328" text-anchor="middle" fill="#00fff7" font-family="Orbitron" font-size="9">VOLUME TORÁCICO ↑</text>
+      <text x="200" y="345" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">P intrapleural −5 → −8 cmH₂O</text>
+
+      <line x1="200" y1="355" x2="200" y2="385" stroke="#00fff7" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <rect x="80" y="385" width="240" height="45" fill="rgba(0,255,247,0.08)" stroke="#00fff7" stroke-width="1" rx="2"/>
+      <text x="200" y="405" text-anchor="middle" fill="#00fff7" font-family="Bangers" font-size="16">AR ENTRA ➜ 500 mL</text>
+      <text x="200" y="422" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Volume Corrente (VC/VT) normal</text>
+
+      <!-- EXPIRAÇÃO side -->
+      <text x="600" y="65" text-anchor="middle" fill="#ff00cc" font-family="Bangers" font-size="22" letter-spacing="2">EXPIRAÇÃO</text>
+
+      <rect x="490" y="80" width="220" height="50" fill="rgba(255,0,204,0.08)" stroke="#ff00cc" stroke-width="1" rx="2"/>
+      <text x="600" y="100" text-anchor="middle" fill="#ff00cc" font-family="Orbitron" font-size="9">EM REPOUSO: PASSIVA</text>
+      <text x="600" y="118" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Elasticidade pulmonar + parede torácica</text>
+
+      <line x1="600" y1="130" x2="600" y2="160" stroke="#ff00cc" stroke-width="1.5" marker-end="url(#arrowM)"/>
+
+      <rect x="490" y="160" width="220" height="45" fill="rgba(255,0,204,0.05)" stroke="#ff00cc" stroke-width="1" rx="2"/>
+      <text x="600" y="178" text-anchor="middle" fill="#ff00cc" font-family="Orbitron" font-size="9">DIAFRAGMA RELAXA ↑</text>
+      <text x="600" y="195" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Recuo elástico pulmonar</text>
+
+      <line x1="600" y1="205" x2="600" y2="235" stroke="#ff00cc" stroke-width="1.5" marker-end="url(#arrowM)"/>
+
+      <rect x="480" y="235" width="240" height="45" fill="rgba(255,0,204,0.05)" stroke="#ff00cc" stroke-width="1" rx="2"/>
+      <text x="600" y="253" text-anchor="middle" fill="#ff00cc" font-family="Orbitron" font-size="9">EXPIRAÇÃO FORÇADA:</text>
+      <text x="600" y="270" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Abdominais + Intercostais internos</text>
+
+      <line x1="600" y1="280" x2="600" y2="310" stroke="#ff00cc" stroke-width="1.5" marker-end="url(#arrowM)"/>
+
+      <rect x="480" y="310" width="240" height="45" fill="rgba(255,0,204,0.05)" stroke="#ff00cc" stroke-width="1" rx="2"/>
+      <text x="600" y="328" text-anchor="middle" fill="#ff00cc" font-family="Orbitron" font-size="9">VOLUME TORÁCICO ↓</text>
+      <text x="600" y="345" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">P alveolar > P atmosférica</text>
+
+      <line x1="600" y1="355" x2="600" y2="385" stroke="#ff00cc" stroke-width="1.5" marker-end="url(#arrowM)"/>
+
+      <rect x="480" y="385" width="240" height="45" fill="rgba(255,0,204,0.08)" stroke="#ff00cc" stroke-width="1" rx="2"/>
+      <text x="600" y="405" text-anchor="middle" fill="#ff00cc" font-family="Bangers" font-size="16">AR SAI ← GRADIENTE ▲P</text>
+      <text x="600" y="422" text-anchor="middle" fill="#aaaacc" font-family="Rajdhani" font-size="11">Lei de Boyle: P↑V↓ → fluxo para fora</text>
+
+      <!-- Center: lung -->
+      <ellipse cx="400" cy="260" rx="50" ry="70" fill="rgba(51,102,255,0.15)" stroke="#3366ff" stroke-width="1.5">
+        <animate attributeName="ry" values="70;85;70" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="rx" values="50;60;50" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <text x="400" y="258" text-anchor="middle" fill="#3366ff" font-family="Orbitron" font-size="9">PULMÃO</text>
+
+      <!-- connecting arrows -->
+      <line x1="320" y1="260" x2="350" y2="260" stroke="#3366ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <line x1="450" y1="260" x2="480" y2="260" stroke="#3366ff" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+      <!-- Feedback loop -->
+      <path d="M 200 475 Q 400 495 600 475" fill="none" stroke="#ffe600" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowY)"/>
+      <text x="400" y="492" text-anchor="middle" fill="#ffe600" font-family="Orbitron" font-size="8">QUIMIORRECEPTORES → FEEDBACK → BULBO</text>
+    </svg>
+  </div>
+
+  <!-- Pressures explained -->
+  <div style="max-width:1200px;margin:40px auto;padding:0 20px">
+    <div class="manga-grid manga-grid-2" style="gap:4px">
+      <div class="manga-panel fade-in">
+        <div class="panel-accent" style="background:var(--cyan)"></div>
+        <h4 style="font-family:Bangers;font-size:35px;color:var(--cyan);margin-bottom:15px">⚖️ PRESSÕES CRÍTICAS</h4>
+        <div class="panel-body">
+          <p><strong style="color:var(--cyan)">P atmosférica (Patm):</strong> ~760 mmHg / 0 cmH₂O (referência)</p><br>
+          <p><strong style="color:var(--green)">P intrapleural (Ppl):</strong> normalmente −5 cmH₂O em repouso. Durante inspiração → −8 cmH₂O. Nunca positiva (senão colapso pulmonar = pneumotórax!).</p><br>
+          <p><strong style="color:var(--yellow)">P alveolar (Palv):</strong> −1 cmH₂O na inspiração (ar entra); +1 cmH₂O na expiração (ar sai).</p><br>
+          <p><strong style="color:var(--magenta)">P transpulmonar (Ptransp):</strong> Palv − Ppl. Força que mantém o pulmão aberto contra o recuo elástico.</p>
+        </div>
+      </div>
+      <div class="manga-panel fade-in">
+        <div class="panel-accent" style="background:var(--yellow)"></div>
+        <h4 style="font-family:Bangers;font-size:35px;color:var(--yellow);margin-bottom:15px">📐 LEI DE FICK & DIFUSÃO</h4>
+        <div class="panel-body">
+          <p><strong>Lei de Fick (Adolf Fick, 1855):</strong> A taxa de difusão de um gás ∝ área × diferença de pressão parcial / espessura da membrana.</p><br>
+          <p>Os músculos respiratórios servem para criar o fluxo de ar (ventilação), mas a troca gasosa em si é passiva — regida por Fick. Se a membrana alveoloapilar engrossar (fibrose), mesmo o diafragma perfeito não compensa.</p><br>
+          <p><strong style="color:var(--yellow)">Clínica:</strong> Na embolia pulmonar (EP), área de troca ↓ → hipóxia com normo/hipocapnia (hiperventilação compensatória ativa os acessórios → taquipneia).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============================== CH 6: TABELA E QUIZ ============================== -->
+<section id="ch6" class="chapter">
+  <div class="corner-deco top-right" style="color:var(--blue)">6</div>
+
+  <div class="chapter-header fade-in">
+    <span class="chapter-num">— CAPÍTULO VI —</span>
+    <h2 class="chapter-title" style="color:var(--blue)">MISSÃO:<br>REVISÃO TOTAL</h2>
+    <p class="chapter-desc">Testa o teu conhecimento. A batalha final.</p>
+  </div>
+
+  <!-- Full Table -->
+  <div style="max-width:1200px;margin:0 auto;padding:0 20px" class="fade-in">
+    <h4 style="font-family:Orbitron;font-size:11px;letter-spacing:3px;color:var(--cyan);margin-bottom:15px">TABELA COMPLETA — MÚSCULOS DA RESPIRAÇÃO</h4>
+    <div style="overflow-x:auto">
+      <table class="muscle-table">
+        <thead>
+          <tr>
+            <th>MÚSCULO</th>
+            <th>FUNÇÃO</th>
+            <th>ORIGEM → INSERÇÃO</th>
+            <th>INERVAÇÃO</th>
+            <th>CLÍNICA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--cyan)">Diafragma</strong></td>
+            <td><span class="tag tag-insp" style="font-size:9px">Inspiração principal (70-80%)</span></td>
+            <td>Xifóide, costelas 7–12, L1–L3 → Tendão central</td>
+            <td><span class="tag tag-phrenic" style="font-size:9px">Frénico C3–C5</span></td>
+            <td>Soluços, paralisia frénica, HDC, hérnia hiatal</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">Intercostais externos</strong></td>
+            <td><span class="tag tag-insp" style="font-size:9px">Inspiração — eleva costelas</span></td>
+            <td>Margem inferior costela sup → Margem superior costela inf</td>
+            <td>N. intercostais T1–T11</td>
+            <td>Bloqueios analgésicos; fracturas de costelas</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--magenta)">Intercostais internos</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração forçada / estabilização</span></td>
+            <td>Sulco subcostal → Margem sup costela inf (dir. oposta)</td>
+            <td>N. intercostais T1–T11</td>
+            <td>Feixe VAN — regra de drenagem torácica</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--blue)">Intercostais íntimos</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração / estabilização</span></td>
+            <td>Face interna costelas (profunda ao feixe VAN)</td>
+            <td>N. intercostais</td>
+            <td>Separados dos internos pelo feixe VAN</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow)">ECM</strong></td>
+            <td><span class="tag tag-acc" style="font-size:9px">Acessório inspiração</span></td>
+            <td>Esterno + Clavícula → Mastóide</td>
+            <td>N. acessório XI + C2–C3</td>
+            <td>Uso de musculatura acessória (DPOC, asma grave)</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--orange)">Escalenos (3)</strong></td>
+            <td><span class="tag tag-acc" style="font-size:9px">Acessório inspiração</span></td>
+            <td>C2–C7 → 1ª e 2ª costelas</td>
+            <td>Plexo cervical C3–C8</td>
+            <td>Síndrome do estreito superior do tórax</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--red)">Peitoral menor</strong></td>
+            <td><span class="tag tag-acc" style="font-size:9px">Acessório (membro fixo)</span></td>
+            <td>Costelas 3–5 → Proc. coracóide</td>
+            <td>N. peitoral medial C8–T1</td>
+            <td>Ortopneia — apoio nos braços para fixar</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--orange)">Reto abdominal</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração forçada</span></td>
+            <td>Xifóide, cartilagens 5–7 → Sínfise do púbis</td>
+            <td>T5–T12</td>
+            <td>Tosse eficaz, espirro, Valsalva</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--magenta)">Oblíquo externo</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração forçada</span></td>
+            <td>Costelas 5–12 → Crista ilíaca + linha alba</td>
+            <td>T5–T12</td>
+            <td>Compressão abdominal; hérnias inguinais</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--cyan)">Oblíquo interno</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração forçada</span></td>
+            <td>Crista ilíaca → Costelas 9–12 + linha alba</td>
+            <td>T10–L1</td>
+            <td>Com externo: compressão circular eficiente</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--green)">Transverso abdominal</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Expiração forçada (mais eficaz)</span></td>
+            <td>Costelas 6–12, TL, crista ilíaca → Linha alba</td>
+            <td>T6–L1</td>
+            <td>Core stability; incontinência; Valsalva</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--yellow)">Quadrado lombar</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Fixa 12ª costela / expira</span></td>
+            <td>Crista ilíaca → Costela 12 + L1–L4</td>
+            <td>T12, L1–L4</td>
+            <td>Dor lombar; ponto fixo do diafragma</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--red)">Serrátil post. inferior</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Deprime costelas 9–12</span></td>
+            <td>T11–L2 → Costelas 9–12</td>
+            <td>T9–T12</td>
+            <td>Dor dorsal baixa; tosse crónica</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--blue)">Serrátil post. superior</strong></td>
+            <td><span class="tag tag-insp" style="font-size:9px">Eleva costelas 2–5</span></td>
+            <td>C7–T3 → Costelas 2–5</td>
+            <td>T1–T4</td>
+            <td>Raramente avaliado isolado</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--blue)">Transverso do tórax</strong></td>
+            <td><span class="tag tag-exp" style="font-size:9px">Deprime cartilagens 2–6</span></td>
+            <td>Esterno (face post.) → Cartilagens 2–6</td>
+            <td>N. intercostais T2–T6</td>
+            <td>Ativo na tosse e expiração forçada</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Accordion: Princípios Físicos -->
+  <div style="max-width:900px;margin:40px auto;padding:0 20px" class="fade-in">
+    <h4 style="font-family:Orbitron;font-size:11px;letter-spacing:3px;color:var(--yellow);margin-bottom:15px">PRINCÍPIOS FÍSICOS ESSENCIAIS</h4>
+    <div style="border:1px solid #1a1a2e">
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">LEI DE BOYLE — P·V = CONSTANTE <span class="accordion-icon">+</span></div>
+        <div class="accordion-content">
+          <p>Robert Boyle (1662): a pressão de um gás é inversamente proporcional ao seu volume (temperatura constante). No pulmão: contração muscular ↑ volume → ↓ pressão alveolar → ar flui de Patm>Palv. <strong>Clínica:</strong> Ventilação mecânica com pressão positiva inverte este gradiente artificialmente.</p>
+        </div>
+      </div>
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">COMPLACÊNCIA PULMONAR — ΔV/ΔP <span class="accordion-icon">+</span></div>
+        <div class="accordion-content">
+          <p>Complacência (C) = ΔVolume / ΔPressão. Normal: ~200 mL/cmH₂O. <strong>↓C (pulmão rígido):</strong> fibrose, edema → maior esforço muscular. <strong>↑C (pulmão flácido):</strong> enfisema → pulmão colapsa facilmente. O diafragma trabalha contra esta complacência — quanto mais rígido o sistema, maior o trabalho respiratório (WOB — Work of Breathing).</p>
+        </div>
+      </div>
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">RESISTÊNCIA DAS VIAS AÉREAS — R = ΔP/Q <span class="accordion-icon">+</span></div>
+        <div class="accordion-content">
+          <p>Lei de Poiseuille: R ∝ 1/r⁴. Pequena redução do raio → grande aumento da resistência → músculos respiratórios têm de gerar maior pressão (ΔP) para o mesmo fluxo (Q). <strong>Asma:</strong> broncoespasmo ↑R → ativa todos os músculos acessórios. Tratamento: broncodilatadores reduzem R → poupam o trabalho muscular.</p>
+        </div>
+      </div>
+      <div class="accordion-item" onclick="toggleAccordion(this)">
+        <div class="accordion-header">TENSÃO SUPERFICIAL & SURFACTANTE <span class="accordion-icon">+</span></div>
+        <div class="accordion-content">
+          <p>Lei de Laplace: P = 2T/r. Alvéolos pequenos teriam pressão interna enorme sem surfactante. O surfactante (produzido por pneumócitos tipo II, a partir da 24ª semana gestacional) ↓ tensão superficial proporcionalmente ao raio — estabiliza os alvéolos. <strong>SDR neonatal:</strong> défice de surfactante → colapso alveolar → os músculos respiratórios do recém-nascido exaustam-se em horas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-section fade-in">
+    <h4 style="font-family:Bangers;font-size:40px;color:var(--yellow);letter-spacing:2px;margin-bottom:5px">⚡ QUIZ FINAL</h4>
+    <p style="color:var(--gray);font-size:13px;font-family:Orbitron;letter-spacing:2px;margin-bottom:25px">TESTA O TEU CONHECIMENTO</p>
+    <div id="quiz-container"></div>
+  </div>
+
+</section>
+
+<!-- ============================== FOOTER ============================== -->
+<footer>
+  <div class="footer-logo">DemilMed</div>
+  <div class="footer-sub">MEDICINA COM ARTE — CIÊNCIA COM ALMA</div>
+  <div style="width:100px;height:2px;background:linear-gradient(90deg,var(--cyan),var(--magenta));margin:20px auto"></div>
+  <div class="footer-credit">
+    <strong style="color:var(--white)">DEMILMED-UL</strong><br>
+    <span style="color:var(--cyan)">UL = UNIVERSIDADE LICUNGO</span><br>
+    <span style="color:var(--gray)">ANO 2026</span>
+  </div>
+  <div style="margin-top:20px;font-size:11px;color:#444;font-family:Orbitron;letter-spacing:2px">
+    MÚSCULOS DA RESPIRAÇÃO — EPISÓDIO I — EDIÇÃO COMPLETA
+  </div>
+  <div style="margin-top:30px">
+    <span style="color:var(--cyan);font-size:30px;opacity:0.3">◈</span>
+    <span style="color:var(--magenta);font-size:30px;opacity:0.3;margin:0 10px">◈</span>
+    <span style="color:var(--yellow);font-size:30px;opacity:0.3">◈</span>
+  </div>
+</footer>
+
+<script>
+// ======= PROGRESS BAR =======
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+});
+
+// ======= PARTICLES =======
+const canvas = document.getElementById('particles1');
+const ctx = canvas.getContext('2d');
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const particles = [];
+for(let i=0;i<80;i++){
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*2+0.5,
+    vx: (Math.random()-0.5)*0.4,
+    vy: (Math.random()-0.5)*0.4,
+    color: ['#00fff7','#ff00cc','#ffe600','#3366ff','#00ff88'][Math.floor(Math.random()*5)],
+    alpha: Math.random()*0.7+0.1
+  });
+}
+
+function animParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>canvas.width) p.vx*=-1;
+    if(p.y<0||p.y>canvas.height) p.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+    ctx.globalAlpha=1;
+  });
+  // connections
+  particles.forEach((p,i)=>{
+    particles.forEach((q,j)=>{
+      if(j>i){
+        const d = Math.hypot(p.x-q.x,p.y-q.y);
+        if(d<80){
+          ctx.beginPath();
+          ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
+          ctx.strokeStyle='rgba(0,255,247,'+(1-d/80)*0.15+')';
+          ctx.lineWidth=0.5; ctx.stroke();
+        }
+      }
+    });
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ======= SCROLL ANIMATIONS =======
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .timeline-item').forEach(el => {
+  observer.observe(el);
+});
+
+// ======= ACCORDION =======
+function toggleAccordion(item) {
+  item.classList.toggle('open');
+}
+
+// ======= QUIZ =======
+const questions = [
+  {
+    q: "Qual nervo inerva o diafragma e de quais segmentos medulares origina?",
+    opts: [
+      "Nervo vago (X), de C1–C2",
+      "Nervo frénico (phrenic nerve), de C3, C4 e C5",
+      "Nervos intercostais, de T1–T4",
+      "Nervo acessório (XI), de C1–C3"
+    ],
+    correct: 1,
+    explanation: "O nervo frénico (phrenic nerve) emerge de C3, C4 e C5. O mnemónico clássico: 'C3, 4, 5 keeps the diaphragm alive.' Lesão acima de C3 → apneia → ventilação mecânica obrigatória."
+  },
+  {
+    q: "Na inspiração tranquila em repouso, qual é o principal músculo responsável e qual a percentagem do trabalho respiratório que realiza?",
+    opts: [
+      "Intercostais externos — 40%",
+      "Escalenos — 60%",
+      "Diafragma — 70 a 80%",
+      "Reto abdominal — 50%"
+    ],
+    correct: 2,
+    explanation: "O diafragma é responsável por 70–80% do trabalho respiratório em repouso. Os intercostais externos e outros músculos contribuem com o restante, sendo mais recrutados em exercício e situações de dificuldade respiratória."
+  },
+  {
+    q: "Onde devo colocar a agulha ao realizar uma drenagem torácica para evitar o feixe vasculonervoso intercostal?",
+    opts: [
+      "Na margem inferior da costela superior do espaço intercostal",
+      "No meio do espaço intercostal",
+      "Na margem superior da costela inferior do espaço intercostal",
+      "Na linha axilar posterior, em qualquer ponto"
+    ],
+    correct: 2,
+    explanation: "O feixe vasculonervoso (veia, artéria, nervo — VAN) corre no sulco subcostal, na margem INFERIOR de cada costela. Portanto, deve-se inserir a agulha na MARGEM SUPERIOR da costela inferior do espaço escolhido para evitar lesão do nervo e vasos intercostais."
+  },
+  {
+    q: "Qual dos seguintes músculos é o mais importante para a expiração FORÇADA e gerar pressão intra-abdominal positiva?",
+    opts: [
+      "Reto abdominal",
+      "Oblíquo externo",
+      "Transverso do abdómen",
+      "Serrátil posterior inferior"
+    ],
+    correct: 2,
+    explanation: "O transverso do abdómen (transversus abdominis) tem fibras horizontais que circundam o abdómen como uma faixa. É o músculo mais eficaz para comprimir as vísceras, elevar o diafragma e gerar pressão intra-abdominal positiva — essencial na tosse eficaz e na Manobra de Valsalva."
+  },
+  {
+    q: "O que acontece à pressão intrapleural durante a inspiração normal?",
+    opts: [
+      "Passa de −5 para 0 cmH₂O (fica neutra)",
+      "Passa de −5 para −8 cmH₂O (fica mais negativa)",
+      "Passa de −5 para +5 cmH₂O (fica positiva)",
+      "Mantém-se constante em −5 cmH₂O"
+    ],
+    correct: 1,
+    explanation: "Durante a inspiração, o diafragma desce e o tórax expande. A pressão intrapleural torna-se MAIS NEGATIVA: de −5 cmH₂O em repouso para cerca de −8 cmH₂O. Isto 'puxa' os pulmões para expansão. Se a pressão intrapleural ficar positiva (pneumotórax), o pulmão colapsa."
+  }
+];
+
+let currentQ = 0;
+let answered = false;
+
+function renderQuiz(){
+  if(currentQ >= questions.length){
+    document.getElementById('quiz-container').innerHTML = `
+      <div style="text-align:center;padding:20px">
+        <div style="font-family:Bangers;font-size:60px;color:var(--green)">MISSÃO COMPLETA!</div>
+        <p style="color:var(--gray);margin-top:10px;font-size:15px">Completaste todas as perguntas. Revê os capítulos e domina os músculos da respiração!</p>
+        <button onclick="currentQ=0;answered=false;renderQuiz()" style="margin-top:20px;background:transparent;border:2px solid var(--cyan);color:var(--cyan);font-family:Orbitron;font-size:11px;letter-spacing:2px;padding:12px 30px;cursor:pointer">↺ RECOMEÇAR</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = questions[currentQ];
+  document.getElementById('quiz-container').innerHTML = `
+    <div style="font-family:Orbitron;font-size:10px;letter-spacing:2px;color:var(--gray);margin-bottom:12px">PERGUNTA ${currentQ+1} / ${questions.length}</div>
+    <p class="quiz-q">${q.q}</p>
+    <div class="quiz-options">
+      ${q.opts.map((o,i)=>`<button class="quiz-btn" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfeedback"></div>
+    <div id="next-btn-wrap" style="margin-top:15px;display:none">
+      <button onclick="nextQuestion()" style="background:transparent;border:1px solid var(--cyan);color:var(--cyan);font-family:Orbitron;font-size:10px;letter-spacing:2px;padding:10px 25px;cursor:pointer">PRÓXIMA →</button>
+    </div>
+  `;
+  answered = false;
+}
+
+function answerQuiz(idx){
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.quiz-btn');
+  const feedback = document.getElementById('qfeedback');
+
+  btns.forEach((b,i)=>{
+    b.style.pointerEvents='none';
+    if(i===q.correct) b.classList.add('correct');
+    else if(i===idx && idx!==q.correct) b.classList.add('wrong');
+  });
+
+  feedback.style.display='block';
+  if(idx===q.correct){
+    feedback.style.background='rgba(0,255,136,0.08)';
+    feedback.style.border='1px solid var(--green)';
+    feedback.style.color='#aaffcc';
+    feedback.innerHTML='✓ CORRETO! — '+q.explanation;
+  } else {
+    feedback.style.background='rgba(255,34,68,0.08)';
+    feedback.style.border='1px solid var(--red)';
+    feedback.style.color='#ffaaaa';
+    feedback.innerHTML='✗ ERRADO — '+q.explanation;
+  }
+  document.getElementById('next-btn-wrap').style.display='block';
+}
+
+function nextQuestion(){
+  currentQ++;
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>

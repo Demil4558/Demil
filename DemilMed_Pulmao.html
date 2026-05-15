@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | O Mundo Secreto do Pulmão</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&family=Orbitron:wght@700;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --cyan: #00f5ff;
+    --pink: #ff2d78;
+    --yellow: #ffe600;
+    --green: #39ff14;
+    --purple: #bf00ff;
+    --orange: #ff6b00;
+    --white: #f0f0ff;
+    --panel-bg: #12121e;
+    --border: rgba(0,245,255,0.3);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ══════════ SCROLLBAR ══════════ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+  /* ══════════ GLOBAL NAV ══════════ */
+  #nav {
+    position: fixed; top:0; left:0; width:100%; z-index:999;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--cyan);
+    display:flex; align-items:center; gap:8px;
+    padding: 10px 20px; flex-wrap:wrap;
+  }
+  #nav span {
+    font-family:'Orbitron',sans-serif; font-size:0.7rem;
+    color: var(--cyan); letter-spacing:2px;
+  }
+  .nav-btn {
+    background:transparent; border:1px solid var(--pink);
+    color: var(--pink); padding:4px 12px; border-radius:20px;
+    font-family:'Nunito',sans-serif; font-size:0.72rem; font-weight:700;
+    cursor:pointer; transition:all 0.25s;
+  }
+  .nav-btn:hover { background:var(--pink); color:#000; transform:scale(1.05); }
+
+  /* ══════════ SECTION BASE ══════════ */
+  .scene {
+    min-height: 100vh;
+    padding: 100px 20px 60px;
+    position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+
+  /* ══════════ MANGA PANEL LAYOUTS ══════════ */
+  .manga-frame {
+    border: 3px solid var(--cyan);
+    border-radius: 4px;
+    padding: 24px;
+    position:relative;
+    background: var(--panel-bg);
+    box-shadow: 0 0 30px rgba(0,245,255,0.15), inset 0 0 40px rgba(0,0,0,0.5);
+    max-width: 900px; width:100%;
+    margin: 20px auto;
+  }
+  .manga-frame::before {
+    content: attr(data-label);
+    position:absolute; top:-14px; left:20px;
+    background: var(--cyan); color:#000;
+    font-family:'Bangers',cursive; font-size:1rem; letter-spacing:2px;
+    padding: 2px 12px; border-radius:4px;
+  }
+
+  /* ══════════ CHAPTER TITLES ══════════ */
+  .chapter-title {
+    font-family:'Bangers',cursive;
+    font-size: clamp(2.5rem,6vw,5rem);
+    line-height:1.1;
+    text-align:center;
+    position:relative; z-index:2;
+    text-shadow: 4px 4px 0 #000, 0 0 40px currentColor;
+  }
+  .ch1 { color: var(--cyan); }
+  .ch2 { color: var(--pink); }
+  .ch3 { color: var(--yellow); }
+  .ch4 { color: var(--green); }
+  .ch5 { color: var(--purple); }
+  .ch6 { color: var(--orange); }
+
+  .chapter-sub {
+    font-family:'Caveat',cursive; font-size:1.4rem;
+    text-align:center; opacity:0.8; margin-top:8px;
+  }
+
+  /* ══════════ SPEECH BUBBLES ══════════ */
+  .bubble {
+    position:relative; background:#fff; color:#000;
+    border-radius:20px; padding:14px 20px;
+    font-weight:700; font-size:0.95rem; max-width:380px;
+    border:3px solid #000;
+    box-shadow: 4px 4px 0 #000;
+    margin: 10px;
+  }
+  .bubble::after {
+    content:''; position:absolute;
+    width:0; height:0;
+  }
+  .bubble.left::after {
+    bottom:-20px; left:30px;
+    border:10px solid transparent;
+    border-top-color:#000;
+  }
+  .bubble.right::after {
+    bottom:-20px; right:30px;
+    border:10px solid transparent;
+    border-top-color:#000;
+  }
+  .bubble.think {
+    border-radius:50%; text-align:center;
+    background: linear-gradient(135deg,#e0f7ff,#fff);
+    border-style:dashed;
+  }
+  .bubble.shout {
+    background: var(--yellow); border-color:#000;
+    transform: rotate(-1deg);
+    font-family:'Bangers',cursive; letter-spacing:1px;
+    font-size:1.1rem;
+  }
+  .bubble.info {
+    background: linear-gradient(135deg,#0a0a1e,#12122e);
+    color: var(--cyan); border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.3);
+  }
+
+  /* ══════════ CHARACTER DISPLAY ══════════ */
+  .character-wrapper {
+    display:flex; align-items:flex-end; gap:20px;
+    flex-wrap:wrap; justify-content:center; margin:20px 0;
+  }
+  .character {
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .char-name {
+    font-family:'Bangers',cursive; font-size:1.1rem;
+    letter-spacing:2px; text-shadow:0 0 10px currentColor;
+  }
+
+  /* ══════════ LUNG SVG ══════════ */
+  .lung-container {
+    display:flex; gap:30px; justify-content:center;
+    align-items:center; flex-wrap:wrap; margin:20px 0;
+  }
+
+  /* ══════════ MOLECULE CANVAS ══════════ */
+  canvas { display:block; }
+
+  /* ══════════ CARDS ══════════ */
+  .card-grid {
+    display:grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap:20px; max-width:900px; width:100%; margin:20px auto;
+  }
+  .card {
+    background: var(--panel-bg);
+    border: 2px solid;
+    border-radius:12px; padding:20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position:relative; overflow:hidden;
+  }
+  .card:hover { transform:translateY(-6px) scale(1.02); }
+  .card::before {
+    content:''; position:absolute; top:0; left:0;
+    width:100%; height:4px;
+    background: inherit; border-color:inherit;
+  }
+  .card h3 { font-family:'Bangers',cursive; font-size:1.4rem; letter-spacing:1px; margin-bottom:10px; }
+  .card p { font-size:0.9rem; line-height:1.6; opacity:0.9; }
+
+  .card.cyan { border-color:var(--cyan); box-shadow:0 0 20px rgba(0,245,255,0.15); }
+  .card.cyan h3 { color:var(--cyan); }
+  .card.pink { border-color:var(--pink); box-shadow:0 0 20px rgba(255,45,120,0.15); }
+  .card.pink h3 { color:var(--pink); }
+  .card.yellow { border-color:var(--yellow); box-shadow:0 0 20px rgba(255,230,0,0.15); }
+  .card.yellow h3 { color:var(--yellow); }
+  .card.green { border-color:var(--green); box-shadow:0 0 20px rgba(57,255,20,0.15); }
+  .card.green h3 { color:var(--green); }
+  .card.purple { border-color:var(--purple); box-shadow:0 0 20px rgba(191,0,255,0.15); }
+  .card.purple h3 { color:var(--purple); }
+  .card.orange { border-color:var(--orange); box-shadow:0 0 20px rgba(255,107,0,0.15); }
+  .card.orange h3 { color:var(--orange); }
+
+  /* ══════════ FORMULA BOX ══════════ */
+  .formula-box {
+    background: linear-gradient(135deg,#0d0d1a,#1a0d2e);
+    border: 2px solid var(--purple);
+    border-radius:12px; padding:24px;
+    text-align:center; position:relative;
+    box-shadow: 0 0 40px rgba(191,0,255,0.2);
+    margin:16px auto; max-width:600px;
+  }
+  .formula-box .formula {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(1.2rem,3vw,2rem);
+    color:var(--yellow);
+    text-shadow: 0 0 20px var(--yellow);
+    margin:8px 0;
+  }
+  .formula-box .formula-label {
+    font-size:0.85rem; color:rgba(255,255,255,0.6);
+    font-style:italic;
+  }
+
+  /* ══════════ TIMELINE ══════════ */
+  .timeline {
+    position:relative; max-width:800px; width:100%; margin:20px auto;
+    padding-left:40px;
+  }
+  .timeline::before {
+    content:''; position:absolute; left:16px; top:0; bottom:0; width:3px;
+    background:linear-gradient(to bottom,var(--cyan),var(--pink),var(--yellow),var(--green));
+  }
+  .tl-item {
+    position:relative; margin-bottom:30px;
+    background:var(--panel-bg); border-radius:12px; padding:18px 20px;
+    border-left:3px solid var(--cyan); transition:transform 0.3s;
+  }
+  .tl-item:hover { transform:translateX(6px); }
+  .tl-item::before {
+    content:''; position:absolute; left:-28px; top:20px;
+    width:16px; height:16px; border-radius:50%;
+    background:var(--cyan); border:3px solid #000;
+    box-shadow:0 0 10px var(--cyan);
+  }
+  .tl-item h4 { font-family:'Bangers',cursive; font-size:1.3rem; color:var(--cyan); margin-bottom:6px; }
+  .tl-item p { font-size:0.88rem; line-height:1.6; }
+
+  /* ══════════ PRESSURE GAUGE ══════════ */
+  .gauge-row {
+    display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin:20px 0;
+  }
+
+  /* ══════════ COMPARISON TABLE ══════════ */
+  .comp-table {
+    width:100%; border-collapse:collapse; max-width:800px;
+    margin:20px auto; border-radius:12px; overflow:hidden;
+  }
+  .comp-table th {
+    background:linear-gradient(135deg,var(--panel-bg),#1a1a2e);
+    color:var(--cyan); font-family:'Bangers',cursive; letter-spacing:1px;
+    padding:14px; border-bottom:2px solid var(--cyan); font-size:1rem;
+  }
+  .comp-table td {
+    padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.08);
+    font-size:0.88rem; line-height:1.5;
+  }
+  .comp-table tr:hover td { background:rgba(0,245,255,0.04); }
+  .comp-table tr td:first-child { color:var(--yellow); font-weight:700; }
+
+  /* ══════════ QUIZ ══════════ */
+  .quiz-box {
+    background:var(--panel-bg); border:2px solid var(--green);
+    border-radius:16px; padding:24px; max-width:700px;
+    margin:20px auto; box-shadow:0 0 30px rgba(57,255,20,0.15);
+  }
+  .quiz-box h3 { font-family:'Bangers',cursive; color:var(--green); font-size:1.5rem; margin-bottom:12px; }
+  .quiz-opt {
+    display:block; width:100%; text-align:left;
+    background:rgba(255,255,255,0.05); border:2px solid rgba(255,255,255,0.15);
+    color:var(--white); padding:12px 16px; border-radius:10px;
+    margin:8px 0; cursor:pointer; font-size:0.9rem; font-weight:700;
+    font-family:'Nunito',sans-serif; transition:all 0.25s;
+  }
+  .quiz-opt:hover { border-color:var(--green); background:rgba(57,255,20,0.1); }
+  .quiz-opt.correct { background:rgba(57,255,20,0.2); border-color:var(--green); color:var(--green); }
+  .quiz-opt.wrong { background:rgba(255,45,120,0.2); border-color:var(--pink); color:var(--pink); }
+  .quiz-result { margin-top:14px; font-weight:700; font-size:1rem; min-height:24px; }
+
+  /* ══════════ HERO SCENE ══════════ */
+  #hero {
+    min-height:100vh;
+    background: radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,45,120,0.08) 0%, transparent 60%),
+                var(--bg);
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; text-align:center; padding:80px 20px 40px;
+    position:relative; overflow:hidden;
+  }
+  .hero-badge {
+    font-family:'Orbitron',sans-serif; font-size:0.7rem; letter-spacing:4px;
+    color:var(--cyan); border:1px solid var(--cyan); padding:6px 16px;
+    border-radius:30px; margin-bottom:20px;
+    animation: pulseBorder 2s ease-in-out infinite;
+  }
+  @keyframes pulseBorder {
+    0%,100% { box-shadow:0 0 8px rgba(0,245,255,0.4); }
+    50% { box-shadow:0 0 20px rgba(0,245,255,0.8); }
+  }
+  .hero-title {
+    font-family:'Bangers',cursive;
+    font-size: clamp(3rem,8vw,7rem);
+    line-height:1;
+    background: linear-gradient(135deg, var(--cyan), var(--pink), var(--yellow));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    animation: titlePulse 3s ease-in-out infinite;
+  }
+  @keyframes titlePulse {
+    0%,100% { filter:drop-shadow(0 0 20px rgba(0,245,255,0.5)); }
+    50% { filter:drop-shadow(0 0 50px rgba(255,45,120,0.6)); }
+  }
+  .hero-sub {
+    font-family:'Caveat',cursive; font-size:1.8rem;
+    color:var(--white); opacity:0.8; margin:10px 0 30px;
+  }
+  .start-btn {
+    background: linear-gradient(135deg,var(--cyan),var(--purple));
+    color:#000; border:none; padding:16px 40px;
+    font-family:'Bangers',cursive; font-size:1.5rem; letter-spacing:2px;
+    border-radius:50px; cursor:pointer; position:relative; z-index:2;
+    box-shadow: 0 8px 30px rgba(0,245,255,0.4);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration:none; display:inline-block;
+  }
+  .start-btn:hover {
+    transform:translateY(-4px) scale(1.05);
+    box-shadow: 0 16px 50px rgba(0,245,255,0.6);
+  }
+
+  /* ══════════ SCENE BACKGROUNDS ══════════ */
+  #ch1 { background: radial-gradient(ellipse at center, rgba(0,245,255,0.05) 0%, var(--bg) 70%); }
+  #ch2 { background: radial-gradient(ellipse at center, rgba(255,45,120,0.05) 0%, var(--bg) 70%); }
+  #ch3 { background: radial-gradient(ellipse at center, rgba(255,230,0,0.05) 0%, var(--bg) 70%); }
+  #ch4 { background: radial-gradient(ellipse at center, rgba(57,255,20,0.05) 0%, var(--bg) 70%); }
+  #ch5 { background: radial-gradient(ellipse at center, rgba(191,0,255,0.05) 0%, var(--bg) 70%); }
+  #ch6 { background: radial-gradient(ellipse at center, rgba(255,107,0,0.05) 0%, var(--bg) 70%); }
+
+  /* ══════════ ANIMATIONS ══════════ */
+  @keyframes float {
+    0%,100% { transform:translateY(0); }
+    50% { transform:translateY(-12px); }
+  }
+  @keyframes breathe {
+    0%,100% { transform:scale(1); opacity:0.9; }
+    50% { transform:scale(1.15); opacity:1; }
+  }
+  @keyframes slideInLeft {
+    from { opacity:0; transform:translateX(-60px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+  @keyframes slideInRight {
+    from { opacity:0; transform:translateX(60px); }
+    to { opacity:1; transform:translateX(0); }
+  }
+  @keyframes slideInUp {
+    from { opacity:0; transform:translateY(40px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes spin {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+  }
+  @keyframes glow {
+    0%,100% { filter:brightness(1); }
+    50% { filter:brightness(1.5) drop-shadow(0 0 10px currentColor); }
+  }
+  @keyframes shake {
+    0%,100% { transform:translateX(0); }
+    25% { transform:translateX(-4px) rotate(-1deg); }
+    75% { transform:translateX(4px) rotate(1deg); }
+  }
+  @keyframes appear {
+    from { opacity:0; transform:scale(0.8); }
+    to { opacity:1; transform:scale(1); }
+  }
+
+  .floating { animation: float 3s ease-in-out infinite; }
+  .breathing { animation: breathe 4s ease-in-out infinite; }
+  .glowing { animation: glow 2s ease-in-out infinite; }
+  .appear { animation: appear 0.6s ease-out forwards; }
+
+  /* ══════════ INTERACTIVE LUNG ══════════ */
+  .lung-demo {
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    margin:20px 0;
+  }
+  .lung-ctrl {
+    display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
+  }
+  .ctrl-btn {
+    background:var(--panel-bg); border:2px solid;
+    border-radius:8px; padding:10px 20px; cursor:pointer;
+    font-family:'Bangers',cursive; font-size:1rem; letter-spacing:1px;
+    transition:all 0.25s;
+  }
+  .ctrl-btn:hover { transform:scale(1.05); }
+  .ctrl-btn.cyan { border-color:var(--cyan); color:var(--cyan); }
+  .ctrl-btn.cyan:hover { background:rgba(0,245,255,0.15); }
+  .ctrl-btn.pink { border-color:var(--pink); color:var(--pink); }
+  .ctrl-btn.pink:hover { background:rgba(255,45,120,0.15); }
+  .ctrl-btn.yellow { border-color:var(--yellow); color:var(--yellow); }
+  .ctrl-btn.yellow:hover { background:rgba(255,230,0,0.15); }
+
+  /* ══════════ PROGRESS BAR ══════════ */
+  .progress-bar-container {
+    position:fixed; top:56px; left:0; width:100%; height:3px; z-index:998;
+    background:rgba(255,255,255,0.05);
+  }
+  .progress-bar {
+    height:100%; width:0%;
+    background:linear-gradient(to right,var(--cyan),var(--pink),var(--yellow));
+    transition:width 0.3s;
+  }
+
+  /* ══════════ CHAPTER MARKERS ══════════ */
+  .chapter-marker {
+    display:inline-flex; align-items:center; gap:10px;
+    background:rgba(0,0,0,0.5); border:2px solid;
+    border-radius:30px; padding:8px 20px; margin-bottom:16px;
+    font-family:'Orbitron',sans-serif; font-size:0.75rem; letter-spacing:2px;
+  }
+
+  /* ══════════ EFFECT FX TEXT ══════════ */
+  .fx {
+    font-family:'Bangers',cursive; position:absolute;
+    pointer-events:none; z-index:0; opacity:0.06;
+    font-size:12rem; white-space:nowrap; user-select:none;
+  }
+
+  /* ══════════ SEPARATOR ══════════ */
+  .sep {
+    width:100%; max-width:800px; margin:30px auto;
+    height:2px; border:none;
+    background: linear-gradient(to right, transparent, var(--cyan), transparent);
+  }
+  .sep.pink { background: linear-gradient(to right, transparent, var(--pink), transparent); }
+  .sep.yellow { background: linear-gradient(to right, transparent, var(--yellow), transparent); }
+  .sep.green { background: linear-gradient(to right, transparent, var(--green), transparent); }
+
+  /* ══════════ CALLOUT ══════════ */
+  .callout {
+    background: linear-gradient(135deg,rgba(0,245,255,0.08),rgba(191,0,255,0.08));
+    border-left: 5px solid var(--cyan);
+    border-radius:0 12px 12px 0; padding:16px 20px;
+    margin:16px 0; position:relative;
+  }
+  .callout.warn { border-color:var(--pink); background:linear-gradient(135deg,rgba(255,45,120,0.08),rgba(255,107,0,0.08)); }
+  .callout.tip { border-color:var(--green); background:linear-gradient(135deg,rgba(57,255,20,0.08),rgba(0,245,255,0.08)); }
+  .callout strong { color:var(--cyan); }
+  .callout.warn strong { color:var(--pink); }
+  .callout.tip strong { color:var(--green); }
+  .callout p { font-size:0.9rem; line-height:1.7; margin-top:6px; }
+
+  /* ══════════ SCROLL REVEAL ══════════ */
+  .reveal {
+    opacity:0; transform:translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ══════════ FOOTER ══════════ */
+  #footer {
+    background: linear-gradient(135deg,#08080f,#12121e);
+    border-top:2px solid var(--cyan);
+    padding:40px 20px; text-align:center;
+  }
+  .footer-logo {
+    font-family:'Bangers',cursive; font-size:2.5rem;
+    background:linear-gradient(135deg,var(--cyan),var(--pink));
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:8px;
+  }
+  .footer-info { font-size:0.85rem; opacity:0.6; line-height:1.8; letter-spacing:1px; }
+
+  /* ══════════ HIGHLIGHT ══════════ */
+  .hl { color:var(--cyan); font-weight:700; }
+  .hl.pink { color:var(--pink); }
+  .hl.yellow { color:var(--yellow); }
+  .hl.green { color:var(--green); }
+  .hl.purple { color:var(--purple); }
+  .hl.orange { color:var(--orange); }
+
+  /* ══════════ BIG NUMBER ══════════ */
+  .big-num {
+    font-family:'Orbitron',sans-serif;
+    font-size:3rem; font-weight:900;
+    text-shadow:0 0 30px currentColor;
+  }
+
+  /* ══════════ STAT BADGE ══════════ */
+  .stat-badge {
+    display:inline-flex; flex-direction:column; align-items:center;
+    background:var(--panel-bg); border:2px solid;
+    border-radius:12px; padding:16px 24px;
+    min-width:140px; margin:8px;
+  }
+  .stat-badge .num { font-family:'Orbitron',sans-serif; font-size:1.6rem; font-weight:900; }
+  .stat-badge .lbl { font-size:0.75rem; opacity:0.7; text-align:center; margin-top:4px; }
+
+  /* ══════════ INTERACTIVE SLIDER ══════════ */
+  input[type=range] {
+    -webkit-appearance:none; appearance:none;
+    width:100%; height:6px; border-radius:3px;
+    background:rgba(255,255,255,0.1); outline:none; cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance:none; appearance:none;
+    width:20px; height:20px; border-radius:50%;
+    background:var(--cyan); border:3px solid #000;
+    box-shadow:0 0 10px var(--cyan); cursor:pointer;
+  }
+
+  /* ══════════ RESPONSIVE ══════════ */
+  @media(max-width:600px) {
+    .chapter-title { font-size:2.2rem; }
+    .manga-frame { padding:16px; }
+    .card-grid { grid-template-columns:1fr; }
+  }
+
+  /* ══════════ HIGHLIGHT TEXT ══════════ */
+  mark {
+    background:var(--yellow); color:#000;
+    padding:0 4px; border-radius:3px; font-weight:700;
+  }
+  mark.cyan { background:var(--cyan); }
+  mark.pink { background:var(--pink); color:#fff; }
+  mark.green { background:var(--green); color:#000; }
+</style>
+</head>
+<body>
+
+<!-- ── PROGRESS BAR ── -->
+<div class="progress-bar-container"><div class="progress-bar" id="progress"></div></div>
+
+<!-- ══════════════════════ NAVIGATION ══════════════════════ -->
+<nav id="nav">
+  <span>⚕ DEMILMED</span>
+  <button class="nav-btn" onclick="scrollTo('#hero')">Início</button>
+  <button class="nav-btn" onclick="scrollTo('#ch1')">Cap.1</button>
+  <button class="nav-btn" onclick="scrollTo('#ch2')">Cap.2</button>
+  <button class="nav-btn" onclick="scrollTo('#ch3')">Cap.3</button>
+  <button class="nav-btn" onclick="scrollTo('#ch4')">Cap.4</button>
+  <button class="nav-btn" onclick="scrollTo('#ch5')">Cap.5</button>
+  <button class="nav-btn" onclick="scrollTo('#ch6')">Cap.6</button>
+  <button class="nav-btn" onclick="scrollTo('#quiz')">Quiz</button>
+</nav>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<section id="hero">
+  <canvas id="moleculaHero" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.35;pointer-events:none;"></canvas>
+  <div class="hero-badge">DEMILMED-UL • SÉRIE ESPECIAL • 2026</div>
+  <h1 class="hero-title">O MUNDO SECRETO<br>DO PULMÃO</h1>
+  <p class="hero-sub">Uma viagem épica pela Complacência, Elastância e Pressões Pulmonares</p>
+  <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;">
+    <div class="bubble think" style="max-width:220px;animation:float 3s ease-in-out infinite;">
+      💭 "Como é que o pulmão sabe quando expandir?!"
+    </div>
+    <div class="bubble shout" style="animation:float 3s 1s ease-in-out infinite;">
+      VAMOS DESCOBRIR JUNTOS! 🔥
+    </div>
+  </div>
+  <a href="#ch1" class="start-btn">▶ COMEÇAR A AVENTURA</a>
+  <div style="margin-top:40px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;opacity:0.5;font-size:0.8rem;font-family:'Orbitron',sans-serif;letter-spacing:2px;">
+    <span>CAP.1 ANATOMIA</span><span>•</span>
+    <span>CAP.2 COMPLACÊNCIA</span><span>•</span>
+    <span>CAP.3 ELASTÂNCIA</span><span>•</span>
+    <span>CAP.4 PRESSÕES</span><span>•</span>
+    <span>CAP.5 CLÍNICA</span><span>•</span>
+    <span>CAP.6 RESUMO</span>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 1 – ANATOMIA & CONTEXTO ══════════════════════ -->
+<section id="ch1" class="scene">
+  <span class="fx" style="top:10%;left:-5%;transform:rotate(-15deg);color:var(--cyan);">PULMÃO</span>
+
+  <div class="chapter-marker" style="border-color:var(--cyan);color:var(--cyan);">
+    📖 CAPÍTULO 1
+  </div>
+  <h2 class="chapter-title ch1">CONHECENDO<br>O GUERREIRO</h2>
+  <p class="chapter-sub">O Pulmão e a Sua Arquitectura</p>
+
+  <hr class="sep">
+
+  <!-- intro bubbles -->
+  <div class="character-wrapper reveal">
+    <div class="character">
+      <!-- SVG lung character -->
+      <svg width="80" height="100" viewBox="0 0 80 100" style="animation:breathe 4s ease-in-out infinite;filter:drop-shadow(0 0 12px #00f5ff)">
+        <ellipse cx="25" cy="60" rx="22" ry="35" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="2"/>
+        <ellipse cx="55" cy="60" rx="22" ry="35" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="2"/>
+        <rect x="35" y="10" width="10" height="40" rx="5" fill="rgba(0,245,255,0.3)" stroke="#00f5ff" stroke-width="2"/>
+        <circle cx="25" cy="55" r="4" fill="var(--cyan)" opacity="0.8"/>
+        <circle cx="55" cy="55" r="4" fill="var(--cyan)" opacity="0.8"/>
+        <circle cx="25" cy="40" r="6" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5"/>
+        <circle cx="55" cy="40" r="6" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5"/>
+        <!-- face -->
+        <circle cx="25" cy="55" r="2" fill="#000"/>
+        <circle cx="55" cy="55" r="2" fill="#000"/>
+        <path d="M20 65 Q25 70 30 65" stroke="#00f5ff" stroke-width="2" fill="none"/>
+        <path d="M50 65 Q55 70 60 65" stroke="#00f5ff" stroke-width="2" fill="none"/>
+      </svg>
+      <span class="char-name" style="color:var(--cyan);">PULMO</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="bubble left">
+        Olá! Eu sou o <strong>Pulmo</strong>, o teu guia pelos mistérios do sistema respiratório!
+      </div>
+      <div class="bubble left">
+        Hoje vais aprender sobre as forças que me fazem expandir e contrair. Prepara-te! 💨
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- Anatomia rápida -->
+  <div class="manga-frame reveal" data-label="⚡ ANATOMIA BÁSICA">
+    <p style="line-height:1.8;margin-bottom:16px;">
+      Antes de falar em pressões e forças, precisamos saber <strong style="color:var(--cyan);">onde estamos</strong>.
+      O pulmão vive dentro de uma caixa chamada <mark class="cyan">tórax</mark>, protegido pelas costelas.
+      Entre o pulmão e as costelas existe um espaço muito especial: o <mark>espaço pleural</mark>.
+    </p>
+    <div class="card-grid">
+      <div class="card cyan">
+        <h3>🫁 Pulmões</h3>
+        <p>Órgãos elásticos, esponjosos, cheios de <strong>alvéolos</strong> (300 milhões deles!). São como balões de borracha que <em>preferem estar colapsados</em>, mas são mantidos abertos.</p>
+      </div>
+      <div class="card pink">
+        <h3>🛡️ Pleura</h3>
+        <p>Membrana dupla que envolve o pulmão. Entre as duas folhas (visceral e parietal) há um espaço com <strong>pressão negativa</strong> — o segredo que mantém o pulmão expandido.</p>
+      </div>
+      <div class="card yellow">
+        <h3>🦴 Tórax</h3>
+        <p>A caixa rígida formada pelas costelas. A parede torácica <strong>tende a expandir</strong> para fora, enquanto o pulmão tende a recolher. É um cabo de guerra constante!</p>
+      </div>
+      <div class="card green">
+        <h3>💧 Tensão Superficial</h3>
+        <p>Nos alvéolos há água → tensão superficial → tendência a colapsar. O <strong>surfactante</strong> (produzido por células tipo II) reduz esta tensão. Sem ele, os pulmões colapsam!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- O cabo de guerra -->
+  <div class="manga-frame reveal" data-label="⚔️ O CABO DE GUERRA">
+    <h3 style="font-family:'Bangers',cursive;font-size:1.5rem;color:var(--yellow);margin-bottom:16px;">🔥 A Batalha Constante no Teu Peito</h3>
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin:20px 0;">
+      <div style="background:rgba(0,245,255,0.1);border:2px solid var(--cyan);border-radius:12px;padding:16px;text-align:center;max-width:200px;">
+        <div style="font-size:2rem;">🫁</div>
+        <strong style="color:var(--cyan);">PULMÃO</strong>
+        <p style="font-size:0.85rem;margin-top:6px;">Quer recolher<br>↩️ Para dentro</p>
+      </div>
+      <div style="font-family:'Bangers',cursive;font-size:3rem;color:var(--pink);margin:0 20px;animation:shake 0.5s ease-in-out infinite;">VS</div>
+      <div style="background:rgba(255,230,0,0.1);border:2px solid var(--yellow);border-radius:12px;padding:16px;text-align:center;max-width:200px;">
+        <div style="font-size:2rem;">🦴</div>
+        <strong style="color:var(--yellow);">TÓRAX</strong>
+        <p style="font-size:0.85rem;margin-top:6px;">Quer expandir<br>↔️ Para fora</p>
+      </div>
+    </div>
+    <div class="callout tip">
+      <strong>🏆 RESULTADO DO CABO DE GUERRA</strong>
+      <p>As duas forças se cancelam na posição de repouso (CRF — Capacidade Residual Funcional), criando uma <strong>pressão negativa no espaço pleural</strong> de aproximadamente <strong style="color:var(--cyan);">-5 cmH₂O</strong>. Este equilíbrio é o que mantém o pulmão aberto!</p>
+    </div>
+  </div>
+
+  <!-- Timeline do ar -->
+  <div class="manga-frame reveal" data-label="🗺️ CAMINHO DO AR">
+    <h3 style="font-family:'Bangers',cursive;font-size:1.5rem;color:var(--pink);margin-bottom:16px;">Do Nariz ao Alvéolo: A Viagem do Ar</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <h4>👃 Nariz/Boca</h4>
+        <p>Entrada do ar. Aqui começa a jornada. O ar é filtrado, humidificado e aquecido.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--pink);">
+        <h4>🌬️ Faringe → Laringe → Traqueia</h4>
+        <p>Grandes vias de condução. O ar passa rapidamente. Sem troca gasosa aqui (espaço morto anatómico).</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--yellow);">
+        <h4>🌿 Brônquios → Bronquíolos</h4>
+        <p>Divisões progressivas em árvore. Resistência ao fluxo de ar ocorre principalmente aqui (brônquios médios).</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--green);">
+        <h4>🫧 Bronquíolos Respiratórios</h4>
+        <p>Início da zona respiratória. Pequena troca gasosa começa aqui.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--purple);">
+        <h4>⭕ Ductos Alveolares → Alvéolos</h4>
+        <p>O destino final! 300 milhões de alvéolos. Superfície total = 70 m². Aqui ocorre a troca de O₂ e CO₂ com o sangue.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 2 – COMPLACÊNCIA ══════════════════════ -->
+<section id="ch2" class="scene">
+  <span class="fx" style="top:5%;right:-5%;transform:rotate(10deg);color:var(--pink);">STRETCH!</span>
+
+  <div class="chapter-marker" style="border-color:var(--pink);color:var(--pink);">📖 CAPÍTULO 2</div>
+  <h2 class="chapter-title ch2">COMPLACÊNCIA:<br>A ARTE DE CEDER</h2>
+  <p class="chapter-sub">Quanto o pulmão "aceita" ser esticado</p>
+
+  <hr class="sep pink">
+
+  <div class="character-wrapper reveal">
+    <div class="bubble info" style="max-width:500px;font-size:1rem;line-height:1.7;">
+      🎯 <strong style="color:var(--pink);">COMPLACÊNCIA</strong> é a <strong>facilidade</strong> com que o pulmão (ou o sistema respiratório) se deixa expandir quando aplicamos uma pressão. É como medir o quanto um balão é "flexível".
+    </div>
+  </div>
+
+  <!-- Formula principal -->
+  <div class="formula-box reveal" style="border-color:var(--pink);box-shadow:0 0 40px rgba(255,45,120,0.2);">
+    <div class="formula-label">FÓRMULA DA COMPLACÊNCIA</div>
+    <div class="formula" style="color:var(--pink);">C = ΔV / ΔP</div>
+    <div style="display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:16px;font-size:0.85rem;">
+      <div style="text-align:center;"><span style="color:var(--pink);font-weight:700;">C</span><br><span style="opacity:0.7;">Complacência<br>(L/cmH₂O)</span></div>
+      <div style="text-align:center;"><span style="color:var(--yellow);font-weight:700;">ΔV</span><br><span style="opacity:0.7;">Variação<br>de Volume (L)</span></div>
+      <div style="text-align:center;"><span style="color:var(--cyan);font-weight:700;">ΔP</span><br><span style="opacity:0.7;">Variação<br>de Pressão (cmH₂O)</span></div>
+    </div>
+    <div class="formula-label" style="margin-top:12px;">
+      💡 Complacência normal do pulmão: <strong style="color:var(--pink);">~0.2 L/cmH₂O</strong>
+    </div>
+  </div>
+
+  <!-- Analogia do balão -->
+  <div class="manga-frame reveal" data-label="🎈 ANALOGIA: OS TRÊS BALÕES">
+    <p style="margin-bottom:20px;line-height:1.8;">
+      Imagina que tens três balões diferentes. Dás o <strong>mesmo sopro</strong> (mesma pressão) a cada um. O que acontece?
+    </p>
+    <div class="card-grid">
+      <div class="card green" style="text-align:center;">
+        <div style="font-size:3rem;animation:breathe 2s ease-in-out infinite;">🟢</div>
+        <h3>Balão Flácido</h3>
+        <p><strong style="color:var(--green);">ALTA complacência</strong><br>Expande muito com pouca pressão.<br><em>Como pulmão enfisematoso</em></p>
+        <div class="big-num" style="color:var(--green);">↑C</div>
+      </div>
+      <div class="card yellow" style="text-align:center;">
+        <div style="font-size:3rem;animation:breathe 3s ease-in-out infinite;">🟡</div>
+        <h3>Balão Normal</h3>
+        <p><strong style="color:var(--yellow);">Complacência normal</strong><br>Expande razoavelmente.<br><em>Pulmão saudável</em></p>
+        <div class="big-num" style="color:var(--yellow);">= C</div>
+      </div>
+      <div class="card pink" style="text-align:center;">
+        <div style="font-size:3rem;animation:breathe 4s ease-in-out infinite;">🔴</div>
+        <h3>Balão Rígido</h3>
+        <p><strong style="color:var(--pink);">BAIXA complacência</strong><br>Precisa de muita pressão para expandir.<br><em>Como fibrose pulmonar</em></p>
+        <div class="big-num" style="color:var(--pink);">↓C</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Curva Pressão-Volume interativa -->
+  <div class="manga-frame reveal" data-label="📈 CURVA PRESSÃO-VOLUME">
+    <h3 style="font-family:'Bangers',cursive;font-size:1.5rem;color:var(--yellow);margin-bottom:10px;">A Curva P-V: O "DNA" do Pulmão</h3>
+    <p style="margin-bottom:16px;font-size:0.9rem;line-height:1.7;">
+      A curva Pressão-Volume (P-V) é como a "identidade" do pulmão. 
+      O <strong style="color:var(--yellow);">declive</strong> desta curva <em>é</em> a complacência!
+    </p>
+    <canvas id="pvCurve" width="700" height="320" style="max-width:100%;border-radius:8px;border:1px solid rgba(255,255,255,0.1);"></canvas>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:12px;font-size:0.8rem;">
+      <span><span style="color:var(--green);">■</span> Normal</span>
+      <span><span style="color:var(--pink);">■</span> Fibrose (↓C)</span>
+      <span><span style="color:var(--yellow);">■</span> Enfisema (↑C)</span>
+    </div>
+    <div class="callout" style="margin-top:16px;">
+      <strong>📐 Como ler a curva:</strong>
+      <p>Quanto mais <strong>vertical</strong> (íngreme) a curva → maior complacência → pulmão mais fácil de expandir. Quanto mais <strong>horizontal</strong> (achatada) → menor complacência → pulmão mais rígido, precisa de mais pressão.</p>
+    </div>
+  </div>
+
+  <!-- Fatores que afectam -->
+  <div class="manga-frame reveal" data-label="🔧 FACTORES QUE ALTERAM A COMPLACÊNCIA">
+    <div class="card-grid">
+      <div class="card cyan">
+        <h3>⬆️ Aumentam C</h3>
+        <p>• <strong>Enfisema</strong> — destruição das paredes alveolares, perda de elasticidade<br>
+        • <strong>Velhice</strong> — perda gradual de fibras elásticas<br>
+        • <strong>Asma crónica</strong> — remodelação tecidular</p>
+      </div>
+      <div class="card pink">
+        <h3>⬇️ Diminuem C</h3>
+        <p>• <strong>Fibrose Pulmonar</strong> — tecido cicatricial rígido<br>
+        • <strong>Edema Pulmonar</strong> — líquido nos alvéolos altera surfactante<br>
+        • <strong>SDRA</strong> — síndrome de dificuldade respiratória<br>
+        • <strong>Pneumonia</strong> — consolidação<br>
+        • <strong>Atelectasia</strong> — colapso alveolar</p>
+      </div>
+      <div class="card yellow">
+        <h3>💧 Surfactante</h3>
+        <p>O surfactante (produzido às 24–36 semanas gestação) <strong>aumenta a complacência</strong> ao reduzir a tensão superficial dos alvéolos. Sem surfactante: cada expiração seria um colapso total!</p>
+      </div>
+      <div class="card purple">
+        <h3>📏 Volume Pulmonar</h3>
+        <p>A complacência varia com o volume! <strong>Baixos volumes</strong> → menor C (alvéolos fechados). <strong>Volumes médios</strong> → C máxima. <strong>Volumes altos</strong> → menor C (tecido já está no limite de extensão).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complacência específica -->
+  <div class="manga-frame reveal" data-label="📐 COMPLACÊNCIA ESPECÍFICA">
+    <h3 style="font-family:'Bangers',cursive;color:var(--purple);font-size:1.4rem;margin-bottom:12px;">Por que comparar pulmões de tamanhos diferentes?</h3>
+    <p style="line-height:1.8;margin-bottom:16px;">
+      Um pulmão maior tem naturalmente maior complacência que um menor, mesmo que ambos sejam normais. 
+      Para comparar corretamente, usamos a <mark class="cyan">complacência específica</mark>:
+    </p>
+    <div class="formula-box" style="border-color:var(--purple);box-shadow:0 0 40px rgba(191,0,255,0.2);">
+      <div class="formula-label">COMPLACÊNCIA ESPECÍFICA</div>
+      <div class="formula" style="color:var(--purple);">Cesp = C / CRF</div>
+      <div class="formula-label">CRF = Capacidade Residual Funcional (~2.5 L no adulto)</div>
+      <div class="formula-label" style="margin-top:8px;">Valor normal: <strong style="color:var(--purple);">~0.08 L/cmH₂O/L</strong></div>
+    </div>
+  </div>
+
+  <!-- Demo interativa lung compliance -->
+  <div class="manga-frame reveal" data-label="🎮 LABORATÓRIO INTERACTIVO">
+    <h3 style="font-family:'Bangers',cursive;color:var(--green);font-size:1.4rem;margin-bottom:16px;">🧪 Experimenta a Complacência!</h3>
+    <p style="margin-bottom:16px;font-size:0.9rem;">Muda o tipo de pulmão e vê como o volume muda para a mesma pressão:</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+      <button class="ctrl-btn cyan" onclick="setCompliance('normal')">Pulmão Normal</button>
+      <button class="ctrl-btn pink" onclick="setCompliance('fibrose')">Fibrose (↓C)</button>
+      <button class="ctrl-btn yellow" onclick="setCompliance('enfisema')">Enfisema (↑C)</button>
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:0.9rem;color:var(--cyan);">Pressão de Distensão: <strong id="pressVal">10</strong> cmH₂O</label>
+      <input type="range" min="0" max="30" value="10" id="pressSlider" oninput="updateLungDemo()" style="margin-top:8px;">
+    </div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center;">
+      <canvas id="lungDemo" width="200" height="220" style="border-radius:12px;border:1px solid rgba(255,255,255,0.1);"></canvas>
+      <div>
+        <div class="stat-badge" style="border-color:var(--cyan);color:var(--cyan);">
+          <span class="num" id="volumeOut">0.50</span>
+          <span class="lbl">Volume (L)<br>acima CRF</span>
+        </div>
+        <div class="stat-badge" style="border-color:var(--pink);color:var(--pink);margin-top:8px;">
+          <span class="num" id="complianceOut">0.20</span>
+          <span class="lbl">Complacência<br>(L/cmH₂O)</span>
+        </div>
+        <div id="compMsg" style="margin-top:12px;max-width:200px;font-size:0.85rem;line-height:1.6;color:var(--white);opacity:0.8;"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 3 – ELASTÂNCIA ══════════════════════ -->
+<section id="ch3" class="scene">
+  <span class="fx" style="bottom:10%;left:-5%;transform:rotate(5deg);color:var(--yellow);">BOUNCE!</span>
+
+  <div class="chapter-marker" style="border-color:var(--yellow);color:var(--yellow);">📖 CAPÍTULO 3</div>
+  <h2 class="chapter-title ch3">ELASTÂNCIA:<br>A FORÇA DE VOLTAR</h2>
+  <p class="chapter-sub">O "desejo" do pulmão de regressar ao seu tamanho original</p>
+
+  <hr class="sep yellow">
+
+  <div class="character-wrapper reveal">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div class="bubble shout" style="transform:rotate(1deg);">
+        ELASTÂNCIA = 1 / COMPLACÊNCIA ! ⚡
+      </div>
+      <div class="bubble left">
+        Se o pulmão tem alta complacência → baixa elastância → pouca força de retração
+      </div>
+    </div>
+    <div class="character">
+      <svg width="80" height="100" viewBox="0 0 80 100" style="animation:float 3s 0.5s ease-in-out infinite;">
+        <ellipse cx="40" cy="55" rx="30" ry="38" fill="rgba(255,230,0,0.1)" stroke="var(--yellow)" stroke-width="2"/>
+        <path d="M40 17 L40 35" stroke="var(--yellow)" stroke-width="3" stroke-dasharray="4 3"/>
+        <circle cx="40" cy="55" r="18" fill="rgba(255,230,0,0.15)" stroke="var(--yellow)" stroke-width="2"/>
+        <!-- spring symbol -->
+        <path d="M30 40 Q40 35 50 40 Q40 45 30 50 Q40 45 50 50 Q40 55 30 60" stroke="var(--yellow)" stroke-width="2.5" fill="none"/>
+        <circle cx="30" cy="55" r="2" fill="var(--yellow)"/>
+        <circle cx="50" cy="55" r="2" fill="var(--yellow)"/>
+      </svg>
+      <span class="char-name" style="color:var(--yellow);">ELASTO</span>
+    </div>
+  </div>
+
+  <!-- Formula -->
+  <div class="formula-box reveal" style="border-color:var(--yellow);box-shadow:0 0 40px rgba(255,230,0,0.2);">
+    <div class="formula-label">FÓRMULA DA ELASTÂNCIA</div>
+    <div class="formula" style="color:var(--yellow);">E = ΔP / ΔV = 1 / C</div>
+    <div style="display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:16px;font-size:0.85rem;">
+      <div style="text-align:center;"><span style="color:var(--yellow);font-weight:700;">E</span><br><span style="opacity:0.7;">Elastância<br>(cmH₂O/L)</span></div>
+      <div style="text-align:center;"><span style="color:var(--pink);font-weight:700;">ΔP</span><br><span style="opacity:0.7;">Variação de<br>Pressão</span></div>
+      <div style="text-align:center;"><span style="color:var(--cyan);font-weight:700;">ΔV</span><br><span style="opacity:0.7;">Variação de<br>Volume</span></div>
+    </div>
+    <div class="formula-label" style="margin-top:12px;">
+      💡 Elastância normal do pulmão: <strong style="color:var(--yellow);">~5 cmH₂O/L</strong>
+    </div>
+  </div>
+
+  <!-- Relação C-E -->
+  <div class="manga-frame reveal" data-label="↔️ COMPLACÊNCIA vs ELASTÂNCIA">
+    <h3 style="font-family:'Bangers',cursive;color:var(--pink);font-size:1.4rem;margin-bottom:16px;">São Opostos! Como Yin e Yang ☯️</h3>
+    <table class="comp-table">
+      <tr>
+        <th>Parâmetro</th>
+        <th style="color:var(--pink);">COMPLACÊNCIA (C)</th>
+        <th style="color:var(--yellow);">ELASTÂNCIA (E)</th>
+      </tr>
+      <tr>
+        <td>Definição</td>
+        <td>Facilidade de expansão</td>
+        <td>Resistência à expansão / força de retração</td>
+      </tr>
+      <tr>
+        <td>Fórmula</td>
+        <td style="color:var(--pink);font-family:'Orbitron',sans-serif;font-size:0.85rem;">C = ΔV/ΔP</td>
+        <td style="color:var(--yellow);font-family:'Orbitron',sans-serif;font-size:0.85rem;">E = ΔP/ΔV = 1/C</td>
+      </tr>
+      <tr>
+        <td>Unidade</td>
+        <td>L/cmH₂O</td>
+        <td>cmH₂O/L</td>
+      </tr>
+      <tr>
+        <td>Alta C = Baixa E?</td>
+        <td colspan="2" style="text-align:center;color:var(--green);font-weight:700;">✅ SIM! São reciprocamente inversos</td>
+      </tr>
+      <tr>
+        <td>Enfisema</td>
+        <td style="color:var(--green);">↑ Alta</td>
+        <td style="color:var(--pink);">↓ Baixa</td>
+      </tr>
+      <tr>
+        <td>Fibrose</td>
+        <td style="color:var(--pink);">↓ Baixa</td>
+        <td style="color:var(--green);">↑ Alta</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Analogia mola -->
+  <div class="manga-frame reveal" data-label="🌀 ANALOGIA DA MOLA">
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:center;">
+      <div>
+        <h3 style="font-family:'Bangers',cursive;color:var(--yellow);font-size:1.4rem;margin-bottom:12px;">Pensa no pulmão como uma mola!</h3>
+        <p style="line-height:1.8;max-width:400px;">
+          Quanto mais <mark>forte</mark> é a mola (alta elastância), mais <strong>força</strong> é necessária para esticá-la. 
+          Quando largas, ela volta ao lugar com mais <strong>vigor</strong>.
+          <br><br>
+          O pulmão é igual: a <strong style="color:var(--yellow);">força de retração elástica</strong> é o que impulsiona a expiração passiva!
+        </p>
+        <div class="callout tip" style="margin-top:12px;">
+          <strong>💡 FACTO SURPRESA</strong>
+          <p>A expiração <strong>em repouso</strong> é completamente <strong>passiva</strong> — não usa músculos! É a elastância do pulmão que expele o ar. Só em exercício ou doença é que os músculos abdominais ajudam.</p>
+        </div>
+      </div>
+      <canvas id="springCanvas" width="200" height="220" style="border-radius:12px;border:1px solid rgba(255,230,0,0.2);"></canvas>
+    </div>
+  </div>
+
+  <!-- Sistema completo -->
+  <div class="manga-frame reveal" data-label="🔗 SISTEMA COMPLETO">
+    <h3 style="font-family:'Bangers',cursive;color:var(--purple);font-size:1.4rem;margin-bottom:16px;">A Complacência do Sistema Respiratório Total</h3>
+    <p style="line-height:1.8;margin-bottom:16px;">
+      O sistema respiratório tem <strong>dois componentes elásticos em série</strong>:
+      o <span class="hl">pulmão</span> e a <span class="hl pink">parede torácica</span>.
+      A complacência total é calculada como:
+    </p>
+    <div class="formula-box" style="border-color:var(--purple);">
+      <div class="formula" style="color:var(--purple);">1/Crs = 1/CL + 1/Cw</div>
+      <div style="margin-top:12px;font-size:0.85rem;opacity:0.8;">
+        <strong style="color:var(--cyan);">Crs</strong> = Complacência do Sistema Respiratório (~0.1 L/cmH₂O)<br>
+        <strong style="color:var(--pink);">CL</strong> = Complacência do Pulmão (~0.2 L/cmH₂O)<br>
+        <strong style="color:var(--yellow);">Cw</strong> = Complacência da Parede Torácica (~0.2 L/cmH₂O)
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top:16px;">
+      <strong>⚠️ ATENÇÃO CLÍNICA</strong>
+      <p>Em ventilação mecânica, medimos a complacência do sistema total (Crs). Uma Crs baixa pode ser por problema pulmonar (SDRA, pneumonia) OU da parede torácica (obesidade mórbida, distensão abdominal)!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 4 – PRESSÕES ══════════════════════ -->
+<section id="ch4" class="scene">
+  <span class="fx" style="top:15%;right:0;transform:rotate(-10deg);color:var(--green);">PFFFFF!</span>
+
+  <div class="chapter-marker" style="border-color:var(--green);color:var(--green);">📖 CAPÍTULO 4</div>
+  <h2 class="chapter-title ch4">AS PRESSÕES:<br>AS FORÇAS OCULTAS</h2>
+  <p class="chapter-sub">Os 5 guerreiros que controlam cada respiração</p>
+
+  <hr class="sep green">
+
+  <div class="manga-frame reveal" data-label="🗺️ MAPA DAS PRESSÕES">
+    <p style="line-height:1.8;margin-bottom:16px;">
+      Existem <strong style="color:var(--green);">5 pressões principais</strong> que precisas de conhecer. Cada uma tem o seu papel na batalha da respiração:
+    </p>
+    <div class="card-grid">
+      <div class="card cyan">
+        <h3>1️⃣ P Atmosférica (Patm)</h3>
+        <p><strong>760 mmHg</strong> ou <strong>0 cmH₂O</strong> (referência). É a pressão do ar exterior. Tudo é medido em relação a ela. O ar entra quando Palv &lt; Patm.</p>
+      </div>
+      <div class="card pink">
+        <h3>2️⃣ P Alveolar (Palv)</h3>
+        <p>Pressão dentro dos alvéolos. No repouso = 0. Inspira: <strong style="color:var(--green);">-1 cmH₂O</strong>. Expira: <strong style="color:var(--pink);">+1 cmH₂O</strong>. É ela que move o ar!</p>
+      </div>
+      <div class="card yellow">
+        <h3>3️⃣ P Pleural (Ppl)</h3>
+        <p>Pressão no espaço entre pleura visceral e parietal. Normalmente <strong>negativa</strong>. Repouso: <strong style="color:var(--yellow);">-5 cmH₂O</strong>. Inspira: <strong>-8 cmH₂O</strong>.</p>
+      </div>
+      <div class="card green">
+        <h3>4️⃣ P de Distensão / Transpulmonar (Ptp)</h3>
+        <p><strong>Ptp = Palv − Ppl</strong><br>Força que mantém o alvéolo aberto. Normal: <strong style="color:var(--green);">+5 cmH₂O</strong>. Inspira: até +8 cmH₂O.</p>
+      </div>
+      <div class="card purple">
+        <h3>5️⃣ P Transmural da Parede Torácica</h3>
+        <p><strong>Pw = Ppl − Patm</strong><br>Força sobre a parede torácica. Determina o quanto a parede torácica é "distendida" pelo exterior.</p>
+      </div>
+      <div class="card orange">
+        <h3>🔄 P Transtorácica (Ptt)</h3>
+        <p><strong>Ptt = Palv − Patm</strong><br>Usada na ventilação mecânica. Diferença entre pressão no pulmão e pressão exterior. Quando Ptt &gt; 0 → pulmão insuflado.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIAGRAMA DINÂMICO -->
+  <div class="manga-frame reveal" data-label="🎬 ANIMAÇÃO: CICLO RESPIRATÓRIO">
+    <h3 style="font-family:'Bangers',cursive;color:var(--green);font-size:1.4rem;margin-bottom:16px;">Vê as Pressões em Tempo Real!</h3>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;justify-content:center;align-items:flex-start;">
+      <canvas id="pressureCanvas" width="420" height="320" style="border-radius:12px;border:1px solid rgba(57,255,20,0.2);max-width:100%;"></canvas>
+      <div>
+        <div style="margin-bottom:16px;">
+          <button class="ctrl-btn cyan" id="breathBtn" onclick="toggleBreathing()">▶ INICIAR RESPIRAÇÃO</button>
+        </div>
+        <div id="pressureReadings" style="display:flex;flex-direction:column;gap:8px;">
+          <div class="stat-badge" style="border-color:var(--cyan);color:var(--cyan);">
+            <span class="num" id="pAlv">0</span>
+            <span class="lbl">Palv (cmH₂O)</span>
+          </div>
+          <div class="stat-badge" style="border-color:var(--yellow);color:var(--yellow);">
+            <span class="num" id="pPl">-5</span>
+            <span class="lbl">Ppleural (cmH₂O)</span>
+          </div>
+          <div class="stat-badge" style="border-color:var(--green);color:var(--green);">
+            <span class="num" id="pTp">5</span>
+            <span class="lbl">Ptp (cmH₂O)</span>
+          </div>
+        </div>
+        <div id="breathPhase" style="margin-top:12px;font-family:'Bangers',cursive;font-size:1.2rem;color:var(--green);">Em Repouso</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Eventos durante respiração -->
+  <div class="manga-frame reveal" data-label="📋 TABELA COMPLETA DO CICLO">
+    <table class="comp-table">
+      <tr>
+        <th>Fase</th>
+        <th>Palv</th>
+        <th>Ppl</th>
+        <th>Ptp</th>
+        <th>Movimento do Ar</th>
+      </tr>
+      <tr>
+        <td>Repouso (FRC)</td>
+        <td style="color:var(--cyan);">0</td>
+        <td style="color:var(--yellow);">-5</td>
+        <td style="color:var(--green);">+5</td>
+        <td>Nenhum</td>
+      </tr>
+      <tr>
+        <td>Início Inspiração</td>
+        <td style="color:var(--green);">-1</td>
+        <td style="color:var(--yellow);">-6 → -8</td>
+        <td style="color:var(--green);">+5 → +8</td>
+        <td style="color:var(--green);">↓ Entra ar</td>
+      </tr>
+      <tr>
+        <td>Fim Inspiração</td>
+        <td style="color:var(--cyan);">0</td>
+        <td style="color:var(--yellow);">-8</td>
+        <td style="color:var(--green);">+8</td>
+        <td>Pausa</td>
+      </tr>
+      <tr>
+        <td>Início Expiração</td>
+        <td style="color:var(--pink);">+1</td>
+        <td style="color:var(--yellow);">-7 → -5</td>
+        <td style="color:var(--green);">+5 → +6</td>
+        <td style="color:var(--pink);">↑ Sai ar</td>
+      </tr>
+      <tr>
+        <td>Fim Expiração</td>
+        <td style="color:var(--cyan);">0</td>
+        <td style="color:var(--yellow);">-5</td>
+        <td style="color:var(--green);">+5</td>
+        <td>Nenhum</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- Ptp em detalhe -->
+  <div class="manga-frame reveal" data-label="⭐ ESTRELA DA SHOW: PRESSÃO TRANSPULMONAR">
+    <h3 style="font-family:'Bangers',cursive;color:var(--pink);font-size:1.4rem;margin-bottom:12px;">Ptp — A Mais Importante de Todas!</h3>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+      <div style="flex:1;min-width:250px;">
+        <div class="formula-box" style="border-color:var(--green);">
+          <div class="formula" style="color:var(--green);">Ptp = Palv - Ppl</div>
+          <div class="formula-label">Pressão Transpulmonar</div>
+        </div>
+        <p style="line-height:1.8;font-size:0.9rem;margin-top:12px;">
+          A Ptp é a força que mantém o pulmão <strong style="color:var(--green);">aberto</strong>.
+          É como o ar dentro de um balão que o impede de colapsar.
+          <br><br>
+          • <strong>Ptp = 0</strong> → Pulmão colapsa (pneumotórax!)<br>
+          • <strong>Ptp ↑</strong> → Maior distensão alveolar<br>
+          • <strong>Ptp muito ↑</strong> → Barotrauma!
+        </p>
+      </div>
+      <div style="flex:1;min-width:250px;">
+        <div class="callout warn">
+          <strong>💥 PNEUMOTÓRAX!</strong>
+          <p>Se entra ar no espaço pleural, a Ppl sobe para 0. Logo Ptp = 0. O pulmão <strong>colapsa imediatamente!</strong> É uma emergência médica.</p>
+        </div>
+        <div class="callout tip" style="margin-top:12px;">
+          <strong>🏥 VENTILAÇÃO MECÂNICA</strong>
+          <p>O ventilador cria pressão <strong>positiva</strong> nas vias aéreas para forçar a entrada de ar. Monitorizamos a Ptp para evitar barotrauma (lesão por excesso de pressão).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 5 – APLICAÇÃO CLÍNICA ══════════════════════ -->
+<section id="ch5" class="scene">
+  <span class="fx" style="top:5%;left:0;color:var(--purple);">CLÍNICA!</span>
+
+  <div class="chapter-marker" style="border-color:var(--purple);color:var(--purple);">📖 CAPÍTULO 5</div>
+  <h2 class="chapter-title ch5">CLÍNICA:<br>QUANDO ALGO FALHA</h2>
+  <p class="chapter-sub">Doenças reais, mecanismos reais</p>
+
+  <hr class="sep" style="background:linear-gradient(to right,transparent,var(--purple),transparent);">
+
+  <div class="manga-frame reveal" data-label="⚔️ DOENÇAS vs COMPLACÊNCIA">
+    <div class="card-grid">
+      <div class="card pink">
+        <h3>🔴 FIBROSE PULMONAR</h3>
+        <p>
+          <strong>Complacência ↓↓ | Elastância ↑↑</strong><br><br>
+          Cicatrização progressiva do parênquima → pulmão rígido como couro.
+          O doente respira rápido e superficialmente (maior esforço muscular).
+          <br><em>Dispneia progressiva, crepitações</em>
+        </p>
+      </div>
+      <div class="card yellow">
+        <h3>🟡 ENFISEMA</h3>
+        <p>
+          <strong>Complacência ↑↑ | Elastância ↓↓</strong><br><br>
+          Destruição das paredes alveolares → perda de fibras elásticas → "hiper-insuflado".
+          Sem força de retração → expiração prejudicada → ar aprisionado.
+          <br><em>Barrel chest, dispneia de esforço</em>
+        </p>
+      </div>
+      <div class="card cyan">
+        <h3>🔵 SDRA</h3>
+        <p>
+          <strong>Complacência ↓↓↓</strong><br><br>
+          Lesão inflamatória maciça → inactivação do surfactante + edema alveolar.
+          "Baby lungs": apenas 20-30% dos alvéolos funcionais.
+          <br><em>Hipóxia grave, VM com PEEP alto</em>
+        </p>
+      </div>
+      <div class="card green">
+        <h3>🟢 ASMA (Crise)</h3>
+        <p>
+          <strong>Obstrução + hiper-insuflação</strong><br><br>
+          Broncoespasmo → resistência ↑ → ar fica preso → CRF sobe → pulmão opera em volume alto → complacência específica ↓.
+          <br><em>Sibilância, uso de músculos acessórios</em>
+        </p>
+      </div>
+      <div class="card purple">
+        <h3>🟣 PREMATURIDADE</h3>
+        <p>
+          <strong>Deficiência de Surfactante</strong><br><br>
+          Antes das 36 semanas: surfactante insuficiente → tensão superficial ↑ → complacência ↓↓ → síndrome de dificuldade respiratória neonatal (SDR).
+          <br><em>Tratamento: surfactante exógeno</em>
+        </p>
+      </div>
+      <div class="card orange">
+        <h3>🟠 PNEUMOTÓRAX</h3>
+        <p>
+          <strong>Ppl → 0</strong><br><br>
+          Ptp = 0 → colapso pulmonar. Pulmão "solta-se" da parede torácica. Pode ser espontâneo (jovens altos, magros) ou traumático.
+          <br><em>Emergência: drenagem torácica</em>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interpretação clínica -->
+  <div class="manga-frame reveal" data-label="🩺 COMO MEDIR NA PRÁTICA">
+    <h3 style="font-family:'Bangers',cursive;color:var(--cyan);font-size:1.4rem;margin-bottom:16px;">Como Medimos a Complacência em Doentes?</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <h4>📊 Complacência Estática (Cst)</h4>
+        <p>Medida em oclusão das vias aéreas (sem fluxo de ar). <strong>Cst = VT / (Pplato − PEEP)</strong>. Normal: &gt;50 mL/cmH₂O em VM. Avalia propriedades elásticas puras.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--pink);">
+        <h4>🔄 Complacência Dinâmica (Cdyn)</h4>
+        <p>Medida durante o fluxo de ar. Inclui resistências das vias aéreas. <strong>Cdyn = VT / (Ppico − PEEP)</strong>. Cdyn &lt; Cst → problema de resistência (secreções, broncoespasmo).</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--yellow);">
+        <h4>📈 Curva P-V do Ventilador</h4>
+        <p>Em doentes com SDRA, a curva P-V ajuda a encontrar o "ponto de inflexão inferior" (mínimo PEEP para manter alvéolos abertos) e o "ponto de inflexão superior" (limite de sobredistensão).</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>🧮 Valores de Referência em VM:</strong>
+      <p>
+        <strong style="color:var(--cyan);">Cst normal:</strong> 60–100 mL/cmH₂O | 
+        <strong style="color:var(--pink);">SDRA grave:</strong> &lt;20 mL/cmH₂O<br>
+        <strong style="color:var(--yellow);">Pplato alvo:</strong> &lt;30 cmH₂O (protocolo lung-protective)
+      </p>
+    </div>
+  </div>
+
+  <!-- Ventilação Mecânica -->
+  <div class="manga-frame reveal" data-label="🤖 VENTILAÇÃO MECÂNICA">
+    <h3 style="font-family:'Bangers',cursive;color:var(--green);font-size:1.5rem;margin-bottom:16px;">O Ventilador: Um Aliado que Precisa de Ordens Certas</h3>
+    <p style="line-height:1.8;margin-bottom:16px;">
+      O ventilador funciona com <mark class="cyan">pressão positiva</mark> — o oposto da respiração normal. 
+      Isso cria desafios únicos:
+    </p>
+    <div class="card-grid">
+      <div class="card cyan">
+        <h3>PEEP</h3>
+        <p><strong>Pressão Positiva no Final da Expiração</strong>. Mantém os alvéolos abertos no final da expiração. Previne colapso e recrutamento repetitivo (shear stress). Aumenta a CRF artificialmente.</p>
+      </div>
+      <div class="card pink">
+        <h3>Driving Pressure</h3>
+        <p><strong>ΔP = Pplato − PEEP</strong>. É a pressão de distensão cíclica por respiração. Preditor independente de mortalidade na SDRA. Alvo: <strong>&lt;15 cmH₂O</strong>.</p>
+      </div>
+      <div class="card yellow">
+        <h3>Barotrauma</h3>
+        <p>Lesão por excesso de pressão. Ptp excessiva → rotura alveolar → pneumotórax iatrogénico. Por isso limitamos Pplato &lt;30 cmH₂O.</p>
+      </div>
+      <div class="card green">
+        <h3>Volutrauma</h3>
+        <p>Lesão por excesso de volume. VT alto → sobredistensão → libertação de mediadores inflamatórios. Usamos <strong>VT protector: 6 mL/kg</strong> de peso ideal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CAP 6 – RESUMO ÉPICO ══════════════════════ -->
+<section id="ch6" class="scene">
+  <div class="chapter-marker" style="border-color:var(--orange);color:var(--orange);">📖 CAPÍTULO FINAL</div>
+  <h2 class="chapter-title ch6">RESUMO ÉPICO:<br>TUDO JUNTO!</h2>
+  <p class="chapter-sub">A cronologia completa, do zero ao herói</p>
+
+  <hr class="sep" style="background:linear-gradient(to right,transparent,var(--orange),transparent);">
+
+  <!-- Cronologia suprema -->
+  <div class="manga-frame reveal" data-label="⏱️ CRONOLOGIA DO SABER">
+    <div class="timeline">
+      <div class="tl-item">
+        <h4>🏗️ PASSO 1 — Arquitectura</h4>
+        <p>O pulmão vive dentro do tórax, envolvido pela pleura. O espaço pleural tem <strong>pressão negativa (-5 cmH₂O)</strong> que mantém o pulmão expandido. Sem ela → colapso.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--pink);">
+        <h4>⚖️ PASSO 2 — Equilíbrio</h4>
+        <p>Duas forças opostas: pulmão quer recolher (retração elástica) ↔ tórax quer expandir. O equilíbrio é a <strong>CRF (Capacidade Residual Funcional)</strong>.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--yellow);">
+        <h4>📐 PASSO 3 — Complacência</h4>
+        <p><strong>C = ΔV/ΔP</strong>. Mede a facilidade de expansão. Normal: 0.2 L/cmH₂O. Alta em enfisema, baixa em fibrose. O surfactante aumenta-a ao reduzir a tensão superficial.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--green);">
+        <h4>🌀 PASSO 4 — Elastância</h4>
+        <p><strong>E = 1/C = ΔP/ΔV</strong>. É a força de retração. Normal: 5 cmH₂O/L. Alta em fibrose, baixa em enfisema. É ela que expele o ar na expiração passiva.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--purple);">
+        <h4>💨 PASSO 5 — Pressões no Ciclo</h4>
+        <p>Inspiração: músculos ↓Ppl → ↑Ptp → ↓Palv → ar entra. Expiração passiva: elastância ↑Palv → ar sai. Ptp = Palv − Ppl = força que mantém alvéolos abertos.</p>
+      </div>
+      <div class="tl-item" style="border-color:var(--orange);">
+        <h4>🏥 PASSO 6 — Clínica</h4>
+        <p>Fibrose → C↓, E↑ | Enfisema → C↑, E↓ | SDRA → C↓↓↓ | Prematuridade → défice surfactante → C↓ | Pneumotórax → Ptp=0 → colapso.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Super fórmulas -->
+  <div class="manga-frame reveal" data-label="📋 TODAS AS FÓRMULAS">
+    <div style="display:flex;flex-direction:column;gap:12px;max-width:700px;margin:0 auto;">
+      <div class="formula-box" style="border-color:var(--pink);">
+        <div class="formula" style="color:var(--pink);">C = ΔV / ΔP</div>
+        <div class="formula-label">Complacência Pulmonar | Unidade: L/cmH₂O</div>
+      </div>
+      <div class="formula-box" style="border-color:var(--yellow);">
+        <div class="formula" style="color:var(--yellow);">E = ΔP / ΔV = 1/C</div>
+        <div class="formula-label">Elastância Pulmonar | Unidade: cmH₂O/L</div>
+      </div>
+      <div class="formula-box" style="border-color:var(--green);">
+        <div class="formula" style="color:var(--green);">Ptp = Palv − Ppl</div>
+        <div class="formula-label">Pressão Transpulmonar | Normal em repouso: +5 cmH₂O</div>
+      </div>
+      <div class="formula-box" style="border-color:var(--cyan);">
+        <div class="formula" style="color:var(--cyan);">1/Crs = 1/CL + 1/Cw</div>
+        <div class="formula-label">Complacência do Sistema Respiratório Total</div>
+      </div>
+      <div class="formula-box" style="border-color:var(--purple);">
+        <div class="formula" style="color:var(--purple);">Cesp = C / CRF</div>
+        <div class="formula-label">Complacência Específica | Normal: ~0.08 L/cmH₂O/L</div>
+      </div>
+      <div class="formula-box" style="border-color:var(--orange);">
+        <div class="formula" style="color:var(--orange);">ΔP = Pplato − PEEP</div>
+        <div class="formula-label">Driving Pressure (Ventilação Mecânica) | Alvo: &lt;15 cmH₂O</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela mestra de referência -->
+  <div class="manga-frame reveal" data-label="🏆 TABELA MESTRA DE VALORES">
+    <table class="comp-table">
+      <tr>
+        <th>Parâmetro</th>
+        <th>Valor Normal</th>
+        <th>Unidade</th>
+        <th>Significado</th>
+      </tr>
+      <tr><td>Complacência Pulmão</td><td style="color:var(--green);">~0.2</td><td>L/cmH₂O</td><td>Expansibilidade pulmonar</td></tr>
+      <tr><td>Complacência Tórax</td><td style="color:var(--green);">~0.2</td><td>L/cmH₂O</td><td>Expansibilidade torácica</td></tr>
+      <tr><td>Complacência Sistema (Crs)</td><td style="color:var(--green);">~0.1</td><td>L/cmH₂O</td><td>Total (pulmão + tórax)</td></tr>
+      <tr><td>Elastância Pulmão</td><td style="color:var(--yellow);">~5</td><td>cmH₂O/L</td><td>Retração elástica</td></tr>
+      <tr><td>P Pleural (repouso)</td><td style="color:var(--cyan);">-5</td><td>cmH₂O</td><td>Mantém pulmão expandido</td></tr>
+      <tr><td>P Pleural (inspiração)</td><td style="color:var(--cyan);">-8</td><td>cmH₂O</td><td>Permite entrada de ar</td></tr>
+      <tr><td>P Transpulmonar (repouso)</td><td style="color:var(--pink);">+5</td><td>cmH₂O</td><td>Força de distensão alveolar</td></tr>
+      <tr><td>P Alveolar (repouso)</td><td style="color:var(--white);">0</td><td>cmH₂O</td><td>Igual à atmosférica</td></tr>
+      <tr><td>P Alveolar (inspiração)</td><td style="color:var(--green);">-1</td><td>cmH₂O</td><td>Gradiente para entrada de ar</td></tr>
+      <tr><td>P Alveolar (expiração)</td><td style="color:var(--pink);">+1</td><td>cmH₂O</td><td>Gradiente para saída de ar</td></tr>
+      <tr><td>Cst VM (normal)</td><td style="color:var(--green);">60–100</td><td>mL/cmH₂O</td><td>Complacência estática em VM</td></tr>
+      <tr><td>Cst VM (SDRA grave)</td><td style="color:var(--pink);">&lt;20</td><td>mL/cmH₂O</td><td>Pulmão muito rígido</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══════════════════════ QUIZ ══════════════════════ -->
+<section id="quiz" class="scene" style="background:radial-gradient(ellipse at center,rgba(57,255,20,0.05) 0%,var(--bg) 70%);">
+  <div class="chapter-marker" style="border-color:var(--green);color:var(--green);">🎮 MODO DESAFIO</div>
+  <h2 class="chapter-title ch4">QUIZ FINAL!<br>PROVA O TEU VALOR!</h2>
+  <p class="chapter-sub">Responde e vê se és um Mestre Pulmonar</p>
+  <hr class="sep green">
+
+  <div id="quizContainer" style="width:100%;max-width:700px;">
+    <!-- Quiz questions generated by JS -->
+  </div>
+  <div style="margin-top:20px;text-align:center;">
+    <div id="quizScore" style="font-family:'Bangers',cursive;font-size:2rem;color:var(--yellow);"></div>
+    <button class="start-btn" style="margin-top:16px;display:none;" id="retryBtn" onclick="initQuiz()">🔄 TENTAR NOVAMENTE</button>
+  </div>
+</section>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer id="footer">
+  <div class="footer-logo">DemilMed-UL</div>
+  <canvas id="moleculaFooter" width="300" height="80" style="opacity:0.4;display:block;margin:0 auto;"></canvas>
+  <div class="footer-info">
+    <strong style="color:var(--cyan);font-family:'Orbitron',sans-serif;letter-spacing:2px;">UNIVERSIDADE LICUNGO</strong><br>
+    Faculdade de Ciências da Saúde<br>
+    Série Educacional DemilMed • Fisiologia Respiratória<br>
+    <strong style="color:var(--pink);">ANO 2026</strong>
+  </div>
+  <div style="margin-top:20px;opacity:0.3;font-size:0.75rem;">
+    Criado com ❤️ para estudantes de medicina • Complacência, Elastância e Pressões Pulmonares
+  </div>
+</footer>
+
+<!-- ══════════════════════ JAVASCRIPT ══════════════════════ -->
+<script>
+// ── SMOOTH SCROLL ──
+function scrollTo(id) {
+  document.querySelector(id).scrollIntoView({ behavior:'smooth' });
+}
+
+// ── PROGRESS BAR ──
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+// ── REVEAL ON SCROLL ──
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ══════════════════════════════════════
+// MOLECULE PARTICLE SYSTEM
+// ══════════════════════════════════════
+function MoleculeSystem(canvasId, count, colors) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W = canvas.width, H = canvas.height;
+
+  const particles = Array.from({ length: count }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 1.2,
+    vy: (Math.random() - 0.5) * 1.2,
+    r: 2 + Math.random() * 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    phase: Math.random() * Math.PI * 2
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() * 0.001;
+
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if (d < 100) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,245,255,${(1 - d/100) * 0.3})`;
+          ctx.lineWidth = 0.8;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+
+      const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+      glow.addColorStop(0, p.color);
+      glow.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r * (1 + 0.3 * Math.sin(t * 2 + p.phase)), 0, Math.PI * 2);
+      ctx.fillStyle = glow;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+MoleculeSystem('moleculaHero', 60, ['#00f5ff','#ff2d78','#ffe600','#39ff14','#bf00ff']);
+MoleculeSystem('moleculaFooter', 20, ['#00f5ff','#ff2d78']);
+
+// ══════════════════════════════════════
+// P-V CURVE CHART
+// ══════════════════════════════════════
+(function drawPVCurve() {
+  const canvas = document.getElementById('pvCurve');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const PAD = { left:60, right:20, top:30, bottom:50 };
+  const cW = W - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
+
+  ctx.fillStyle = '#0d0d1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, PAD.top); ctx.lineTo(PAD.left, PAD.top + cH);
+  ctx.lineTo(PAD.left + cW, PAD.top + cH);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.font = '11px Nunito';
+  ctx.textAlign = 'center';
+  ctx.fillText('Pressão de Distensão (cmH₂O)', PAD.left + cW / 2, H - 8);
+  ctx.save(); ctx.translate(14, PAD.top + cH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('Volume (L)', 0, 0);
+  ctx.restore();
+
+  // Grid
+  for (let i = 0; i <= 5; i++) {
+    const x = PAD.left + (i / 5) * cW;
+    const y = PAD.top + (1 - i / 5) * cH;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.beginPath(); ctx.moveTo(x, PAD.top); ctx.lineTo(x, PAD.top + cH); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + cW, y); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.textAlign = 'center';
+    ctx.fillText((i * 6).toString(), x, PAD.top + cH + 16);
+    ctx.textAlign = 'right';
+    ctx.fillText((i * 0.6).toFixed(1), PAD.left - 6, PAD.top + cH - (i / 5) * cH + 4);
+  }
+
+  // Curves
+  function drawCurve(compliance, color, label, yOff) {
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.shadowColor = color; ctx.shadowBlur = 8;
+    for (let p = 0; p <= 30; p += 0.5) {
+      const v = compliance * p;
+      const x = PAD.left + (p / 30) * cW;
+      const y = PAD.top + cH - Math.min(v / 3, 1) * cH;
+      p === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    // label at end
+    ctx.fillStyle = color;
+    ctx.font = 'bold 11px Nunito';
+    ctx.textAlign = 'left';
+    const lx = PAD.left + cW - 5;
+    const lv = compliance * 30;
+    const ly = PAD.top + cH - Math.min(lv / 3, 1) * cH + yOff;
+    ctx.fillText(label, lx - 70, ly);
+  }
+
+  drawCurve(0.2, '#39ff14', '◀ Normal (C=0.2)', 0);
+  drawCurve(0.08, '#ff2d78', '◀ Fibrose (C=0.08)', 12);
+  drawCurve(0.35, '#ffe600', '◀ Enfisema (C=0.35)', -10);
+})();
+
+// ══════════════════════════════════════
+// LUNG COMPLIANCE DEMO
+// ══════════════════════════════════════
+let currentCompliance = 0.2;
+let complianceLabel = 'Normal';
+
+function setCompliance(type) {
+  const map = { normal: [0.2, 'Normal'], fibrose: [0.08, 'Fibrose ↓C'], enfisema: [0.35, 'Enfisema ↑C'] };
+  [currentCompliance, complianceLabel] = map[type];
+  updateLungDemo();
+}
+
+function updateLungDemo() {
+  const canvas = document.getElementById('lungDemo');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const pressure = parseFloat(document.getElementById('pressSlider').value);
+  document.getElementById('pressVal').textContent = pressure;
+  const volume = currentCompliance * pressure;
+  document.getElementById('volumeOut').textContent = volume.toFixed(2);
+  document.getElementById('complianceOut').textContent = currentCompliance.toFixed(2);
+
+  const msgs = {
+    0.2: 'Pulmão normal: expande bem com pressão moderada.',
+    0.08: 'Fibrose: precisa de MUITA pressão para expandir!',
+    0.35: 'Enfisema: expande facilmente, mas perde retração.'
+  };
+  document.getElementById('compMsg').textContent = msgs[currentCompliance] || '';
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0d0d1a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Draw diaphragm/chest
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(30, 20, W - 60, H - 60);
+
+  // Draw lung
+  const scale = 0.3 + Math.min(volume / 3, 0.6);
+  const cx = W / 2, cy = H / 2 - 10;
+  const rx = 55 * scale, ry = 65 * scale;
+  
+  const gradient = ctx.createRadialGradient(cx - rx * 0.3, cy - ry * 0.3, 0, cx, cy, Math.max(rx, ry));
+  gradient.addColorStop(0, 'rgba(0,245,255,0.4)');
+  gradient.addColorStop(0.6, 'rgba(0,245,255,0.15)');
+  gradient.addColorStop(1, 'rgba(0,245,255,0.05)');
+
+  // Left lung
+  ctx.beginPath();
+  ctx.ellipse(cx - 30 * scale, cy, rx * 0.8, ry, 0, 0, Math.PI * 2);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  ctx.strokeStyle = '#00f5ff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Right lung
+  ctx.beginPath();
+  ctx.ellipse(cx + 30 * scale, cy, rx * 0.8, ry, 0, 0, Math.PI * 2);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  ctx.stroke();
+
+  // Trachea
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - ry - 5);
+  ctx.lineTo(cx, 15);
+  ctx.strokeStyle = '#00f5ff';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+
+  // Volume indicator
+  ctx.fillStyle = 'rgba(255,255,255,0.6)';
+  ctx.font = 'bold 11px Nunito';
+  ctx.textAlign = 'center';
+  ctx.fillText(complianceLabel, cx, H - 20);
+}
+updateLungDemo();
+
+// ══════════════════════════════════════
+// SPRING CANVAS
+// ══════════════════════════════════════
+(function animateSpring() {
+  const canvas = document.getElementById('springCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  let t = 0;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#0d0d1a';
+    ctx.fillRect(0, 0, W, H);
+    t += 0.03;
+    const stretch = 60 + 40 * Math.sin(t);
+
+    // ceiling
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillRect(40, 10, W - 80, 8);
+
+    // spring
+    const segments = 12;
+    const x0 = W / 2, y0 = 18;
+    ctx.beginPath();
+    ctx.strokeStyle = '#ffe600';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = '#ffe600'; ctx.shadowBlur = 6;
+    for (let i = 0; i <= segments * 4; i++) {
+      const frac = i / (segments * 4);
+      const y = y0 + frac * stretch * 2;
+      const x = x0 + (i % 4 < 2 ? 20 : -20);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Mass (lung)
+    const massY = y0 + stretch * 2 + 16;
+    const r = 35;
+    ctx.beginPath();
+    ctx.ellipse(x0 - 20, massY + r * 0.7, r * 0.85, r, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,245,255,0.15)';
+    ctx.strokeStyle = '#00f5ff';
+    ctx.lineWidth = 2;
+    ctx.fill(); ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(x0 + 20, massY + r * 0.7, r * 0.85, r, 0, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+
+    // arrows
+    const arrowDir = Math.sin(t) > 0 ? 1 : -1;
+    ctx.fillStyle = arrowDir > 0 ? '#ff2d78' : '#39ff14';
+    ctx.font = 'bold 28px Nunito';
+    ctx.textAlign = 'center';
+    ctx.fillText(arrowDir > 0 ? '↓' : '↑', x0, massY - 10);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '10px Nunito';
+    ctx.fillText(arrowDir > 0 ? 'Inspiração' : 'Expiração', x0, massY + r * 2 + 20);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ══════════════════════════════════════
+// BREATHING PRESSURE ANIMATION
+// ══════════════════════════════════════
+let breathing = false;
+let breathAnim = null;
+let breathPhase = 0;
+
+function toggleBreathing() {
+  breathing = !breathing;
+  const btn = document.getElementById('breathBtn');
+  btn.textContent = breathing ? '⏸ PARAR' : '▶ INICIAR RESPIRAÇÃO';
+  if (breathing) animateBreath();
+  else cancelAnimationFrame(breathAnim);
+}
+
+function animateBreath() {
+  const canvas = document.getElementById('pressureCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  breathPhase += 0.025;
+  const cyclePos = (Math.sin(breathPhase) + 1) / 2; // 0 to 1
+  const isInspire = Math.sin(breathPhase) > 0;
+
+  const pAlv = isInspire ? -1 * Math.abs(Math.sin(breathPhase)) : 1 * Math.abs(Math.sin(breathPhase));
+  const pPl = -5 - 3 * Math.abs(Math.sin(breathPhase)) * (isInspire ? 1 : 0.5);
+  const pTp = pAlv - pPl;
+
+  document.getElementById('pAlv').textContent = pAlv.toFixed(1);
+  document.getElementById('pPl').textContent = pPl.toFixed(1);
+  document.getElementById('pTp').textContent = pTp.toFixed(1);
+  document.getElementById('breathPhase').textContent = isInspire ? '💨 INSPIRAÇÃO' : '🌬️ EXPIRAÇÃO';
+  document.getElementById('breathPhase').style.color = isInspire ? '#39ff14' : '#ff2d78';
+
+  // Draw scene
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0a0a12';
+  ctx.fillRect(0, 0, W, H);
+
+  // Lung scale
+  const scale = 0.7 + 0.3 * cyclePos;
+  const cx = W / 2, cy = H / 2;
+
+  // Pleural space indicator
+  const plColor = isInspire ? 'rgba(57,255,20,0.2)' : 'rgba(255,45,120,0.1)';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 120 * scale + 20, 130 * scale + 20, 0, 0, Math.PI * 2);
+  ctx.fillStyle = plColor;
+  ctx.fill();
+
+  // Trachea
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - 120 * scale - 15);
+  ctx.lineTo(cx, 20);
+  ctx.strokeStyle = '#00f5ff'; ctx.lineWidth = 6; ctx.stroke();
+
+  // Lungs
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 120 * scale);
+  grad.addColorStop(0, `rgba(0,245,255,${0.15 + 0.2 * cyclePos})`);
+  grad.addColorStop(1, 'rgba(0,245,255,0.03)');
+
+  ctx.beginPath();
+  ctx.ellipse(cx - 40 * scale, cy, 70 * scale, 110 * scale, 0, 0, Math.PI * 2);
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = '#00f5ff'; ctx.lineWidth = 2; ctx.stroke();
+
+  ctx.beginPath();
+  ctx.ellipse(cx + 40 * scale, cy, 70 * scale, 110 * scale, 0, 0, Math.PI * 2);
+  ctx.fill(); ctx.stroke();
+
+  // Diaphragm
+  const diaY = cy + 100 * scale + 10;
+  ctx.beginPath();
+  ctx.moveTo(cx - 130, diaY);
+  ctx.quadraticCurveTo(cx, diaY + (isInspire ? 20 : -10), cx + 130, diaY);
+  ctx.strokeStyle = '#ffe600'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = 'rgba(255,230,0,0.1)';
+  ctx.fill();
+
+  // Pressure labels
+  ctx.font = 'bold 12px Orbitron';
+  ctx.textAlign = 'center';
+
+  ctx.fillStyle = '#00f5ff';
+  ctx.fillText(`Palv: ${pAlv.toFixed(1)}`, cx, cy);
+
+  ctx.fillStyle = '#ffe600';
+  ctx.fillText(`Ppl: ${pPl.toFixed(1)}`, cx + 160, cy);
+
+  ctx.fillStyle = '#39ff14';
+  ctx.fillText(`Ptp: ${pTp.toFixed(1)}`, cx - 160, cy);
+
+  // Air flow arrow
+  if (Math.abs(Math.sin(breathPhase)) > 0.1) {
+    const arrowY = 20;
+    ctx.fillStyle = isInspire ? '#39ff14' : '#ff2d78';
+    ctx.font = 'bold 24px Nunito';
+    ctx.fillText(isInspire ? '⬇️' : '⬆️', cx, arrowY);
+    ctx.font = '10px Nunito';
+    ctx.fillText(isInspire ? 'AR ENTRA' : 'AR SAI', cx, arrowY + 18);
+  }
+
+  breathAnim = requestAnimationFrame(animateBreath);
+}
+
+// ══════════════════════════════════════
+// QUIZ SYSTEM
+// ══════════════════════════════════════
+const quizData = [
+  {
+    q: "O que representa a Complacência Pulmonar?",
+    opts: ["A resistência do pulmão à expansão", "A facilidade com que o pulmão se expande por unidade de pressão", "A pressão dentro dos alvéolos", "A tensão superficial dos alvéolos"],
+    correct: 1,
+    explain: "C = ΔV/ΔP. Alta complacência = pulmão expande facilmente com pouca pressão."
+  },
+  {
+    q: "Qual a relação matemática entre Elastância (E) e Complacência (C)?",
+    opts: ["E = C × 2", "E = C + ΔP", "E = 1/C", "E = C − ΔV"],
+    correct: 2,
+    explain: "São inversamente proporcionais: E = 1/C. Alta complacência = baixa elastância."
+  },
+  {
+    q: "Na fibrose pulmonar, o que acontece à complacência?",
+    opts: ["Aumenta muito (pulmão flácido)", "Diminui (pulmão rígido)", "Mantém-se normal", "Aumenta inicialmente, depois diminui"],
+    correct: 1,
+    explain: "A fibrose cria tecido cicatricial rígido → ↓ complacência → ↑ elastância."
+  },
+  {
+    q: "A Pressão Transpulmonar (Ptp) é calculada por:",
+    opts: ["Ptp = Ppl − Palv", "Ptp = Palv − Patm", "Ptp = Palv − Ppl", "Ptp = Patm − Ppl"],
+    correct: 2,
+    explain: "Ptp = Palv − Ppl. É a força que mantém o alvéolo aberto. Normal em repouso: +5 cmH₂O."
+  },
+  {
+    q: "O surfactante pulmonar tem que efeito na complacência?",
+    opts: ["Diminui a complacência", "Aumenta a complacência ao reduzir a tensão superficial", "Não tem efeito", "Diminui a elastância e a complacência"],
+    correct: 1,
+    explain: "O surfactante reduz a tensão superficial → ↓ tendência ao colapso → ↑ complacência."
+  },
+  {
+    q: "Qual a pressão pleural normal em repouso?",
+    opts: ["+5 cmH₂O", "0 cmH₂O", "-5 cmH₂O", "-15 cmH₂O"],
+    correct: 2,
+    explain: "A Ppl em repouso é -5 cmH₂O. Esta pressão negativa mantém o pulmão expandido."
+  },
+  {
+    q: "No enfisema, o que acontece à elastância pulmonar?",
+    opts: ["Aumenta (pulmão mais rígido)", "Mantém-se normal", "Diminui (perda de fibras elásticas)", "Duplica de valor"],
+    correct: 2,
+    explain: "Enfisema destrói as paredes alveolares → perda de fibras elásticas → ↓ elastância → ↑ complacência."
+  },
+  {
+    q: "O que acontece à Ptp num pneumotórax?",
+    opts: ["Aumenta para +20 cmH₂O", "Fica negativa", "Fica igual a zero → colapso pulmonar", "Não se altera"],
+    correct: 2,
+    explain: "Ar no espaço pleural → Ppl sobe para 0 → Ptp = Palv − 0 = 0 → pulmão colapsa."
+  }
+];
+
+let quizAnswers = {};
+let quizTotal = 0;
+let quizDone = false;
+
+function initQuiz() {
+  quizAnswers = {};
+  quizDone = false;
+  quizTotal = 0;
+  document.getElementById('quizScore').textContent = '';
+  document.getElementById('retryBtn').style.display = 'none';
+  const container = document.getElementById('quizContainer');
+  container.innerHTML = '';
+
+  quizData.forEach((item, qi) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box reveal';
+    box.innerHTML = `
+      <h3>❓ Questão ${qi + 1}/${quizData.length}</h3>
+      <p style="margin-bottom:14px;font-size:0.95rem;line-height:1.6;">${item.q}</p>
+      ${item.opts.map((opt, oi) => `
+        <button class="quiz-opt" id="q${qi}o${oi}" onclick="answerQuiz(${qi},${oi})">${String.fromCharCode(65+oi)}. ${opt}</button>
+      `).join('')}
+      <div class="quiz-result" id="qr${qi}"></div>
+    `;
+    container.appendChild(box);
+    setTimeout(() => box.classList.add('visible'), qi * 100);
+  });
+
+  const submitBtn = document.createElement('div');
+  submitBtn.style.textAlign = 'center';
+  submitBtn.style.marginTop = '20px';
+  submitBtn.innerHTML = `<button class="start-btn" onclick="submitQuiz()" id="submitBtn">✅ VER RESULTADO</button>`;
+  container.appendChild(submitBtn);
+}
+
+function answerQuiz(qi, oi) {
+  if (quizAnswers[qi] !== undefined) return;
+  quizAnswers[qi] = oi;
+  const item = quizData[qi];
+  const isCorrect = oi === item.correct;
+
+  // Highlight
+  item.opts.forEach((_, i) => {
+    const btn = document.getElementById(`q${qi}o${i}`);
+    if (i === item.correct) btn.classList.add('correct');
+    else if (i === oi && !isCorrect) btn.classList.add('wrong');
+    btn.disabled = true;
+  });
+
+  const result = document.getElementById(`qr${qi}`);
+  result.innerHTML = isCorrect
+    ? `<span style="color:var(--green);">✅ CORRECTO! ${item.explain}</span>`
+    : `<span style="color:var(--pink);">❌ Errado. ${item.explain}</span>`;
+}
+
+function submitQuiz() {
+  if (quizDone) return;
+  quizDone = true;
+  let correct = 0;
+  quizData.forEach((item, qi) => {
+    if (quizAnswers[qi] === item.correct) correct++;
+  });
+  const pct = Math.round((correct / quizData.length) * 100);
+  const msg = pct >= 80 ? '🏆 MESTRE PULMONAR!' : pct >= 60 ? '🎯 Bom trabalho!' : '📚 Precisa de rever!';
+  document.getElementById('quizScore').innerHTML = `
+    <div style="color:var(--yellow);">${msg}</div>
+    <div style="font-size:1.2rem;margin-top:8px;color:var(--white);">${correct}/${quizData.length} corretas (${pct}%)</div>
+  `;
+  document.getElementById('retryBtn').style.display = 'inline-block';
+  document.getElementById('submitBtn').style.display = 'none';
+}
+
+initQuiz();
+
+// ── INIT DEMOS ──
+window.addEventListener('load', () => {
+  updateLungDemo();
+});
+</script>
+</body>
+</html>

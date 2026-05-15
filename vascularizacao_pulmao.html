@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulmão Vivo — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --panel: #0a0f1e;
+    --card: #0d1428;
+    --blood: #ff1744;
+    --blood2: #ff6d00;
+    --vein: #3d5afe;
+    --vein2: #00b0ff;
+    --nerve: #ffea00;
+    --nerve2: #76ff03;
+    --lymph: #e040fb;
+    --lymph2: #00e5ff;
+    --gold: #ffd740;
+    --white: #e8f0fe;
+    --dim: #8899bb;
+    --glow-red: 0 0 20px #ff174488, 0 0 40px #ff174444;
+    --glow-blue: 0 0 20px #3d5afe88, 0 0 40px #3d5afe44;
+    --glow-yellow: 0 0 20px #ffea0088, 0 0 40px #ffea0044;
+    --glow-purple: 0 0 20px #e040fb88, 0 0 40px #e040fb44;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ─── PARTICLES CANVAS ─── */
+  #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(5,8,16,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,23,68,0.3);
+    padding: 10px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .nav-logo {
+    font-family: 'Bangers'; font-size: 1.5rem; letter-spacing: 3px;
+    color: var(--blood); text-shadow: var(--glow-red);
+  }
+  .nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
+  .nav-links a {
+    font-family: 'Orbitron'; font-size: 0.55rem; letter-spacing: 1px;
+    padding: 5px 10px; border-radius: 3px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--dim); text-decoration: none;
+    transition: all 0.3s;
+  }
+  .nav-links a:hover { color: var(--white); border-color: var(--blood); box-shadow: var(--glow-red); }
+  .nav-links a.active { color: var(--blood); border-color: var(--blood); }
+
+  /* ─── SECTIONS ─── */
+  section { position: relative; z-index: 1; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 80px 20px 40px;
+    background: radial-gradient(ellipse at 50% 40%, rgba(255,23,68,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse at 20% 80%, rgba(61,90,254,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(224,64,251,0.08) 0%, transparent 50%);
+  }
+  .hero-episode {
+    font-family: 'Orbitron'; font-size: 0.7rem; letter-spacing: 6px;
+    color: var(--blood); text-shadow: var(--glow-red);
+    margin-bottom: 16px;
+    animation: fadeInDown 1s ease;
+  }
+  .hero-title {
+    font-family: 'Bangers'; font-size: clamp(2.5rem, 8vw, 7rem);
+    line-height: 1; letter-spacing: 4px;
+    background: linear-gradient(135deg, #ff1744, #ff6d00, #ffea00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeInUp 1s ease 0.2s both;
+    filter: drop-shadow(0 0 30px rgba(255,23,68,0.5));
+  }
+  .hero-subtitle {
+    font-family: 'Orbitron'; font-size: clamp(0.6rem, 2vw, 0.95rem);
+    letter-spacing: 4px; color: var(--vein2);
+    text-shadow: var(--glow-blue);
+    margin: 12px 0 24px;
+    animation: fadeInUp 1s ease 0.4s both;
+  }
+  .hero-desc {
+    max-width: 600px; font-size: 1.1rem; line-height: 1.7;
+    color: var(--dim); animation: fadeInUp 1s ease 0.6s both;
+    margin-bottom: 36px;
+  }
+  .hero-scroll {
+    font-family: 'Orbitron'; font-size: 0.65rem; letter-spacing: 3px;
+    color: var(--blood); animation: pulse 2s infinite;
+    cursor: pointer;
+  }
+
+  /* LUNG SVG HERO */
+  .hero-lung {
+    width: min(340px, 80vw);
+    margin: 30px auto 10px;
+    animation: float 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(255,23,68,0.4));
+  }
+  .lung-svg .lung-body { fill: rgba(180,20,40,0.18); stroke: #ff1744; stroke-width: 2; }
+  .lung-svg .vein-line { stroke: #3d5afe; stroke-width: 1.5; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawLine 3s ease forwards; }
+  .lung-svg .artery-line { stroke: #ff1744; stroke-width: 2; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawLine 3s ease 0.5s forwards; }
+  .lung-svg .nerve-line { stroke: #ffea00; stroke-width: 1; fill: none; stroke-dasharray: 200; stroke-dashoffset: 200; animation: drawLine 3s ease 1s forwards; }
+  .blood-dot { fill: var(--blood); animation: blink 1.5s infinite; }
+  .nerve-dot { fill: var(--nerve); animation: blink 1.5s 0.5s infinite; }
+  .vein-dot { fill: var(--vein2); animation: blink 1.5s 1s infinite; }
+
+  /* ─── CHAPTER HEADERS ─── */
+  .chapter-header {
+    padding: 20px 24px 10px;
+    text-align: center;
+  }
+  .chapter-num {
+    font-family: 'Orbitron'; font-size: 0.65rem; letter-spacing: 6px;
+    margin-bottom: 6px;
+  }
+  .chapter-title {
+    font-family: 'Bangers'; font-size: clamp(2rem, 6vw, 4.5rem);
+    letter-spacing: 3px; line-height: 1.1;
+  }
+  .chapter-divider {
+    width: 120px; height: 3px;
+    margin: 12px auto;
+    border-radius: 2px;
+  }
+
+  /* ─── MANGA PANELS ─── */
+  .manga-grid {
+    display: grid;
+    padding: 20px;
+    gap: 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .mg-2 { grid-template-columns: 1fr 1fr; }
+  .mg-3 { grid-template-columns: 2fr 1fr 1fr; }
+  .mg-full { grid-template-columns: 1fr; }
+  @media(max-width:700px){
+    .mg-2, .mg-3 { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--card);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: panelReveal 0.6s ease both;
+  }
+  .panel:hover { transform: translateY(-4px) scale(1.01); }
+
+  .panel-red { border: 2px solid rgba(255,23,68,0.5); }
+  .panel-red:hover { box-shadow: var(--glow-red); }
+  .panel-blue { border: 2px solid rgba(61,90,254,0.5); }
+  .panel-blue:hover { box-shadow: var(--glow-blue); }
+  .panel-yellow { border: 2px solid rgba(255,234,0,0.5); }
+  .panel-yellow:hover { box-shadow: var(--glow-yellow); }
+  .panel-purple { border: 2px solid rgba(224,64,251,0.5); }
+  .panel-purple:hover { box-shadow: var(--glow-purple); }
+  .panel-cyan { border: 2px solid rgba(0,229,255,0.5); }
+  .panel-cyan:hover { box-shadow: 0 0 20px #00e5ff88, 0 0 40px #00e5ff44; }
+
+  .panel-inner { padding: 20px; }
+  .panel-tag {
+    font-family: 'Orbitron'; font-size: 0.55rem; letter-spacing: 3px;
+    padding: 4px 10px; border-radius: 2px;
+    display: inline-block; margin-bottom: 12px;
+  }
+  .tag-red { background: rgba(255,23,68,0.2); color: var(--blood); }
+  .tag-blue { background: rgba(61,90,254,0.2); color: var(--vein2); }
+  .tag-yellow { background: rgba(255,234,0,0.2); color: var(--nerve); }
+  .tag-purple { background: rgba(224,64,251,0.2); color: var(--lymph); }
+  .tag-cyan { background: rgba(0,229,255,0.2); color: var(--lymph2); }
+  .tag-green { background: rgba(118,255,3,0.2); color: var(--nerve2); }
+
+  .panel h3 {
+    font-family: 'Orbitron'; font-size: 0.9rem; letter-spacing: 2px;
+    margin-bottom: 10px; line-height: 1.3;
+  }
+  .panel p { font-size: 0.95rem; line-height: 1.65; color: #b0c4de; }
+  .panel ul { list-style: none; margin-top: 10px; }
+  .panel ul li {
+    padding: 5px 0; font-size: 0.9rem;
+    color: #b0c4de; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .panel ul li::before { content: '▸'; flex-shrink: 0; margin-top: 2px; }
+  .li-red::before { color: var(--blood); }
+  .li-blue::before { color: var(--vein2); }
+  .li-yellow::before { color: var(--nerve); }
+  .li-purple::before { color: var(--lymph); }
+  .li-cyan::before { color: var(--lymph2); }
+  .li-green::before { color: var(--nerve2); }
+
+  /* ─── PANEL VISUAL ILLUSTRATIONS ─── */
+  .panel-art {
+    width: 100%; height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .art-canvas {
+    width: 100%; height: 100%;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline-section {
+    padding: 40px 20px;
+    background: linear-gradient(180deg, transparent, rgba(61,90,254,0.05), transparent);
+  }
+  .timeline { max-width: 900px; margin: 0 auto; position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+    background: linear-gradient(180deg, var(--blood), var(--vein), var(--nerve), var(--lymph));
+    transform: translateX(-50%);
+  }
+  @media(max-width:600px){
+    .timeline::before { left: 20px; }
+  }
+  .tl-item {
+    display: flex; gap: 30px; margin-bottom: 40px;
+    align-items: flex-start;
+    animation: panelReveal 0.5s ease both;
+  }
+  .tl-item:nth-child(even) { flex-direction: row-reverse; }
+  @media(max-width:600px){
+    .tl-item, .tl-item:nth-child(even) { flex-direction: row; padding-left: 50px; }
+  }
+  .tl-dot {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bangers'; font-size: 1rem;
+    flex-shrink: 0; position: relative; z-index: 2;
+    border: 3px solid;
+  }
+  .tl-dot-red { background: rgba(255,23,68,0.2); border-color: var(--blood); color: var(--blood); box-shadow: var(--glow-red); }
+  .tl-dot-blue { background: rgba(61,90,254,0.2); border-color: var(--vein); color: var(--vein2); box-shadow: var(--glow-blue); }
+  .tl-dot-yellow { background: rgba(255,234,0,0.2); border-color: var(--nerve); color: var(--nerve); box-shadow: var(--glow-yellow); }
+  .tl-dot-purple { background: rgba(224,64,251,0.2); border-color: var(--lymph); color: var(--lymph); box-shadow: var(--glow-purple); }
+  .tl-dot-cyan { background: rgba(0,229,255,0.2); border-color: var(--lymph2); color: var(--lymph2); }
+  .tl-content {
+    flex: 1; background: var(--card);
+    border-radius: 6px; padding: 18px;
+    border-left: 3px solid transparent;
+  }
+  .tl-item:nth-child(odd) .tl-content { border-left-color: var(--blood); }
+  .tl-item:nth-child(even) .tl-content { border-left-color: var(--vein); border-left: none; border-right: 3px solid var(--vein); }
+  @media(max-width:600px){
+    .tl-item:nth-child(even) .tl-content { border-right: none; border-left: 3px solid var(--vein); }
+  }
+  .tl-label { font-family: 'Orbitron'; font-size: 0.55rem; letter-spacing: 3px; margin-bottom: 6px; }
+  .tl-content h4 { font-family: 'Orbitron'; font-size: 0.85rem; margin-bottom: 8px; }
+  .tl-content p { font-size: 0.9rem; color: #9bb; line-height: 1.6; }
+
+  /* ─── MOLECULE ANIMATED SCENE ─── */
+  .molecule-scene {
+    padding: 20px; text-align: center;
+    background: radial-gradient(ellipse at center, rgba(61,90,254,0.08) 0%, transparent 70%);
+  }
+  #mol-canvas { border: 1px solid rgba(61,90,254,0.2); border-radius: 8px; background: rgba(5,8,20,0.9); }
+
+  /* ─── QUIZ / INTERACTIVE ─── */
+  .quiz-section {
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(255,23,68,0.04), rgba(61,90,254,0.04));
+  }
+  .quiz-box {
+    max-width: 700px; margin: 0 auto;
+    background: var(--card); border-radius: 8px;
+    border: 2px solid rgba(255,234,0,0.3);
+    padding: 30px;
+  }
+  .quiz-q { font-family: 'Orbitron'; font-size: 0.9rem; margin-bottom: 20px; color: var(--nerve); }
+  .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 12px 18px;
+    cursor: pointer; font-size: 0.9rem; color: var(--dim);
+    transition: all 0.3s; text-align: left;
+    font-family: 'Rajdhani';
+  }
+  .quiz-opt:hover { background: rgba(255,234,0,0.1); border-color: var(--nerve); color: var(--white); }
+  .quiz-opt.correct { background: rgba(118,255,3,0.15); border-color: var(--nerve2); color: var(--nerve2); box-shadow: 0 0 15px rgba(118,255,3,0.3); }
+  .quiz-opt.wrong { background: rgba(255,23,68,0.15); border-color: var(--blood); color: var(--blood); }
+  .quiz-feedback { margin-top: 16px; font-size: 0.9rem; min-height: 40px; line-height: 1.6; }
+  .quiz-nav { display: flex; gap: 12px; margin-top: 20px; }
+  .btn {
+    font-family: 'Orbitron'; font-size: 0.65rem; letter-spacing: 2px;
+    padding: 10px 20px; border-radius: 4px; border: none;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .btn-red { background: rgba(255,23,68,0.2); color: var(--blood); border: 1px solid var(--blood); }
+  .btn-red:hover { background: var(--blood); color: #fff; box-shadow: var(--glow-red); }
+  .btn-yellow { background: rgba(255,234,0,0.15); color: var(--nerve); border: 1px solid var(--nerve); }
+  .btn-yellow:hover { background: var(--nerve); color: #000; box-shadow: var(--glow-yellow); }
+  .quiz-counter { font-family: 'Orbitron'; font-size: 0.7rem; color: var(--dim); margin-bottom: 12px; }
+  .score-display { font-family: 'Bangers'; font-size: 3rem; color: var(--nerve); text-shadow: var(--glow-yellow); }
+
+  /* ─── ACCORDION ─── */
+  .accordion { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+  .acc-item { margin-bottom: 12px; border-radius: 6px; overflow: hidden; }
+  .acc-header {
+    background: var(--card); padding: 16px 20px;
+    cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.3s; border: 1px solid rgba(255,255,255,0.06);
+    font-family: 'Orbitron'; font-size: 0.8rem; letter-spacing: 1px;
+  }
+  .acc-header:hover { background: rgba(255,255,255,0.04); }
+  .acc-header .acc-icon { font-size: 1.2rem; transition: transform 0.3s; flex-shrink: 0; }
+  .acc-header.open .acc-icon { transform: rotate(90deg); }
+  .acc-body {
+    background: rgba(10,15,30,0.8); max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    font-size: 0.9rem; line-height: 1.7; color: #9bb;
+    border: 1px solid rgba(255,255,255,0.04); border-top: none;
+  }
+  .acc-body.open { max-height: 600px; padding: 20px; }
+  .acc-body table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+  .acc-body th { font-family: 'Orbitron'; font-size: 0.6rem; letter-spacing: 2px; padding: 8px 12px; text-align: left; }
+  .acc-body td { padding: 8px 12px; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+  /* ─── SECTIONS SPECIFIC ─── */
+  #cap1 {
+    background: radial-gradient(ellipse at 70% 30%, rgba(255,23,68,0.08) 0%, transparent 60%);
+    padding-bottom: 60px;
+  }
+  #cap2 {
+    background: radial-gradient(ellipse at 30% 50%, rgba(61,90,254,0.08) 0%, transparent 60%);
+    padding-bottom: 60px;
+  }
+  #cap3 {
+    background: radial-gradient(ellipse at 60% 50%, rgba(255,234,0,0.06) 0%, transparent 60%);
+    padding-bottom: 60px;
+  }
+  #cap4 {
+    background: radial-gradient(ellipse at 50% 50%, rgba(224,64,251,0.07) 0%, transparent 60%);
+    padding-bottom: 60px;
+  }
+  #cap5 {
+    background: radial-gradient(ellipse at 40% 50%, rgba(0,229,255,0.07) 0%, transparent 60%);
+    padding-bottom: 60px;
+  }
+
+  /* ─── DIALOGUE BUBBLES (MANGA STYLE) ─── */
+  .dialogue { display: flex; gap: 16px; align-items: flex-start; margin: 20px; max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+  .dialogue.right { flex-direction: row-reverse; }
+  .char-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; flex-shrink: 0;
+    border: 2px solid;
+  }
+  .char-sensei { background: rgba(255,23,68,0.15); border-color: var(--blood); }
+  .char-aluno { background: rgba(61,90,254,0.15); border-color: var(--vein2); }
+  .char-nerve { background: rgba(255,234,0,0.15); border-color: var(--nerve); }
+  .bubble {
+    background: var(--card); border-radius: 12px; padding: 14px 18px;
+    max-width: 500px; font-size: 0.9rem; line-height: 1.65;
+    color: var(--white); border: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+  }
+  .bubble-name { font-family: 'Orbitron'; font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 6px; }
+  .bubble-sensei { border-left: 3px solid var(--blood); }
+  .bubble-sensei .bubble-name { color: var(--blood); }
+  .bubble-aluno { border-left: 3px solid var(--vein2); }
+  .bubble-aluno .bubble-name { color: var(--vein2); }
+  .bubble-nerve { border-left: 3px solid var(--nerve); }
+  .bubble-nerve .bubble-name { color: var(--nerve); }
+
+  /* ─── HIGHLIGHT BOX ─── */
+  .highlight-box {
+    border-radius: 8px; padding: 20px 24px; margin: 20px;
+    border: 1px solid; font-size: 0.9rem; line-height: 1.7;
+  }
+  .hl-red { background: rgba(255,23,68,0.08); border-color: rgba(255,23,68,0.4); }
+  .hl-blue { background: rgba(61,90,254,0.08); border-color: rgba(61,90,254,0.4); }
+  .hl-yellow { background: rgba(255,234,0,0.08); border-color: rgba(255,234,0,0.4); }
+  .hl-green { background: rgba(118,255,3,0.08); border-color: rgba(118,255,3,0.4); }
+  .hl-title { font-family: 'Orbitron'; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 8px; }
+  .hl-red .hl-title { color: var(--blood); }
+  .hl-blue .hl-title { color: var(--vein2); }
+  .hl-yellow .hl-title { color: var(--nerve); }
+  .hl-green .hl-title { color: var(--nerve2); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position: relative; z-index: 1;
+    padding: 50px 24px 30px;
+    text-align: center;
+    background: linear-gradient(180deg, transparent, rgba(5,8,16,0.95));
+    border-top: 1px solid rgba(255,23,68,0.2);
+  }
+  .footer-logo { font-family: 'Bangers'; font-size: 2.5rem; letter-spacing: 5px; color: var(--blood); text-shadow: var(--glow-red); }
+  .footer-sub { font-family: 'Orbitron'; font-size: 0.65rem; letter-spacing: 4px; color: var(--dim); margin-top: 6px; }
+  .footer-divider { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, var(--blood), transparent); margin: 20px auto; }
+  .footer-credits { font-size: 0.85rem; color: var(--dim); line-height: 2; }
+  .footer-credits span { color: var(--white); }
+
+  /* ─── SCROLL PROGRESS ─── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
+    background: linear-gradient(90deg, var(--blood), var(--vein2), var(--nerve));
+    transition: width 0.1s;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; r: 5; }
+    50% { opacity: 0.4; r: 3; }
+  }
+  @keyframes drawLine {
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes panelReveal {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes orbit { to { transform: rotate(360deg) translateX(var(--r)) rotate(-360deg); } }
+
+  /* ─── INTERSECTION OBSERVER TRIGGERS ─── */
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.6s ease; }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.6s ease; }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* info badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 0.8rem; color: var(--dim); margin: 4px;
+  }
+  .badge-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚡ PULMÃO VIVO</div>
+  <div class="nav-links">
+    <a href="#hero" class="active">Início</a>
+    <a href="#cap1">Vasc. Funcional</a>
+    <a href="#cap2">Vasc. Nutricional</a>
+    <a href="#cap3">Inervação</a>
+    <a href="#cap4">Pleura</a>
+    <a href="#cap5">Linfáticos</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="hero-episode">DEMILMED-UL — SÉRIE ANATÓMICA // EP. 01</div>
+  <h1 class="hero-title">PULMÃO VIVO</h1>
+  <div class="hero-subtitle">Vascularização &amp; Inervação Pulmonar e Pleural</div>
+  <p class="hero-desc">Entra na missão. Dois sistemas vasculares, uma rede nervosa complexa e uma pleura que guarda os segredos do tórax. Descobrimos tudo — de forma épica.</p>
+
+  <!-- LUNG SVG ANIMATION -->
+  <svg class="hero-lung lung-svg" viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg">
+    <!-- Left lung -->
+    <path class="lung-body" d="M60,250 Q20,220 25,160 Q20,100 60,70 Q80,55 95,65 Q110,75 115,100 Q130,70 140,80 Q155,95 150,150 Q145,220 110,255 Z"/>
+    <!-- Right lung -->
+    <path class="lung-body" d="M280,250 Q320,220 315,160 Q320,100 280,70 Q260,55 245,65 Q230,75 225,100 Q210,70 200,80 Q185,95 190,150 Q195,220 230,255 Z"/>
+    <!-- Trachea -->
+    <rect x="158" y="20" width="24" height="80" rx="12" fill="none" stroke="#ff6d00" stroke-width="2.5"/>
+    <!-- Main bronchi -->
+    <path d="M158,95 Q130,110 115,100" class="artery-line" style="stroke:#ff6d00;stroke-dasharray:80;stroke-dashoffset:80;animation:drawLine 2s ease 0.3s forwards"/>
+    <path d="M182,95 Q210,110 225,100" class="artery-line" style="stroke:#ff6d00;stroke-dasharray:80;stroke-dashoffset:80;animation:drawLine 2s ease 0.3s forwards"/>
+    <!-- Pulmonary arteries (blue-ish, deoxygenated going to lung) -->
+    <path d="M162,140 Q100,130 70,140" class="vein-line"/>
+    <path d="M178,140 Q240,130 270,140" class="vein-line" style="animation-delay:0.3s"/>
+    <!-- Pulmonary veins (red, oxygenated coming back) -->
+    <path d="M162,160 Q95,170 75,175" class="artery-line"/>
+    <path d="M178,160 Q245,170 265,175" class="artery-line" style="animation-delay:0.4s"/>
+    <!-- Nerve lines -->
+    <path d="M170,85 Q140,140 100,190" class="nerve-line"/>
+    <path d="M170,85 Q200,140 240,190" class="nerve-line" style="animation-delay:1.2s"/>
+    <!-- Dots -->
+    <circle class="blood-dot" cx="170" cy="140" r="5"/>
+    <circle class="vein-dot" cx="75" cy="155" r="4"/>
+    <circle class="vein-dot" cx="265" cy="155" r="4"/>
+    <circle class="nerve-dot" cx="100" cy="190" r="4"/>
+    <circle class="nerve-dot" cx="240" cy="190" r="4"/>
+    <!-- Heart outline -->
+    <path d="M148,175 Q140,155 155,150 Q162,148 170,158 Q178,148 185,150 Q200,155 192,175 Q185,190 170,200 Q155,190 148,175Z" fill="rgba(255,23,68,0.3)" stroke="#ff1744" stroke-width="1.5"/>
+  </svg>
+
+  <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:30px;">
+    <span class="badge"><span class="badge-dot" style="background:var(--blood)"></span>Artérias Pulmonares</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--vein2)"></span>Veias Pulmonares</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--nerve)"></span>Nervos</span>
+    <span class="badge"><span class="badge-dot" style="background:var(--lymph)"></span>Linfáticos</span>
+    <span class="badge"><span class="badge-dot" style="background:#ff6d00"></span>Brônquicas</span>
+  </div>
+
+  <div class="hero-scroll" onclick="document.getElementById('cap1').scrollIntoView({behavior:'smooth'})">↓ COMEÇAR A MISSÃO ↓</div>
+</section>
+
+<!-- ═══════════════ CAP 1 — VASCULARIZAÇÃO FUNCIONAL ═══════════════ -->
+<section id="cap1">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--blood)">CAPÍTULO 01 // SISTEMA VASCULAR FUNCIONAL</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#ff1744,#ff6d00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      O Rio do Sangue
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--blood),transparent)"></div>
+  </div>
+
+  <!-- Dialogue -->
+  <div class="dialogue reveal">
+    <div class="char-icon char-sensei">🫁</div>
+    <div class="bubble bubble-sensei">
+      <div class="bubble-name">PROFESSOR PULMÃO</div>
+      O sistema vascular <em>funcional</em> do pulmão é responsável pela hematose — a troca gasosa. Temos duas grandes artérias pulmonares saindo do ventrículo direito… e quatro veias que entram no átrio esquerdo. Este é o núcleo da circulação pulmonar!
+    </div>
+  </div>
+  <div class="dialogue right reveal">
+    <div class="char-icon char-aluno">🎓</div>
+    <div class="bubble bubble-aluno">
+      <div class="bubble-name">ESTUDANTE</div>
+      Mas espera — as artérias pulmonares levam sangue <em>venoso</em> e as veias pulmonares carregam sangue <em>arterial</em>? Isso é invertido!
+    </div>
+  </div>
+  <div class="dialogue reveal">
+    <div class="char-icon char-sensei">🫁</div>
+    <div class="bubble bubble-sensei">
+      <div class="bubble-name">PROFESSOR PULMÃO</div>
+      Exatamente! No pulmão, as regras clássicas invertem-se. Artéria = leva do coração. Veia = traz para o coração. A oxigenação acontece NOS PULMÕES, não no coração!
+    </div>
+  </div>
+
+  <div class="manga-grid mg-2 reveal">
+    <!-- Arterias pulmonares -->
+    <div class="panel panel-red">
+      <div class="panel-inner">
+        <span class="panel-tag tag-red">ARTÉRIAS PULMONARES</span>
+        <h3 style="color:var(--blood)">Tronco Pulmonar → Pulmões</h3>
+        <p>O <strong style="color:var(--blood)">tronco pulmonar</strong> emerge do ventrículo direito e divide-se em dois ramos principais logo abaixo do arco da aorta.</p>
+        <ul>
+          <li class="li-red"><strong>Artéria Pulmonar Direita:</strong> mais longa, passa atrás da aorta ascendente e da VCS. Divide-se em ramo lobar superior (truncus anterior) e ramo interlobar.</li>
+          <li class="li-red"><strong>Artéria Pulmonar Esquerda:</strong> mais curta, curvada sobre o brônquio principal esquerdo. Liga-se ao arco aórtico pelo <em>ligamento arterioso</em> (resquício do ducto arterioso).</li>
+          <li class="li-red">Ambas acompanham os brônquios e dividem-se em ramos <strong>lobares → segmentares → subsegmentares</strong> até às arteríolas alveolares.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Veias pulmonares -->
+    <div class="panel panel-blue">
+      <div class="panel-inner">
+        <span class="panel-tag tag-blue">VEIAS PULMONARES</span>
+        <h3 style="color:var(--vein2)">Pulmões → Átrio Esquerdo</h3>
+        <p>As <strong style="color:var(--vein2)">veias pulmonares</strong> conduzem sangue rico em O₂ de volta ao coração — 4 veias no total (2 por pulmão).</p>
+        <ul>
+          <li class="li-blue"><strong>Pulmão Direito:</strong> Veia pulmonar superior direita (lobos sup. + médio) + Veia pulmonar inferior direita (lobo inf.).</li>
+          <li class="li-blue"><strong>Pulmão Esquerdo:</strong> Veia pulmonar superior esquerda (lobos sup. + língula) + Veia pulmonar inferior esquerda (lobo inf.).</li>
+          <li class="li-blue">Correm <strong>separadas dos brônquios e artérias</strong> — transitam pelo bordo inferior do hilo antes de atingir o átrio esquerdo.</li>
+          <li class="li-blue">Ocasionalmente, pode existir uma <em>5ª veia pulmonar média direita</em> separada.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline circulação pulmonar -->
+  <div style="padding:10px 20px 20px">
+    <h3 class="reveal" style="font-family:'Orbitron';font-size:0.9rem;letter-spacing:3px;color:var(--blood);text-align:center;margin-bottom:30px">PERCURSO DO SANGUE — CIRCULAÇÃO PULMONAR</h3>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-red">1</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--blood)">PARTIDA</div>
+          <h4>Ventrículo Direito</h4>
+          <p>Sangue venoso (pobre em O₂, rico em CO₂) é ejetado pelo ventrículo direito durante a sístole para o tronco pulmonar.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-red">2</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--blood)">BIFURCAÇÃO</div>
+          <h4>Tronco Pulmonar</h4>
+          <p>Divide-se em artéria pulmonar direita e esquerda ao nível do ângulo esternal (Ângulo de Louis / T4-T5).</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-red">3</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--blood)">DISTRIBUIÇÃO</div>
+          <h4>Artérias Lobares → Segmentares</h4>
+          <p>Cada artéria pulmonar acompanha fielmente os brônquios correspondentes, ramificando-se em paralelo até ao nível alveolar.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-blue">4</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--vein2)">TROCA GASOSA</div>
+          <h4>Rede Capilar Alveolar</h4>
+          <p>O₂ difunde-se dos alvéolos para o sangue. CO₂ vai do sangue para os alvéolos. Espessura da barreira alvéolo-capilar: ~0,5 μm!</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-blue">5</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--vein2)">RETORNO</div>
+          <h4>Veias Pulmonares</h4>
+          <p>Sangue oxigenado converge em 4 veias pulmonares que desembocam no átrio esquerdo (aurícula esquerda).</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-blue">6</div>
+        <div class="tl-content">
+          <div class="tl-label" style="color:var(--vein2)">DESTINO</div>
+          <h4>Átrio Esquerdo → Circulação Sistémica</h4>
+          <p>O sangue oxigenado entra no átrio esquerdo e é distribuído pelo ventrículo esquerdo para todo o organismo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box hl-red reveal" style="max-width:900px;margin:20px auto">
+    <div class="hl-title">⚡ PONTO-CHAVE CLÍNICO</div>
+    Nas artérias pulmonares a pressão é <strong>baixa</strong> (~25/8 mmHg vs 120/80 da sistémica). Um aumento patológico desta pressão denomina-se <strong>Hipertensão Pulmonar</strong> — condição grave que sobrecarrega o ventrículo direito e pode levar a cor pulmonale.
+  </div>
+</section>
+
+<!-- ═══════════════ CAP 2 — VASCULARIZAÇÃO NUTRICIONAL ═══════════════ -->
+<section id="cap2">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:#ff6d00">CAPÍTULO 02 // SISTEMA VASCULAR NUTRICIONAL</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#ff6d00,#ffea00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      O Alimento do Pulmão
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,#ff6d00,transparent)"></div>
+  </div>
+
+  <div class="dialogue reveal">
+    <div class="char-icon char-aluno">🎓</div>
+    <div class="bubble bubble-aluno">
+      <div class="bubble-name">ESTUDANTE</div>
+      Mas se as artérias pulmonares suprem o pulmão todo, porque existe um segundo sistema vascular?
+    </div>
+  </div>
+  <div class="dialogue right reveal">
+    <div class="char-icon char-sensei">🫁</div>
+    <div class="bubble bubble-sensei">
+      <div class="bubble-name">PROFESSOR PULMÃO</div>
+      As artérias pulmonares nutrem apenas os alvéolos! O tecido de suporte do pulmão — brônquios, bronquíolos, pleura visceral, septo — precisa de um sistema separado: as <strong style="color:#ff6d00">artérias brônquicas</strong>. Sangue arterial sistémico de verdade!
+    </div>
+  </div>
+
+  <div class="manga-grid mg-3 reveal">
+    <div class="panel panel-red" style="border-color:rgba(255,109,0,0.5)">
+      <div class="panel-inner">
+        <span class="panel-tag" style="background:rgba(255,109,0,0.2);color:#ff6d00">ARTÉRIAS BRÔNQUICAS</span>
+        <h3 style="color:#ff6d00">Origem &amp; Trajeto</h3>
+        <ul>
+          <li class="li-red"><strong>Direita:</strong> geralmente 1 ramo, nasce de um espaço intercostal (3.ª) ou da artéria brônquica esquerda superior.</li>
+          <li class="li-red"><strong>Esquerda:</strong> geralmente 2 ramos, nascendo diretamente da aorta torácica descendente (T5-T6).</li>
+          <li class="li-red">Acompanham os brônquios pelo <em>hilo pulmonar</em> até aos bronquíolos terminais.</li>
+          <li class="li-red">Nutrem: brônquios, bronquíolos, nódulos linfáticos hilares, pleura visceral e septo interlobular.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel panel-blue">
+      <div class="panel-inner">
+        <span class="panel-tag tag-blue">VEIAS BRÔNQUICAS</span>
+        <h3 style="color:var(--vein2)">Drenagem</h3>
+        <ul>
+          <li class="li-blue"><strong>Veia brônquica direita</strong> → veia ázigos.</li>
+          <li class="li-blue"><strong>Veia brônquica esquerda</strong> → veia hemiázigos acessória ou veia intercostal superior esquerda.</li>
+          <li class="li-blue">Apenas parte do sangue brônquico retorna pelas veias brônquicas — o restante drena pelas veias pulmonares (<em>shunt fisiológico</em>).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel panel-yellow">
+      <div class="panel-inner">
+        <span class="panel-tag tag-yellow">ANASTOMOSES</span>
+        <h3 style="color:var(--nerve)">Conexões Importantes</h3>
+        <ul>
+          <li class="li-yellow">Anastomoses entre artérias brônquicas e ramos da artéria pulmonar ao nível dos bronquíolos (zona de transição).</li>
+          <li class="li-yellow">Em situação de <em>embolismo pulmonar</em>, estas anastomoses podem compensar parcialmente.</li>
+          <li class="li-yellow">A pleura visceral é suprida pelas artérias brônquicas (via circulação sistémica).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela comparativa -->
+  <div class="accordion reveal">
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border:1px solid rgba(255,109,0,0.3)">
+        <span style="color:#ff6d00">📊 TABELA COMPARATIVA — Circulação Funcional vs Nutricional</span>
+        <span class="acc-icon" style="color:#ff6d00">▶</span>
+      </div>
+      <div class="acc-body">
+        <table>
+          <thead>
+            <tr>
+              <th style="color:#ff6d00">PARÂMETRO</th>
+              <th style="color:var(--blood)">CIRCULAÇÃO FUNCIONAL</th>
+              <th style="color:#ff6d00">CIRCULAÇÃO NUTRICIONAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Vasos</td><td>Artérias/Veias Pulmonares</td><td>Artérias/Veias Brônquicas</td></tr>
+            <tr><td>Origem</td><td>Ventrículo Direito</td><td>Aorta Torácica / Intercostais</td></tr>
+            <tr><td>Função</td><td>Hematose (troca gasosa)</td><td>Nutrição do tecido pulmonar</td></tr>
+            <tr><td>Pressão</td><td>Baixa (~25/8 mmHg)</td><td>Alta (sistémica ~120/80 mmHg)</td></tr>
+            <tr><td>Território</td><td>Rede capilar alveolar</td><td>Brônquios, pleura visceral, septo</td></tr>
+            <tr><td>Drenagem venosa</td><td>Átrio Esquerdo</td><td>Ázigos / Veias Pulmonares (parcial)</td></tr>
+            <tr><td>Volume relativo</td><td>~99% do débito cardíaco direito</td><td>~1-2% do débito cardíaco</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box hl-yellow reveal" style="max-width:900px;margin:20px auto">
+    <div class="hl-title">⚡ CLÍNICA — EMBOLISMO PULMONAR</div>
+    O embolismo pulmonar obstrui ramos das artérias pulmonares. Como as artérias brônquicas ainda suprem o tecido, o <strong>infarto pulmonar</strong> só ocorre em ~10% dos casos (geralmente quando há insuficiência cardíaca concomitante que compromete a circulação brônquica colateral).
+  </div>
+</section>
+
+<!-- ═══════════════ CAP 3 — INERVAÇÃO ═══════════════ -->
+<section id="cap3">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--nerve)">CAPÍTULO 03 // INERVAÇÃO PULMONAR</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#ffea00,#76ff03);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      O Sistema Nervoso em Acção
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--nerve),transparent)"></div>
+  </div>
+
+  <div class="dialogue reveal">
+    <div class="char-icon char-nerve">⚡</div>
+    <div class="bubble bubble-nerve">
+      <div class="bubble-name">AGENTE NERVO</div>
+      Missão recebida! O plexo pulmonar controla o pulmão. Recebo ordens do <strong style="color:var(--nerve)">nervo vago (X)</strong> e do <strong style="color:var(--nerve2)">simpático torácico</strong>. Broncoconstrição? Broncodilatação? Digo eu!
+    </div>
+  </div>
+
+  <div class="manga-grid mg-2 reveal">
+    <!-- Plexo Pulmonar -->
+    <div class="panel panel-yellow">
+      <div class="panel-inner">
+        <span class="panel-tag tag-yellow">PLEXO PULMONAR</span>
+        <h3 style="color:var(--nerve)">Formação &amp; Localização</h3>
+        <p>O <strong style="color:var(--nerve)">plexo pulmonar</strong> forma-se na raiz do pulmão (hilo), anterior e posterior ao brônquio principal.</p>
+        <ul>
+          <li class="li-yellow"><strong>Plexo anterior:</strong> menor, situa-se anterior à raiz pulmonar.</li>
+          <li class="li-yellow"><strong>Plexo posterior:</strong> maior, posterior à raiz pulmonar. Formado principalmente pelo vago e gânglios simpáticos T2-T5.</li>
+          <li class="li-yellow">Os dois plexos comunicam entre si.</li>
+          <li class="li-yellow">Fibras seguem os vasos sanguíneos e brônquios até ao parênquima pulmonar.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Vago -->
+    <div class="panel panel-yellow">
+      <div class="panel-inner">
+        <span class="panel-tag tag-green">NERVO VAGO (NC X) — PARASSIMPÁTICO</span>
+        <h3 style="color:var(--nerve2)">O Inibidor Broncoconstritor</h3>
+        <ul>
+          <li class="li-green"><strong>Origem:</strong> Núcleo dorsal do vago (bulbo) → desce pelo pescoço e mediastino.</li>
+          <li class="li-green"><strong>Contribuição:</strong> ramos pulmonares do vago bilateralmente → plexo pulmonar.</li>
+          <li class="li-green"><strong>Pré-ganglionar:</strong> fibras longas terminam em gânglios intramurais (na parede brônquica).</li>
+          <li class="li-green"><strong>Efeitos:</strong>
+            <br>• Broncoconstrição
+            <br>• Aumento da secreção glandular brônquica
+            <br>• Vasodilatação pulmonar (minor)
+          </li>
+          <li class="li-green">Mediador: <strong>Acetilcolina → recetores M3</strong> nas células musculares lisas brônquicas.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simpático -->
+  <div class="manga-grid mg-full reveal">
+    <div class="panel panel-red" style="border-color:rgba(255,234,0,0.4)">
+      <div class="panel-inner">
+        <span class="panel-tag tag-yellow">SIMPÁTICO TORÁCICO — ADRENÉRGICO</span>
+        <h3 style="color:var(--nerve)">O Dilatador de Emergência</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <p style="color:var(--dim);margin-bottom:8px;font-size:0.85rem">ORIGEM &amp; PERCURSO:</p>
+            <ul>
+              <li class="li-yellow">Neurónios pré-ganglionares: colunas intermediolaterais T2-T5 da medula espinal.</li>
+              <li class="li-yellow">Fazem sinapse nos <strong>gânglios simpáticos paravertebrais</strong> torácicos.</li>
+              <li class="li-yellow">Pós-ganglionares seguem pelos nervos cardiopulmonares → plexo pulmonar.</li>
+            </ul>
+          </div>
+          <div>
+            <p style="color:var(--dim);margin-bottom:8px;font-size:0.85rem">EFEITOS PULMONARES:</p>
+            <ul>
+              <li class="li-yellow"><strong>Broncodilatação</strong> (fight-or-flight!)</li>
+              <li class="li-yellow">Redução da secreção glandular</li>
+              <li class="li-yellow">Vasoconstrição dos vasos brônquicos</li>
+              <li class="li-yellow">Mediador: <strong>Noradrenalina → recetores β₂</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top:16px;padding:12px;background:rgba(255,234,0,0.07);border-radius:6px;border:1px solid rgba(255,234,0,0.2)">
+          <span style="color:var(--nerve);font-family:'Orbitron';font-size:0.7rem">APLICAÇÃO CLÍNICA</span>
+          <p style="margin-top:6px;font-size:0.88rem">Os <strong style="color:var(--nerve2)">broncodilatadores β₂-agonistas</strong> (salbutamol, formoterol) mimetizam o simpático: relaxam o músculo liso brônquico e aliviam a asma. Os <strong style="color:var(--nerve)">anticolinérgicos</strong> (ipratrópio) bloqueiam o vago e são usados na DPOC.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aferentes / dor -->
+  <div class="manga-grid mg-2 reveal">
+    <div class="panel panel-cyan">
+      <div class="panel-inner">
+        <span class="panel-tag tag-cyan">FIBRAS AFERENTES VAGAIS</span>
+        <h3 style="color:var(--lymph2)">Sensibilidade Pulmonar</h3>
+        <ul>
+          <li class="li-cyan"><strong>Recetores de estiramento (RAR e SAR):</strong> nas paredes brônquicas — medeiam o reflexo de Hering-Breuer (controle respiratório).</li>
+          <li class="li-cyan"><strong>Fibras C (J-receptors):</strong> perto dos capilares alveolares — ativadas por edema pulmonar, causando dispneia e apneia reflexa.</li>
+          <li class="li-cyan"><strong>Recetores de irritação:</strong> na mucosa brônquica — medeiam tosse e broncospasmo reflexo.</li>
+          <li class="li-cyan">Via aferente: vago → núcleo do trato solitário (bulbo).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel panel-yellow">
+      <div class="panel-inner">
+        <span class="panel-tag tag-yellow">FIBRAS AFERENTES SIMPÁTICAS</span>
+        <h3 style="color:var(--nerve)">A Dor Visceral</h3>
+        <ul>
+          <li class="li-yellow">Conduzem dor e sensações viscerais do pulmão.</li>
+          <li class="li-yellow">Percurso: fibras aferentes acompanham os nervos simpáticos → raízes dorsais T1-T4.</li>
+          <li class="li-yellow">Dor pulmonar visceral pode ser referida para o <strong>pescoço, ombro, braço</strong> (dermátomos T1-T4) — semelhante à angina!</li>
+          <li class="li-yellow"><strong>O parênquima pulmonar</strong> em si é insensível à dor (sem aferentes nociceptivos diretos).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box hl-green reveal" style="max-width:900px;margin:20px auto">
+    <div class="hl-title">⚡ REFLEXO DE HERING-BREUER</div>
+    Estiramento dos pulmões → ativa recetores SAR → sinal via vago → inibe inspiração (previne hiperinsuflação). Este reflexo é fundamental no recém-nascido e em estados de hiperpneia. Em adultos normais, atua principalmente durante volumes correntes elevados (exercício intenso).
+  </div>
+
+  <!-- Accordions inervação detalhada -->
+  <div class="accordion">
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(255,234,0,0.3)">
+        <span style="color:var(--nerve)">🧠 RESUMO — Vias Nervosas Detalhadas (Eferentes)</span>
+        <span class="acc-icon" style="color:var(--nerve)">▶</span>
+      </div>
+      <div class="acc-body">
+        <table>
+          <thead>
+            <tr>
+              <th style="color:var(--nerve)">SISTEMA</th>
+              <th style="color:var(--nerve)">ORIGEM</th>
+              <th style="color:var(--nerve)">GÂNGLIO</th>
+              <th style="color:var(--nerve)">MEDIADOR</th>
+              <th style="color:var(--nerve)">EFEITO BRÔNQUICO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Parassimpático</td>
+              <td>Núcleo dorsal vagal (bulbo)</td>
+              <td>Intramural (parede brônquica)</td>
+              <td>ACh → M₃</td>
+              <td>Broncoconstrição / ↑ secreção</td>
+            </tr>
+            <tr>
+              <td>Simpático</td>
+              <td>Colunas IML T2-T5</td>
+              <td>Cadeia paravertebral</td>
+              <td>NA → β₂</td>
+              <td>Broncodilatação / ↓ secreção</td>
+            </tr>
+            <tr>
+              <td>NANC inibitório</td>
+              <td>Plexo intramural</td>
+              <td>Intramural</td>
+              <td>VIP / NO</td>
+              <td>Broncodilatação potente</td>
+            </tr>
+            <tr>
+              <td>NANC excitatório</td>
+              <td>Fibras C sensoriais</td>
+              <td>—</td>
+              <td>Substância P / NKA</td>
+              <td>Broncoconstrição / inflamação</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAP 4 — PLEURA ═══════════════ -->
+<section id="cap4">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--lymph)">CAPÍTULO 04 // VASCULARIZAÇÃO E INERVAÇÃO PLEURAL</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#e040fb,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      A Guardiã dos Pulmões
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--lymph),transparent)"></div>
+  </div>
+
+  <div class="dialogue reveal">
+    <div class="char-icon" style="background:rgba(224,64,251,0.15);border:2px solid var(--lymph);font-size:1.8rem;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center">🛡️</div>
+    <div class="bubble" style="border-left:3px solid var(--lymph)">
+      <div class="bubble-name" style="color:var(--lymph);font-family:'Orbitron';font-size:0.6rem;margin-bottom:6px">PLEURA</div>
+      Sou uma membrana serosa dupla. Tenho duas folhas: a <strong style="color:var(--lymph2)">visceral</strong> (adere ao pulmão) e a <strong style="color:var(--lymph)">parietal</strong> (forra o tórax). Entre nós existe uma fina camada de líquido lubrificante. Mas atenção: somos diferentes em tudo — vascularização, inervação e origem embrionária!
+    </div>
+  </div>
+
+  <div class="manga-grid mg-2 reveal">
+    <!-- Pleura visceral -->
+    <div class="panel panel-cyan">
+      <div class="panel-inner">
+        <span class="panel-tag tag-cyan">PLEURA VISCERAL</span>
+        <h3 style="color:var(--lymph2)">Vascularização</h3>
+        <ul>
+          <li class="li-cyan"><strong>Artérias:</strong> ramos das artérias brônquicas (circulação sistémica).</li>
+          <li class="li-cyan"><strong>Veias:</strong> drenagem pelo sistema das veias pulmonares (parcialmente) e veias brônquicas.</li>
+          <li class="li-cyan">Não possui inervação sensitiva (insensível à dor e ao toque).</li>
+          <li class="li-cyan"><strong>Linfáticos:</strong> plexo submesotelial → linfáticos interlobulares → hilares.</li>
+        </ul>
+        <div style="margin-top:12px;padding:10px;background:rgba(0,229,255,0.07);border-radius:4px">
+          <span style="color:var(--lymph2);font-size:0.75rem;font-family:'Orbitron'">INERVAÇÃO</span>
+          <p style="margin-top:6px;font-size:0.85rem">Inervada por fibras autonómicas (plexo pulmonar) — sem dor, sem proprioceção. Lesão da pleura visceral = <strong>sem dor!</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pleura parietal -->
+    <div class="panel panel-purple">
+      <div class="panel-inner">
+        <span class="panel-tag tag-purple">PLEURA PARIETAL</span>
+        <h3 style="color:var(--lymph)">Vascularização</h3>
+        <ul>
+          <li class="li-purple"><strong>Porção costal:</strong> artérias intercostais + ramos das artérias mamárias internas.</li>
+          <li class="li-purple"><strong>Porção diafragmática:</strong> artérias frenicas superiores e musculofrenicas.</li>
+          <li class="li-purple"><strong>Porção mediastínica:</strong> artérias pericardiofrênicas e bronco-esofágicas.</li>
+          <li class="li-purple"><strong>Veias:</strong> drenam para veias intercostais, ázigos e hemiázigos.</li>
+        </ul>
+        <div style="margin-top:12px;padding:10px;background:rgba(224,64,251,0.08);border-radius:4px">
+          <span style="color:var(--lymph);font-size:0.75rem;font-family:'Orbitron'">INERVAÇÃO — MUITO SENSÍVEL!</span>
+          <p style="margin-top:6px;font-size:0.85rem">Ricamente inervada. Pleurite parietal = <strong style="color:var(--blood)">DOR INTENSA</strong> e bem localizada!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inervação pleural detalhada -->
+  <div class="manga-grid mg-full reveal">
+    <div class="panel panel-purple">
+      <div class="panel-inner">
+        <span class="panel-tag tag-purple">INERVAÇÃO PLEURAL PARIETAL — DETALHADA</span>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:10px">
+          <div style="padding:14px;background:rgba(224,64,251,0.06);border-radius:6px;border:1px solid rgba(224,64,251,0.2)">
+            <div style="color:var(--lymph);font-family:'Orbitron';font-size:0.65rem;letter-spacing:2px;margin-bottom:8px">PORÇÃO COSTAL</div>
+            <p style="font-size:0.87rem;color:#b0c4de;line-height:1.6">Nervos intercostais (T1-T11). Dor referida para a parede torácica correspondente ao dermátomo.</p>
+          </div>
+          <div style="padding:14px;background:rgba(224,64,251,0.06);border-radius:6px;border:1px solid rgba(224,64,251,0.2)">
+            <div style="color:var(--lymph);font-family:'Orbitron';font-size:0.65rem;letter-spacing:2px;margin-bottom:8px">PORÇÃO DIAFRAGMÁTICA CENTRAL</div>
+            <p style="font-size:0.87rem;color:#b0c4de;line-height:1.6">Nervo frénico (C3-C5). Dor referida para o <strong style="color:var(--blood)">ombro ipsilateral</strong> — sinal clínico importante!</p>
+          </div>
+          <div style="padding:14px;background:rgba(224,64,251,0.06);border-radius:6px;border:1px solid rgba(224,64,251,0.2)">
+            <div style="color:var(--lymph);font-family:'Orbitron';font-size:0.65rem;letter-spacing:2px;margin-bottom:8px">PORÇÃO DIAFRAGMÁTICA PERIFÉRICA</div>
+            <p style="font-size:0.87rem;color:#b0c4de;line-height:1.6">Nervos intercostais inferiores (T7-T11). Dor referida para parede abdominal anterior.</p>
+          </div>
+          <div style="padding:14px;background:rgba(224,64,251,0.06);border-radius:6px;border:1px solid rgba(224,64,251,0.2)">
+            <div style="color:var(--lymph);font-family:'Orbitron';font-size:0.65rem;letter-spacing:2px;margin-bottom:8px">PORÇÃO MEDIASTÍNICA</div>
+            <p style="font-size:0.87rem;color:#b0c4de;line-height:1.6">Nervo frénico principalmente. Dor referida para ombro e pescoço. Importante em pericardite e pleurite mediastínica.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="background:rgba(224,64,251,0.07);border:1px solid rgba(224,64,251,0.4);border-radius:8px;padding:20px 24px;margin:20px auto;max-width:900px" class="reveal">
+    <div style="font-family:'Orbitron';font-size:0.7rem;letter-spacing:2px;color:var(--lymph);margin-bottom:8px">⚡ CLÍNICA — DOR PLEURÍTICA</div>
+    <div style="font-size:0.9rem;line-height:1.7">
+      A <strong style="color:var(--lymph)">pleurite</strong> (inflamação pleural) causa dor caracteristicamente em <strong>facada</strong>, piora com inspiração profunda e tosse (por irritação da pleura parietal costal). Se afeta o centro do diafragma, a dor é referida para o ombro — cuidado para não confundir com patologia do ombro!
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CAP 5 — LINFÁTICOS ═══════════════ -->
+<section id="cap5">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--lymph2)">CAPÍTULO 05 // DRENAGEM LINFÁTICA</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#00e5ff,#76ff03);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      A Rede Invisível
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--lymph2),transparent)"></div>
+  </div>
+
+  <div class="manga-grid mg-2 reveal">
+    <div class="panel panel-cyan">
+      <div class="panel-inner">
+        <span class="panel-tag tag-cyan">PLEXO SUPERFICIAL (SUBPLEURAL)</span>
+        <h3 style="color:var(--lymph2)">Via Periférica</h3>
+        <ul>
+          <li class="li-cyan">Localiza-se sob a pleura visceral.</li>
+          <li class="li-cyan">Drena a periferia do parênquima pulmonar e a pleura visceral.</li>
+          <li class="li-cyan">Fluxo centrípeto → converge em direção ao hilo.</li>
+          <li class="li-cyan">Anastomosa-se com o plexo profundo ao nível dos lóbulos.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel panel-cyan">
+      <div class="panel-inner">
+        <span class="panel-tag tag-cyan">PLEXO PROFUNDO (PERIBRONQUIAL)</span>
+        <h3 style="color:var(--lymph2)">Via Central</h3>
+        <ul>
+          <li class="li-cyan">Acompanha os brônquios e vasos pulmonares.</li>
+          <li class="li-cyan">Drena o parênquima central e os septos interlobulares.</li>
+          <li class="li-cyan">Fluxo centrífugo (nos pequenos vasos) → centrípeto (nos grandes vasos).</li>
+          <li class="li-cyan">Ausência de vasos linfáticos nos alvéolos — começam nos ductos alveolares.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline linfática -->
+  <div style="padding:10px 20px 30px;">
+    <h3 class="reveal" style="font-family:'Orbitron';font-size:0.9rem;letter-spacing:3px;color:var(--lymph2);text-align:center;margin-bottom:30px">PERCURSO DA DRENAGEM LINFÁTICA</h3>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-cyan">L1</div>
+        <div class="tl-content" style="border-left-color:var(--lymph2)">
+          <div class="tl-label" style="color:var(--lymph2)">INÍCIO</div>
+          <h4>Parênquima Pulmonar</h4>
+          <p>Plexos linfáticos superficial e profundo drenam o parênquima.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-cyan">L2</div>
+        <div class="tl-content" style="border-right-color:var(--lymph2)">
+          <div class="tl-label" style="color:var(--lymph2)">ETAPA 1</div>
+          <h4>Nódulos Intrapulmonares</h4>
+          <p>Pequenos linfonodos ao longo dos brônquios e vasos — filtram a linfa periférica.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-cyan">L3</div>
+        <div class="tl-content" style="border-left-color:var(--lymph2)">
+          <div class="tl-label" style="color:var(--lymph2)">ETAPA 2</div>
+          <h4>Nódulos Broncopulmonares (Hilares)</h4>
+          <p>Situados no hilo pulmonar — estação principal de filtragem do parênquima. Adenopatia hilar = sinal radiológico importante!</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-purple">L4</div>
+        <div class="tl-content" style="border-right-color:var(--lymph)">
+          <div class="tl-label" style="color:var(--lymph)">ETAPA 3</div>
+          <h4>Nódulos Traqueobronquiais</h4>
+          <p>Ângulo de bifurcação da traqueia. Subdividem-se em superiores direito e esquerdo, e inferiores (subcarinais). Os subcarinais são importantes na estadiação do cancro do pulmão (mediastinoscopia).</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-purple">L5</div>
+        <div class="tl-content" style="border-left-color:var(--lymph)">
+          <div class="tl-label" style="color:var(--lymph)">ETAPA 4</div>
+          <h4>Nódulos Paratraqueais</h4>
+          <p>Ao longo da traqueia. Direita: cadeia paratraqueal direita → tronco linfático broncomediastinal direito. Esquerda: pode cruzar para a direita.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tl-dot-purple">L6</div>
+        <div class="tl-content" style="border-right-color:var(--lymph)">
+          <div class="tl-label" style="color:var(--lymph)">DESTINO FINAL</div>
+          <h4>Ductos Linfáticos</h4>
+          <p><strong>Pulmão Direito + Lobo Inferior Esquerdo:</strong> tronco linfático broncomediastinal direito → ângulo venoso direito (junção VJI + subclávia).<br><strong>Pulmão Esquerdo (superiores):</strong> → ducto torácico → ângulo venoso esquerdo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box" style="background:rgba(0,229,255,0.07);border:1px solid rgba(0,229,255,0.4);border-radius:8px;padding:20px 24px;margin:20px auto;max-width:900px">
+    <div style="font-family:'Orbitron';font-size:0.7rem;letter-spacing:2px;color:var(--lymph2);margin-bottom:8px">⚡ CLÍNICA — CANCRO DO PULMÃO &amp; METÁSTASES</div>
+    <div style="font-size:0.9rem;line-height:1.7">
+      A disseminação linfática do carcinoma broncogénico segue esta cadeia de linfonodos. A biópsia dos nódulos subcarinais (via broncoscopia ou mediastinoscopia) é essencial para estadiação N2/N3. <strong style="color:var(--lymph2)">Sinal de Virchow</strong>: metástase no gânglio supraclavicular esquerdo pode indicar cancro do pulmão esquerdo via ducto torácico.
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MOLÉCULA ANIMADA ═══════════════ -->
+<section style="padding:60px 20px;background:radial-gradient(ellipse at center,rgba(61,90,254,0.06) 0%,transparent 70%)">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--vein2)">LABORATÓRIO INTERACTIVO</div>
+    <h2 class="chapter-title" style="color:var(--white)">Moléculas em Movimento</h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--vein2),transparent)"></div>
+  </div>
+  <div class="molecule-scene">
+    <canvas id="mol-canvas" width="700" height="380"></canvas>
+    <p style="color:var(--dim);font-size:0.8rem;margin-top:10px;font-family:'Orbitron';letter-spacing:2px">⬤ O₂  ⬤ CO₂  ⬤ Acetilcolina  ⬤ Noradrenalina  — Circulam nos pulmões em tempo real</p>
+  </div>
+</section>
+
+<!-- ═══════════════ QUIZ ═══════════════ -->
+<section id="quiz" class="quiz-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--nerve)">MISSÃO FINAL</div>
+    <h2 class="chapter-title" style="background:linear-gradient(135deg,#ffea00,#ff1744);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+      Quiz de Combate
+    </h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--nerve),transparent)"></div>
+  </div>
+  <div class="quiz-box reveal">
+    <div class="quiz-counter" id="quiz-counter">Pergunta 1 / 10</div>
+    <div class="quiz-q" id="quiz-q"></div>
+    <div class="quiz-opts" id="quiz-opts"></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-nav">
+      <button class="btn btn-yellow" id="quiz-next" onclick="nextQuestion()" style="display:none">PRÓXIMA ▶</button>
+    </div>
+    <div id="quiz-score" style="display:none;text-align:center;padding:20px">
+      <div style="font-family:'Orbitron';font-size:0.8rem;color:var(--dim);margin-bottom:10px">PONTUAÇÃO FINAL</div>
+      <div class="score-display" id="score-num"></div>
+      <div style="font-family:'Rajdhani';font-size:1rem;color:var(--dim);margin-top:8px" id="score-msg"></div>
+      <button class="btn btn-red" style="margin-top:16px" onclick="restartQuiz()">↺ RECOMEÇAR</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ RESUMO FINAL ═══════════════ -->
+<section style="padding:60px 20px;background:radial-gradient(ellipse at center,rgba(255,23,68,0.06) 0%,transparent 60%)">
+  <div class="chapter-header reveal">
+    <div class="chapter-num" style="color:var(--gold)">EPÍLOGO</div>
+    <h2 class="chapter-title" style="color:var(--gold)">Resumo da Missão</h2>
+    <div class="chapter-divider" style="background:linear-gradient(90deg,transparent,var(--gold),transparent)"></div>
+  </div>
+
+  <div class="accordion">
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(255,23,68,0.4)">
+        <span style="color:var(--blood)">🩸 Circulação Funcional — Pontos-Chave</span>
+        <span class="acc-icon" style="color:var(--blood)">▶</span>
+      </div>
+      <div class="acc-body">
+        <ul style="list-style:none;">
+          <li style="padding:5px 0">▸ Tronco pulmonar → AP direita e esquerda (sangue venoso → alvéolos)</li>
+          <li style="padding:5px 0">▸ AP direita: mais longa, atrás da aorta/VCS; AP esquerda: ligamento arterioso</li>
+          <li style="padding:5px 0">▸ 4 veias pulmonares → átrio esquerdo (sangue arterializado)</li>
+          <li style="padding:5px 0">▸ Baixa pressão: ~25/8 mmHg; Hipertensão pulmonar = ≥ 25 mmHg em repouso</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(255,109,0,0.4)">
+        <span style="color:#ff6d00">🔥 Circulação Nutricional — Pontos-Chave</span>
+        <span class="acc-icon" style="color:#ff6d00">▶</span>
+      </div>
+      <div class="acc-body">
+        <ul style="list-style:none;">
+          <li style="padding:5px 0">▸ Artérias brônquicas: 1 direita (3.ª intercostal/aorta), 2 esquerdas (aorta T5-T6)</li>
+          <li style="padding:5px 0">▸ Nutrem: brônquios, bronquíolos, pleura visceral, septo</li>
+          <li style="padding:5px 0">▸ Veias brônquicas: direita → ázigos; esquerda → hemiázigos acessória</li>
+          <li style="padding:5px 0">▸ Shunt fisiológico: parte do sangue brônquico drena nas veias pulmonares</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(255,234,0,0.4)">
+        <span style="color:var(--nerve)">⚡ Inervação — Pontos-Chave</span>
+        <span class="acc-icon" style="color:var(--nerve)">▶</span>
+      </div>
+      <div class="acc-body">
+        <ul style="list-style:none;">
+          <li style="padding:5px 0">▸ Plexo pulmonar (anterior + posterior) ao nível do hilo</li>
+          <li style="padding:5px 0">▸ Vago → broncoconstrição + ↑ secreção (ACh/M₃)</li>
+          <li style="padding:5px 0">▸ Simpático T2-T5 → broncodilatação + ↓ secreção (NA/β₂)</li>
+          <li style="padding:5px 0">▸ Aferentes vagais: recetores de estiramento (reflexo H-B), fibras C, recetores de irritação</li>
+          <li style="padding:5px 0">▸ Dor visceral pulmonar → via simpática T1-T4 → referida para ombro/braço</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(224,64,251,0.4)">
+        <span style="color:var(--lymph)">🛡️ Pleura — Pontos-Chave</span>
+        <span class="acc-icon" style="color:var(--lymph)">▶</span>
+      </div>
+      <div class="acc-body">
+        <ul style="list-style:none;">
+          <li style="padding:5px 0">▸ Visceral: artérias brônquicas; insensível à dor</li>
+          <li style="padding:5px 0">▸ Parietal costal: artérias intercostais; nervos intercostais; dor bem localizada</li>
+          <li style="padding:5px 0">▸ Parietal diafragmática central: nervo frénico (C3-C5); dor referida ao ombro</li>
+          <li style="padding:5px 0">▸ Parietal diafragmática periférica: nervos intercostais T7-T11; dor referida ao abdómen</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc-item reveal">
+      <div class="acc-header" onclick="toggleAcc(this)" style="border-color:rgba(0,229,255,0.4)">
+        <span style="color:var(--lymph2)">🔵 Linfáticos — Pontos-Chave</span>
+        <span class="acc-icon" style="color:var(--lymph2)">▶</span>
+      </div>
+      <div class="acc-body">
+        <ul style="list-style:none;">
+          <li style="padding:5px 0">▸ Plexo superficial (subpleural) + Plexo profundo (peribronquial)</li>
+          <li style="padding:5px 0">▸ Cadeia: intrapulmonares → hilares → traqueobronquiais → paratraqueais</li>
+          <li style="padding:5px 0">▸ Pulmão direito → ângulo venoso direito</li>
+          <li style="padding:5px 0">▸ Pulmão esquerdo superior → ducto torácico → ângulo venoso esquerdo</li>
+          <li style="padding:5px 0">▸ Subcarinais: essenciais na estadiação do cancro (N2)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DEMILMED-UL</div>
+  <div class="footer-sub">Universidade Licungo · Medicina · 2026</div>
+  <div class="footer-divider"></div>
+  <div class="footer-credits">
+    Elaborado por <span>DemilMed-UL</span><br>
+    <span>UL = UNIVERSIDADE LICUNGO</span><br>
+    Ano <span>2026</span><br>
+    <br>
+    <span style="font-size:0.75rem;color:rgba(255,255,255,0.2)">Vascularização e Inervação Pulmonar e Pleural — Série Anatómica</span>
+  </div>
+</footer>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+// ─── PROGRESS BAR ───
+window.addEventListener('scroll', () => {
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (window.scrollY / total) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ─── PARTICLES ───
+const pc = document.getElementById('particles');
+const pctx = pc.getContext('2d');
+pc.width = window.innerWidth; pc.height = window.innerHeight;
+window.addEventListener('resize', () => { pc.width = window.innerWidth; pc.height = window.innerHeight; });
+
+const particles = [];
+const colors = ['#ff1744','#3d5afe','#ffea00','#e040fb','#00e5ff','#76ff03','#ff6d00'];
+for(let i=0;i<60;i++){
+  particles.push({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx: (Math.random()-0.5)*0.5,
+    vy: (Math.random()-0.5)*0.5,
+    r: Math.random()*2+1,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    alpha: Math.random()*0.4+0.1
+  });
+}
+function animParticles(){
+  pctx.clearRect(0,0,pc.width,pc.height);
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0||p.x>pc.width) p.vx*=-1;
+    if(p.y<0||p.y>pc.height) p.vy*=-1;
+    pctx.beginPath();
+    pctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pctx.fillStyle = p.color;
+    pctx.globalAlpha = p.alpha;
+    pctx.fill();
+    pctx.globalAlpha=1;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ─── MOLECULE CANVAS ───
+const mc = document.getElementById('mol-canvas');
+const mctx = mc.getContext('2d');
+const molW = mc.width, molH = mc.height;
+
+const molecules = [];
+const molTypes = [
+  {label:'O₂', color:'#00e5ff', r:12},
+  {label:'CO₂', color:'#ff6d00', r:14},
+  {label:'ACh', color:'#76ff03', r:10},
+  {label:'NA', color:'#ffea00', r:10},
+  {label:'O₂', color:'#00e5ff', r:12},
+  {label:'CO₂', color:'#ff6d00', r:13},
+  {label:'ACh', color:'#76ff03', r:9},
+  {label:'NA', color:'#ffea00', r:11},
+  {label:'O₂', color:'#00e5ff', r:12},
+  {label:'CO₂', color:'#ff6d00', r:14},
+  {label:'ACh', color:'#76ff03', r:10},
+  {label:'NA', color:'#ffea00', r:10},
+  {label:'O₂', color:'#00b0ff', r:11},
+  {label:'CO₂', color:'#ff1744', r:12},
+];
+
+molTypes.forEach(t=>{
+  molecules.push({
+    x: Math.random()*(molW-40)+20,
+    y: Math.random()*(molH-40)+20,
+    vx: (Math.random()-0.5)*1.8,
+    vy: (Math.random()-0.5)*1.8,
+    ...t,
+    pulse: Math.random()*Math.PI*2
+  });
+});
+
+function drawMolecule(m, t){
+  const pulse = Math.sin(t*0.05+m.pulse)*0.3+1;
+  const rr = m.r * pulse;
+  // Glow
+  const grad = mctx.createRadialGradient(m.x,m.y,0,m.x,m.y,rr*3);
+  grad.addColorStop(0, m.color+'66');
+  grad.addColorStop(1, 'transparent');
+  mctx.beginPath();
+  mctx.arc(m.x,m.y,rr*3,0,Math.PI*2);
+  mctx.fillStyle = grad;
+  mctx.fill();
+  // Core
+  mctx.beginPath();
+  mctx.arc(m.x,m.y,rr,0,Math.PI*2);
+  mctx.fillStyle = m.color+'44';
+  mctx.strokeStyle = m.color;
+  mctx.lineWidth = 2;
+  mctx.fill();
+  mctx.stroke();
+  // Label
+  mctx.fillStyle = m.color;
+  mctx.font = `bold ${Math.max(8, rr*0.85)}px Orbitron, monospace`;
+  mctx.textAlign = 'center';
+  mctx.textBaseline = 'middle';
+  mctx.fillText(m.label, m.x, m.y);
+}
+
+// Draw vessels
+function drawVessels(){
+  // Alveolus
+  mctx.beginPath();
+  mctx.ellipse(350, 190, 110, 70, 0, 0, Math.PI*2);
+  mctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  mctx.lineWidth = 1;
+  mctx.stroke();
+  mctx.fillStyle = 'rgba(255,255,255,0.02)';
+  mctx.fill();
+  mctx.fillStyle = 'rgba(255,255,255,0.2)';
+  mctx.font = '9px Orbitron';
+  mctx.textAlign = 'center';
+  mctx.fillText('ALVÉOLO', 350, 140);
+
+  // Artery
+  mctx.beginPath();
+  mctx.roundRect(10, 30, 30, molH-60, 15);
+  mctx.strokeStyle = 'rgba(255,23,68,0.3)';
+  mctx.lineWidth = 1.5;
+  mctx.stroke();
+  mctx.fillStyle = 'rgba(255,23,68,0.06)';
+  mctx.fill();
+  mctx.fillStyle = 'rgba(255,23,68,0.6)';
+  mctx.font = '7px Orbitron';
+  mctx.textAlign = 'center';
+  mctx.save(); mctx.translate(25, molH/2); mctx.rotate(-Math.PI/2);
+  mctx.fillText('ART. PULMONAR', 0, 0);
+  mctx.restore();
+
+  // Vein
+  mctx.beginPath();
+  mctx.roundRect(molW-40, 30, 30, molH-60, 15);
+  mctx.strokeStyle = 'rgba(61,90,254,0.3)';
+  mctx.lineWidth = 1.5;
+  mctx.stroke();
+  mctx.fillStyle = 'rgba(61,90,254,0.06)';
+  mctx.fill();
+  mctx.fillStyle = 'rgba(61,90,254,0.6)';
+  mctx.font = '7px Orbitron';
+  mctx.textAlign = 'center';
+  mctx.save(); mctx.translate(molW-25, molH/2); mctx.rotate(-Math.PI/2);
+  mctx.fillText('VEIA PULMONAR', 0, 0);
+  mctx.restore();
+
+  // Bronchus top
+  mctx.beginPath();
+  mctx.roundRect(200, 5, 300, 22, 11);
+  mctx.strokeStyle = 'rgba(255,109,0,0.3)';
+  mctx.lineWidth = 1.5;
+  mctx.stroke();
+  mctx.fillStyle = 'rgba(255,109,0,0.06)';
+  mctx.fill();
+  mctx.fillStyle = 'rgba(255,109,0,0.6)';
+  mctx.font = '7px Orbitron';
+  mctx.textAlign = 'center';
+  mctx.fillText('BRÔNQUIO', 350, 18);
+}
+
+let molT = 0;
+function animMol(){
+  mctx.clearRect(0,0,molW,molH);
+  drawVessels();
+  molecules.forEach(m=>{
+    m.x+=m.vx; m.y+=m.vy;
+    const pad = 45;
+    if(m.x<pad){m.x=pad;m.vx=Math.abs(m.vx);}
+    if(m.x>molW-pad){m.x=molW-pad;m.vx=-Math.abs(m.vx);}
+    if(m.y<pad){m.y=pad;m.vy=Math.abs(m.vy);}
+    if(m.y>molH-pad){m.y=molH-pad;m.vy=-Math.abs(m.vy);}
+    drawMolecule(m, molT);
+  });
+  molT++;
+  requestAnimationFrame(animMol);
+}
+animMol();
+
+// ─── ACCORDION ───
+function toggleAcc(el){
+  el.classList.toggle('open');
+  const body = el.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ─── INTERSECTION OBSERVER ───
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>observer.observe(el));
+
+// ─── QUIZ ───
+const questions = [
+  {
+    q: "O tronco pulmonar emerge de qual câmara cardíaca?",
+    opts: ["Átrio Direito","Ventrículo Direito","Ventrículo Esquerdo","Átrio Esquerdo"],
+    correct: 1,
+    exp: "O tronco pulmonar emerge do ventrículo direito, conduzindo sangue venoso (pobre em O₂) para a circulação pulmonar."
+  },
+  {
+    q: "Quantas veias pulmonares desembocam normalmente no átrio esquerdo?",
+    opts: ["2","3","4","5"],
+    correct: 2,
+    exp: "Normalmente existem 4 veias pulmonares: 2 direitas (superior e inferior) e 2 esquerdas (superior e inferior)."
+  },
+  {
+    q: "As artérias brônquicas têm origem principalmente em qual estrutura?",
+    opts: ["Tronco pulmonar","Aorta torácica descendente","Artérias intercostais posteriores","Artérias mamárias internas"],
+    correct: 1,
+    exp: "As artérias brônquicas esquerdas originam-se diretamente da aorta torácica (T5-T6). A direita pode originar-se de um espaço intercostal."
+  },
+  {
+    q: "A estimulação do nervo vago (X) nos brônquios causa:",
+    opts: ["Broncodilatação e redução da secreção","Broncoconstrição e aumento da secreção","Broncodilatação e aumento da secreção","Broncoconstrição e redução da secreção"],
+    correct: 1,
+    exp: "O vago (parassimpático) liberta acetilcolina → recetores M₃ → broncoconstrição + aumento das secreções brônquicas."
+  },
+  {
+    q: "A pleura visceral é inervada por fibras de qual tipo?",
+    opts: ["Somáticas (nervos intercostais)","Autonómicas (plexo pulmonar) — sem dor","Nervo frénico","Nervos intercostais + nervo frénico"],
+    correct: 1,
+    exp: "A pleura visceral possui apenas inervação autonómica (plexo pulmonar). Por isso, a sua lesão NÃO causa dor."
+  },
+  {
+    q: "A dor na pleura diafragmática central é mediada por qual nervo?",
+    opts: ["Nervos intercostais T6-T8","Nervo frénico (C3-C5)","Nervo vago","Nervos esplâncnicos"],
+    correct: 1,
+    exp: "O nervo frénico (C3-C5) inerva a porção central da pleura diafragmática. A dor é referida para o ombro ipsilateral."
+  },
+  {
+    q: "O ligamento arterioso é o resquício adulto de qual estrutura fetal?",
+    opts: ["Forame oval","Ducto arterioso de Botallo","Ducto venoso de Arânzio","Veia umbilical"],
+    correct: 1,
+    exp: "O ligamento arterioso une a artéria pulmonar esquerda ao arco aórtico — é o vestígio fibroso do ducto arterioso fetal."
+  },
+  {
+    q: "A drenagem linfática do pulmão direito dirige-se predominantemente para:",
+    opts: ["Ducto torácico → ângulo venoso esquerdo","Tronco broncomediastinal direito → ângulo venoso direito","Diretamente para o átrio direito","Rede linfática subpleural → diafragma"],
+    correct: 1,
+    exp: "O pulmão direito drena via tronco broncomediastinal direito → ângulo venoso direito (junção veia jugular interna + subclávia direita)."
+  },
+  {
+    q: "Os recetores de estiramento pulmonares (SAR) medeiam qual reflexo importante?",
+    opts: ["Reflexo de tosse","Reflexo de Hering-Breuer (controle da inspiração)","Reflexo vasovagal","Reflexo de vómito"],
+    correct: 1,
+    exp: "Os SAR (slowly adapting receptors) mediados pelo vago medeiam o reflexo de Hering-Breuer: a insuflação pulmonar inibe a inspiração."
+  },
+  {
+    q: "Em embolismo pulmonar, o infarto pulmonar é incomum (só ~10%) porque:",
+    opts: ["As artérias pulmonares têm baixa pressão","As artérias brônquicas fornecem circulação colateral ao tecido","O pulmão tem reserva funcional elevada","Os capilares alveolares têm múltiplas anastomoses"],
+    correct: 1,
+    exp: "As artérias brônquicas (circulação sistémica) nutrem o tecido pulmonar e fornecem circulação colateral, prevenindo infarto mesmo com embolismo da artéria pulmonar."
+  }
+];
+
+let currentQ = 0, score = 0, answered = false;
+
+function loadQuestion(){
+  const q = questions[currentQ];
+  document.getElementById('quiz-counter').textContent = `Pergunta ${currentQ+1} / ${questions.length}`;
+  document.getElementById('quiz-q').textContent = q.q;
+  const optsEl = document.getElementById('quiz-opts');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${['A','B','C','D'][i]}. ${opt}`;
+    btn.onclick = ()=>selectAnswer(i);
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((btn, idx)=>{
+    if(idx === q.correct) btn.classList.add('correct');
+    else if(idx === i && i !== q.correct) btn.classList.add('wrong');
+    btn.style.pointerEvents = 'none';
+  });
+  const feedback = document.getElementById('quiz-feedback');
+  if(i === q.correct){
+    score++;
+    feedback.innerHTML = `<span style="color:var(--nerve2)">✓ CORRETO!</span> ${q.exp}`;
+  } else {
+    feedback.innerHTML = `<span style="color:var(--blood)">✗ INCORRETO.</span> ${q.exp}`;
+  }
+  document.getElementById('quiz-next').style.display = 'inline-block';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ >= questions.length){
+    showScore();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showScore(){
+  document.getElementById('quiz-q').textContent = '';
+  document.getElementById('quiz-opts').innerHTML = '';
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').style.display = 'none';
+  document.getElementById('quiz-counter').textContent = 'Missão concluída!';
+  const scoreEl = document.getElementById('quiz-score');
+  scoreEl.style.display = 'block';
+  document.getElementById('score-num').textContent = `${score} / ${questions.length}`;
+  const pct = score/questions.length;
+  let msg;
+  if(pct >= 0.9) msg = '🏆 Excelente! Domínio total da anatomia!';
+  else if(pct >= 0.7) msg = '✅ Muito bom! Revisita os pontos errados.';
+  else if(pct >= 0.5) msg = '⚠️ Razoável. Estuda mais os capítulos anteriores.';
+  else msg = '📚 Precisas de rever o material. Não desistas!';
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restartQuiz(){
+  currentQ = 0; score = 0;
+  document.getElementById('quiz-score').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+
+// ─── NAV ACTIVE ───
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+window.addEventListener('scroll', ()=>{
+  let current = '';
+  sections.forEach(s=>{
+    if(window.scrollY >= s.offsetTop - 120) current = s.id;
+  });
+  navLinks.forEach(a=>{
+    a.classList.remove('active');
+    if(a.getAttribute('href') === '#'+current) a.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

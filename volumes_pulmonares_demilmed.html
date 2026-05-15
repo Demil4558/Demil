@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Volumes & Capacidades Pulmonares | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #030712;
+    --bg-panel: #0a0f1e;
+    --bg-card: #0d1526;
+    --cyan: #00f5ff;
+    --cyan-dim: #00b8c8;
+    --magenta: #ff00aa;
+    --yellow: #ffd700;
+    --green: #39ff14;
+    --orange: #ff6b00;
+    --purple: #a855f7;
+    --red: #ff2d55;
+    --blue: #4169e1;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --glow-cyan: 0 0 20px #00f5ff80, 0 0 40px #00f5ff40;
+    --glow-magenta: 0 0 20px #ff00aa80, 0 0 40px #ff00aa40;
+    --glow-green: 0 0 20px #39ff1480, 0 0 40px #39ff1440;
+    --glow-yellow: 0 0 20px #ffd70080, 0 0 40px #ffd70040;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ========== PARTICLES BACKGROUND ========== */
+  #particles {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+    opacity: 0.4;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.2; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* ========== SCANLINES ========== */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,245,255,0.015) 2px, rgba(0,245,255,0.015) 4px);
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* ========== NAV ========== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(3,7,18,0.9);
+    border-bottom: 1px solid var(--cyan);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    padding: 12px 30px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: var(--glow-cyan);
+  }
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    letter-spacing: 2px;
+  }
+  .nav-links {
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+  }
+  .nav-links a:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  /* ========== SECTIONS ========== */
+  section { position: relative; z-index: 1; }
+
+  /* ========== HERO ========== */
+  #hero {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 100px 20px 60px;
+    background: radial-gradient(ellipse at 50% 50%, #0a1628 0%, #030712 70%);
+    overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+  }
+  @keyframes gridMove {
+    0% { transform: perspective(500px) rotateX(0deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(0deg) translateY(50px); }
+  }
+  .hero-badge {
+    background: linear-gradient(90deg, var(--magenta), var(--purple));
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 4px 16px;
+    border-radius: 100px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 10px #ff00aa60; }
+    50% { box-shadow: 0 0 30px #ff00aa, 0 0 60px #ff00aa60; }
+  }
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 50%, var(--yellow) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 3s ease-in-out infinite;
+  }
+  @keyframes titleGlow {
+    0%, 100% { filter: drop-shadow(0 0 8px #00f5ff80); }
+    50% { filter: drop-shadow(0 0 20px #ff00aa80) drop-shadow(0 0 40px #00f5ff60); }
+  }
+  .hero-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+  .hero-subtitle span { color: var(--cyan); font-weight: 700; }
+  .scroll-btn {
+    background: transparent;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    padding: 14px 40px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: var(--glow-cyan);
+  }
+  .scroll-btn:hover {
+    background: var(--cyan);
+    color: var(--bg-dark);
+    transform: scale(1.05);
+  }
+
+  /* LUNG ANIMATION IN HERO */
+  .lung-hero {
+    position: relative;
+    width: 300px; height: 280px;
+    margin: 40px auto;
+  }
+  .lung-hero svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 15px #00f5ff60);
+  }
+
+  /* ========== CHAPTER HEADER ========== */
+  .chapter-header {
+    padding: 80px 20px 40px;
+    text-align: center;
+    position: relative;
+  }
+  .chapter-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: var(--magenta);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .chapter-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .chapter-line {
+    width: 100px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    margin: 0 auto 24px;
+  }
+  .chapter-desc {
+    max-width: 700px;
+    margin: 0 auto;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  /* ========== MANGA PANELS ========== */
+  .manga-panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3px;
+    padding: 0 20px 60px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .manga-panel {
+    background: var(--bg-card);
+    border: 2px solid #1e293b;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+    cursor: pointer;
+  }
+  .manga-panel::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, rgba(0,245,255,0.03), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .manga-panel:hover::before { opacity: 1; }
+  .manga-panel:hover {
+    border-color: var(--cyan);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,245,255,0.2);
+  }
+  .panel-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    display: block;
+    animation: iconFloat 3s ease-in-out infinite;
+  }
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .panel-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--magenta);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .panel-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .panel-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .panel-desc {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .panel-corner {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.4rem;
+    opacity: 0.15;
+    color: var(--cyan);
+  }
+
+  /* ========== INTERACTIVE SPIROMETER ========== */
+  #spirometer-section {
+    padding: 60px 20px;
+    background: var(--bg-panel);
+    border-top: 1px solid #1e293b;
+    border-bottom: 1px solid #1e293b;
+  }
+  .spiro-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  @media(max-width:768px) { .spiro-container { grid-template-columns: 1fr; } }
+
+  /* LUNG SVG ANIMATED */
+  .lung-viz {
+    position: relative;
+    background: #030f1a;
+    border: 2px solid var(--cyan);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--glow-cyan);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .lung-viz-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  #lung-svg {
+    width: 220px; height: 220px;
+  }
+  .breathe-label {
+    margin-top: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    animation: blinkLabel 2s infinite;
+  }
+  @keyframes blinkLabel {
+    0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+  }
+  .breath-controls {
+    display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  .breath-btn {
+    padding: 8px 16px;
+    border: none; border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-normal { background: var(--cyan); color: #000; }
+  .btn-deep { background: var(--magenta); color: #fff; }
+  .btn-forced { background: var(--yellow); color: #000; }
+  .btn-tv { background: var(--green); color: #000; }
+  .breath-btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+
+  /* VOLUME BARS */
+  .vol-bars {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .vol-bar-item {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border-left: 4px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .vol-bar-label {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .vol-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .vol-num {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+  }
+  .vol-track {
+    height: 10px;
+    background: #1e293b;
+    border-radius: 100px;
+    overflow: hidden;
+  }
+  .vol-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.6s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  /* ========== STACKED DIAGRAM ========== */
+  #diagram-section {
+    padding: 60px 20px;
+  }
+  .stack-diagram {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .stack-bar-wrapper {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    height: 500px;
+    border-left: 3px solid #334155;
+    border-bottom: 3px solid #334155;
+    padding: 20px 20px 0 20px;
+    position: relative;
+  }
+
+  /* Y-axis labels */
+  .y-axis {
+    position: absolute;
+    left: 0;
+    top: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0 8px 30px 0;
+    width: 50px;
+  }
+  .y-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    font-family: 'Orbitron', sans-serif;
+    text-align: right;
+  }
+
+  .vol-stacks {
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+    padding-left: 60px;
+    padding-bottom: 30px;
+    flex: 1;
+    height: 100%;
+  }
+  .stack-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+  .stack-col-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .stack-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: stretch;
+  }
+  .stack-seg {
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: filter 0.3s;
+    border-radius: 2px;
+    min-height: 24px;
+  }
+  .stack-seg:hover { filter: brightness(1.4); }
+  .stack-seg-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(0,0,0,0.85);
+    text-align: center;
+    line-height: 1.2;
+    padding: 2px;
+  }
+
+  /* ========== TIMELINE ========== */
+  #timeline-section {
+    padding: 60px 20px;
+    background: var(--bg-panel);
+  }
+  .timeline {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--magenta), var(--yellow), var(--green));
+    transform: translateX(-50%);
+  }
+  @media(max-width: 600px) {
+    .timeline::before { left: 20px; }
+  }
+  .tl-item {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+  .tl-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .tl-item:nth-child(odd) { flex-direction: row-reverse; }
+  @media(max-width:600px) {
+    .tl-item, .tl-item:nth-child(odd) { flex-direction: column; padding-left: 50px; }
+    .tl-dot { left: 20px !important; transform: none !important; position: absolute; }
+  }
+  .tl-dot {
+    position: absolute;
+    left: 50%; top: 20px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    border: 3px solid var(--bg-dark);
+    z-index: 2;
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.3); }
+  }
+  .tl-content {
+    flex: 1;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #1e293b;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .tl-content:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.15);
+  }
+  .tl-step {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+  .tl-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+  }
+  .tl-body {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .tl-spacer { flex: 1; }
+
+  /* ========== CLINICAL SECTION ========== */
+  #clinical-section {
+    padding: 60px 20px;
+  }
+  .clinical-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .clinical-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 28px;
+    border: 1px solid #1e293b;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .clinical-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .clinical-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(0,245,255,0.3);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .cc-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+  .cc-disease {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .cc-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .cc-body {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .cc-tags {
+    display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .cc-tag {
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* ========== QUIZ SECTION ========== */
+  #quiz-section {
+    padding: 60px 20px;
+    background: var(--bg-panel);
+  }
+  .quiz-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--bg-card);
+    border: 2px solid var(--cyan);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: var(--glow-cyan);
+  }
+  .quiz-progress {
+    display: flex; gap: 6px; margin-bottom: 28px; justify-content: center;
+  }
+  .qp-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #1e293b;
+    transition: all 0.3s;
+  }
+  .qp-dot.active { background: var(--cyan); box-shadow: var(--glow-cyan); }
+  .qp-dot.done { background: var(--green); }
+  .quiz-q {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    color: var(--cyan);
+    text-align: center;
+    min-height: 60px;
+  }
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .qopt {
+    background: transparent;
+    border: 2px solid #334155;
+    color: var(--text);
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .qopt:hover { border-color: var(--cyan); color: var(--cyan); }
+  .qopt.correct { border-color: var(--green); background: rgba(57,255,20,0.1); color: var(--green); }
+  .qopt.wrong { border-color: var(--red); background: rgba(255,45,85,0.1); color: var(--red); }
+  .quiz-feedback {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+    text-align: center;
+    min-height: 40px;
+    padding: 0 10px;
+  }
+  .quiz-next {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    background: var(--cyan);
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .quiz-next:hover { background: var(--magenta); color: #fff; }
+  .quiz-score-display {
+    text-align: center;
+    padding: 20px;
+    display: none;
+  }
+  .quiz-score-display h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+  .quiz-score-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    font-weight: 900;
+  }
+  .quiz-restart {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: var(--magenta);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+  }
+
+  /* ========== MOLECULE ========== */
+  #molecule-section {
+    padding: 60px 20px;
+    text-align: center;
+  }
+  #mol-canvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 16px;
+    border: 2px solid #1e293b;
+    background: #030f1a;
+    cursor: grab;
+  }
+
+  /* ========== FORMULA TABLE ========== */
+  .formula-table-wrap {
+    max-width: 900px;
+    margin: 0 auto 40px;
+    overflow-x: auto;
+  }
+  .formula-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .formula-table th {
+    background: #0a1628;
+    padding: 14px 18px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    text-align: left;
+    text-transform: uppercase;
+  }
+  .formula-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #1e293b;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    vertical-align: top;
+  }
+  .formula-table tr:hover td {
+    background: rgba(0,245,255,0.04);
+    color: var(--text);
+  }
+  .formula-table .col-name {
+    font-weight: 700;
+    color: var(--text);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+  }
+  .formula-table .abbr { color: var(--cyan); font-weight: 700; font-size: 1rem; }
+  .formula-table .val { color: var(--yellow); font-weight: 700; }
+
+  /* ========== TOOLTIP ========== */
+  .tooltip-wrap { position: relative; display: inline-block; cursor: help; }
+  .tooltip-wrap::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0a1628;
+    border: 1px solid var(--cyan);
+    color: var(--text);
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 100;
+    font-family: 'Rajdhani', sans-serif;
+    max-width: 250px;
+    white-space: normal;
+    text-align: center;
+    width: 200px;
+    line-height: 1.4;
+  }
+  .tooltip-wrap:hover::after { opacity: 1; }
+
+  /* ========== SPIROMETRY WAVE ========== */
+  #wave-section {
+    padding: 40px 20px 60px;
+    background: var(--bg-panel);
+  }
+  #wave-canvas {
+    display: block;
+    margin: 0 auto;
+    border: 2px solid #1e293b;
+    border-radius: 12px;
+    background: #030f1a;
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: #030712;
+    border-top: 2px solid var(--cyan);
+    padding: 40px 20px;
+    text-align: center;
+    box-shadow: 0 -8px 30px rgba(0,245,255,0.1);
+  }
+  .footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .footer-sub {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    font-family: 'Orbitron', sans-serif;
+  }
+  .footer-year {
+    margin-top: 16px;
+    color: var(--cyan);
+    font-size: 0.8rem;
+    font-family: 'Orbitron', sans-serif;
+    opacity: 0.7;
+  }
+
+  /* ========== UTILITY ========== */
+  .cyan { color: var(--cyan); }
+  .magenta { color: var(--magenta); }
+  .yellow { color: var(--yellow); }
+  .green { color: var(--green); }
+  .orange { color: var(--orange); }
+  .purple { color: var(--purple); }
+  .red { color: var(--red); }
+  .blue { color: var(--blue); }
+
+  .text-glow-cyan { text-shadow: var(--glow-cyan); }
+  .text-glow-mg { text-shadow: var(--glow-magenta); }
+
+  .highlight {
+    display: inline-block;
+    background: linear-gradient(90deg, rgba(0,245,255,0.15), rgba(0,245,255,0.05));
+    border-left: 3px solid var(--cyan);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 10px 0;
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    width: 100%;
+  }
+
+  .section-divider {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--text-dim);
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 10px;
+    opacity: 0.3;
+  }
+
+  .info-box {
+    background: var(--bg-card);
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px auto;
+    max-width: 800px;
+    position: relative;
+  }
+  .info-box-accent {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+  .info-box h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  .info-box p {
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.7s cubic-bezier(0.23,1,0.32,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Glitch text */
+  .glitch {
+    position: relative;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--magenta);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+  }
+  .glitch::after {
+    color: var(--cyan);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translateX(0); }
+    92% { transform: translateX(-3px); }
+    94% { transform: translateX(3px); }
+    96% { transform: translateX(-2px); }
+    98% { transform: translateX(2px); }
+  }
+  @keyframes glitch2 {
+    0%, 88%, 100% { transform: translateX(0); }
+    90% { transform: translateX(3px); }
+    92% { transform: translateX(-3px); }
+    94% { transform: translateX(2px); }
+    96% { transform: translateX(-2px); }
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg-card);
+    border: 2px solid var(--cyan);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 550px;
+    width: 90%;
+    position: relative;
+    box-shadow: var(--glow-cyan);
+    animation: modalIn 0.3s ease;
+  }
+  @keyframes modalIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-close {
+    position: absolute;
+    top: 12px; right: 16px;
+    background: none; border: none;
+    color: var(--text-dim);
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+  .modal-close:hover { color: var(--red); }
+  .modal h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  .modal p { color: var(--text-dim); line-height: 1.7; font-size: 0.95rem; }
+  .modal .big-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div id="particles"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">🫁 DEMILMED</div>
+  <div class="nav-links">
+    <a href="#volumes">Volumes</a>
+    <a href="#capacidades">Capacidades</a>
+    <a href="#spirometer-section">Espirômetro</a>
+    <a href="#timeline-section">Cronologia</a>
+    <a href="#clinical-section">Clínica</a>
+    <a href="#quiz-section">Quiz</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-badge">CAPÍTULO I — MISSÃO: RESPIRAR</div>
+  <div class="glitch hero-title" data-text="VOLUMES &amp; CAPACIDADES PULMONARES">
+    VOLUMES &amp; CAPACIDADES<br>PULMONARES
+  </div>
+  <p class="hero-subtitle">
+    O teu corpo é uma <span>máquina de combate biológico</span>. A cada segundo, os pulmões executam uma operação silenciosa mas vital. Prepara-te para <span>dominar os segredos</span> dessa missão.
+  </p>
+
+  <!-- Animated Lung SVG -->
+  <div class="lung-hero">
+    <svg viewBox="0 0 300 280" fill="none" xmlns="http://www.w3.org/2000/svg" id="hero-lung">
+      <!-- Trachea -->
+      <rect x="143" y="10" width="14" height="60" rx="7" fill="#00f5ff" opacity="0.7"/>
+      <!-- Left Lung -->
+      <path id="left-lung" d="M140 70 C120 70 60 80 40 120 C20 160 30 220 60 240 C90 260 120 255 135 240 C148 228 148 200 140 70Z" fill="url(#lgLeft)" opacity="0.85"/>
+      <!-- Right Lung -->
+      <path id="right-lung" d="M160 70 C180 70 240 80 260 120 C280 160 270 220 240 240 C210 260 180 255 165 240 C152 228 152 200 160 70Z" fill="url(#lgRight)" opacity="0.85"/>
+      <!-- Bronchi -->
+      <path d="M143 68 C130 80 100 100 80 130" stroke="#00f5ff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+      <path d="M157 68 C170 80 200 100 220 130" stroke="#00f5ff" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.6"/>
+      <path d="M80 130 C70 150 65 170 70 190" stroke="#00f5ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+      <path d="M80 130 C90 148 92 165 85 185" stroke="#00f5ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+      <path d="M220 130 C230 150 235 170 230 190" stroke="#00f5ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+      <path d="M220 130 C210 148 208 165 215 185" stroke="#00f5ff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+      <!-- Sparkles -->
+      <circle cx="90" cy="160" r="3" fill="#00f5ff" opacity="0.8"><animate attributeName="opacity" values="0.8;0.1;0.8" dur="1.5s" repeatCount="indefinite"/></circle>
+      <circle cx="210" cy="160" r="3" fill="#ff00aa" opacity="0.8"><animate attributeName="opacity" values="0.8;0.1;0.8" dur="1.8s" repeatCount="indefinite"/></circle>
+      <circle cx="75" cy="200" r="2" fill="#39ff14" opacity="0.8"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.2s" repeatCount="indefinite"/></circle>
+      <circle cx="225" cy="195" r="2" fill="#ffd700" opacity="0.8"><animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.9s" repeatCount="indefinite"/></circle>
+      <defs>
+        <radialGradient id="lgLeft" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#0a2040" stop-opacity="0.9"/>
+        </radialGradient>
+        <radialGradient id="lgRight" cx="50%" cy="50%" r="60%">
+          <stop offset="0%" stop-color="#ff00aa" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#200a30" stop-opacity="0.9"/>
+        </radialGradient>
+      </defs>
+    </svg>
+  </div>
+
+  <a href="#volumes" class="scroll-btn">▼ INICIAR MISSÃO</a>
+</section>
+
+<!-- ===================== SECTION 0: INTRO ===================== -->
+<section id="intro-section" style="padding:60px 20px; background:#080d1a;">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// PRÓLOGO</div>
+    <h2 class="chapter-title"><span class="cyan">Por que estudar</span> isto?</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">
+      Antes de lançar o jutsu, o ninja conhece a anatomia do campo de batalha. Os pulmões não são apenas "sacos de ar" — são <strong class="cyan">órgãos de alta precisão</strong>. Para um médico, saber exactamente <em>quanto ar entra, quanto fica e quanto sai</em> é a diferença entre diagnosticar ou deixar passar uma doença fatal.
+    </p>
+  </div>
+
+  <div class="manga-panel-grid reveal" style="max-width:900px; margin:0 auto;">
+    <div class="manga-panel" onclick="openModal('o2modal')">
+      <div class="panel-corner">🫁</div>
+      <span class="panel-icon">⚡</span>
+      <div class="panel-tag">Porquê?</div>
+      <div class="panel-name cyan">O² é vida</div>
+      <div class="panel-desc">Cada célula do teu corpo precisa de oxigénio. Sem ele, em 4 minutos o cérebro começa a morrer. Os pulmões são a <strong>central de abastecimento</strong>.</div>
+    </div>
+    <div class="manga-panel" onclick="openModal('co2modal')">
+      <div class="panel-corner">💨</div>
+      <span class="panel-icon">🌡️</span>
+      <div class="panel-tag">Porquê?</div>
+      <div class="panel-name magenta">CO² é veneno</div>
+      <div class="panel-desc">O dióxido de carbono acumula-se como resíduo tóxico. O pulmão expulsa-o continuamente, mantendo o pH do sangue em equilíbrio.</div>
+    </div>
+    <div class="manga-panel" onclick="openModal('medModal')">
+      <div class="panel-corner">🩺</div>
+      <span class="panel-icon">📊</span>
+      <div class="panel-tag">Porquê?</div>
+      <div class="panel-name yellow">Medição = Diagnóstico</div>
+      <div class="panel-desc">Medir volumes pulmonares revela doenças como <strong class="cyan">asma, DPOC, fibrose</strong>. É como uma TAC em forma de números.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SECTION 1: VOLUMES ===================== -->
+<section id="volumes">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CAPÍTULO 01</div>
+    <h2 class="chapter-title"><span class="cyan">Os 4 Volumes</span> <span class="magenta">Fundamentais</span></h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">
+      Um <strong class="cyan">volume pulmonar</strong> é uma quantidade de ar medida em <strong class="yellow">litros (L)</strong> ou <strong class="yellow">mililitros (mL)</strong> que corresponde a uma fase específica da respiração. Existem <strong>4 volumes primários</strong> que não se sobrepõem — são como as peças de LEGO que, juntas, formam a capacidade total.
+    </p>
+  </div>
+
+  <div class="info-box reveal" style="max-width:800px; margin: 0 auto 40px;">
+    <div class="info-box-accent" style="background:var(--cyan)"></div>
+    <h4 class="cyan">🔬 Definição Essencial</h4>
+    <p>Os volumes pulmonares são medidos com um aparelho chamado <strong class="cyan">espirômetro</strong>. São valores <strong>estáticos</strong> (não se sobrepõem) e representam as diferentes "fases" da respiração. Os valores normais referem-se a um <strong>adulto do sexo masculino de 70kg</strong> — variam com sexo, idade, altura e raça.</p>
+  </div>
+
+  <!-- VOLUMES CARDS -->
+  <div class="manga-panel-grid" id="volumes-grid">
+
+    <div class="manga-panel reveal" style="border-color:#00f5ff33;" onclick="openModal('vtModal')">
+      <div class="panel-corner">一</div>
+      <span class="panel-icon">🌬️</span>
+      <div class="panel-tag">Volume #1</div>
+      <div class="panel-name cyan">Volume Corrente (VC)</div>
+      <div class="panel-value cyan">~500 mL</div>
+      <div class="panel-desc">
+        O ar que <strong>entra e sai</strong> numa respiração normal, em repouso. É o teu "modo automático". Sem esforço, sem drama — apenas viver.<br><br>
+        <span style="font-size:0.8rem; color:#64748b;">Sigla EN: <span class="cyan">TV (Tidal Volume)</span></span>
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#ff00aa33;" onclick="openModal('vriModal')">
+      <div class="panel-corner">二</div>
+      <span class="panel-icon">💪</span>
+      <div class="panel-tag">Volume #2</div>
+      <div class="panel-name magenta">Vol. Reserva Inspiratório (VRI)</div>
+      <div class="panel-value magenta">~3000 mL</div>
+      <div class="panel-desc">
+        O ar <strong>extra</strong> que podes inspirar após uma respiração normal. É a tua <em>reserva de superpoder</em> — usada no exercício intenso.<br><br>
+        <span style="font-size:0.8rem; color:#64748b;">Sigla EN: <span class="magenta">IRV (Inspiratory Reserve Volume)</span></span>
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#ffd70033;" onclick="openModal('vreModal')">
+      <div class="panel-corner">三</div>
+      <span class="panel-icon">🌀</span>
+      <div class="panel-tag">Volume #3</div>
+      <div class="panel-name yellow">Vol. Reserva Expiratório (VRE)</div>
+      <div class="panel-value yellow">~1200 mL</div>
+      <div class="panel-desc">
+        O ar que podes expirar forçadamente após uma expiração normal. É o que resta quando "espremes" mais os pulmões.<br><br>
+        <span style="font-size:0.8rem; color:#64748b;">Sigla EN: <span class="yellow">ERV (Expiratory Reserve Volume)</span></span>
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#39ff1433;" onclick="openModal('vrModal')">
+      <div class="panel-corner">四</div>
+      <span class="panel-icon">🔒</span>
+      <div class="panel-tag">Volume #4</div>
+      <div class="panel-name green">Volume Residual (VR)</div>
+      <div class="panel-value green">~1200 mL</div>
+      <div class="panel-desc">
+        O ar que <strong>NUNCA sai</strong> dos pulmões — nem mesmo com expiração máxima forçada. Mantém os alvéolos abertos, evitando colapso.<br><br>
+        <span style="font-size:0.8rem; color:#64748b">⚠️ <span class="red">NÃO MENSURÁVEL por espirometria simples!</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box reveal" style="max-width:800px; margin: 20px auto 0;">
+    <div class="info-box-accent" style="background:var(--red)"></div>
+    <h4 class="red">⚠️ Atenção Clínica</h4>
+    <p>O <strong class="green">Volume Residual (VR)</strong> só pode ser medido por técnicas especiais como <strong>pletismografia corporal</strong> ou <strong>diluição de hélio</strong>. A espirometria convencional NÃO o detecta. Isto é pergunta frequente em exames!</p>
+  </div>
+</section>
+
+<!-- DIVIDER -->
+<div class="section-divider">◆ ◆ ◆ ◆ ◆</div>
+
+<!-- ===================== SECTION 2: CAPACIDADES ===================== -->
+<section id="capacidades">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CAPÍTULO 02</div>
+    <h2 class="chapter-title"><span class="yellow">As 4 Capacidades</span> — Fusões</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">
+      Se os volumes são <strong>peças individuais</strong>, as <strong class="yellow">capacidades</strong> são as <em>combinações</em> dessas peças. Uma capacidade é sempre a <strong>soma de 2 ou mais volumes</strong>. Pensa como um combo de ataques num jogo de luta!
+    </p>
+  </div>
+
+  <!-- Formulas -->
+  <div class="formula-table-wrap reveal">
+    <table class="formula-table">
+      <thead>
+        <tr>
+          <th>Capacidade</th>
+          <th>Abrev.</th>
+          <th>Fórmula</th>
+          <th>Valor Normal</th>
+          <th>Significado Clínico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="col-name">Capacidade Inspiratória</td>
+          <td class="abbr">CI</td>
+          <td><span class="cyan">VC + VRI</span> = 500 + 3000</td>
+          <td class="val">≈ 3500 mL</td>
+          <td>Volume máximo que podes inspirar a partir da expiração normal</td>
+        </tr>
+        <tr>
+          <td class="col-name">Capacidade Residual Funcional</td>
+          <td class="abbr red">CRF</td>
+          <td><span class="yellow">VRE + VR</span> = 1200 + 1200</td>
+          <td class="val">≈ 2400 mL</td>
+          <td>Ar nos pulmões após expiração normal. ⚠️ Não mensurável por espirometria!</td>
+        </tr>
+        <tr>
+          <td class="col-name">Capacidade Vital</td>
+          <td class="abbr magenta">CV</td>
+          <td><span class="magenta">VRI + VC + VRE</span></td>
+          <td class="val">≈ 4700 mL</td>
+          <td>Volume máximo mobilizável. Parâmetro chave em espirometria</td>
+        </tr>
+        <tr>
+          <td class="col-name">Capacidade Pulmonar Total</td>
+          <td class="abbr green">CPT</td>
+          <td><span class="green">CV + VR</span> = 4700 + 1200</td>
+          <td class="val">≈ 5900 mL</td>
+          <td>Volume total quando os pulmões estão completamente cheios</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CAPACIDADES CARDS -->
+  <div class="manga-panel-grid" style="max-width: 900px; margin: 0 auto;">
+
+    <div class="manga-panel reveal" style="border-color:#00f5ff33;" onclick="openModal('ciModal')">
+      <span class="panel-icon">⬆️</span>
+      <div class="panel-tag">Capacidade</div>
+      <div class="panel-name cyan">Capacidade Inspiratória (CI)</div>
+      <div class="panel-value cyan">≈ 3500 mL</div>
+      <div class="panel-desc">
+        <div class="highlight">CI = VC + VRI</div>
+        Volume máximo que inspiras a partir do nível de repouso. O teu "tanque de carga".
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#ff2d5533;" onclick="openModal('crfModal')">
+      <span class="panel-icon">⚖️</span>
+      <div class="panel-tag">Capacidade ⚠️</div>
+      <div class="panel-name red">Cap. Residual Funcional (CRF)</div>
+      <div class="panel-value red">≈ 2400 mL</div>
+      <div class="panel-desc">
+        <div class="highlight" style="border-color:var(--red); background:rgba(255,45,85,0.08);">CRF = VRE + VR</div>
+        Ar que fica após expiração normal. É o <strong>"ponto de equilíbrio"</strong> — onde as forças elásticas do pulmão e da caixa torácica se igualam. <span class="red">Não mensurável por espirometria!</span>
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#ff00aa33;" onclick="openModal('cvModal')">
+      <span class="panel-icon">💨</span>
+      <div class="panel-tag">Capacidade ★★★</div>
+      <div class="panel-name magenta">Capacidade Vital (CV)</div>
+      <div class="panel-value magenta">≈ 4700 mL</div>
+      <div class="panel-desc">
+        <div class="highlight" style="border-color:var(--magenta); background:rgba(255,0,170,0.08);">CV = VRI + VC + VRE</div>
+        A mais usada clinicamente! Volume total que podes mobilizar (de inspiração máxima a expiração máxima). Avalia força muscular respiratória.
+      </div>
+    </div>
+
+    <div class="manga-panel reveal" style="border-color:#39ff1433;" onclick="openModal('cptModal')">
+      <span class="panel-icon">🌟</span>
+      <div class="panel-tag">Capacidade TOTAL</div>
+      <div class="panel-name green">Cap. Pulmonar Total (CPT)</div>
+      <div class="panel-value green">≈ 5900 mL</div>
+      <div class="panel-desc">
+        <div class="highlight" style="border-color:var(--green); background:rgba(57,255,20,0.05);">CPT = CV + VR = Todos os volumes</div>
+        O volume máximo absoluto dos pulmões. Só calculável quando se conhece o VR. Inclui o ar inacessível ao espirômetro.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STACKED DIAGRAM ===================== -->
+<section id="diagram-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// DIAGRAMA</div>
+    <h2 class="chapter-title">Mapa <span class="cyan">Visual</span> Completo</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">Vê como os volumes se empilham para formar as capacidades. Clica em cada segmento para mais info!</p>
+  </div>
+
+  <div class="stack-diagram reveal">
+    <div class="stack-bar-wrapper">
+      <div class="y-axis">
+        <div class="y-label">6L</div>
+        <div class="y-label">5L</div>
+        <div class="y-label">4L</div>
+        <div class="y-label">3L</div>
+        <div class="y-label">2L</div>
+        <div class="y-label">1L</div>
+        <div class="y-label">0L</div>
+      </div>
+      <div class="vol-stacks">
+        <!-- Column: CPT breakdown -->
+        <div class="stack-col">
+          <div class="stack-bar" style="height: calc(100% - 30px)">
+            <!-- VR = 20% -->
+            <div class="stack-seg" style="height:20.3%; background:linear-gradient(135deg,#39ff14,#1a8a08);" onclick="openModal('vrModal')">
+              <div class="stack-seg-label">VR<br>1.2L</div>
+            </div>
+            <!-- VRE = 20% -->
+            <div class="stack-seg" style="height:20.3%; background:linear-gradient(135deg,#ffd700,#a37e00);" onclick="openModal('vreModal')">
+              <div class="stack-seg-label">VRE<br>1.2L</div>
+            </div>
+            <!-- VC = 8.5% -->
+            <div class="stack-seg" style="height:8.5%; background:linear-gradient(135deg,#00f5ff,#007a80);" onclick="openModal('vtModal')">
+              <div class="stack-seg-label">VC 0.5L</div>
+            </div>
+            <!-- VRI = 50.8% -->
+            <div class="stack-seg" style="height:50.8%; background:linear-gradient(135deg,#ff00aa,#800055);" onclick="openModal('vriModal')">
+              <div class="stack-seg-label">VRI<br>3.0L</div>
+            </div>
+          </div>
+          <div class="stack-col-label">CPT<br>≈ 5.9L</div>
+        </div>
+
+        <!-- Capacity lines annotations -->
+        <div class="stack-col" style="flex:1.5; padding-right:10px;">
+          <div style="height:calc(100% - 30px); display:flex; flex-direction:column; justify-content:space-between; padding-bottom: 4px;">
+            <div style="border-left:2px dashed var(--magenta); padding-left:10px; margin-top:0%;">
+              <div style="font-family:'Orbitron',sans-serif; font-size:0.65rem; color:var(--magenta);">CV = VRI+VC+VRE</div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">≈ 4.7L</div>
+            </div>
+            <div style="border-left:2px dashed var(--cyan); padding-left:10px;">
+              <div style="font-family:'Orbitron',sans-serif; font-size:0.65rem; color:var(--cyan);">CI = VC+VRI</div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">≈ 3.5L</div>
+            </div>
+            <div style="border-left:2px dashed var(--red); padding-left:10px;">
+              <div style="font-family:'Orbitron',sans-serif; font-size:0.65rem; color:var(--red);">CRF = VRE+VR</div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">≈ 2.4L</div>
+            </div>
+          </div>
+          <div class="stack-col-label">Capacidades</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SPIROMETER ===================== -->
+<section id="spirometer-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CAPÍTULO 03</div>
+    <h2 class="chapter-title">O <span class="cyan">Espirômetro</span> Virtual</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">Simula diferentes tipos de respiração e observa em tempo real como os volumes se alteram!</p>
+  </div>
+
+  <div class="spiro-container">
+    <div class="lung-viz reveal">
+      <div class="lung-viz-title">⚡ PULMÕES EM TEMPO REAL</div>
+      <svg id="lung-svg" viewBox="0 0 220 220">
+        <!-- Trachea -->
+        <rect x="103" y="5" width="14" height="50" rx="7" fill="#00f5ff" opacity="0.7"/>
+        <!-- Left Lung -->
+        <path id="ll" d="M103 55 C88 55 45 65 30 95 C15 125 22 170 48 185 C74 200 92 197 100 185 C108 173 108 150 103 55Z" fill="url(#lgL2)" opacity="0.85"/>
+        <!-- Right Lung -->
+        <path id="rl" d="M117 55 C132 55 175 65 190 95 C205 125 198 170 172 185 C146 200 128 197 120 185 C112 173 112 150 117 55Z" fill="url(#lgR2)" opacity="0.85"/>
+        <!-- Animated particles inside lungs -->
+        <circle id="p1" cx="65" cy="130" r="2.5" fill="#00f5ff" opacity="0.6"><animate attributeName="r" values="1.5;4;1.5" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/></circle>
+        <circle id="p2" cx="155" cy="130" r="2.5" fill="#ff00aa" opacity="0.6"><animate attributeName="r" values="1.5;4;1.5" dur="2.3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="2.3s" repeatCount="indefinite"/></circle>
+        <circle id="p3" cx="75" cy="160" r="2" fill="#39ff14" opacity="0.5"><animate attributeName="r" values="1;3;1" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle id="p4" cx="145" cy="155" r="2" fill="#ffd700" opacity="0.5"><animate attributeName="r" values="1;3;1" dur="2.5s" repeatCount="indefinite"/></circle>
+        <defs>
+          <radialGradient id="lgL2" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#051a30" stop-opacity="0.9"/>
+          </radialGradient>
+          <radialGradient id="lgR2" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stop-color="#ff00aa" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#1e0530" stop-opacity="0.9"/>
+          </radialGradient>
+        </defs>
+      </svg>
+      <div class="breathe-label" id="breathe-label">◉ RESPIRAÇÃO NORMAL</div>
+      <div class="breath-controls">
+        <button class="breath-btn btn-normal" onclick="setBreath('normal')">Normal</button>
+        <button class="breath-btn btn-deep" onclick="setBreath('deep')">Profunda</button>
+        <button class="breath-btn btn-forced" onclick="setBreath('forced')">Forçada</button>
+        <button class="breath-btn btn-tv" onclick="setBreath('tv')">Corrente</button>
+      </div>
+    </div>
+
+    <div class="vol-bars reveal">
+      <div style="font-family:'Orbitron',sans-serif; font-size:0.8rem; color:var(--cyan); margin-bottom:16px; letter-spacing:2px;">📊 VOLUMES ACTIVOS</div>
+
+      <div class="vol-bar-item" style="border-color:var(--cyan)">
+        <div class="vol-bar-label">
+          <span class="vol-name cyan">VC — Corrente</span>
+          <span class="vol-num cyan" id="vc-val">500 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="vc-bar" style="width:8.5%; background:var(--cyan)"></div></div>
+      </div>
+
+      <div class="vol-bar-item" style="border-color:var(--magenta)">
+        <div class="vol-bar-label">
+          <span class="vol-name magenta">VRI — Res. Insp.</span>
+          <span class="vol-num magenta" id="vri-val">3000 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="vri-bar" style="width:50.8%; background:var(--magenta)"></div></div>
+      </div>
+
+      <div class="vol-bar-item" style="border-color:var(--yellow)">
+        <div class="vol-bar-label">
+          <span class="vol-name yellow">VRE — Res. Exp.</span>
+          <span class="vol-num yellow" id="vre-val">1200 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="vre-bar" style="width:20.3%; background:var(--yellow)"></div></div>
+      </div>
+
+      <div class="vol-bar-item" style="border-color:var(--green)">
+        <div class="vol-bar-label">
+          <span class="vol-name green">VR — Residual</span>
+          <span class="vol-num green" id="vr-val">1200 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="vr-bar" style="width:20.3%; background:var(--green)"></div></div>
+      </div>
+
+      <div class="vol-bar-item" style="border-color:var(--purple); margin-top:8px; border-top:2px dashed var(--purple);">
+        <div class="vol-bar-label">
+          <span class="vol-name purple">CV — Cap. Vital</span>
+          <span class="vol-num purple" id="cv-val">4700 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="cv-bar" style="width:79.7%; background:var(--purple)"></div></div>
+      </div>
+
+      <div class="vol-bar-item" style="border-color:var(--orange)">
+        <div class="vol-bar-label">
+          <span class="vol-name orange">CPT — Total</span>
+          <span class="vol-num orange" id="cpt-val">5900 mL</span>
+        </div>
+        <div class="vol-track"><div class="vol-fill" id="cpt-bar" style="width:100%; background:var(--orange)"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WAVE SPIROGRAM ===================== -->
+<section id="wave-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// ESPIROGRAMA</div>
+    <h2 class="chapter-title">A <span class="magenta">Onda</span> da Respiração</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">O espirograma é o gráfico do volume de ar ao longo do tempo, traçado pelo espirômetro. Esta é a <strong>"escrita" dos pulmões</strong>.</p>
+  </div>
+  <canvas id="wave-canvas" width="800" height="300" style="max-width:100%;"></canvas>
+  <div style="text-align:center; margin-top:16px; color:var(--text-dim); font-size:0.85rem;">
+    <span style="color:var(--cyan)">■</span> Respiração Normal &nbsp;
+    <span style="color:var(--magenta)">■</span> Inspiração Máxima &nbsp;
+    <span style="color:var(--yellow)">■</span> Expiração Máxima &nbsp;
+    <span style="color:var(--green)">■</span> Volume Residual (linha)
+  </div>
+</section>
+
+<!-- ===================== SECTION MOLECULES ===================== -->
+<section id="molecule-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// BIOQUÍMICA VISUAL</div>
+    <h2 class="chapter-title">Moléculas <span class="cyan">Vivas</span></h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">O ar que respiras é uma mistura de moléculas. Observa O₂ e CO₂ em movimento real nos alvéolos — a troca gasosa em acção!</p>
+  </div>
+  <canvas id="mol-canvas" width="700" height="350" style="max-width:100%;"></canvas>
+  <div style="text-align:center; margin-top:12px; font-size:0.85rem; color:var(--text-dim);">
+    <span style="color:#00f5ff">● O₂</span> a entrar no sangue &nbsp;|&nbsp;
+    <span style="color:#ff4444">● CO₂</span> a sair do sangue &nbsp;|&nbsp;
+    <span style="color:#39ff14">● N₂</span> inerte
+  </div>
+</section>
+
+<!-- ===================== TIMELINE ===================== -->
+<section id="timeline-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CRONOLOGIA</div>
+    <h2 class="chapter-title">O Ciclo <span class="cyan">Respiratório</span> Completo</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">Da inspiração tranquila ao esforço máximo — passo a passo, cada momento do ciclo respiratório.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--cyan)"></div>
+      <div class="tl-content">
+        <div class="tl-step cyan">// FASE 1</div>
+        <div class="tl-title cyan">Posição de Repouso</div>
+        <div class="tl-body">Os pulmões estão no ponto de equilíbrio — a <strong class="red">CRF (≈2400mL)</strong>. O diafragma relaxado. As forças elásticas do pulmão (para dentro) e da parede torácica (para fora) estão equilibradas. É o zero da respiração.</div>
+      </div>
+      <div class="tl-spacer"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--cyan)"></div>
+      <div class="tl-spacer"></div>
+      <div class="tl-content">
+        <div class="tl-step cyan">// FASE 2</div>
+        <div class="tl-title cyan">Inspiração Normal</div>
+        <div class="tl-body">O diafragma contrai — desce. Os intercostais externos expandem a caixa torácica. A pressão intratorácica cai. Entram <strong class="cyan">≈500mL (VC)</strong>. Os pulmões estão agora com CRF + VC = ≈2900mL.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--yellow)"></div>
+      <div class="tl-content">
+        <div class="tl-step yellow">// FASE 3</div>
+        <div class="tl-title yellow">Expiração Normal</div>
+        <div class="tl-body">Processo <strong>passivo</strong> — nenhum músculo activo! As forças elásticas dos pulmões recuam naturalmente. Os ≈500mL saem. Os pulmões voltam à CRF. É por isso que a expiração normal <em>não cansa</em>.</div>
+      </div>
+      <div class="tl-spacer"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--magenta)"></div>
+      <div class="tl-spacer"></div>
+      <div class="tl-content">
+        <div class="tl-step magenta">// FASE 4</div>
+        <div class="tl-title magenta">Inspiração Máxima</div>
+        <div class="tl-body">Activação total: diafragma, intercostais externos, <em>esternocleidomastoideu</em>, <em>escalenos</em>. Entram mais <strong class="magenta">≈3000mL (VRI)</strong> sobre o VC normal. Os pulmões atingem a <strong class="green">CPT ≈ 5900mL</strong>.</div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--orange)"></div>
+      <div class="tl-content">
+        <div class="tl-step orange">// FASE 5</div>
+        <div class="tl-title orange">Expiração Forçada</div>
+        <div class="tl-body">Agora é <strong>activa</strong> — músculos abdominais e intercostais internos comprimem a caixa torácica. Saem mais <strong class="yellow">≈1200mL (VRE)</strong>. Mas os pulmões nunca ficam vazios...</div>
+      </div>
+      <div class="tl-spacer"></div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--green)"></div>
+      <div class="tl-spacer"></div>
+      <div class="tl-content">
+        <div class="tl-step green">// FASE 6</div>
+        <div class="tl-title green">Volume Residual — Permanente</div>
+        <div class="tl-body">Mesmo após expiração máxima forçada, ficam <strong class="green">≈1200mL (VR)</strong>. Não por falta de força — mas porque as vias aéreas pequenas colapsam antes de se extrair todo o ar. Este ar mantém os alvéolos abertos e garante trocas gasosas contínuas.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CLINICAL ===================== -->
+<section id="clinical-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CAPÍTULO 04</div>
+    <h2 class="chapter-title">Aplicações <span class="red">Clínicas</span></h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">O médico não aprende volumes para fazer cálculos — aprende para <strong class="red">salvar vidas</strong>. Cada alteração nos volumes conta uma história patológica.</p>
+  </div>
+
+  <div class="clinical-grid">
+
+    <div class="clinical-card reveal" style="border-color:#ff2d5533;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--red),var(--orange));"></div>
+      <span class="cc-icon">🌬️</span>
+      <div class="cc-disease red">Padrão OBSTRUTIVO</div>
+      <div class="cc-name">DPOC / Asma</div>
+      <div class="cc-body">
+        Nas doenças obstrutivas (obstrução ao fluxo de ar), o ar fica <strong>preso</strong> nos pulmões:<br><br>
+        ▲ VR aumentado — hiperinsuflação<br>
+        ▲ CPT normal ou aumentada<br>
+        ▼ VEF₁/CVF &lt; 70% (critério diagnóstico)<br>
+        ▼ Capacidade Vital pode diminuir<br><br>
+        <strong class="orange">Imagem: tórax em barril no RX</strong>
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(255,45,85,0.15); color:var(--red);">DPOC</span>
+        <span class="cc-tag" style="background:rgba(255,107,0,0.15); color:var(--orange);">Asma</span>
+        <span class="cc-tag" style="background:rgba(255,45,85,0.1); color:var(--text-dim);">Bronquiectasias</span>
+      </div>
+    </div>
+
+    <div class="clinical-card reveal" style="border-color:#4169e133;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--purple));"></div>
+      <span class="cc-icon">🪨</span>
+      <div class="cc-disease" style="color:var(--blue)">Padrão RESTRITIVO</div>
+      <div class="cc-name">Fibrose / Cifoescoliose</div>
+      <div class="cc-body">
+        Nas doenças restritivas, os pulmões <strong>não conseguem expandir</strong>:<br><br>
+        ▼ CPT diminuída (&lt; 80% do previsto)<br>
+        ▼ CV diminuída<br>
+        ▼ VR pode estar normal ou diminuído<br>
+        → VEF₁/CVF normal ou elevado<br><br>
+        <strong style="color:var(--blue)">Inclui: causas pulmonares, pleurais, neuromusculares, ósseas</strong>
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(65,105,225,0.15); color:var(--blue);">Fibrose Pulmonar</span>
+        <span class="cc-tag" style="background:rgba(168,85,247,0.15); color:var(--purple);">Sarcoidose</span>
+        <span class="cc-tag" style="background:rgba(65,105,225,0.1); color:var(--text-dim);">Cifoescoliose</span>
+      </div>
+    </div>
+
+    <div class="clinical-card reveal" style="border-color:#39ff1433;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),var(--cyan));"></div>
+      <span class="cc-icon">📈</span>
+      <div class="cc-disease green">VEF₁/CVF — O RÁCIO CHAVE</div>
+      <div class="cc-name">Índice de Tiffeneau</div>
+      <div class="cc-body">
+        O <strong class="green">VEF₁</strong> (Volume Expiratório Forçado no 1º segundo) dividido pela CVF:<br><br>
+        <strong class="yellow">Normal: ≥ 70% (ou &gt; 0.70)</strong><br>
+        <strong class="red">&lt; 70% → Padrão Obstrutivo</strong><br>
+        <strong class="cyan">≥ 70% com CVF ↓ → Padrão Restritivo</strong><br><br>
+        <em class="text-dim">Este rácio é o teste de rastreio mais importante da função pulmonar!</em>
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(57,255,20,0.12); color:var(--green);">VEF₁</span>
+        <span class="cc-tag" style="background:rgba(0,245,255,0.12); color:var(--cyan);">CVF</span>
+        <span class="cc-tag" style="background:rgba(255,215,0,0.12); color:var(--yellow);">Espirometria</span>
+      </div>
+    </div>
+
+    <div class="clinical-card reveal" style="border-color:#ffd70033;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--yellow),var(--orange));"></div>
+      <span class="cc-icon">🔴</span>
+      <div class="cc-disease yellow">EMERGÊNCIA</div>
+      <div class="cc-name">Pneumotórax</div>
+      <div class="cc-body">
+        Ar entra no espaço pleural → o pulmão <strong>colapsa</strong>. O VR e todos os volumes desse pulmão caem a zero.<br><br>
+        CV do pulmão afectado → 0<br>
+        CRF → perturbada<br>
+        <strong class="red">Dispneia súbita + desvio traqueal + ausência de murmúrio vesicular</strong>
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(255,215,0,0.12); color:var(--yellow);">Pneumotórax</span>
+        <span class="cc-tag" style="background:rgba(255,107,0,0.12); color:var(--orange);">Urgência</span>
+      </div>
+    </div>
+
+    <div class="clinical-card reveal" style="border-color:#a855f733;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--purple),var(--magenta));"></div>
+      <span class="cc-icon">🌊</span>
+      <div class="cc-disease purple">VENTILAÇÃO MECÂNICA</div>
+      <div class="cc-name">UCI — Volume Corrente</div>
+      <div class="cc-body">
+        Em doentes ventilados, o VC é programado pelo médico. A estratégia de <strong class="purple">"ventilação protetora"</strong> usa:<br><br>
+        <strong class="yellow">VC = 6–8 mL/kg de peso ideal</strong><br><br>
+        Volumes maiores causam <strong class="red">volutrauma</strong> — lesão pulmonar mecânica. Menor volume corrente = menos lesão.
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(168,85,247,0.12); color:var(--purple);">UCI</span>
+        <span class="cc-tag" style="background:rgba(255,0,170,0.12); color:var(--magenta);">ARDS</span>
+        <span class="cc-tag" style="background:rgba(168,85,247,0.1); color:var(--text-dim);">Volutrauma</span>
+      </div>
+    </div>
+
+    <div class="clinical-card reveal" style="border-color:#00f5ff33;">
+      <div style="position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--cyan),var(--blue));"></div>
+      <span class="cc-icon">🏊</span>
+      <div class="cc-disease cyan">EXERCÍCIO & DESPORTO</div>
+      <div class="cc-name">Adaptações Fisiológicas</div>
+      <div class="cc-body">
+        Durante exercício intenso:<br><br>
+        ▲ VC aumenta drasticamente (usa VRI)<br>
+        ▲ Frequência respiratória sobe (12→ 60/min)<br>
+        ▼ CRF pode diminuir (recrutamento activo do VRE)<br><br>
+        Atletas de elite têm <strong class="cyan">CPT maior</strong> e <strong class="cyan">VR menor</strong> percentualmente.
+      </div>
+      <div class="cc-tags">
+        <span class="cc-tag" style="background:rgba(0,245,255,0.12); color:var(--cyan);">Exercício</span>
+        <span class="cc-tag" style="background:rgba(65,105,225,0.12); color:var(--blue);">VO₂máx</span>
+        <span class="cc-tag" style="background:rgba(0,245,255,0.1); color:var(--text-dim);">Atletas</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUIZ ===================== -->
+<section id="quiz-section">
+  <div class="chapter-header reveal">
+    <div class="chapter-num">// CAPÍTULO FINAL</div>
+    <h2 class="chapter-title">Quiz <span class="yellow">Nível Ninja</span> 🥷</h2>
+    <div class="chapter-line"></div>
+    <p class="chapter-desc">Estás preparado? Prova que dominaste os volumes e capacidades pulmonares!</p>
+  </div>
+
+  <div class="quiz-box reveal">
+    <div class="quiz-progress" id="quiz-prog"></div>
+    <div class="quiz-q" id="quiz-q"></div>
+    <div class="quiz-options" id="quiz-opts"></div>
+    <div class="quiz-feedback" id="quiz-fb"></div>
+    <button class="quiz-next" id="quiz-next-btn" onclick="nextQuestion()" style="display:none">PRÓXIMA PERGUNTA →</button>
+    <div class="quiz-score-display" id="quiz-score-display">
+      <h3 class="cyan">MISSÃO CONCLUÍDA!</h3>
+      <div class="quiz-score-val" id="quiz-score-val"></div>
+      <p id="quiz-score-msg" style="color:var(--text-dim); margin-top:8px;"></p>
+      <button class="quiz-restart" onclick="restartQuiz()">↺ RECOMEÇAR</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">UNIVERSIDADE LICUNGO</div>
+  <div class="footer-year">© ANO 2026 — VOLUMES & CAPACIDADES PULMONARES</div>
+  <div style="margin-top:20px; font-size:0.75rem; color:#334155; font-family:'Rajdhani',sans-serif;">
+    Material Educativo de Fisiologia Respiratória • Todos os direitos reservados
+  </div>
+</footer>
+
+<!-- ===================== MODALS DATA ===================== -->
+<script>
+const modalData = {
+  o2modal: {
+    title: '⚡ O Oxigénio — O Combustível da Vida',
+    color: 'var(--cyan)',
+    val: 'O₂',
+    body: 'O oxigénio (O₂) é necessário para a <strong>fosforilação oxidativa</strong> nas mitocôndrias — o processo que produz ATP (energia). Sem O₂, as células mudam para metabolismo anaeróbio, acumulam lactato e entram em falência. O cérebro, que consome 20% do O₂ do corpo, é o mais vulnerável.'
+  },
+  co2modal: {
+    title: '💨 O CO₂ — O Resíduo Tóxico',
+    color: 'var(--magenta)',
+    val: 'CO₂',
+    body: 'O dióxido de carbono é produto do metabolismo aeróbio. Dissolve-se no sangue formando <strong>ácido carbónico (H₂CO₃)</strong>, que baixa o pH. O pulmão regula o pH sanguíneo expulsando CO₂. <em>Hipercapnia</em> (excesso de CO₂) → acidose respiratória → depressão do SNC.'
+  },
+  medModal: {
+    title: '🩺 Espirometria — O Teste Essencial',
+    color: 'var(--yellow)',
+    val: 'CVF',
+    body: 'A espirometria é o teste mais pedido em pneumologia. Mede volumes e fluxos. Diagnóstica DPOC, asma, fibrose. O parâmetro chave é o <strong>VEF₁/CVF</strong> (Índice de Tiffeneau). Se &lt; 70%, confirma obstrução. Se ≥ 70% com CVF reduzida, sugere restrição. Simples, barato e muito informativo!'
+  },
+  vtModal: {
+    title: '🌬️ Volume Corrente (VC / TV)',
+    color: 'var(--cyan)',
+    val: '~500 mL',
+    body: 'É o ar de cada respiração em repouso. Para um adulto de 70kg, são ~500mL (~7mL/kg). Em ventilação mecânica protectora, programamos <strong>6-8 mL/kg de peso ideal</strong> para evitar lesão pulmonar. Em exercício máximo, o VC pode subir para 2-3L usando a reserva inspiratória.'
+  },
+  vriModal: {
+    title: '💪 Volume de Reserva Inspiratório (VRI / IRV)',
+    color: 'var(--magenta)',
+    val: '~3000 mL',
+    body: 'É a maior "bateria" pulmonar — 3 litros extra além da respiração normal. É mobilizado durante exercício intenso, stress, tosse profunda. Usamos os músculos acessórios da inspiração: <strong>esternocleidomastoideu, escalenos, peitoral menor</strong>. Diminui com doenças que reduzem a compliance pulmonar (fibrose).'
+  },
+  vreModal: {
+    title: '🌀 Volume de Reserva Expiratório (VRE / ERV)',
+    color: 'var(--yellow)',
+    val: '~1200 mL',
+    body: 'É o ar que se pode "espremer" após expiração normal — exige activação muscular (abdominais + intercostais internos). Diminui significativamente na <strong>obesidade</strong> (o peso do abdómen impede o diafragma de subir). Na gravidez avançada, o útero aumentado também reduz o VRE.'
+  },
+  vrModal: {
+    title: '🔒 Volume Residual (VR / RV)',
+    color: 'var(--green)',
+    val: '~1200 mL',
+    body: 'O ar eterno — nunca sai! Formado porque as vias aéreas pequenas (bronquíolos) colapsam antes de se poder esvaziar os alvéolos completamente. Função vital: mantém os alvéolos abertos, garantindo trocas gasosas contínuas entre respirações. <strong>Aumenta com a idade</strong> (perda de elasticidade). Não mensurável por espirometria convencional — requer pletismografia ou diluição de hélio.'
+  },
+  ciModal: {
+    title: '⬆️ Capacidade Inspiratória (CI)',
+    color: 'var(--cyan)',
+    val: '~3500 mL',
+    body: 'CI = VC + VRI. É o volume máximo que se pode inspirar a partir do nível de repouso (CRF). Clinicamente, reflecte a função dos músculos inspiratórios e a compliance pulmonar. Reduzida em doenças neuromusculares e restrição pulmonar.'
+  },
+  crfModal: {
+    title: '⚖️ Capacidade Residual Funcional (CRF)',
+    color: 'var(--red)',
+    val: '~2400 mL',
+    body: '<strong>CRF = VRE + VR</strong>. É o ponto de equilíbrio onde a força elástica do pulmão (para dentro) e a força elástica da parede torácica (para fora) se anulam. Aumenta na DPOC (hiperinsuflação). Diminui na obesidade e em posição supina. Não mensurável por espirometria! Requer pletismografia ou diluição de hélio/nitrogênio.'
+  },
+  cvModal: {
+    title: '💨 Capacidade Vital (CV / VC)',
+    color: 'var(--magenta)',
+    val: '~4700 mL',
+    body: '<strong>CV = VRI + VC + VRE</strong>. Volume total mobilizável. É o parâmetro mais medido em espirometria. A CVF (Capacidade Vital Forçada) é medida em expiração máxima rápida. Reflecte a função dos músculos respiratórios e a mecânica pulmonar. Diminuída tanto em doenças obstrutivas como restritivas.'
+  },
+  cptModal: {
+    title: '🌟 Capacidade Pulmonar Total (CPT / TLC)',
+    color: 'var(--green)',
+    val: '~5900 mL',
+    body: '<strong>CPT = CV + VR</strong>. Volume total quando os pulmões estão completamente inflados. Aumenta na DPOC/Enfisema. Diminui nas doenças restritivas. Determinada usando pletismografia corporal ou diluição de gás (inclui espaços não ventilados). É o denominador em muitos cálculos de função pulmonar.'
+  }
+};
+
+function openModal(id) {
+  const d = modalData[id];
+  if (!d) return;
+  document.getElementById('modal-content').innerHTML = `
+    <h3 style="color:${d.color}; font-family:'Orbitron',sans-serif;">${d.title}</h3>
+    <div class="big-val" style="color:${d.color}">${d.val}</div>
+    <p>${d.body}</p>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if(e.target === this) closeModal();
+});
+</script>
+
+<!-- ===================== ANIMATIONS JS ===================== -->
+<script>
+// PARTICLES
+(function(){
+  const cont = document.getElementById('particles');
+  const colors = ['#00f5ff','#ff00aa','#39ff14','#ffd700','#a855f7','#ff6b00'];
+  for(let i=0;i<40;i++){
+    const p = document.createElement('div');
+    p.className='particle';
+    const size=Math.random()*4+2;
+    p.style.cssText=`
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*15+8}s;
+      animation-delay:${Math.random()*10}s;
+      box-shadow:0 0 ${size*3}px currentColor;
+    `;
+    cont.appendChild(p);
+  }
+})();
+
+// HERO LUNG BREATHE
+(function(){
+  const ll = document.getElementById('left-lung');
+  const rl = document.getElementById('right-lung');
+  let scale = 1, dir = 1, t = 0;
+  function breathe(){
+    t += 0.012 * dir;
+    if(t >= 1){ dir = -1; t = 1; }
+    if(t <= 0){ dir = 1; t = 0; }
+    scale = 1 + t * 0.06;
+    const s = `scale(${scale})`;
+    if(ll) { ll.style.transformOrigin='center'; ll.style.transform=s; }
+    if(rl) { rl.style.transformOrigin='center'; rl.style.transform=s; }
+    requestAnimationFrame(breathe);
+  }
+  breathe();
+})();
+
+// SCROLL REVEAL
+(function(){
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        // timeline items
+        if(e.target.classList.contains('tl-item')) e.target.classList.add('visible');
+      }
+    });
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal, .tl-item').forEach(el=>obs.observe(el));
+})();
+
+// SPIROMETER
+const breathModes = {
+  normal: { vc:500, vri:3000, vre:1200, label:'◉ RESPIRAÇÃO NORMAL', lungScale:1.0 },
+  deep:   { vc:3500, vri:0, vre:500, label:'◉ INSPIRAÇÃO PROFUNDA', lungScale:1.12 },
+  forced: { vc:500, vri:3000, vre:1200, label:'◉ EXPIRAÇÃO FORÇADA', lungScale:0.85 },
+  tv:     { vc:500, vri:3000, vre:1200, label:'◉ VOLUME CORRENTE', lungScale:1.0 }
+};
+let currentBreath = 'normal';
+
+function setBreath(mode) {
+  currentBreath = mode;
+  const m = breathModes[mode];
+  const vr = 1200;
+  const cv = m.vri + m.vc + m.vre;
+  const cpt = cv + vr;
+  const maxVol = 6000;
+  document.getElementById('vc-val').textContent = m.vc + ' mL';
+  document.getElementById('vri-val').textContent = m.vri + ' mL';
+  document.getElementById('vre-val').textContent = m.vre + ' mL';
+  document.getElementById('vr-val').textContent = vr + ' mL';
+  document.getElementById('cv-val').textContent = cv + ' mL';
+  document.getElementById('cpt-val').textContent = cpt + ' mL';
+  document.getElementById('vc-bar').style.width = (m.vc/maxVol*100)+'%';
+  document.getElementById('vri-bar').style.width = (m.vri/maxVol*100)+'%';
+  document.getElementById('vre-bar').style.width = (m.vre/maxVol*100)+'%';
+  document.getElementById('vr-bar').style.width = (vr/maxVol*100)+'%';
+  document.getElementById('cv-bar').style.width = (cv/maxVol*100)+'%';
+  document.getElementById('cpt-bar').style.width = (cpt/maxVol*100)+'%';
+  document.getElementById('breathe-label').textContent = m.label;
+}
+
+// Animated lung breathing
+(function(){
+  const ll = document.getElementById('ll');
+  const rl = document.getElementById('rl');
+  let t = 0, dir = 1;
+  function animLung(){
+    t += 0.008 * dir;
+    if(t >= 1){ dir=-1; t=1; }
+    if(t <= 0){ dir=1; t=0; }
+    const s = 1 + t * 0.07;
+    if(ll){ ll.style.transformOrigin='center'; ll.style.transform=`scale(${s})`; }
+    if(rl){ rl.style.transformOrigin='center'; rl.style.transform=`scale(${s})`; }
+    requestAnimationFrame(animLung);
+  }
+  animLung();
+})();
+
+// SPIROGRAM WAVE CANVAS
+(function(){
+  const c = document.getElementById('wave-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  let frame = 0;
+
+  function drawSpirogram(){
+    ctx.clearRect(0,0,W,H);
+    // Background
+    ctx.fillStyle = '#030f1a';
+    ctx.fillRect(0,0,W,H);
+    // Grid
+    ctx.strokeStyle='rgba(0,245,255,0.06)';
+    ctx.lineWidth=1;
+    for(let x=0;x<=W;x+=50){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for(let y=0;y<=H;y+=30){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    // Labels
+    ctx.fillStyle='rgba(0,245,255,0.5)';
+    ctx.font='11px Orbitron,sans-serif';
+    ctx.fillText('CPT ≈ 6L', 8, 20);
+    ctx.fillStyle='rgba(255,0,170,0.6)';
+    ctx.fillText('CV ≈ 4.7L', 8, 70);
+    ctx.fillStyle='rgba(255,215,0,0.6)';
+    ctx.fillText('CRF ≈ 2.4L', 8, 180);
+    ctx.fillStyle='rgba(57,255,20,0.6)';
+    ctx.fillText('VR ≈ 1.2L', 8, 250);
+
+    // VR line
+    ctx.strokeStyle='rgba(57,255,20,0.4)';
+    ctx.setLineDash([6,4]);
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(60,248); ctx.lineTo(W-10,248); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // CRF line
+    ctx.strokeStyle='rgba(255,45,85,0.25)';
+    ctx.setLineDash([4,4]);
+    ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(60,178); ctx.lineTo(W-10,178); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Spirogram wave
+    const spiro = [];
+    const pts = 400;
+    for(let i=0;i<pts;i++){
+      const x = 60 + (i/(pts-1))*(W-80);
+      const t = (i/pts)*4*Math.PI + frame*0.02;
+      let vol;
+
+      // Phase: normal breathing (2 cycles), then deep inhale, deep exhale to VR
+      const norm = 0.5 + 0.08*Math.sin(t);
+      if(i < pts*0.4){
+        vol = norm;
+      } else if(i < pts*0.55){
+        // Deep inhale
+        const p=(i-pts*0.4)/(pts*0.15);
+        vol = norm + p*0.65;
+      } else if(i < pts*0.75){
+        // Max exhale
+        const p=(i-pts*0.55)/(pts*0.2);
+        vol = (0.5+0.08*Math.sin(t)) + 0.65 - p*(0.65+0.3);
+      } else if(i < pts*0.85){
+        // Back to normal
+        const p=(i-pts*0.75)/(pts*0.1);
+        vol = 0.2 + p*0.3;
+      } else {
+        vol = norm;
+      }
+      const y = H-30 - vol*(H-60);
+      spiro.push({x,y});
+    }
+
+    // Gradient stroke
+    const grad = ctx.createLinearGradient(60,0,W,0);
+    grad.addColorStop(0,'#00f5ff');
+    grad.addColorStop(0.4,'#ff00aa');
+    grad.addColorStop(0.6,'#ffd700');
+    grad.addColorStop(0.8,'#39ff14');
+    grad.addColorStop(1,'#00f5ff');
+    ctx.strokeStyle=grad;
+    ctx.lineWidth=2.5;
+    ctx.lineJoin='round';
+    ctx.beginPath();
+    spiro.forEach((p,i)=>{ i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); });
+    ctx.stroke();
+
+    // Glow effect
+    ctx.strokeStyle='rgba(0,245,255,0.15)';
+    ctx.lineWidth=6;
+    ctx.beginPath();
+    spiro.forEach((p,i)=>{ i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); });
+    ctx.stroke();
+
+    // Axis
+    ctx.strokeStyle='rgba(0,245,255,0.4)';
+    ctx.lineWidth=1.5;
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(60,10); ctx.lineTo(60,H-20);
+    ctx.moveTo(60,H-20); ctx.lineTo(W-10,H-20);
+    ctx.stroke();
+    ctx.fillStyle='rgba(0,245,255,0.6)';
+    ctx.font='10px Orbitron,sans-serif';
+    ctx.fillText('Volume (L)', 65, H-5);
+    ctx.save(); ctx.translate(20,(H-20)/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Tempo (s)',0,0); ctx.restore();
+
+    frame++;
+    requestAnimationFrame(drawSpirogram);
+  }
+  drawSpirogram();
+})();
+
+// MOLECULE CANVAS
+(function(){
+  const c = document.getElementById('mol-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  const molecules = [];
+  const molTypes = [
+    {type:'O2', color:'#00f5ff', r:5, count:40},
+    {type:'CO2', color:'#ff4444', r:6, count:25},
+    {type:'N2', color:'#39ff14', r:4, count:60},
+  ];
+  molTypes.forEach(t=>{
+    for(let i=0;i<t.count;i++){
+      molecules.push({
+        x:Math.random()*W,
+        y:Math.random()*H,
+        vx:(Math.random()-0.5)*1.5,
+        vy:(Math.random()-0.5)*1.5,
+        r:t.r,
+        color:t.color,
+        type:t.type,
+        alpha:0.5+Math.random()*0.5,
+        pulse:Math.random()*Math.PI*2
+      });
+    }
+  });
+
+  // Alveoli walls
+  function drawAlveolus(x, y, r){
+    ctx.strokeStyle='rgba(0,245,255,0.12)';
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.stroke();
+    ctx.fillStyle='rgba(0,245,255,0.03)';
+    ctx.fill();
+  }
+
+  function drawMol(){
+    ctx.fillStyle='#030f1a';
+    ctx.fillRect(0,0,W,H);
+
+    // Alveoli
+    const alvPos = [{x:120,y:100,r:70},{x:280,y:90,r:65},{x:440,y:100,r:70},{x:590,y:90,r:65},
+                    {x:160,y:240,r:60},{x:340,y:250,r:65},{x:510,y:245,r:60}];
+    alvPos.forEach(a=>drawAlveolus(a.x,a.y,a.r));
+
+    // Label
+    ctx.fillStyle='rgba(0,245,255,0.25)';
+    ctx.font='11px Orbitron,sans-serif';
+    ctx.fillText('ALVÉOLOS — TROCA GASOSA', W/2-110, H-12);
+
+    molecules.forEach(m=>{
+      m.x += m.vx; m.y += m.vy;
+      m.pulse += 0.05;
+      if(m.x<m.r||m.x>W-m.r) m.vx*=-1;
+      if(m.y<m.r||m.y>H-m.r) m.vy*=-1;
+      const pr = m.r + Math.sin(m.pulse)*1.2;
+      ctx.beginPath();
+      ctx.arc(m.x,m.y,pr,0,Math.PI*2);
+      ctx.fillStyle=m.color+Math.round(m.alpha*255).toString(16).padStart(2,'0');
+      ctx.fill();
+      // Glow
+      ctx.beginPath();
+      ctx.arc(m.x,m.y,pr+3,0,Math.PI*2);
+      ctx.fillStyle=m.color+'18';
+      ctx.fill();
+      // Label
+      ctx.fillStyle=m.color;
+      ctx.font=`bold ${m.r+2}px Rajdhani,sans-serif`;
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(m.type,m.x,m.y);
+    });
+    ctx.textAlign='left';
+    ctx.textBaseline='alphabetic';
+    requestAnimationFrame(drawMol);
+  }
+  drawMol();
+})();
+
+// QUIZ
+const questions = [
+  {
+    q:'Qual é o volume de ar trocado em cada respiração normal em repouso?',
+    opts:['Volume de Reserva Inspiratório (≈3000mL)','Volume Corrente (≈500mL)','Volume Residual (≈1200mL)','Capacidade Vital (≈4700mL)'],
+    ans:1,
+    fb:'✅ Correcto! O Volume Corrente (VC) é ≈500mL — o ar de cada ciclo respiratório normal. Também chamado Tidal Volume (TV) em inglês.'
+  },
+  {
+    q:'Qual volume pulmonar NÃO pode ser medido directamente por espirometria convencional?',
+    opts:['Volume Corrente','Volume de Reserva Inspiratório','Volume Residual','Volume de Reserva Expiratório'],
+    ans:2,
+    fb:'✅ Correcto! O Volume Residual (VR) só pode ser determinado por pletismografia corporal ou diluição de hélio, pois é o ar que nunca sai dos pulmões.'
+  },
+  {
+    q:'A Capacidade Residual Funcional (CRF) corresponde à soma de:',
+    opts:['VC + VRI','VRI + VC + VRE','VRE + VR','CV + VR'],
+    ans:2,
+    fb:'✅ Correcto! CRF = VRE + VR ≈ 2400mL. É o volume nos pulmões após expiração tranquila — o ponto de equilíbrio das forças elásticas.'
+  },
+  {
+    q:'No padrão obstrutivo (ex: DPOC), o que acontece ao Volume Residual?',
+    opts:['Diminui por colapso alveolar','Mantém-se sempre normal','Aumenta — hiperinsuflação','Desaparece completamente'],
+    ans:2,
+    fb:'✅ Correcto! Na DPOC, o ar fica preso (hiperinsuflação) — o VR e a CPT aumentam. O tórax fica "em barril" no RX.'
+  },
+  {
+    q:'O Índice de Tiffeneau (VEF₁/CVF) abaixo de que valor indica padrão obstrutivo?',
+    opts:['90%','80%','70%','50%'],
+    ans:2,
+    fb:'✅ Correcto! VEF₁/CVF < 70% = padrão obstrutivo. É o critério da GOLD para diagnóstico de DPOC. Este rácio é a base da espirometria clínica!'
+  },
+  {
+    q:'Qual é a Capacidade Pulmonar Total (CPT) aproximada num adulto saudável de 70kg?',
+    opts:['≈2400 mL','≈3500 mL','≈4700 mL','≈5900 mL'],
+    ans:3,
+    fb:'✅ Correcto! CPT ≈ 5900mL = CV (4700) + VR (1200). É o volume total quando os pulmões estão completamente cheios.'
+  },
+  {
+    q:'A expiração normal (tranquila) é um processo:',
+    opts:['Activo — requer contracção dos abdominais','Passivo — resultado da retracção elástica pulmonar','Activo — requer intercostais internos','Semi-activo — envolve o diafragma'],
+    ans:1,
+    fb:'✅ Correcto! A expiração tranquila é passiva — os pulmões e a caixa torácica recuam elasticamente sem activação muscular. Só a expiração forçada é activa!'
+  },
+  {
+    q:'Em ventilação mecânica protectora, qual é o volume corrente programado?',
+    opts:['12-15 mL/kg','10-12 mL/kg','6-8 mL/kg','3-5 mL/kg'],
+    ans:2,
+    fb:'✅ Correcto! 6-8 mL/kg de peso ideal previne volutrauma. Volumes maiores causam lesão pulmonar induzida pelo ventilador (VILI), especialmente no ARDS.'
+  }
+];
+
+let qIdx = 0, score = 0, answered = false;
+
+function buildProgress(){
+  const p = document.getElementById('quiz-prog');
+  p.innerHTML = questions.map((q,i)=>`<div class="qp-dot ${i<qIdx?'done':i===qIdx?'active':''}"></div>`).join('');
+}
+
+function loadQuestion(){
+  if(qIdx >= questions.length){ showScore(); return; }
+  answered = false;
+  const q = questions[qIdx];
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-fb').textContent = '';
+  document.getElementById('quiz-next-btn').style.display='none';
+  const opts = document.getElementById('quiz-opts');
+  opts.innerHTML = q.opts.map((o,i)=>`<button class="qopt" onclick="answerQ(${i})">${o}</button>`).join('');
+  buildProgress();
+}
+
+function answerQ(i){
+  if(answered) return;
+  answered = true;
+  const q = questions[qIdx];
+  const btns = document.querySelectorAll('.qopt');
+  btns.forEach((b,idx)=>{
+    if(idx===q.ans) b.classList.add('correct');
+    else if(idx===i && i!==q.ans) b.classList.add('wrong');
+    b.disabled=true;
+  });
+  if(i===q.ans) score++;
+  document.getElementById('quiz-fb').textContent = i===q.ans ? q.fb : '❌ Errado! '+q.fb;
+  document.getElementById('quiz-next-btn').style.display='block';
+}
+
+function nextQuestion(){
+  qIdx++;
+  if(qIdx >= questions.length){ showScore(); return; }
+  loadQuestion();
+}
+
+function showScore(){
+  document.getElementById('quiz-q').textContent='';
+  document.getElementById('quiz-opts').innerHTML='';
+  document.getElementById('quiz-fb').textContent='';
+  document.getElementById('quiz-next-btn').style.display='none';
+  const sd = document.getElementById('quiz-score-display');
+  sd.style.display='block';
+  const pct = Math.round(score/questions.length*100);
+  document.getElementById('quiz-score-val').textContent = `${score}/${questions.length}`;
+  document.getElementById('quiz-score-val').style.color = pct>=80?'var(--green)':pct>=60?'var(--yellow)':'var(--red)';
+  const msgs = ['Continua a treinar, Ninja em formação! 🥋','Bom progresso! Mais um round! 💪','Excelente! Médico de excelência! 🏆','PERFEITO! Mestre dos Pulmões! 🫁⚡'];
+  document.getElementById('quiz-score-msg').textContent = msgs[pct>=100?3:pct>=80?2:pct>=60?1:0];
+  buildProgress();
+}
+
+function restartQuiz(){
+  qIdx=0; score=0; answered=false;
+  document.getElementById('quiz-score-display').style.display='none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

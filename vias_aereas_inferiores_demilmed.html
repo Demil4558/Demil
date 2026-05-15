@@ -1,0 +1,2509 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vias Aéreas Inferiores — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cyan: #00f5ff;
+  --magenta: #ff00aa;
+  --gold: #ffd600;
+  --green: #00ff88;
+  --orange: #ff6d00;
+  --purple: #bf00ff;
+  --red: #ff2244;
+  --bg: #060a14;
+  --bg2: #0a1020;
+  --bg3: #0d1630;
+  --panel: rgba(0,245,255,0.04);
+  --border: rgba(0,245,255,0.18);
+  --text: #e0f0ff;
+  --dim: #7090b0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+/* ═══════════════════════════════════
+   LOADING SCREEN
+═══════════════════════════════════ */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity 0.8s, visibility 0.8s;
+}
+#loader.hide { opacity: 0; visibility: hidden; }
+.loader-ring {
+  width: 100px; height: 100px;
+  border: 3px solid transparent;
+  border-top-color: var(--cyan);
+  border-right-color: var(--magenta);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  position: relative;
+}
+.loader-ring::after {
+  content: '🫁';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  font-size: 36px;
+  animation: pulse-emoji 1s ease-in-out infinite alternate;
+}
+@keyframes pulse-emoji { from { transform: translate(-50%,-50%) scale(0.8); } to { transform: translate(-50%,-50%) scale(1.2); } }
+.loader-text {
+  margin-top: 20px;
+  font-family: 'Orbitron', monospace;
+  font-size: 13px;
+  color: var(--cyan);
+  letter-spacing: 4px;
+  animation: flicker 0.8s ease-in-out infinite alternate;
+}
+@keyframes flicker { from { opacity: 0.4; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════
+   NOISE OVERLAY
+═══════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* ═══════════════════════════════════
+   HERO / INTRO
+═══════════════════════════════════ */
+#hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: radial-gradient(ellipse at 50% 60%, #001a2e 0%, var(--bg) 70%);
+}
+
+.hero-bg-anim {
+  position: absolute; inset: 0; pointer-events: none;
+}
+.bg-circle {
+  position: absolute; border-radius: 50%;
+  border: 1px solid;
+  animation: expandCircle 6s ease-out infinite;
+  opacity: 0;
+}
+.bg-circle:nth-child(1) { width: 200px; height: 200px; top: 50%; left: 50%; margin: -100px; border-color: var(--cyan); animation-delay: 0s; }
+.bg-circle:nth-child(2) { width: 400px; height: 400px; top: 50%; left: 50%; margin: -200px; border-color: var(--magenta); animation-delay: 1.5s; }
+.bg-circle:nth-child(3) { width: 600px; height: 600px; top: 50%; left: 50%; margin: -300px; border-color: var(--purple); animation-delay: 3s; }
+.bg-circle:nth-child(4) { width: 800px; height: 800px; top: 50%; left: 50%; margin: -400px; border-color: var(--cyan); animation-delay: 4.5s; }
+@keyframes expandCircle { 0% { transform: scale(0.3); opacity: 0.6; } 100% { transform: scale(1.5); opacity: 0; } }
+
+.floating-molecules {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+}
+.mol {
+  position: absolute;
+  animation: floatMol linear infinite;
+  opacity: 0.7;
+}
+@keyframes floatMol {
+  0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(-20vh) rotate(720deg) scale(1.2); opacity: 0; }
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 16px;
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+  0%,100% { box-shadow: 0 0 8px var(--cyan), inset 0 0 8px rgba(0,245,255,0.1); }
+  50% { box-shadow: 0 0 24px var(--cyan), inset 0 0 16px rgba(0,245,255,0.2); }
+}
+
+.hero-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(28px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--cyan), var(--magenta), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 4s ease-in-out infinite;
+  background-size: 300% 300%;
+}
+@keyframes titleShimmer {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.hero-subtitle {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: clamp(12px, 2vw, 18px);
+  color: var(--gold);
+  letter-spacing: 6px;
+  margin-bottom: 32px;
+  opacity: 0.9;
+}
+
+.hero-desc {
+  font-size: 18px;
+  color: var(--dim);
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+.scroll-hint {
+  display: flex; flex-direction: column; align-items: center;
+  color: var(--cyan); font-size: 12px; letter-spacing: 3px;
+  animation: bounce 2s ease-in-out infinite;
+}
+.scroll-hint::after { content: '▼'; font-size: 20px; margin-top: 6px; }
+@keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+
+/* LUNG SVG animated */
+.hero-lung {
+  width: 200px; height: 200px;
+  margin: 0 auto 24px;
+  position: relative;
+}
+
+/* ═══════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(6,10,20,0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+  transform: translateY(-100%);
+  transition: transform 0.4s;
+}
+nav.visible { transform: translateY(0); }
+.nav-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 12px; color: var(--cyan);
+  letter-spacing: 2px;
+}
+.nav-links {
+  display: flex; gap: 4px; flex-wrap: wrap;
+}
+.nav-link {
+  background: none; border: none; cursor: pointer;
+  color: var(--dim); font-family: 'Rajdhani', sans-serif;
+  font-size: 12px; letter-spacing: 1px;
+  padding: 6px 10px; border-radius: 4px;
+  transition: all 0.2s;
+}
+.nav-link:hover, .nav-link.active { color: var(--cyan); background: rgba(0,245,255,0.08); }
+
+/* ═══════════════════════════════════
+   CHAPTERS / PAGES
+═══════════════════════════════════ */
+.chapter {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0 60px;
+}
+
+/* chapter label */
+.chapter-label {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 40px;
+  margin-bottom: 40px;
+}
+.chapter-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 60px; font-weight: 900;
+  line-height: 1;
+  -webkit-text-stroke: 1px;
+  color: transparent;
+}
+.chapter-info { flex: 1; }
+.chapter-tag {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; letter-spacing: 4px;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.chapter-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(22px, 4vw, 42px);
+  font-weight: 900; line-height: 1.1;
+}
+.chapter-line {
+  height: 2px;
+  background: linear-gradient(to right, transparent, currentColor, transparent);
+  margin: 16px 40px;
+  opacity: 0.5;
+}
+
+/* Content wrappers */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 0 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.content-single {
+  padding: 0 40px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .content-grid { grid-template-columns: 1fr; padding: 0 20px; }
+  .content-single { padding: 0 20px; }
+  .chapter-label { padding: 0 20px; }
+  .chapter-line { margin: 16px 20px; }
+}
+
+/* ═══════════════════════════════════
+   PANELS / CARDS
+═══════════════════════════════════ */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+}
+.panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.6;
+}
+
+.panel-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 14px; letter-spacing: 2px;
+  margin-bottom: 16px; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════
+   MANGA SPEECH BUBBLE
+═══════════════════════════════════ */
+.speech-bubble {
+  position: relative;
+  background: rgba(255,255,255,0.05);
+  border: 2px solid;
+  border-radius: 20px;
+  padding: 20px 24px;
+  margin: 20px 0;
+  font-size: 17px;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -18px; left: 36px;
+  border: 10px solid transparent;
+  border-top-width: 18px;
+}
+.speech-bubble.right::before {
+  left: auto; right: 36px;
+}
+.speech-narrator {
+  font-family: 'Orbitron', monospace;
+  font-size: 10px; letter-spacing: 3px;
+  margin-bottom: 8px; text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════
+   CHAPTER COLORS
+═══════════════════════════════════ */
+/* Ch1 – Laringe */
+#ch1 { background: radial-gradient(ellipse at 20% 80%, #001a14 0%, var(--bg) 60%); }
+#ch1 .chapter-num { -webkit-text-stroke-color: var(--green); color: transparent; }
+#ch1 .chapter-tag { color: var(--green); }
+#ch1 .chapter-title { color: var(--green); }
+#ch1 .chapter-line { color: var(--green); background: linear-gradient(to right, transparent, var(--green), transparent); }
+#ch1 .panel { color: var(--green); --panel: rgba(0,255,136,0.04); --border: rgba(0,255,136,0.18); }
+#ch1 .panel::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+#ch1 .speech-bubble { border-color: var(--green); }
+#ch1 .speech-bubble::before { border-top-color: var(--green); }
+
+/* Ch2 – Traqueia */
+#ch2 { background: radial-gradient(ellipse at 80% 20%, #001828 0%, var(--bg) 60%); }
+#ch2 .chapter-num { -webkit-text-stroke-color: var(--cyan); }
+#ch2 .chapter-tag { color: var(--cyan); }
+#ch2 .chapter-title { color: var(--cyan); }
+#ch2 .chapter-line { background: linear-gradient(to right, transparent, var(--cyan), transparent); }
+#ch2 .panel { color: var(--cyan); }
+#ch2 .speech-bubble { border-color: var(--cyan); }
+#ch2 .speech-bubble::before { border-top-color: var(--cyan); }
+
+/* Ch3 – Brônquios */
+#ch3 { background: radial-gradient(ellipse at 50% 30%, #200010 0%, var(--bg) 60%); }
+#ch3 .chapter-num { -webkit-text-stroke-color: var(--magenta); }
+#ch3 .chapter-tag { color: var(--magenta); }
+#ch3 .chapter-title { color: var(--magenta); }
+#ch3 .chapter-line { background: linear-gradient(to right, transparent, var(--magenta), transparent); }
+#ch3 .panel { color: var(--magenta); --border: rgba(255,0,170,0.18); --panel: rgba(255,0,170,0.04); }
+#ch3 .panel::before { background: linear-gradient(90deg, transparent, var(--magenta), transparent); }
+#ch3 .speech-bubble { border-color: var(--magenta); }
+#ch3 .speech-bubble::before { border-top-color: var(--magenta); }
+
+/* Ch4 – Pulmões */
+#ch4 { background: radial-gradient(ellipse at 20% 50%, #1a1000 0%, var(--bg) 60%); }
+#ch4 .chapter-num { -webkit-text-stroke-color: var(--gold); }
+#ch4 .chapter-tag { color: var(--gold); }
+#ch4 .chapter-title { color: var(--gold); }
+#ch4 .chapter-line { background: linear-gradient(to right, transparent, var(--gold), transparent); }
+#ch4 .panel { color: var(--gold); --border: rgba(255,214,0,0.18); --panel: rgba(255,214,0,0.04); }
+#ch4 .panel::before { background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+#ch4 .speech-bubble { border-color: var(--gold); }
+#ch4 .speech-bubble::before { border-top-color: var(--gold); }
+
+/* Ch5 – Alvéolos */
+#ch5 { background: radial-gradient(ellipse at 80% 80%, #0d0020 0%, var(--bg) 60%); }
+#ch5 .chapter-num { -webkit-text-stroke-color: var(--purple); }
+#ch5 .chapter-tag { color: var(--purple); }
+#ch5 .chapter-title { color: var(--purple); }
+#ch5 .chapter-line { background: linear-gradient(to right, transparent, var(--purple), transparent); }
+#ch5 .panel { color: var(--purple); --border: rgba(191,0,255,0.18); --panel: rgba(191,0,255,0.04); }
+#ch5 .panel::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+#ch5 .speech-bubble { border-color: var(--purple); }
+#ch5 .speech-bubble::before { border-top-color: var(--purple); }
+
+/* Ch6 – Fisiologia */
+#ch6 { background: radial-gradient(ellipse at 40% 60%, #1a0500 0%, var(--bg) 60%); }
+#ch6 .chapter-num { -webkit-text-stroke-color: var(--orange); }
+#ch6 .chapter-tag { color: var(--orange); }
+#ch6 .chapter-title { color: var(--orange); }
+#ch6 .chapter-line { background: linear-gradient(to right, transparent, var(--orange), transparent); }
+#ch6 .panel { color: var(--orange); --border: rgba(255,109,0,0.18); --panel: rgba(255,109,0,0.04); }
+#ch6 .panel::before { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+#ch6 .speech-bubble { border-color: var(--orange); }
+#ch6 .speech-bubble::before { border-top-color: var(--orange); }
+
+/* Ch7 – Trocas */
+#ch7 { background: radial-gradient(ellipse at 60% 30%, #1a0010 0%, var(--bg) 60%); }
+#ch7 .chapter-num { -webkit-text-stroke-color: var(--red); }
+#ch7 .chapter-tag { color: var(--red); }
+#ch7 .chapter-title { color: var(--red); }
+#ch7 .chapter-line { background: linear-gradient(to right, transparent, var(--red), transparent); }
+#ch7 .panel { color: var(--red); --border: rgba(255,34,68,0.18); --panel: rgba(255,34,68,0.04); }
+#ch7 .panel::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+#ch7 .speech-bubble { border-color: var(--red); }
+#ch7 .speech-bubble::before { border-top-color: var(--red); }
+
+/* ═══════════════════════════════════
+   ANIMATED SVG DIAGRAMS
+═══════════════════════════════════ */
+.svg-container {
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.svg-container svg {
+  max-width: 100%; height: auto;
+  filter: drop-shadow(0 0 16px currentColor);
+}
+
+/* ═══════════════════════════════════
+   MOLECULE ANIMATION
+═══════════════════════════════════ */
+.molecule-canvas {
+  width: 100%; height: 260px;
+  position: relative; overflow: hidden;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════
+   STATS / INFO BOXES
+═══════════════════════════════════ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.stat-box {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.stat-box:hover { transform: scale(1.05); }
+.stat-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 26px; font-weight: 900;
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label { font-size: 12px; color: var(--dim); letter-spacing: 1px; margin-top: 4px; }
+
+/* ═══════════════════════════════════
+   TIMELINE
+═══════════════════════════════════ */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin: 24px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute; left: 12px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--cyan), var(--magenta), var(--purple));
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 28px;
+  animation: fadeInLeft 0.6s ease-out both;
+}
+.timeline-dot {
+  position: absolute;
+  left: -34px; top: 4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: var(--bg);
+}
+.timeline-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px; letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.timeline-body { font-size: 15px; color: var(--dim); }
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ═══════════════════════════════════
+   HIGHLIGHT LIST
+═══════════════════════════════════ */
+.hl-list { list-style: none; margin: 16px 0; }
+.hl-list li {
+  padding: 10px 0 10px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  position: relative;
+  font-size: 16px;
+}
+.hl-list li::before {
+  content: '►';
+  position: absolute; left: 0;
+  font-size: 10px;
+  line-height: 2.2;
+}
+
+/* ═══════════════════════════════════
+   INTERACTIVE QUIZ
+═══════════════════════════════════ */
+.quiz-container {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 32px auto;
+  max-width: 700px;
+}
+.quiz-q {
+  font-family: 'Orbitron', monospace;
+  font-size: 15px;
+  margin-bottom: 20px;
+  color: var(--gold);
+}
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 500px) { .quiz-options { grid-template-columns: 1fr; } }
+.quiz-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 14px 16px;
+  color: var(--text); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-size: 15px;
+  text-align: left; transition: all 0.2s;
+}
+.quiz-btn:hover { background: rgba(255,255,255,0.1); transform: translateX(4px); }
+.quiz-btn.correct { background: rgba(0,255,136,0.15); border-color: var(--green); color: var(--green); }
+.quiz-btn.wrong { background: rgba(255,34,68,0.15); border-color: var(--red); color: var(--red); }
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(0,255,136,0.1); border: 1px solid var(--green); color: var(--green); }
+.quiz-feedback.fail { background: rgba(255,34,68,0.1); border: 1px solid var(--red); color: var(--red); }
+
+/* ═══════════════════════════════════
+   BREATHING ANIMATION
+═══════════════════════════════════ */
+.breath-anim {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px; padding: 32px;
+}
+.breath-circle {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 3px solid var(--cyan);
+  background: radial-gradient(circle, rgba(0,245,255,0.2), transparent);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 11px; color: var(--cyan);
+  letter-spacing: 1px; text-align: center;
+  animation: breatheCircle 4s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(0,245,255,0.3);
+}
+@keyframes breatheCircle {
+  0%,100% { transform: scale(1); box-shadow: 0 0 20px rgba(0,245,255,0.2); }
+  50% { transform: scale(1.4); box-shadow: 0 0 60px rgba(0,245,255,0.5); }
+}
+.breath-label {
+  font-family: 'Orbitron', monospace; font-size: 11px;
+  color: var(--cyan); letter-spacing: 3px;
+  animation: fadeInOut 4s ease-in-out infinite;
+}
+@keyframes fadeInOut {
+  0%,100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ═══════════════════════════════════
+   GAS EXCHANGE ANIMATION
+═══════════════════════════════════ */
+#gasCanvas { width: 100%; height: 280px; display: block; border-radius: 12px; }
+
+/* ═══════════════════════════════════
+   ACCORDION
+═══════════════════════════════════ */
+.accordion { margin: 16px 0; }
+.acc-item {
+  border: 1px solid var(--border);
+  border-radius: 10px; margin-bottom: 8px;
+  overflow: hidden;
+}
+.acc-header {
+  padding: 14px 20px;
+  cursor: pointer;
+  font-family: 'Orbitron', monospace;
+  font-size: 13px; letter-spacing: 1px;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(0,0,0,0.3);
+  transition: background 0.2s;
+}
+.acc-header:hover { background: rgba(255,255,255,0.05); }
+.acc-arrow { transition: transform 0.3s; font-size: 10px; }
+.acc-item.open .acc-arrow { transform: rotate(180deg); }
+.acc-body {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s;
+  background: rgba(0,0,0,0.2);
+  font-size: 15px; color: var(--dim);
+}
+.acc-body.open {
+  max-height: 400px;
+  padding: 16px 20px;
+}
+
+/* ═══════════════════════════════════
+   CHAPTER DIVIDER
+═══════════════════════════════════ */
+.chapter-divider {
+  display: flex; align-items: center;
+  padding: 40px 40px 0;
+  gap: 16px;
+}
+.divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+.divider-icon { font-size: 24px; }
+
+/* ═══════════════════════════════════
+   MANGA PANEL LAYOUT (Ch1)
+═══════════════════════════════════ */
+.manga-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 3px;
+  padding: 0 40px;
+  margin-bottom: 32px;
+}
+.manga-panel {
+  background: rgba(0,0,0,0.5);
+  border: 2px solid rgba(255,255,255,0.1);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+}
+.manga-panel.big { grid-row: span 2; }
+.manga-panel::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 70%, rgba(255,255,255,0.02) 100%);
+}
+@media (max-width: 768px) { .manga-grid { grid-template-columns: 1fr; padding: 0 20px; } .manga-panel.big { grid-row: auto; } }
+
+/* ═══════════════════════════════════
+   FOOTER
+═══════════════════════════════════ */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 40px;
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 22px; font-weight: 900;
+  background: linear-gradient(135deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+.footer-sub { color: var(--dim); font-size: 13px; letter-spacing: 2px; }
+.footer-copy { color: rgba(255,255,255,0.2); font-size: 12px; margin-top: 24px; }
+
+/* ═══════════════════════════════════
+   REVEAL ANIMATIONS
+═══════════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1; transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ═══════════════════════════════════
+   PROGRESS BAR
+═══════════════════════════════════ */
+.read-progress {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--gold));
+  transition: width 0.1s;
+  box-shadow: 0 0 8px var(--cyan);
+}
+
+/* ═══════════════════════════════════
+   ANATOMY MAP
+═══════════════════════════════════ */
+.anat-map {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+}
+
+/* GLOW EFFECTS */
+.glow-cyan { text-shadow: 0 0 20px var(--cyan); }
+.glow-magenta { text-shadow: 0 0 20px var(--magenta); }
+.glow-gold { text-shadow: 0 0 20px var(--gold); }
+.glow-green { text-shadow: 0 0 20px var(--green); }
+
+/* COLOR SPANS */
+.c-cyan { color: var(--cyan); }
+.c-magenta { color: var(--magenta); }
+.c-gold { color: var(--gold); }
+.c-green { color: var(--green); }
+.c-orange { color: var(--orange); }
+.c-purple { color: var(--purple); }
+.c-red { color: var(--red); }
+
+p { margin-bottom: 14px; }
+strong { font-weight: 700; }
+
+/* GLITCH EFFECT */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+.glitch::before {
+  color: var(--cyan);
+  animation: glitch1 3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  transform: translate(-2px);
+}
+.glitch::after {
+  color: var(--magenta);
+  animation: glitch2 3s infinite;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  transform: translate(2px);
+}
+@keyframes glitch1 {
+  0%,90%,100% { transform: translate(-2px); opacity: 0; }
+  91%,93% { transform: translate(-4px); opacity: 1; }
+  92%,94% { transform: translate(2px); opacity: 1; }
+}
+@keyframes glitch2 {
+  0%,90%,100% { transform: translate(2px); opacity: 0; }
+  91%,93% { transform: translate(4px); opacity: 1; }
+  92%,94% { transform: translate(-2px); opacity: 1; }
+}
+
+/* SCAN LINE */
+.scan-line {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  z-index: 1;
+}
+
+/* char card */
+.char-card {
+  display: flex; gap: 20px; align-items: flex-start;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.char-avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+  border: 2px solid;
+}
+.char-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 13px; letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.char-body { font-size: 15px; color: var(--dim); }
+
+/* Cartilage rings visual */
+.rings-visual {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 20px;
+}
+.ring {
+  height: 16px;
+  border: 2px solid var(--cyan);
+  border-radius: 8px;
+  position: relative;
+  background: rgba(0,245,255,0.05);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--cyan); letter-spacing: 2px;
+  animation: ringPulse 2s ease-in-out infinite;
+}
+.ring:nth-child(even) { animation-delay: 0.5s; }
+@keyframes ringPulse {
+  0%,100% { box-shadow: 0 0 6px rgba(0,245,255,0.3); }
+  50% { box-shadow: 0 0 16px rgba(0,245,255,0.6); }
+}
+
+/* Flow arrow */
+.flow-arrow {
+  display: flex; align-items: center;
+  gap: 12px; margin: 12px 0;
+  font-size: 14px; color: var(--dim);
+}
+.flow-arrow::before, .flow-arrow::after {
+  content: ''; flex: 1; height: 1px;
+}
+.flow-arrow::before { background: linear-gradient(to right, transparent, currentColor); }
+.flow-arrow::after { background: linear-gradient(to left, transparent, currentColor); }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="read-progress" id="readProgress"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">INICIALIZANDO SISTEMA RESPIRATÓRIO</div>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <div class="nav-logo">🫁 DEMILMED-UL</div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="scrollTo('#hero')">Intro</button>
+    <button class="nav-link" onclick="scrollTo('#ch1')">Laringe</button>
+    <button class="nav-link" onclick="scrollTo('#ch2')">Traqueia</button>
+    <button class="nav-link" onclick="scrollTo('#ch3')">Brônquios</button>
+    <button class="nav-link" onclick="scrollTo('#ch4')">Pulmões</button>
+    <button class="nav-link" onclick="scrollTo('#ch5')">Alvéolos</button>
+    <button class="nav-link" onclick="scrollTo('#ch6')">Fisiologia</button>
+    <button class="nav-link" onclick="scrollTo('#ch7')">Trocas</button>
+    <button class="nav-link" onclick="scrollTo('#quiz')">Quiz</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════
+     HERO
+═══════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg-anim">
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+    <div class="bg-circle"></div>
+  </div>
+  <div class="floating-molecules" id="floatingMols"></div>
+  <div class="scan-line"></div>
+
+  <div class="hero-content">
+    <div class="badge">DemilMed-UL · Anatomia &amp; Fisiologia</div>
+
+    <div class="hero-lung">
+      <svg viewBox="0 0 200 200" width="200" height="200">
+        <!-- Animated lungs -->
+        <defs>
+          <radialGradient id="lg1" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="lg2" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#ff00aa" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#ff00aa" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- Left lung -->
+        <ellipse cx="72" cy="115" rx="48" ry="68" fill="url(#lg1)" stroke="#00f5ff" stroke-width="1.5" opacity="0.8">
+          <animate attributeName="rx" values="48;54;48" dur="4s" repeatCount="indefinite"/>
+          <animate attributeName="ry" values="68;74;68" dur="4s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Right lung -->
+        <ellipse cx="128" cy="115" rx="48" ry="68" fill="url(#lg2)" stroke="#ff00aa" stroke-width="1.5" opacity="0.8">
+          <animate attributeName="rx" values="48;54;48" dur="4s" repeatCount="indefinite" begin="0.2s"/>
+          <animate attributeName="ry" values="68;74;68" dur="4s" repeatCount="indefinite" begin="0.2s"/>
+        </ellipse>
+        <!-- Trachea -->
+        <rect x="92" y="20" width="16" height="60" rx="8" fill="none" stroke="#ffd600" stroke-width="1.5" opacity="0.9"/>
+        <!-- Bronchi -->
+        <path d="M100 80 Q80 90 72 100" fill="none" stroke="#ffd600" stroke-width="1.5" opacity="0.9"/>
+        <path d="M100 80 Q120 90 128 100" fill="none" stroke="#ffd600" stroke-width="1.5" opacity="0.9"/>
+        <!-- Larynx -->
+        <rect x="88" y="10" width="24" height="16" rx="5" fill="rgba(0,255,136,0.3)" stroke="#00ff88" stroke-width="1.5"/>
+        <!-- Dots for alveoli -->
+        <circle cx="60" cy="120" r="4" fill="rgba(191,0,255,0.6)" stroke="#bf00ff" stroke-width="1">
+          <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="85" cy="140" r="3" fill="rgba(191,0,255,0.6)" stroke="#bf00ff" stroke-width="1">
+          <animate attributeName="r" values="3;5;3" dur="2.3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="115" cy="125" r="4" fill="rgba(191,0,255,0.6)" stroke="#bf00ff" stroke-width="1">
+          <animate attributeName="r" values="4;6;4" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="140" cy="145" r="3" fill="rgba(191,0,255,0.6)" stroke="#bf00ff" stroke-width="1">
+          <animate attributeName="r" values="3;5;3" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <h1 class="hero-title glitch" data-text="VIAS AÉREAS INFERIORES">VIAS AÉREAS INFERIORES</h1>
+    <div class="hero-subtitle">気道下部 · ANATOMIA &amp; FISIOLOGIA</div>
+    <p class="hero-desc">
+      Uma jornada épica pelo sistema respiratório. Da Laringe aos Alvéolos — descobre os segredos das trocas gasosas que te mantêm vivo.
+    </p>
+
+    <div class="stat-grid" style="max-width:500px;margin:0 auto 40px;">
+      <div class="stat-box">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Capítulos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">300M</div>
+        <div class="stat-label">Alvéolos</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">70m²</div>
+        <div class="stat-label">Sup. Troca</div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">COMEÇA A JORNADA</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 1 – LARINGE
+═══════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-label reveal">
+    <div class="chapter-num">01</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo I · The Gateway</div>
+      <div class="chapter-title">A LARINGE</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-grid">
+    <!-- LEFT -->
+    <div>
+      <div class="char-card reveal">
+        <div class="char-avatar" style="border-color:var(--green);background:rgba(0,255,136,0.1)">🗣️</div>
+        <div>
+          <div class="char-name" style="color:var(--green)">LARINGE — A GUARDIÃ</div>
+          <div class="char-body">"Sou o portão entre o mundo exterior e os pulmões. Não só deixo passar o ar — produzo a tua voz e protejo o trato respiratório inferior de invasores."</div>
+        </div>
+      </div>
+
+      <div class="speech-bubble reveal reveal-delay-1">
+        <div class="speech-narrator" style="color:var(--green)">Narrador</div>
+        A laringe situa-se na região anterior do pescoço, entre a <span class="c-green">C3 e C6</span>. É composta por <strong>9 cartilagens</strong> — 3 ímpares e 3 pares — unidas por ligamentos e membranas.
+      </div>
+
+      <div class="panel reveal reveal-delay-2" style="margin-top:24px;">
+        <div class="panel-title">⚙️ Cartilagens da Laringe</div>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              🟢 Cartilagem Tiroideia <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              A maior de todas. Forma o famoso <strong>"pomo de Adão"</strong> (proeminência laríngea). Protege as cordas vocais. Constituída por duas lâminas que se unem a ~90° nos homens e ~120° nas mulheres — daí a diferença na saliência.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              🟢 Cartilagem Cricoideia <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              Forma completa de <strong>anel</strong> cartilaginoso — a única estrutura laríngea com anel completo. Base da laringe. Fica abaixo da tiroideia. Tem uma lâmina posterior alta e um arco anterior baixo.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              🟢 Epiglote <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              Cartilagem elástica em forma de folha. Durante a deglutição, inclina-se para cobrir a abertura da laringe (glote), impedindo alimentos de entrar nas vias aéreas. A sua base está presa ao ângulo interno da cartilagem tiroideia.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              🟢 Cartilagens Aritenoides (par) <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              Pirâmides triangulares sobre a cricoideia. São o pivot das cordas vocais verdadeiras — a sua rotação e deslizamento modula a tensão das cordas e assim a altura da voz.
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              🟢 Cartilagens Corniculadas, Cuneiformes e Triticea <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              Corniculadas (par): sobre as aritenoides, nas pregas aritenoepglóticas. Cuneiformes (par): varetas nos pliegues ariepiglóticos, rigidez. Triticea (par): no ligamento tireo-hioideu lateral — menos constante.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div>
+      <!-- SVG LARINGE -->
+      <div class="svg-container reveal" style="color:var(--green)">
+        <svg viewBox="0 0 220 320" width="220" height="320">
+          <defs>
+            <filter id="glow-green">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <!-- Hyoid bone -->
+          <path d="M55 30 Q110 20 165 30" stroke="#00ff88" stroke-width="2" fill="none" filter="url(#glow-green)" opacity="0.7"/>
+          <text x="110" y="15" text-anchor="middle" fill="#00ff88" font-size="9" font-family="Orbitron">OSSO HIÓIDE</text>
+
+          <!-- Epiglottis -->
+          <path d="M110 42 Q90 65 88 80 L110 85 L132 80 Q130 65 110 42Z" fill="rgba(0,255,136,0.2)" stroke="#00ff88" stroke-width="1.5" filter="url(#glow-green)"/>
+          <text x="145" y="65" fill="#00ff88" font-size="8" font-family="Rajdhani">EPIGLOTE</text>
+          <line x1="132" y1="65" x2="142" y2="65" stroke="#00ff88" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Thyroid cartilage -->
+          <path d="M75 85 L85 85 Q110 75 135 85 L145 85 L145 160 Q110 175 75 160Z" fill="rgba(0,255,136,0.1)" stroke="#00ff88" stroke-width="2" filter="url(#glow-green)"/>
+          <text x="47" y="130" fill="#00ff88" font-size="8" font-family="Orbitron" text-anchor="end">TIREOIDEIA</text>
+          <line x1="75" y1="125" x2="50" y2="125" stroke="#00ff88" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Adam's apple -->
+          <path d="M100 85 L110 75 L120 85" fill="rgba(0,255,136,0.3)" stroke="#00ff88" stroke-width="1"/>
+
+          <!-- Vocal cords -->
+          <ellipse cx="110" cy="125" rx="22" ry="8" fill="rgba(255,214,0,0.2)" stroke="#ffd600" stroke-width="1.5">
+            <animate attributeName="ry" values="8;4;8" dur="2s" repeatCount="indefinite"/>
+          </ellipse>
+          <text x="145" y="128" fill="#ffd600" font-size="8" font-family="Rajdhani">CORDAS VOCAIS</text>
+          <line x1="132" y1="125" x2="142" y2="125" stroke="#ffd600" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Arytenoids -->
+          <polygon points="100,140 108,132 116,140 108,148" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5"/>
+          <text x="145" y="143" fill="#00f5ff" font-size="8" font-family="Rajdhani">ARITENÓIDES</text>
+          <line x1="116" y1="140" x2="142" y2="140" stroke="#00f5ff" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Cricoid -->
+          <rect x="82" y="165" width="56" height="40" rx="10" fill="rgba(0,255,136,0.15)" stroke="#00ff88" stroke-width="2" filter="url(#glow-green)"/>
+          <text x="110" y="290" text-anchor="middle" fill="#00ff88" font-size="8" font-family="Orbitron">CRICOIDEIA</text>
+          <text x="47" y="188" fill="#00ff88" font-size="8" font-family="Rajdhani" text-anchor="end">ANEL</text>
+          <line x1="82" y1="185" x2="50" y2="185" stroke="#00ff88" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Trachea beginning -->
+          <rect x="95" y="205" width="30" height="50" rx="5" fill="rgba(255,214,0,0.1)" stroke="#ffd600" stroke-width="1.5"/>
+          <text x="110" y="270" text-anchor="middle" fill="#ffd600" font-size="8" font-family="Rajdhani">TRAQUEIA ↓</text>
+
+          <!-- Level labels -->
+          <text x="170" y="90" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">C3</text>
+          <text x="170" y="175" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">C6</text>
+          <line x1="165" y1="85" x2="165" y2="200" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+        </svg>
+      </div>
+
+      <div class="panel reveal reveal-delay-3">
+        <div class="panel-title">🎵 Produção de Voz</div>
+        <div class="breath-anim">
+          <div class="breath-circle" style="border-color:var(--green);background:radial-gradient(circle,rgba(0,255,136,0.2),transparent);color:var(--green);box-shadow:0 0 30px rgba(0,255,136,0.3)">
+            GLOTE<br>VIBRANTE
+          </div>
+          <div class="breath-label" style="color:var(--green)">ARITENÓIDES EM AÇÃO</div>
+        </div>
+        <p style="font-size:14px;color:var(--dim);text-align:center">
+          O ar proveniente dos pulmões faz vibrar as <span class="c-green">cordas vocais verdadeiras</span>. A frequência da vibração determina o tom; a tensão (muscular aritenoideus) controla a altura.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inervação/Vascularização -->
+  <div class="content-single" style="margin-top:32px;">
+    <div class="panel reveal">
+      <div class="panel-title" style="color:var(--green)">⚡ Inervação &amp; Vascularização</div>
+      <div class="content-grid" style="padding:0;gap:20px;">
+        <div>
+          <p><strong class="c-green">Nervo Laríngeo Superior (NLS)</strong> — ramo do vago (X par). Ramo interno sensitivo: mucosa supraglótica. Ramo externo motor: músculo cricotiroideu.</p>
+          <p><strong class="c-green">Nervo Laríngeo Recorrente (NLR)</strong> — ramo do vago. Motor para todos os músculos intrínsecos (exceto cricotiroideu). Sensitivo abaixo das cordas.</p>
+          <div class="flow-arrow" style="color:var(--green)">⚠️ Lesão do NLR → rouquidão ou afonia</div>
+        </div>
+        <div>
+          <p><strong class="c-green">Artéria Laríngea Superior</strong> — ramo da tiroideia superior (carótida externa).</p>
+          <p><strong class="c-green">Artéria Laríngea Inferior</strong> — ramo da tiroideia inferior (subclávia).</p>
+          <p><strong class="c-green">Linfa</strong> — acima das cordas → gânglios cervicais profundos superiores; abaixo → paratraqueais.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 2 – TRAQUEIA
+═══════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">🌬️</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">02</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo II · The Pipeline</div>
+      <div class="chapter-title">A TRAQUEIA</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-grid">
+    <div>
+      <div class="speech-bubble reveal">
+        <div class="speech-narrator" style="color:var(--cyan)">Narrador</div>
+        A traqueia é um <strong>tubo fibrocartilaginoso</strong> que se estende da laringe (C6) até à bifurcação ao nível de <span class="c-cyan">T4-T5</span> (ângulo de Louis). Tem <strong>~12 cm</strong> de comprimento e <strong>1,5–2 cm</strong> de diâmetro.
+      </div>
+
+      <div class="stat-grid reveal reveal-delay-1">
+        <div class="stat-box">
+          <div class="stat-value" style="background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">12cm</div>
+          <div class="stat-label">Comprimento</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" style="background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">18-22</div>
+          <div class="stat-label">Anéis Cartilagem</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value" style="background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">T4-T5</div>
+          <div class="stat-label">Carina</div>
+        </div>
+      </div>
+
+      <!-- Rings visual -->
+      <div class="panel reveal reveal-delay-2" style="margin-top:24px;">
+        <div class="panel-title">🔵 Anéis de Cartilagem Hialina</div>
+        <div class="rings-visual">
+          <div class="ring" style="width:90%;">Anel Traqueal — abertura posterior</div>
+          <div class="ring" style="width:85%;">Músculo Traqueal (posterior)</div>
+          <div class="ring" style="width:88%;">Mucosa Colunar Pseudo-estratificada</div>
+          <div class="ring" style="width:82%;">Células Ciliadas + Caliciformes</div>
+          <div class="ring" style="width:86%;">Submucosa + Glândulas</div>
+        </div>
+        <p style="font-size:14px;color:var(--dim);margin-top:12px;">
+          Os <span class="c-cyan">16–20 anéis em C</span> são incompletos na face posterior — o músculo traqueal (liso) fecha o anel, permitindo deformação durante a deglutição e a tosse.
+        </p>
+      </div>
+
+      <div class="panel reveal reveal-delay-3" style="margin-top:16px;">
+        <div class="panel-title">🦠 Epitélio Respiratório</div>
+        <ul class="hl-list" style="color:var(--cyan)">
+          <li style="color:var(--text)"><span class="c-cyan">Colunar pseudo-estratificado ciliado</span> — tipo dominante</li>
+          <li style="color:var(--text)"><span class="c-cyan">Células caliciformes</span> — secretam muco (aprisionam partículas)</li>
+          <li style="color:var(--text)"><span class="c-cyan">Células basais</span> — progenitoras, renovação epitelial</li>
+          <li style="color:var(--text)"><span class="c-cyan">Células de Clara (club)</span> — bronquíolos, desintoxicação</li>
+          <li style="color:var(--text)"><span class="c-cyan">Células neuroendócrinas</span> — reflexos locais</li>
+        </ul>
+        <div class="flow-arrow" style="color:var(--cyan)">↑ ESCADA MUCOCILIAR — muco + cílios expulsam detritos ↑</div>
+      </div>
+    </div>
+
+    <div>
+      <!-- SVG Trachea cross-section -->
+      <div class="svg-container reveal" style="color:var(--cyan)">
+        <svg viewBox="0 0 240 400" width="240" height="400">
+          <defs>
+            <filter id="glow-cyan">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Title -->
+          <text x="120" y="18" text-anchor="middle" fill="#00f5ff" font-size="9" font-family="Orbitron">SECÇÃO TRANSVERSAL</text>
+
+          <!-- Outer wall -->
+          <path d="M80 30 Q120 25 160 30 L165 60 Q120 68 75 60 Z" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow-cyan)"/>
+          <!-- Cartilage ring arc -->
+          <path d="M80 45 Q120 38 160 45" fill="none" stroke="#ffd600" stroke-width="3" opacity="0.8"/>
+          <!-- Posterior muscle -->
+          <path d="M80 45 Q80 55 80 60" fill="none" stroke="#ff00aa" stroke-width="3" opacity="0.8"/>
+          <path d="M160 45 Q160 55 160 60" fill="none" stroke="#ff00aa" stroke-width="3" opacity="0.8"/>
+          <line x1="80" y1="60" x2="160" y2="60" stroke="#ff00aa" stroke-width="3" opacity="0.8"/>
+
+          <!-- Labels for cross-section -->
+          <text x="185" y="38" fill="#ffd600" font-size="8" font-family="Rajdhani">Cartilagem</text>
+          <text x="185" y="60" fill="#ff00aa" font-size="8" font-family="Rajdhani">M. Traqueal</text>
+          <line x1="160" y1="36" x2="182" y2="36" stroke="#ffd600" stroke-width="1" stroke-dasharray="3,2"/>
+          <line x1="160" y1="60" x2="182" y2="58" stroke="#ff00aa" stroke-width="1" stroke-dasharray="3,2"/>
+
+          <!-- Lumen -->
+          <ellipse cx="120" cy="47" rx="32" ry="12" fill="rgba(0,245,255,0.08)"/>
+          <text x="120" y="50" text-anchor="middle" fill="#00f5ff" font-size="8" font-family="Orbitron">LÚMEN</text>
+
+          <!-- Vertical trachea with rings -->
+          <line x1="92" y1="80" x2="92" y2="310" stroke="#00f5ff" stroke-width="1.5" opacity="0.5"/>
+          <line x1="148" y1="80" x2="148" y2="310" stroke="#00f5ff" stroke-width="1.5" opacity="0.5"/>
+
+          <!-- Rings along trachea -->
+          <g opacity="0.8" filter="url(#glow-cyan)">
+            <path d="M92 90 Q120 84 148 90" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 105 Q120 99 148 105" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 120 Q120 114 148 120" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 135 Q120 129 148 135" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 150 Q120 144 148 150" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 165 Q120 159 148 165" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 180 Q120 174 148 180" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 195 Q120 189 148 195" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 210 Q120 204 148 210" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 225 Q120 219 148 225" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 240 Q120 234 148 240" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 255 Q120 249 148 255" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 270 Q120 264 148 270" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 285 Q120 279 148 285" fill="none" stroke="#00f5ff" stroke-width="2"/>
+            <path d="M92 300 Q120 294 148 300" fill="none" stroke="#00f5ff" stroke-width="2"/>
+          </g>
+
+          <!-- Cilia animation along inner wall -->
+          <g id="cilia" opacity="0.6" stroke="#00ff88" stroke-width="1">
+            <line x1="97" y1="90" x2="97" y2="100"><animate attributeName="x2" values="97;100;97" dur="0.4s" repeatCount="indefinite"/></line>
+            <line x1="101" y1="90" x2="101" y2="100"><animate attributeName="x2" values="101;104;101" dur="0.4s" repeatCount="indefinite" begin="0.05s"/></line>
+            <line x1="105" y1="90" x2="105" y2="100"><animate attributeName="x2" values="105;108;105" dur="0.4s" repeatCount="indefinite" begin="0.1s"/></line>
+            <line x1="109" y1="90" x2="109" y2="100"><animate attributeName="x2" values="109;112;109" dur="0.4s" repeatCount="indefinite" begin="0.15s"/></line>
+            <line x1="113" y1="90" x2="113" y2="100"><animate attributeName="x2" values="113;116;113" dur="0.4s" repeatCount="indefinite" begin="0.2s"/></line>
+            <line x1="117" y1="90" x2="117" y2="100"><animate attributeName="x2" values="117;120;117" dur="0.4s" repeatCount="indefinite" begin="0.25s"/></line>
+            <line x1="121" y1="90" x2="121" y2="100"><animate attributeName="x2" values="121;124;121" dur="0.4s" repeatCount="indefinite" begin="0.3s"/></line>
+            <line x1="125" y1="90" x2="125" y2="100"><animate attributeName="x2" values="125;128;125" dur="0.4s" repeatCount="indefinite" begin="0.35s"/></line>
+            <line x1="129" y1="90" x2="129" y2="100"><animate attributeName="x2" values="129;132;129" dur="0.4s" repeatCount="indefinite" begin="0.4s"/></line>
+            <line x1="133" y1="90" x2="133" y2="100"><animate attributeName="x2" values="133;136;133" dur="0.4s" repeatCount="indefinite" begin="0.45s"/></line>
+            <line x1="137" y1="90" x2="137" y2="100"><animate attributeName="x2" values="137;140;137" dur="0.4s" repeatCount="indefinite" begin="0.5s"/></line>
+            <line x1="141" y1="90" x2="141" y2="100"><animate attributeName="x2" values="141;144;141" dur="0.4s" repeatCount="indefinite" begin="0.55s"/></line>
+            <line x1="145" y1="90" x2="145" y2="100"><animate attributeName="x2" values="145;148;145" dur="0.4s" repeatCount="indefinite" begin="0.6s"/></line>
+          </g>
+
+          <!-- CARINA -->
+          <line x1="92" y1="310" x2="60" y2="360" stroke="#ffd600" stroke-width="2" opacity="0.9"/>
+          <line x1="148" y1="310" x2="180" y2="360" stroke="#ffd600" stroke-width="2" opacity="0.9"/>
+          <circle cx="120" cy="310" r="6" fill="#ffd600" opacity="0.8">
+            <animate attributeName="r" values="6;9;6" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="120" y="340" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Orbitron">CARINA</text>
+          <text x="120" y="352" text-anchor="middle" fill="rgba(255,214,0,0.6)" font-size="8" font-family="Rajdhani">T4-T5 · ângulo de Louis</text>
+
+          <!-- Bronchi labels -->
+          <text x="35" y="385" fill="#ff00aa" font-size="8" font-family="Rajdhani" text-anchor="middle">B. Prim. Esq.</text>
+          <text x="205" y="385" fill="#00f5ff" font-size="8" font-family="Rajdhani" text-anchor="middle">B. Prim. Dir.</text>
+
+          <!-- Level markers -->
+          <text x="10" y="83" fill="rgba(255,255,255,0.3)" font-size="7" font-family="Orbitron">C6</text>
+          <text x="10" y="313" fill="rgba(255,255,255,0.3)" font-size="7" font-family="Orbitron">T4</text>
+          <line x1="20" y1="80" x2="20" y2="315" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="4,4"/>
+        </svg>
+      </div>
+
+      <div class="panel reveal reveal-delay-2">
+        <div class="panel-title">🔑 Relações Importantes</div>
+        <ul class="hl-list" style="color:var(--cyan)">
+          <li style="color:var(--text)">Anterior: istmo da tireóide (C6-T1), veias braquiocefálicas</li>
+          <li style="color:var(--text)">Posterior: esófago</li>
+          <li style="color:var(--text)">Lateral direito: v. cava superior, v. ázigos</li>
+          <li style="color:var(--text)">Lateral esquerdo: arco aórtico, a. carótida comum, n. laríngeo recorrente</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 3 – BRÔNQUIOS
+═══════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">🌿</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">03</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo III · The Branching Tree</div>
+      <div class="chapter-title">ÁRVORE BRÔNQUICA</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-single">
+    <div class="speech-bubble reveal">
+      <div class="speech-narrator" style="color:var(--magenta)">Narrador</div>
+      Na carina, a traqueia divide-se em dois <strong>brônquios principais</strong>. Esta bifurcação dá início à imponente <span class="c-magenta">Árvore Brônquica</span> — 23 gerações de ramificações que levam o ar até aos alvéolos.
+    </div>
+  </div>
+
+  <!-- Bronchial tree SVG -->
+  <div class="svg-container reveal" style="color:var(--magenta);max-width:700px;margin:0 auto;">
+    <svg viewBox="0 0 700 500" width="100%" height="auto">
+      <defs>
+        <filter id="glow-mag">
+          <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Trachea -->
+      <line x1="350" y1="20" x2="350" y2="80" stroke="#ffd600" stroke-width="6" stroke-linecap="round" filter="url(#glow-mag)"/>
+      <text x="350" y="14" text-anchor="middle" fill="#ffd600" font-size="10" font-family="Orbitron">TRAQUEIA</text>
+
+      <!-- Carina -->
+      <circle cx="350" cy="80" r="8" fill="#ffd600" opacity="0.9" filter="url(#glow-mag)">
+        <animate attributeName="r" values="8;11;8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="370" y="78" fill="#ffd600" font-size="9" font-family="Orbitron">CARINA</text>
+
+      <!-- Main bronchi -->
+      <line x1="350" y1="80" x2="200" y2="150" stroke="#ff00aa" stroke-width="5" stroke-linecap="round" filter="url(#glow-mag)"/>
+      <line x1="350" y1="80" x2="500" y2="150" stroke="#00f5ff" stroke-width="5" stroke-linecap="round" filter="url(#glow-mag)"/>
+
+      <!-- Left label -->
+      <text x="140" y="155" text-anchor="middle" fill="#ff00aa" font-size="10" font-family="Orbitron">B. PRINCIPAL</text>
+      <text x="140" y="168" text-anchor="middle" fill="#ff00aa" font-size="9" font-family="Rajdhani">ESQUERDO</text>
+      <text x="140" y="180" text-anchor="middle" fill="rgba(255,0,170,0.5)" font-size="8" font-family="Rajdhani">~5cm · mais horizontal</text>
+
+      <!-- Right label -->
+      <text x="560" y="155" text-anchor="middle" fill="#00f5ff" font-size="10" font-family="Orbitron">B. PRINCIPAL</text>
+      <text x="560" y="168" text-anchor="middle" fill="#00f5ff" font-size="9" font-family="Rajdhani">DIREITO</text>
+      <text x="560" y="180" text-anchor="middle" fill="rgba(0,245,255,0.5)" font-size="8" font-family="Rajdhani">~2.5cm · mais vertical</text>
+
+      <!-- Right bronchus - 3 lobar -->
+      <line x1="500" y1="150" x2="440" y2="210" stroke="#00f5ff" stroke-width="3.5" filter="url(#glow-mag)"/>
+      <line x1="500" y1="150" x2="510" y2="210" stroke="#00f5ff" stroke-width="3.5" filter="url(#glow-mag)"/>
+      <line x1="500" y1="150" x2="560" y2="210" stroke="#00f5ff" stroke-width="3.5" filter="url(#glow-mag)"/>
+      <text x="425" y="225" fill="#00f5ff" font-size="8" font-family="Rajdhani" text-anchor="middle">Lobar Sup.</text>
+      <text x="510" y="225" fill="#00f5ff" font-size="8" font-family="Rajdhani" text-anchor="middle">Lobar Med.</text>
+      <text x="575" y="225" fill="#00f5ff" font-size="8" font-family="Rajdhani" text-anchor="middle">Lobar Inf.</text>
+
+      <!-- Left bronchus - 2 lobar -->
+      <line x1="200" y1="150" x2="155" y2="210" stroke="#ff00aa" stroke-width="3.5" filter="url(#glow-mag)"/>
+      <line x1="200" y1="150" x2="235" y2="210" stroke="#ff00aa" stroke-width="3.5" filter="url(#glow-mag)"/>
+      <text x="140" y="225" fill="#ff00aa" font-size="8" font-family="Rajdhani" text-anchor="middle">Lobar Sup.</text>
+      <text x="250" y="225" fill="#ff00aa" font-size="8" font-family="Rajdhani" text-anchor="middle">Lobar Inf.</text>
+
+      <!-- Segmental branches - right -->
+      <line x1="440" y1="210" x2="410" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="440" y1="210" x2="445" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="440" y1="210" x2="470" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="510" y1="210" x2="505" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="510" y1="210" x2="530" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="560" y1="210" x2="545" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="560" y1="210" x2="565" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+      <line x1="560" y1="210" x2="585" y2="265" stroke="#00f5ff" stroke-width="2.5" opacity="0.8"/>
+
+      <!-- Segmental branches - left -->
+      <line x1="155" y1="210" x2="130" y2="265" stroke="#ff00aa" stroke-width="2.5" opacity="0.8"/>
+      <line x1="155" y1="210" x2="160" y2="265" stroke="#ff00aa" stroke-width="2.5" opacity="0.8"/>
+      <line x1="235" y1="210" x2="215" y2="265" stroke="#ff00aa" stroke-width="2.5" opacity="0.8"/>
+      <line x1="235" y1="210" x2="250" y2="265" stroke="#ff00aa" stroke-width="2.5" opacity="0.8"/>
+      <line x1="235" y1="210" x2="280" y2="265" stroke="#ff00aa" stroke-width="2.5" opacity="0.8"/>
+
+      <!-- Smaller branches (gen 4+) -->
+      <g opacity="0.5">
+        <line x1="410" y1="265" x2="395" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="410" y1="265" x2="418" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="445" y1="265" x2="438" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="445" y1="265" x2="455" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="505" y1="265" x2="495" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="505" y1="265" x2="512" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="545" y1="265" x2="538" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="565" y1="265" x2="560" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+        <line x1="585" y1="265" x2="578" y2="310" stroke="#00f5ff" stroke-width="1.5"/>
+
+        <line x1="130" y1="265" x2="118" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="130" y1="265" x2="138" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="160" y1="265" x2="152" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="160" y1="265" x2="168" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="215" y1="265" x2="208" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="250" y1="265" x2="244" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+        <line x1="280" y1="265" x2="274" y2="310" stroke="#ff00aa" stroke-width="1.5"/>
+      </g>
+
+      <!-- Gen 5 - tiny -->
+      <g opacity="0.3">
+        <line x1="395" y1="310" x2="388" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="418" y1="310" x2="422" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="438" y1="310" x2="432" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="455" y1="310" x2="460" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="495" y1="310" x2="490" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="512" y1="310" x2="517" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="538" y1="310" x2="533" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="560" y1="310" x2="556" y2="345" stroke="#00f5ff" stroke-width="1"/>
+        <line x1="578" y1="310" x2="575" y2="345" stroke="#00f5ff" stroke-width="1"/>
+
+        <line x1="118" y1="310" x2="113" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="138" y1="310" x2="142" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="152" y1="310" x2="147" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="168" y1="310" x2="173" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="208" y1="310" x2="203" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="244" y1="310" x2="240" y2="345" stroke="#ff00aa" stroke-width="1"/>
+        <line x1="274" y1="310" x2="270" y2="345" stroke="#ff00aa" stroke-width="1"/>
+      </g>
+
+      <!-- Bronchioles label -->
+      <text x="350" y="370" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="9" font-family="Orbitron">Bronquíolos Terminais / Respiratórios</text>
+
+      <!-- Alveoli dots -->
+      <g opacity="0.6">
+        <circle cx="390" cy="390" r="8" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="8;10;8" dur="1.5s" repeatCount="indefinite"/></circle>
+        <circle cx="415" cy="395" r="7" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="7;9;7" dur="1.7s" repeatCount="indefinite"/></circle>
+        <circle cx="460" cy="388" r="9" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="9;11;9" dur="2s" repeatCount="indefinite"/></circle>
+        <circle cx="498" cy="393" r="7" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="7;9;7" dur="1.4s" repeatCount="indefinite"/></circle>
+        <circle cx="540" cy="390" r="8" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="8;10;8" dur="1.8s" repeatCount="indefinite"/></circle>
+        <circle cx="200" cy="390" r="8" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="8;10;8" dur="1.6s" repeatCount="indefinite"/></circle>
+        <circle cx="230" cy="395" r="7" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="7;9;7" dur="2.1s" repeatCount="indefinite"/></circle>
+        <circle cx="158" cy="390" r="9" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="9;11;9" dur="1.9s" repeatCount="indefinite"/></circle>
+        <circle cx="130" cy="395" r="7" fill="rgba(191,0,255,0.3)" stroke="#bf00ff" stroke-width="1"><animate attributeName="r" values="7;9;7" dur="2.3s" repeatCount="indefinite"/></circle>
+      </g>
+      <text x="350" y="485" text-anchor="middle" fill="#bf00ff" font-size="9" font-family="Orbitron">ALVÉOLOS ● ● ●</text>
+
+      <!-- Generation counter -->
+      <text x="10" y="82" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">G0</text>
+      <text x="10" y="155" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">G1</text>
+      <text x="10" y="220" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">G2</text>
+      <text x="10" y="275" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">G3</text>
+      <text x="10" y="320" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">G4+</text>
+      <line x1="22" y1="75" x2="22" y2="380" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+    </svg>
+  </div>
+
+  <div class="content-grid">
+    <div class="panel reveal">
+      <div class="panel-title">⬅️ Brônquio Esquerdo vs Direito ➡️</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;">
+        <div style="padding:16px;background:rgba(255,0,170,0.08);border:1px solid rgba(255,0,170,0.2);border-radius:10px;">
+          <div style="color:var(--magenta);font-family:Orbitron,monospace;font-size:11px;margin-bottom:8px;">ESQUERDO</div>
+          <ul class="hl-list" style="font-size:13px;">
+            <li style="color:var(--text)">~5 cm comprimento</li>
+            <li style="color:var(--text)">Mais horizontal (~45°)</li>
+            <li style="color:var(--text)">2 brônquios lobares</li>
+            <li style="color:var(--text)">Passa sob arco aórtico</li>
+            <li style="color:var(--text)">Mais estreito</li>
+          </ul>
+        </div>
+        <div style="padding:16px;background:rgba(0,245,255,0.08);border:1px solid rgba(0,245,255,0.2);border-radius:10px;">
+          <div style="color:var(--cyan);font-family:Orbitron,monospace;font-size:11px;margin-bottom:8px;">DIREITO</div>
+          <ul class="hl-list" style="font-size:13px;">
+            <li style="color:var(--text)">~2.5 cm comprimento</li>
+            <li style="color:var(--text)">Mais vertical (~25°)</li>
+            <li style="color:var(--text)">3 brônquios lobares</li>
+            <li style="color:var(--text)">⚠️ Aspiração preferencial</li>
+            <li style="color:var(--text)">Mais largo</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel reveal reveal-delay-1">
+      <div class="panel-title">📐 As 23 Gerações de Weibel</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--magenta)"></div>
+          <div class="timeline-title" style="color:var(--magenta)">G0 — Traqueia</div>
+          <div class="timeline-body">Diâmetro ~1.8cm. Zona de condução.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--magenta)"></div>
+          <div class="timeline-title" style="color:var(--magenta)">G1-2 — Brônquios Principais e Lobares</div>
+          <div class="timeline-body">Cartilagem hialina. Músculo liso. Glândulas submucosas.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--magenta)"></div>
+          <div class="timeline-title" style="color:var(--magenta)">G3-4 — Brônquios Segmentares</div>
+          <div class="timeline-body">10 segmentos/pulmão. Unidades cirúrgicas independentes.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--orange)"></div>
+          <div class="timeline-title" style="color:var(--orange)">G5-16 — Bronquíolos</div>
+          <div class="timeline-body">Sem cartilagem. Só músculo liso. Bronquíolos terminais = última geração de condução.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--purple)"></div>
+          <div class="timeline-title" style="color:var(--purple)">G17-19 — Bronquíolos Respiratórios</div>
+          <div class="timeline-body">Primeiros com alvéolos nas paredes. Zona de transição.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot" style="border-color:var(--purple)"></div>
+          <div class="timeline-title" style="color:var(--purple)">G20-23 — Ductos e Sacos Alveolares</div>
+          <div class="timeline-body">Zona respiratória. 300 milhões de alvéolos. ~70 m² de superfície.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 4 – PULMÕES
+═══════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">🫁</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">04</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo IV · The Organs</div>
+      <div class="chapter-title">OS PULMÕES</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-grid">
+    <div>
+      <div class="speech-bubble reveal">
+        <div class="speech-narrator" style="color:var(--gold)">Narrador</div>
+        Os pulmões são dois órgãos esponjosos situados na <span class="c-gold">caixa torácica</span>, separados pelo mediastino. São revestidos pela <strong>pleura</strong> — duas folhas que deslizam entre si, facilitando a expansão.
+      </div>
+
+      <!-- Lobes comparison -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;" class="reveal reveal-delay-1">
+        <div class="panel">
+          <div class="panel-title" style="font-size:11px;">🔶 PULMÃO DIREITO</div>
+          <svg viewBox="0 0 120 200" width="100%" height="160">
+            <!-- Right lung -->
+            <ellipse cx="60" cy="100" rx="50" ry="90" fill="rgba(255,214,0,0.1)" stroke="#ffd600" stroke-width="1.5"/>
+            <!-- Fissure oblique -->
+            <line x1="20" y1="60" x2="95" y2="160" stroke="#ffd600" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Fissure horizontal -->
+            <line x1="30" y1="85" x2="100" y2="90" stroke="#ffd600" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Labels -->
+            <text x="60" y="42" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Rajdhani">SUP</text>
+            <text x="85" y="115" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Rajdhani">MED</text>
+            <text x="45" y="165" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Rajdhani">INF</text>
+            <text x="60" y="195" text-anchor="middle" fill="rgba(255,214,0,0.5)" font-size="8" font-family="Orbitron">3 LOBOS</text>
+          </svg>
+          <p style="font-size:12px;color:var(--dim);text-align:center;">Lobo Superior, Médio, Inferior<br>2 fissuras · 10 segmentos</p>
+        </div>
+        <div class="panel">
+          <div class="panel-title" style="font-size:11px;">🔷 PULMÃO ESQUERDO</div>
+          <svg viewBox="0 0 120 200" width="100%" height="160">
+            <!-- Left lung (slightly smaller) -->
+            <path d="M15 100 Q15 30 60 15 Q100 5 105 100 Q105 175 60 185 Q20 180 15 100Z" fill="rgba(255,0,170,0.1)" stroke="#ff00aa" stroke-width="1.5"/>
+            <!-- Cardiac notch -->
+            <path d="M15 100 Q25 95 35 110 Q38 120 30 130" fill="none" stroke="#ff00aa" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="18" y="118" fill="rgba(255,0,170,0.6)" font-size="7" font-family="Rajdhani">♥ notch</text>
+            <!-- Fissure oblique -->
+            <line x1="20" y1="70" x2="95" y2="165" stroke="#ff00aa" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Labels -->
+            <text x="65" y="45" text-anchor="middle" fill="#ff00aa" font-size="9" font-family="Rajdhani">SUP</text>
+            <text x="60" y="160" text-anchor="middle" fill="#ff00aa" font-size="9" font-family="Rajdhani">INF</text>
+            <text x="60" y="195" text-anchor="middle" fill="rgba(255,0,170,0.5)" font-size="8" font-family="Orbitron">2 LOBOS</text>
+          </svg>
+          <p style="font-size:12px;color:var(--dim);text-align:center;">Lobo Superior, Inferior<br>1 fissura oblíqua · 8-9 seg.</p>
+        </div>
+      </div>
+
+      <div class="panel reveal reveal-delay-2">
+        <div class="panel-title">🫶 Pleura — O Envelope</div>
+        <p>A pleura é uma membrana serosa com duas camadas:</p>
+        <ul class="hl-list">
+          <li><strong class="c-gold">Pleura Visceral</strong> — adere diretamente ao parênquima pulmonar. Não tem inervação dolorosa.</li>
+          <li><strong class="c-gold">Pleura Parietal</strong> — reveste a face interna da caixa torácica, diafragma e mediastino. Tem fibras dolorosas (n. frénico e intercostais).</li>
+          <li><strong class="c-gold">Cavidade Pleural</strong> — espaço virtual com ~10-20ml de líquido pleural; pressão subatmosférica (~-5 cmH₂O) mantém pulmão expandido.</li>
+        </ul>
+        <div class="flow-arrow" style="color:var(--gold)">⚠️ Pneumotórax → entrada de ar → pulmão colapsa</div>
+      </div>
+    </div>
+
+    <div>
+      <!-- Hilum & Circulation -->
+      <div class="svg-container reveal" style="color:var(--gold)">
+        <svg viewBox="0 0 280 420" width="280" height="420">
+          <!-- Lungs outline -->
+          <path d="M30 80 Q30 20 100 10 Q140 5 140 80 Q140 200 100 250 Q60 280 30 260 Z" fill="rgba(255,214,0,0.06)" stroke="#ffd600" stroke-width="1.5"/>
+          <path d="M250 80 Q250 20 180 10 Q140 5 140 80 Q140 200 180 250 Q220 280 250 260 Z" fill="rgba(255,0,170,0.06)" stroke="#ff00aa" stroke-width="1.5"/>
+
+          <!-- Trachea -->
+          <rect x="130" y="-10" width="20" height="55" rx="5" fill="none" stroke="#ffd600" stroke-width="1.5"/>
+
+          <!-- Main bronchi -->
+          <line x1="140" y1="45" x2="95" y2="80" stroke="#ffd600" stroke-width="2.5"/>
+          <line x1="140" y1="45" x2="185" y2="80" stroke="#ff00aa" stroke-width="2.5"/>
+
+          <!-- Pulmonary arteries (blue = deoxygenated TO lungs) -->
+          <path d="M140 120 Q95 110 80 120" fill="none" stroke="#4488ff" stroke-width="3"/>
+          <path d="M140 120 Q185 110 200 120" fill="none" stroke="#4488ff" stroke-width="3"/>
+          <text x="140" y="115" text-anchor="middle" fill="#4488ff" font-size="8" font-family="Rajdhani">A. Pulmonares (desox.)</text>
+
+          <!-- Pulmonary veins (red = oxygenated FROM lungs) -->
+          <path d="M80 140 Q95 155 140 150 Q185 155 200 140" fill="none" stroke="#ff4444" stroke-width="3"/>
+          <text x="140" y="170" text-anchor="middle" fill="#ff4444" font-size="8" font-family="Rajdhani">V. Pulmonares (ox.)</text>
+
+          <!-- Hilum label -->
+          <text x="90" y="130" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Orbitron">HILO</text>
+          <text x="190" y="130" text-anchor="middle" fill="#ff00aa" font-size="9" font-family="Orbitron">HILO</text>
+          <ellipse cx="90" cy="120" rx="18" ry="25" fill="none" stroke="#ffd600" stroke-width="1" stroke-dasharray="3,3"/>
+          <ellipse cx="190" cy="120" rx="18" ry="25" fill="none" stroke="#ff00aa" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <!-- Cardiac notch on left -->
+          <path d="M140 160 Q130 170 125 185 Q120 200 135 210" fill="none" stroke="rgba(255,0,170,0.5)" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="110" y="195" fill="rgba(255,0,170,0.6)" font-size="8" font-family="Rajdhani" text-anchor="middle">incisura cardíaca</text>
+
+          <!-- Diaphragm -->
+          <path d="M10 300 Q140 340 270 300" fill="rgba(255,214,0,0.08)" stroke="#ffd600" stroke-width="2"/>
+          <text x="140" y="330" text-anchor="middle" fill="#ffd600" font-size="9" font-family="Orbitron">DIAFRAGMA</text>
+
+          <!-- Pleura layers -->
+          <path d="M30 80 Q28 20 100 10 Q142 5 142 80 Q142 202 100 252 Q58 282 28 260 Z" fill="none" stroke="rgba(255,214,0,0.3)" stroke-width="1" stroke-dasharray="5,3"/>
+          <path d="M250 80 Q252 20 180 10 Q138 5 138 80 Q138 202 180 252 Q222 282 252 260 Z" fill="none" stroke="rgba(255,0,170,0.3)" stroke-width="1" stroke-dasharray="5,3"/>
+
+          <!-- Fissures -->
+          <line x1="35" y1="95" x2="120" y2="240" stroke="#ffd600" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="42" y1="130" x2="125" y2="135" stroke="#ffd600" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="165" y1="95" x2="245" y2="240" stroke="#ff00aa" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+
+          <!-- Apex -->
+          <text x="100" y="8" text-anchor="middle" fill="rgba(255,214,0,0.7)" font-size="8" font-family="Orbitron">ÁPEX</text>
+          <text x="180" y="8" text-anchor="middle" fill="rgba(255,0,170,0.7)" font-size="8" font-family="Orbitron">ÁPEX</text>
+
+          <!-- Base -->
+          <text x="70" y="268" text-anchor="middle" fill="rgba(255,214,0,0.7)" font-size="8" font-family="Orbitron">BASE</text>
+          <text x="210" y="268" text-anchor="middle" fill="rgba(255,0,170,0.7)" font-size="8" font-family="Orbitron">BASE</text>
+
+          <!-- Mediastinum -->
+          <rect x="126" y="0" width="28" height="300" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="6,4"/>
+          <text x="140" y="380" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="8" font-family="Orbitron">MEDIASTINO</text>
+        </svg>
+      </div>
+
+      <div class="panel reveal reveal-delay-2">
+        <div class="panel-title">🔴 Dupla Circulação</div>
+        <div class="flow-arrow" style="color:#4488ff">🫀 → A. Pulmonares → Pulmões (desoxigenado)</div>
+        <div class="flow-arrow" style="color:var(--red)">Pulmões → V. Pulmonares → 🫀 (oxigenado)</div>
+        <p style="font-size:14px;color:var(--dim);margin-top:8px;">Os pulmões têm também circulação brônquica (nutritiva): artérias brônquicas (da aorta torácica) nutrem a parede das vias aéreas. O retorno venoso brônquico vai às veias pulmonares (contaminando ligeiramente a mistura venosa).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 5 – ALVÉOLOS
+═══════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">🔬</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">05</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo V · The Exchange Zone</div>
+      <div class="chapter-title">OS ALVÉOLOS</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-single">
+    <div class="speech-bubble reveal">
+      <div class="speech-narrator" style="color:var(--purple)">Narrador</div>
+      Os alvéolos são as unidades funcionais do pulmão — pequenas câmaras esféricas onde ocorrem as <span class="c-purple">trocas gasosas</span>. São cerca de <strong>300 milhões</strong>, com um diâmetro de 100-300 μm, totalizando uma área de superfície de <strong>~70 m²</strong>.
+    </div>
+  </div>
+
+  <!-- Animated alveoli canvas -->
+  <div class="molecule-canvas reveal" id="alveoli-canvas" style="max-width:800px;margin:24px auto;"></div>
+
+  <div class="content-grid" style="margin-top:24px;">
+    <div>
+      <div class="panel reveal">
+        <div class="panel-title">🧬 Células do Alvéolo</div>
+        <div class="char-card">
+          <div class="char-avatar" style="border-color:var(--purple);background:rgba(191,0,255,0.1)">I</div>
+          <div>
+            <div class="char-name" style="color:var(--purple)">Pneumócito Tipo I (95%)</div>
+            <div class="char-body">Células planas escamosas. Cobrem ~95% da superfície alveolar. Extremamente finas (0.1–0.5 μm) para minimizar a distância de difusão. Não se dividem.</div>
+          </div>
+        </div>
+        <div class="char-card">
+          <div class="char-avatar" style="border-color:var(--cyan);background:rgba(0,245,255,0.1)">II</div>
+          <div>
+            <div class="char-name" style="color:var(--cyan)">Pneumócito Tipo II (5% área)</div>
+            <div class="char-body">Células cuboidais. Produzem <strong>surfactante</strong> (corpos lamelares). São as progenitoras — regeneram tipo I após lesão.</div>
+          </div>
+        </div>
+        <div class="char-card">
+          <div class="char-avatar" style="border-color:var(--gold);background:rgba(255,214,0,0.1)">M</div>
+          <div>
+            <div class="char-name" style="color:var(--gold)">Macrófagos Alveolares</div>
+            <div class="char-body">Os "varredores". Fagocitam partículas, bactérias e células mortas. Migram via escada mucociliar ou linfáticos.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel reveal">
+        <div class="panel-title">💧 Surfactante Pulmonar</div>
+        <p>O surfactante é uma mistura de <span class="c-purple">fosfolipídios</span> (70%), proteínas (10%) e colesterol (10%) secretada pelos pneumócitos tipo II.</p>
+        <div class="flow-arrow" style="color:var(--purple)">Principal componente: DPPC (dipalmitoilfosfatidilcolina)</div>
+        <p><strong>Função:</strong> Reduz a tensão superficial dos alvéolos, prevenindo o colapso (atelectasia) durante a expiração.</p>
+        <p>A tensão superficial segue a <strong>Lei de Laplace</strong>:</p>
+        <div style="text-align:center;padding:16px;background:rgba(191,0,255,0.08);border:1px solid rgba(191,0,255,0.2);border-radius:10px;margin:12px 0;">
+          <span style="font-family:Orbitron,monospace;font-size:20px;color:var(--purple)">P = 2T / r</span>
+          <div style="font-size:12px;color:var(--dim);margin-top:6px;">Pressão = 2 × Tensão / Raio</div>
+        </div>
+        <p style="font-size:14px;color:var(--dim);">Sem surfactante, os alvéolos pequenos (↓r) teriam maior pressão e esvaziavam para os grandes. O surfactante ↓T proporcionalmente ao ↓r — estabilizando todos os alvéolos.</p>
+        <div class="flow-arrow" style="color:var(--red)">⚠️ Deficiência: SDR neonatal (pré-termo &lt;28s)</div>
+      </div>
+
+      <div class="panel reveal reveal-delay-1" style="margin-top:16px;">
+        <div class="panel-title">📏 Barreira Alveolocapilar</div>
+        <div style="text-align:center;margin:12px 0;">
+          <span style="font-family:Orbitron,monospace;font-size:32px;color:var(--purple)">0.5 μm</span>
+          <div style="font-size:12px;color:var(--dim);">Espessura total</div>
+        </div>
+        <div class="timeline" style="font-size:14px;">
+          <div class="timeline-item">
+            <div class="timeline-dot" style="border-color:var(--purple)"></div>
+            <div class="timeline-title" style="color:var(--purple);">1. Surfactante + líquido alveolar</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="border-color:var(--purple)"></div>
+            <div class="timeline-title" style="color:var(--purple);">2. Epitélio alveolar (pneumócito I)</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="border-color:var(--purple)"></div>
+            <div class="timeline-title" style="color:var(--purple);">3. Membrana basal fundida</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="border-color:var(--purple)"></div>
+            <div class="timeline-title" style="color:var(--purple);">4. Endotélio capilar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 6 – FISIOLOGIA
+═══════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">⚡</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">06</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo VI · The Mechanics</div>
+      <div class="chapter-title">MECÂNICA VENTILATÓRIA</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-grid">
+    <div>
+      <div class="speech-bubble reveal">
+        <div class="speech-narrator" style="color:var(--orange)">Narrador</div>
+        A ventilação é o processo de renovação do ar nos pulmões. É um processo <strong>passivo e activo</strong>, governado por gradientes de pressão criados pelos músculos respiratórios e pela elasticidade pulmonar.
+      </div>
+
+      <!-- Breathing animation -->
+      <div class="panel reveal reveal-delay-1" style="margin-top:24px;">
+        <div class="panel-title">🌬️ Ciclo Respiratório Animado</div>
+        <div class="breath-anim">
+          <div class="breath-circle" style="border-color:var(--orange);background:radial-gradient(circle,rgba(255,109,0,0.2),transparent);color:var(--orange);box-shadow:0 0 30px rgba(255,109,0,0.3);">
+            VOLUME<br>PULMONAR
+          </div>
+          <div class="breath-label" style="color:var(--orange);" id="breathPhase">INSPIRAÇÃO →</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;">
+          <div style="padding:14px;background:rgba(255,109,0,0.06);border:1px solid rgba(255,109,0,0.2);border-radius:10px;">
+            <div style="color:var(--orange);font-family:Orbitron,monospace;font-size:11px;margin-bottom:8px;">INSPIRAÇÃO</div>
+            <p style="font-size:13px;color:var(--dim);">Diafragma desce (↓ 1.5cm normal, ↓10cm forçada). Intercostais externos contraem → ↑ volume → ↓ pressão → ar entra.</p>
+          </div>
+          <div style="padding:14px;background:rgba(255,109,0,0.06);border:1px solid rgba(255,109,0,0.2);border-radius:10px;">
+            <div style="color:var(--orange);font-family:Orbitron,monospace;font-size:11px;margin-bottom:8px;">EXPIRAÇÃO</div>
+            <p style="font-size:13px;color:var(--dim);">Processo passivo em repouso. Recuo elástico do pulmão + relaxamento diafragma → ↓ volume → ↑ pressão → ar sai.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel reveal reveal-delay-2" style="margin-top:16px;">
+        <div class="panel-title">💨 Pressões Respiratórias</div>
+        <ul class="hl-list" style="color:var(--orange)">
+          <li style="color:var(--text)"><strong class="c-orange">P atm</strong> = 760 mmHg (referência 0)</li>
+          <li style="color:var(--text)"><strong class="c-orange">P intrapleural</strong> = -5 cmH₂O repouso / -8 insp.</li>
+          <li style="color:var(--text)"><strong class="c-orange">P alveolar</strong> = 0 em repouso / -1 inspiração / +1 expiração</li>
+          <li style="color:var(--text)"><strong class="c-orange">P transpulmonar</strong> = Palv - Ppl = mantém pulmão aberto</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <!-- Volumes SVG -->
+      <div class="panel reveal" style="overflow:hidden;">
+        <div class="panel-title">📊 Volumes e Capacidades Pulmonares</div>
+        <svg viewBox="0 0 380 300" width="100%" height="auto">
+          <defs>
+            <linearGradient id="vol-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff6d00" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#ff6d00" stop-opacity="0.1"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Grid -->
+          <line x1="40" y1="20" x2="40" y2="260" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <line x1="40" y1="260" x2="370" y2="260" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+          <!-- Volume levels -->
+          <!-- TLC = top -->
+          <line x1="40" y1="30" x2="370" y2="30" stroke="rgba(255,109,0,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="5" y="33" fill="#ff6d00" font-size="8" font-family="Orbitron">TLC</text>
+
+          <!-- IRV above TV -->
+          <line x1="40" y1="80" x2="370" y2="80" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <!-- End inspiration (TV top) -->
+          <line x1="40" y1="140" x2="370" y2="140" stroke="rgba(255,255,255,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+
+          <!-- FRC level -->
+          <line x1="40" y1="185" x2="370" y2="185" stroke="rgba(0,245,255,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="3" y="188" fill="#00f5ff" font-size="7" font-family="Orbitron">FRC</text>
+
+          <!-- RV = bottom -->
+          <line x1="40" y1="230" x2="370" y2="230" stroke="rgba(255,0,170,0.3)" stroke-width="1" stroke-dasharray="4,3"/>
+          <text x="8" y="233" fill="#ff00aa" font-size="8" font-family="Orbitron">RV</text>
+
+          <!-- Spirogram wave -->
+          <path d="M40,185 L70,185 Q80,185 85,140 L100,140 L115,140 Q120,140 125,185 L140,185 Q150,185 155,80 L170,80 L185,80 Q190,80 195,185 L210,185 L225,185 Q230,185 235,140 L250,140 L265,140 Q270,140 275,185 L290,185 Q300,185 305,30 L320,30 L335,30 Q340,30 345,185 L370,185"
+                fill="url(#vol-grad)" fill-opacity="0.3"
+                stroke="#ff6d00" stroke-width="2.5"/>
+
+          <!-- Volume labels on right -->
+          <text x="375" y="55" fill="#ff6d00" font-size="8" font-family="Rajdhani">IRV</text>
+          <text x="375" y="55" fill="#ff6d00" font-size="7" font-family="Rajdhani" dy="10">3000ml</text>
+          <text x="375" y="115" fill="#ffd600" font-size="8" font-family="Rajdhani">TV</text>
+          <text x="375" y="115" fill="#ffd600" font-size="7" font-family="Rajdhani" dy="10">500ml</text>
+          <text x="375" y="160" fill="#00f5ff" font-size="8" font-family="Rajdhani">ERV</text>
+          <text x="375" y="160" fill="#00f5ff" font-size="7" font-family="Rajdhani" dy="10">1200ml</text>
+          <text x="375" y="208" fill="#ff00aa" font-size="8" font-family="Rajdhani">RV</text>
+          <text x="375" y="208" fill="#ff00aa" font-size="7" font-family="Rajdhani" dy="10">1200ml</text>
+
+          <!-- Capacities brackets -->
+          <line x1="358" y1="30" x2="358" y2="185" stroke="rgba(255,109,0,0.4)" stroke-width="1"/>
+          <text x="360" y="108" fill="rgba(255,109,0,0.8)" font-size="7" font-family="Orbitron" transform="rotate(90,360,108)" text-anchor="middle">VC</text>
+
+          <line x1="348" y1="30" x2="348" y2="230" stroke="rgba(255,109,0,0.5)" stroke-width="1"/>
+
+          <!-- Max insp arrow -->
+          <text x="300" y="15" text-anchor="middle" fill="#ff6d00" font-size="8" font-family="Orbitron">TLC ≈ 6000ml</text>
+
+          <!-- Vital capacity label -->
+          <text x="210" y="275" text-anchor="middle" fill="rgba(255,109,0,0.8)" font-size="9" font-family="Orbitron">CV = IRV + TV + ERV ≈ 4700ml</text>
+        </svg>
+      </div>
+
+      <div class="panel reveal reveal-delay-2" style="margin-top:16px;">
+        <div class="panel-title">🔢 Equação da Ventilação</div>
+        <div style="text-align:center;padding:20px;background:rgba(255,109,0,0.06);border:1px solid rgba(255,109,0,0.2);border-radius:12px;">
+          <div style="font-family:Orbitron,monospace;font-size:16px;color:var(--orange);margin-bottom:8px;">V̇A = (VT − VD) × FR</div>
+          <div style="font-size:12px;color:var(--dim);">VT = Vol. Corrente (~500ml) | VD = Espaço Morto (~150ml) | FR = Freq. Resp. (~14/min)</div>
+          <div style="font-family:Orbitron,monospace;font-size:14px;color:var(--gold);margin-top:12px;">V̇A = (500 − 150) × 14 = <span style="color:var(--green)">4900 ml/min</span></div>
+        </div>
+        <p style="font-size:13px;color:var(--dim);margin-top:10px;"><strong class="c-orange">Espaço morto anatómico:</strong> Volume das vias de condução (~150 ml). Não participa em trocas gasosas. Gera-se ao nível dos bronquíolos terminais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     CHAPTER 7 – TROCAS GASOSAS
+═══════════════════════════════ -->
+<section class="chapter" id="ch7">
+  <div class="chapter-divider"><div class="divider-line"></div><div class="divider-icon">⚗️</div><div class="divider-line"></div></div>
+
+  <div class="chapter-label reveal">
+    <div class="chapter-num">07</div>
+    <div class="chapter-info">
+      <div class="chapter-tag">Capítulo VII · The Finale</div>
+      <div class="chapter-title">TROCAS GASOSAS</div>
+    </div>
+  </div>
+  <div class="chapter-line"></div>
+
+  <div class="content-single">
+    <div class="speech-bubble reveal">
+      <div class="speech-narrator" style="color:var(--red)">Narrador</div>
+      Este é o clímax de toda a jornada. Depois de percorrer laringe, traqueia, brônquios e bronquíolos, o ar chega aos alvéolos onde <span class="c-red">O₂ atravessa a membrana</span> para o sangue e <span class="c-red">CO₂ sai do sangue</span> para o ar. Tudo em milissegundos.
+    </div>
+  </div>
+
+  <!-- Gas exchange animation canvas -->
+  <canvas id="gasCanvas" class="reveal" style="max-width:800px;margin:0 auto;display:block;"></canvas>
+
+  <div class="content-grid" style="margin-top:32px;">
+    <div>
+      <div class="panel reveal">
+        <div class="panel-title">📐 Lei de Fick</div>
+        <div style="text-align:center;padding:20px;background:rgba(255,34,68,0.06);border:1px solid rgba(255,34,68,0.2);border-radius:12px;margin-bottom:16px;">
+          <div style="font-family:Orbitron,monospace;font-size:14px;color:var(--red);line-height:1.8;">
+            V̇gas = A × D × (P₁ − P₂)<br>
+            ―――――――――――――――――<br>
+            T
+          </div>
+        </div>
+        <ul class="hl-list" style="color:var(--red)">
+          <li style="color:var(--text);"><strong class="c-red">A</strong> = Área de superfície (~70m²)</li>
+          <li style="color:var(--text);"><strong class="c-red">D</strong> = Coeficiente de difusão (↑ para CO₂ × 20)</li>
+          <li style="color:var(--text);"><strong class="c-red">P₁-P₂</strong> = Gradiente de pressão parcial</li>
+          <li style="color:var(--text);"><strong class="c-red">T</strong> = Espessura da membrana (~0.5μm)</li>
+        </ul>
+      </div>
+
+      <div class="panel reveal reveal-delay-1" style="margin-top:16px;">
+        <div class="panel-title">🩸 Transporte de O₂</div>
+        <p><strong>97%</strong> ligado à hemoglobina → <strong>HbO₂</strong> (oxiemoglobina)</p>
+        <p><strong>3%</strong> dissolvido no plasma</p>
+        <div style="background:rgba(255,34,68,0.06);border:1px solid rgba(255,34,68,0.2);border-radius:10px;padding:14px;margin:12px 0;">
+          <div style="font-family:Orbitron,monospace;font-size:13px;color:var(--red);">Hb + 4O₂ ⇌ Hb(O₂)₄</div>
+        </div>
+        <p style="font-size:14px;color:var(--dim);">A curva de dissociação da Hb-O₂ é sigmoidal (cooperatividade). Desviada à <span class="c-red">direita</span> por: ↑T°, ↑CO₂, ↓pH, ↑2,3-DPG (efeito Bohr → ↓ afinidade → ↑ libertação nos tecidos).</p>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel reveal">
+        <div class="panel-title">💨 Pressões Parciais dos Gases</div>
+        <svg viewBox="0 0 320 280" width="100%" height="auto">
+          <!-- Alveolus -->
+          <circle cx="90" cy="100" r="65" fill="rgba(255,34,68,0.06)" stroke="#ff2244" stroke-width="1.5">
+            <animate attributeName="r" values="65;72;65" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <text x="90" y="85" text-anchor="middle" fill="#ff2244" font-size="9" font-family="Orbitron">ALVÉOLO</text>
+          <text x="90" y="100" text-anchor="middle" fill="#ff9999" font-size="9" font-family="Rajdhani">PAO₂ = 100 mmHg</text>
+          <text x="90" y="115" text-anchor="middle" fill="#99ccff" font-size="9" font-family="Rajdhani">PACO₂ = 40 mmHg</text>
+
+          <!-- Capillary -->
+          <rect x="185" y="55" width="90" height="90" rx="45" fill="rgba(68,136,255,0.1)" stroke="#4488ff" stroke-width="1.5"/>
+          <text x="230" y="80" text-anchor="middle" fill="#4488ff" font-size="9" font-family="Orbitron">CAPILAR</text>
+          <text x="230" y="97" text-anchor="middle" fill="#ff9999" font-size="8" font-family="Rajdhani">PvO₂=40→100</text>
+          <text x="230" y="112" text-anchor="middle" fill="#99ccff" font-size="8" font-family="Rajdhani">PvCO₂=46→40</text>
+
+          <!-- O2 arrows (alv → cap) -->
+          <path d="M155 90 L185 90" stroke="#ff4444" stroke-width="2.5" marker-end="url(#arrow-r)">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <text x="170" y="83" fill="#ff4444" font-size="8" font-family="Orbitron" text-anchor="middle">O₂ →</text>
+
+          <!-- CO2 arrows (cap → alv) -->
+          <path d="M185 110 L155 110" stroke="#4488ff" stroke-width="2.5" marker-end="url(#arrow-b)">
+            <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" begin="1s"/>
+          </path>
+          <text x="170" y="123" fill="#4488ff" font-size="8" font-family="Orbitron" text-anchor="middle">← CO₂</text>
+
+          <defs>
+            <marker id="arrow-r" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#ff4444"/>
+            </marker>
+            <marker id="arrow-b" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="#4488ff"/>
+            </marker>
+          </defs>
+
+          <!-- Membrane barrier label -->
+          <line x1="155" y1="40" x2="185" y2="40" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <text x="170" y="36" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="8" font-family="Orbitron">MEMBRANA</text>
+          <text x="170" y="47" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="7" font-family="Rajdhani">0.5 μm</text>
+
+          <!-- TISSUES section -->
+          <rect x="185" y="170" width="90" height="70" rx="10" fill="rgba(255,109,0,0.1)" stroke="#ff6d00" stroke-width="1.5"/>
+          <text x="230" y="192" text-anchor="middle" fill="#ff6d00" font-size="9" font-family="Orbitron">TECIDOS</text>
+          <text x="230" y="208" text-anchor="middle" fill="#ff9999" font-size="8" font-family="Rajdhani">PO₂=40 mmHg</text>
+          <text x="230" y="222" text-anchor="middle" fill="#99ccff" font-size="8" font-family="Rajdhani">PCO₂=46 mmHg</text>
+
+          <!-- Arrows capillary to tissues -->
+          <path d="M230 145 L230 170" stroke="#ff4444" stroke-width="2" marker-end="url(#arrow-r)"/>
+          <text x="250" y="160" fill="#ff4444" font-size="7" font-family="Rajdhani">O₂</text>
+          <path d="M215 145 L215 170" stroke="#4488ff" stroke-width="2"/>
+          <text x="195" y="160" fill="#4488ff" font-size="7" font-family="Rajdhani">CO₂</text>
+
+          <!-- Labels left side -->
+          <text x="10" y="185" fill="rgba(255,255,255,0.4)" font-size="8" font-family="Orbitron">AR</text>
+          <text x="10" y="198" fill="rgba(255,255,255,0.4)" font-size="7" font-family="Rajdhani">PO₂=159</text>
+          <text x="10" y="210" fill="rgba(255,255,255,0.4)" font-size="7" font-family="Rajdhani">PCO₂=0.3</text>
+          <path d="M30 170 L30 40 Q50 30 80 55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="35" y="30" fill="rgba(255,255,255,0.4)" font-size="7" font-family="Rajdhani">AR INSPIRADO</text>
+        </svg>
+      </div>
+
+      <div class="panel reveal reveal-delay-1" style="margin-top:16px;">
+        <div class="panel-title">🔄 Transporte de CO₂</div>
+        <div class="stat-grid" style="margin:8px 0;">
+          <div class="stat-box">
+            <div class="stat-value" style="font-size:18px;background:linear-gradient(135deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">70%</div>
+            <div class="stat-label">HCO₃⁻ (bicarbonato)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" style="font-size:18px;background:linear-gradient(135deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">23%</div>
+            <div class="stat-label">Carbaminohemoglobina</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-value" style="font-size:18px;background:linear-gradient(135deg,var(--red),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">7%</div>
+            <div class="stat-label">Dissolvido</div>
+          </div>
+        </div>
+        <div style="background:rgba(255,34,68,0.06);border:1px solid rgba(255,34,68,0.2);border-radius:10px;padding:14px;">
+          <div style="font-family:Orbitron,monospace;font-size:12px;color:var(--red);text-align:center;">CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻</div>
+          <div style="font-size:11px;color:var(--dim);text-align:center;margin-top:4px;">Anidrase carbónica (eritrócitos)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     QUIZ
+═══════════════════════════════ -->
+<section id="quiz" style="background:var(--bg2);padding:80px 0 60px;border-top:1px solid var(--border);">
+  <div class="chapter-label reveal" style="max-width:800px;margin:0 auto;padding:0 40px;">
+    <div class="chapter-num" style="-webkit-text-stroke-color:var(--gold);color:transparent;">Q</div>
+    <div class="chapter-info">
+      <div class="chapter-tag" style="color:var(--gold)">Boss Fight · Teste Final</div>
+      <div class="chapter-title" style="color:var(--gold)">QUIZ INTERATIVO</div>
+    </div>
+  </div>
+  <div style="height:1px;background:linear-gradient(to right,transparent,var(--gold),transparent);margin:16px 40px;opacity:0.5;"></div>
+
+  <div id="quizArea" style="max-width:700px;margin:0 auto;padding:0 20px;">
+    <!-- Q1 -->
+    <div class="quiz-container reveal" data-q="1">
+      <div class="quiz-q">❓ Q1 — Qual cartilagem laríngea é a ÚNICA que forma um anel completo?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','A cartilagem tiroideia é incompleta — tem abertura posterior.')">Tiroideia</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','✅ Correto! A cricoideia é o único anel completo da laringe — essencial para a rigidez estrutural.')">Cricoideia</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','A epiglote tem forma de folha e não é um anel.')">Epiglote</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','As aritenoides são piramidais, não anulares.')">Aritenoides</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-container reveal reveal-delay-1" data-q="2">
+      <div class="quiz-q">❓ Q2 — Porque é que o brônquio direito é mais suscetível a aspiração de corpos estranhos?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','O comprimento não está diretamente relacionado com a aspiração.')">É mais curto</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','✅ Exato! O brônquio direito é mais vertical (~25°), mais curto e mais largo, sendo uma extensão quase direta da traqueia.')">É mais vertical e largo</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Tem cartilagem, tal como o esquerdo.')">Tem mais cartilagem</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Ambos têm epitélio similar.')">Epitélio diferente</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-container reveal reveal-delay-2" data-q="3">
+      <div class="quiz-q">❓ Q3 — Qual o papel do surfactante pulmonar segundo a Lei de Laplace?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','O surfactante reduz, não aumenta a tensão.')">Aumenta a tensão superficial</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Não destrói CO₂.')">Destrói CO₂</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','✅ Correto! O surfactante reduz T proporcionalmente ao ↓r, estabilizando alvéolos de diferentes tamanhos e prevenindo o colapso (atelectasia).')">Reduz tensão superficial, prevenindo colapso alveolar</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Não aumenta O₂ diretamente.')">Aumenta concentração de O₂</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-container reveal reveal-delay-3" data-q="4">
+      <div class="quiz-q">❓ Q4 — Qual a espessura aproximada da barreira alveolocapilar?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','5mm é a espessura de outros tecidos, não da barreira.')">5 mm</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','5μm já seria espesso para difusão eficiente.')">5 μm</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','✅ Perfeito! A barreira tem ~0.5 μm, o que é essencial para a difusão rápida de O₂ e CO₂.')">0.5 μm</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','0.5 nm seria atómico — impossível para esta estrutura.')">0.5 nm</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-container reveal" data-q="5">
+      <div class="quiz-q">❓ Q5 — Qual a principal forma de transporte de CO₂ no sangue?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','Apenas ~7% é transportado dissolvido.')">Dissolvido no plasma</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','✅ Correto! ~70% é transportado como HCO₃⁻ (bicarbonato) — produto da reação CO₂+H₂O catalizada pela anidrase carbónica nos eritrócitos.')">Como bicarbonato (HCO₃⁻)</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Carbaminohemoglobina representa ~23%.')">Ligado à hemoglobina</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','Não existe transporte por proteínas plasmáticas em quantidade significativa.')">Ligado a proteínas plasmáticas</button>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div id="quizScore" style="display:none;text-align:center;padding:32px;background:rgba(255,214,0,0.06);border:1px solid rgba(255,214,0,0.2);border-radius:16px;margin-top:24px;">
+      <div style="font-family:Orbitron,monospace;font-size:36px;color:var(--gold);" id="scoreNum">0/5</div>
+      <div style="font-size:14px;color:var(--dim);margin-top:8px;" id="scoreMsg">Complete o quiz!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════
+     FOOTER
+═══════════════════════════════ -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">Vias Aéreas Inferiores · Anatomia &amp; Fisiologia</div>
+  <div style="margin-top:24px;display:flex;justify-content:center;gap:24px;flex-wrap:wrap;font-size:13px;color:var(--dim);">
+    <span>🫁 Laringe</span>
+    <span>🌬️ Traqueia</span>
+    <span>🌿 Brônquios</span>
+    <span>🫁 Pulmões</span>
+    <span>🔬 Alvéolos</span>
+    <span>⚡ Fisiologia</span>
+    <span>⚗️ Trocas Gasosas</span>
+  </div>
+  <div class="footer-copy">© DemilMed-UL · Material didático · Uso educacional</div>
+</footer>
+
+<!-- ═══════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════ -->
+<script>
+// ── LOADER ──────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hide');
+  }, 1600);
+});
+
+// ── SCROLL: NAV + PROGRESS ──────
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  const progress = document.getElementById('readProgress');
+  const scrollTop = window.scrollY;
+  const docHeight = document.body.scrollHeight - window.innerHeight;
+
+  if (scrollTop > 80) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+
+  progress.style.width = (scrollTop / docHeight * 100) + '%';
+});
+
+function scrollTo(id) {
+  document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── REVEAL ON SCROLL ─────────────
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+reveals.forEach(r => observer.observe(r));
+
+// ── FLOATING MOLECULES ──────────
+const molContainer = document.getElementById('floatingMols');
+const molTypes = ['O₂','CO₂','N₂','H₂O','O₂','CO₂','●','◆','▲','○'];
+const molColors = ['#00f5ff','#ff00aa','#ffd600','#00ff88','#bf00ff','#ff6d00'];
+
+for (let i = 0; i < 30; i++) {
+  const mol = document.createElement('div');
+  mol.className = 'mol';
+  mol.textContent = molTypes[Math.floor(Math.random() * molTypes.length)];
+  mol.style.cssText = `
+    left: ${Math.random() * 100}%;
+    color: ${molColors[Math.floor(Math.random() * molColors.length)]};
+    font-size: ${8 + Math.random() * 14}px;
+    font-family: 'Orbitron', monospace;
+    animation-duration: ${8 + Math.random() * 16}s;
+    animation-delay: ${-Math.random() * 16}s;
+  `;
+  molContainer.appendChild(mol);
+}
+
+// ── ACCORDION ───────────────────
+function toggleAcc(header) {
+  const item = header.parentElement;
+  const body = item.querySelector('.acc-body');
+  const wasOpen = item.classList.contains('open');
+
+  document.querySelectorAll('.acc-item').forEach(i => {
+    i.classList.remove('open');
+    i.querySelector('.acc-body').classList.remove('open');
+  });
+
+  if (!wasOpen) {
+    item.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ── QUIZ ────────────────────────
+let answers = {};
+let answered = {};
+
+function answer(btn, type, feedback) {
+  const container = btn.closest('.quiz-container');
+  const qNum = container.dataset.q;
+
+  if (answered[qNum]) return;
+  answered[qNum] = true;
+
+  const allBtns = container.querySelectorAll('.quiz-btn');
+  allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+  btn.classList.add(type === 'correct' ? 'correct' : 'wrong');
+
+  if (type === 'correct') {
+    answers[qNum] = true;
+    // Find and highlight correct if wrong was clicked
+  }
+
+  const fb = container.querySelector('.quiz-feedback');
+  fb.textContent = feedback;
+  fb.classList.add('show', type === 'correct' ? 'ok' : 'fail');
+
+  // Check if all done
+  if (Object.keys(answered).length === 5) {
+    const score = Object.values(answers).filter(Boolean).length;
+    const scoreEl = document.getElementById('quizScore');
+    const scoreNum = document.getElementById('scoreNum');
+    const scoreMsg = document.getElementById('scoreMsg');
+    scoreEl.style.display = 'block';
+    scoreNum.textContent = score + '/5';
+
+    const msgs = [
+      '😔 Continua a estudar! Volta a este material.',
+      '😐 Quase! Revê os capítulos sobre trocas gasosas.',
+      '🙂 Bom esforço! Revê a anatomia brônquica.',
+      '😊 Muito bem! Pequenos detalhes a afinar.',
+      '🏆 PERFEITO! És um especialista em vias aéreas!'
+    ];
+    scoreMsg.textContent = msgs[score];
+    scoreEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+// ── ALVEOLI CANVAS ───────────────
+(function() {
+  const container = document.getElementById('alveoli-canvas');
+  if (!container) return;
+  const canvas = document.createElement('canvas');
+  canvas.width = container.offsetWidth || 700;
+  canvas.height = 260;
+  canvas.style.width = '100%';
+  canvas.style.height = '260px';
+  container.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+
+  const alveoli = [];
+  for (let i = 0; i < 14; i++) {
+    alveoli.push({
+      x: 40 + (i % 7) * 95 + Math.random() * 20,
+      y: 60 + Math.floor(i / 7) * 110 + Math.random() * 20,
+      r: 30 + Math.random() * 18,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.3 + Math.random() * 0.4,
+      color: i % 3 === 0 ? '#bf00ff' : i % 3 === 1 ? '#00f5ff' : '#ff00aa'
+    });
+  }
+
+  // O2/CO2 particles
+  const particles = [];
+  for (let i = 0; i < 40; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      type: Math.random() > 0.5 ? 'O2' : 'CO2',
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: (Math.random() - 0.5) * 1.5,
+      size: 5 + Math.random() * 5,
+      alpha: 0.5 + Math.random() * 0.5
+    });
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(6,10,20,0.95)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    alveoli.forEach(a => {
+      const breath = Math.sin(t * a.speed + a.phase) * 0.15 + 1;
+      const r = a.r * breath;
+
+      // Glow
+      const g = ctx.createRadialGradient(a.x, a.y, 0, a.x, a.y, r);
+      g.addColorStop(0, a.color + '22');
+      g.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = g;
+      ctx.fill();
+
+      // Border
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, r, 0, Math.PI * 2);
+      ctx.strokeStyle = a.color;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.7;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      // Label
+      ctx.fillStyle = a.color;
+      ctx.font = '8px Orbitron, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('alvéolo', a.x, a.y + 3);
+    });
+
+    // Particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.globalAlpha = p.alpha * 0.8;
+      ctx.fillStyle = p.type === 'O2' ? '#ff4444' : '#4488ff';
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = p.type === 'O2' ? '#ff9999' : '#99ccff';
+      ctx.font = `${p.size}px Orbitron, monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(p.type, p.x, p.y + p.size / 3);
+      ctx.globalAlpha = 1;
+    });
+
+    // Legend
+    ctx.fillStyle = '#ff4444';
+    ctx.beginPath(); ctx.arc(20, 20, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffaaaa';
+    ctx.font = '10px Rajdhani, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('O₂', 30, 24);
+
+    ctx.fillStyle = '#4488ff';
+    ctx.beginPath(); ctx.arc(70, 20, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#aaccff';
+    ctx.fillText('CO₂', 80, 24);
+
+    t += 0.02;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── GAS EXCHANGE CANVAS ──────────
+(function() {
+  const canvas = document.getElementById('gasCanvas');
+  if (!canvas) return;
+
+  const W = Math.min(800, window.innerWidth - 40);
+  canvas.width = W;
+  canvas.height = 280;
+  const ctx = canvas.getContext('2d');
+
+  const particles = [];
+
+  function makeParticle(type) {
+    const fromAlv = type === 'O2';
+    return {
+      type,
+      x: fromAlv ? (W * 0.2 + Math.random() * W * 0.2) : (W * 0.6 + Math.random() * W * 0.2),
+      y: 60 + Math.random() * 80,
+      targetX: fromAlv ? (W * 0.6 + Math.random() * W * 0.2) : (W * 0.2 + Math.random() * W * 0.2),
+      targetY: 150 + Math.random() * 80,
+      progress: 0,
+      speed: 0.003 + Math.random() * 0.004,
+    };
+  }
+
+  for (let i = 0; i < 20; i++) {
+    particles.push(makeParticle(i % 2 === 0 ? 'O2' : 'CO2'));
+  }
+
+  let t = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, 280);
+    ctx.fillStyle = 'rgba(6,10,20,0.97)';
+    ctx.fillRect(0, 0, W, 280);
+
+    // Alveolus zone
+    const alvGrad = ctx.createLinearGradient(0, 0, 0, 140);
+    alvGrad.addColorStop(0, 'rgba(255,34,68,0.06)');
+    alvGrad.addColorStop(1, 'rgba(255,34,68,0.02)');
+    ctx.fillStyle = alvGrad;
+    ctx.fillRect(0, 0, W, 140);
+
+    // Capillary zone
+    const capGrad = ctx.createLinearGradient(0, 140, 0, 280);
+    capGrad.addColorStop(0, 'rgba(68,136,255,0.04)');
+    capGrad.addColorStop(1, 'rgba(68,136,255,0.08)');
+    ctx.fillStyle = capGrad;
+    ctx.fillRect(0, 140, W, 140);
+
+    // Membrane
+    for (let x = 0; x < W; x += 6) {
+      ctx.fillStyle = x % 12 === 0 ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)';
+      ctx.fillRect(x, 136, 4, 8);
+    }
+
+    ctx.font = '10px Orbitron, monospace';
+    ctx.textAlign = 'center';
+
+    ctx.fillStyle = 'rgba(255,34,68,0.6)';
+    ctx.fillText('ALVÉOLO — PAO₂: 100 | PACO₂: 40 mmHg', W / 2, 20);
+
+    ctx.fillStyle = 'rgba(68,136,255,0.6)';
+    ctx.fillText('CAPILAR PULMONAR — PO₂: 40→100 | PCO₂: 46→40 mmHg', W / 2, 268);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillText('▬▬▬ Membrana alveolocapilar (0.5 μm) ▬▬▬', W / 2, 145);
+
+    // O2/CO2 labels
+    ctx.font = '9px Rajdhani, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#ff4444';
+    ctx.fillText('O₂ difunde →', W * 0.35, 105);
+    ctx.fillStyle = '#4488ff';
+    ctx.fillText('← CO₂ difunde', W * 0.4, 175);
+
+    // Update & draw particles
+    particles.forEach((p, i) => {
+      p.progress += p.speed;
+      if (p.progress >= 1) {
+        particles[i] = makeParticle(p.type);
+        return;
+      }
+
+      const x = p.x + (p.targetX - p.x) * p.progress;
+      const y = p.y + (p.targetY - p.y) * p.progress;
+
+      ctx.globalAlpha = Math.sin(p.progress * Math.PI) * 0.9;
+      ctx.fillStyle = p.type === 'O2' ? '#ff4444' : '#4488ff';
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = p.type === 'O2' ? '#ffaaaa' : '#aaccff';
+      ctx.font = '8px Orbitron, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.type, x, y + 3);
+      ctx.globalAlpha = 1;
+    });
+
+    t += 0.01;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── BREATHING PHASE TEXT ──────────
+let bPhase = true;
+setInterval(() => {
+  const el = document.getElementById('breathPhase');
+  if (el) {
+    bPhase = !bPhase;
+    el.textContent = bPhase ? 'INSPIRAÇÃO →' : '← EXPIRAÇÃO';
+  }
+}, 2000);
+</script>
+</body>
+</html>

@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>As Leis do Ar — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Nunito:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #050810;
+    --bg-panel: #0a0f1e;
+    --bg-card: #0d1428;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff00aa;
+    --neon-lime: #aaff00;
+    --neon-orange: #ff6600;
+    --neon-violet: #bf00ff;
+    --neon-gold: #ffcc00;
+    --neon-red: #ff2244;
+    --text-main: #e8f4ff;
+    --text-dim: #8899bb;
+    --border-glow: rgba(0,245,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ========== PARTÍCULAS DE FUNDO ========== */
+  #particle-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ========== HERO / ABERTURA ========== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    padding: 40px 20px;
+    background: radial-gradient(ellipse at center, #0a1535 0%, #050810 70%);
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,245,255,0.03) 40px, rgba(0,245,255,0.03) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,245,255,0.03) 40px, rgba(0,245,255,0.03) 41px);
+    animation: gridPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .episode-badge {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 8px;
+    color: var(--neon-pink);
+    text-shadow: 0 0 20px var(--neon-pink);
+    margin-bottom: 20px;
+    animation: fadeInDown 1s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.9;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    animation: fadeInUp 1s ease 0.3s both;
+    margin-bottom: 10px;
+  }
+
+  .hero-subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: var(--neon-lime);
+    letter-spacing: 6px;
+    text-shadow: 0 0 15px var(--neon-lime);
+    margin-bottom: 30px;
+    animation: fadeInUp 1s ease 0.5s both;
+  }
+
+  .hero-description {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--text-dim);
+    max-width: 600px;
+    line-height: 1.7;
+    animation: fadeInUp 1s ease 0.7s both;
+    margin-bottom: 40px;
+  }
+
+  .scroll-btn {
+    display: inline-block;
+    padding: 14px 40px;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 1s ease 0.9s both;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .scroll-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--neon-cyan);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+
+  .scroll-btn:hover::before { transform: translateX(0); }
+  .scroll-btn:hover { color: #000; }
+
+  /* Lungs SVG animation */
+  .lungs-svg {
+    width: 220px;
+    height: 220px;
+    margin-bottom: 30px;
+    animation: floatUpDown 3s ease-in-out infinite, fadeInUp 1s ease 0.2s both;
+  }
+
+  /* ========== NAV DE CAPÍTULOS ========== */
+  .chapter-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5,8,16,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-glow);
+    padding: 12px 20px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .chapter-nav::-webkit-scrollbar { display: none; }
+
+  .nav-pill {
+    padding: 6px 18px;
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border: 1px solid;
+    transition: all 0.3s;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  /* ========== SEÇÕES GERAIS ========== */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 80px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ========== PAINÉIS ESTILO MANGA ========== */
+  .manga-panel {
+    border: 3px solid;
+    position: relative;
+    margin: 40px 0;
+    overflow: hidden;
+    background: var(--bg-panel);
+  }
+
+  .manga-panel::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -1px;
+    left: 20px;
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    opacity: 0.07;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .panel-inner {
+    padding: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ========== TÍTULOS DE SEÇÃO ========== */
+  .section-tag {
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+
+  .section-intro {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+  }
+
+  /* ========== SPEECH BUBBLES ========== */
+  .speech-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .speech-container.reverse { flex-direction: row-reverse; }
+
+  .character-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    border: 3px solid;
+    position: relative;
+    animation: avatarPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes avatarPulse {
+    0%, 100% { box-shadow: 0 0 10px currentColor; }
+    50% { box-shadow: 0 0 25px currentColor, 0 0 50px currentColor; }
+  }
+
+  .speech-bubble {
+    flex: 1;
+    padding: 20px 24px;
+    border-radius: 16px;
+    position: relative;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    width: 0; height: 0;
+  }
+
+  .speech-container:not(.reverse) .speech-bubble::before {
+    left: -12px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 12px solid;
+  }
+
+  .speech-container.reverse .speech-bubble::before {
+    right: -12px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 12px solid;
+  }
+
+  /* ========== CAIXAS DE DESTAQUE ========== */
+  .law-box {
+    border-left: 5px solid;
+    padding: 24px 28px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .law-box::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.02) 100%);
+  }
+
+  .law-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .law-formula {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin: 12px 0;
+    letter-spacing: 2px;
+  }
+
+  .law-text {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+
+  /* ========== ANIMAÇÕES DE MOLÉCULAS ========== */
+  .molecule-stage {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+
+  .molecule {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+  }
+
+  /* ========== GRID COMPARATIVO ========== */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .compare-card {
+    padding: 28px;
+    border: 1px solid;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  .compare-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .compare-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: currentColor;
+  }
+
+  /* ========== TIMELINE ========== */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin: 30px 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-violet), var(--neon-pink));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding: 20px 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.3s;
+  }
+
+  .timeline-item:hover {
+    background: rgba(255,255,255,0.05);
+    transform: translateX(4px);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -34px;
+    top: 24px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    background: var(--bg-deep);
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  .timeline-year {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .timeline-content {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  /* ========== SIMULADOR INTERATIVO ========== */
+  .simulator {
+    background: var(--bg-card);
+    border: 2px solid var(--neon-cyan);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px 0;
+    box-shadow: 0 0 30px rgba(0,245,255,0.1);
+  }
+
+  .sim-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--neon-cyan);
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .sim-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .sim-control label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .sim-control input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.1);
+    outline: none;
+  }
+
+  .sim-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  .sim-display {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .sim-value {
+    text-align: center;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+  }
+
+  .sim-value .val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    display: block;
+  }
+
+  .sim-value .unit {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  /* ========== CANVAS DE MOLÉCULAS ========== */
+  canvas.mol-canvas {
+    width: 100%;
+    height: 180px;
+    border-radius: 8px;
+    display: block;
+  }
+
+  /* ========== ALERTA CLÍNICO ========== */
+  .clinical-alert {
+    border: 2px solid var(--neon-red);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin: 24px 0;
+    position: relative;
+    background: rgba(255,34,68,0.05);
+  }
+
+  .clinical-alert::before {
+    content: '⚠ CLÍNICA';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--neon-red);
+    color: #000;
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    padding: 2px 12px;
+  }
+
+  /* ========== QUIZ ========== */
+  .quiz-box {
+    border: 2px solid var(--neon-gold);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 40px 0;
+    background: rgba(255,204,0,0.03);
+  }
+
+  .quiz-question {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    color: var(--text-main);
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 14px 20px;
+    border: 1px solid rgba(255,204,0,0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    background: transparent;
+    color: var(--text-main);
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .quiz-option:hover {
+    background: rgba(255,204,0,0.1);
+    border-color: var(--neon-gold);
+  }
+
+  .quiz-option.correct {
+    background: rgba(170,255,0,0.15);
+    border-color: var(--neon-lime);
+    color: var(--neon-lime);
+  }
+
+  .quiz-option.wrong {
+    background: rgba(255,34,68,0.15);
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+  }
+
+  .quiz-feedback {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    display: none;
+    line-height: 1.6;
+  }
+
+  /* ========== SEPARADOR ========== */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 60px 0;
+  }
+
+  .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+  .divider-icon {
+    font-size: 1.5rem;
+    opacity: 0.5;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ========== FOOTER ========== */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-top: 1px solid rgba(0,245,255,0.2);
+    background: var(--bg-panel);
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-violet));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+
+  .footer-info {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+
+  /* ========== ANIMAÇÕES GLOBAIS ========== */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes floatUpDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ========== SCROLLBAR ========== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
+  /* ========== PROGRESS BAR ========== */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--neon-cyan), var(--neon-pink));
+    z-index: 9999;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* ========== HIGHLIGHT TEXT ========== */
+  .hl-cyan { color: var(--neon-cyan); font-weight: 700; }
+  .hl-pink { color: var(--neon-pink); font-weight: 700; }
+  .hl-lime { color: var(--neon-lime); font-weight: 700; }
+  .hl-orange { color: var(--neon-orange); font-weight: 700; }
+  .hl-violet { color: var(--neon-violet); font-weight: 700; }
+  .hl-gold { color: var(--neon-gold); font-weight: 700; }
+
+  /* ========== ETYM BOX ========== */
+  .etym-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border: 1px solid var(--neon-gold);
+    border-radius: 30px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    color: var(--neon-gold);
+    margin: 8px 4px;
+  }
+
+  .etym-box span { opacity: 0.7; }
+
+  /* ========== INFO GRID ========== */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .info-tile {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .info-tile:hover {
+    transform: scale(1.03);
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .info-tile .icon { font-size: 2rem; display: block; margin-bottom: 10px; }
+  .info-tile .label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .info-tile .value {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+  }
+
+  /* ========== ACCORDION ========== */
+  .accordion-item {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin: 8px 0;
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+  }
+
+  .accordion-header:hover { background: rgba(255,255,255,0.05); }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+
+  .accordion-body.open { max-height: 600px; }
+  .accordion-body-inner { padding: 16px 20px 20px; }
+
+  .accordion-arrow { transition: transform 0.3s; }
+  .accordion-arrow.open { transform: rotate(180deg); }
+
+</style>
+</head>
+<body>
+
+<!-- BARRA DE PROGRESSO -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- CANVAS DE PARTÍCULAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero" id="home">
+  <!-- PULMÃO SVG ANIMADO -->
+  <svg class="lungs-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+        <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <!-- Traqueia -->
+    <rect x="93" y="20" width="14" height="50" rx="7" fill="#00f5ff" filter="url(#glow)" opacity="0.9">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+    </rect>
+    <!-- Brônquio esq -->
+    <path d="M93 65 Q70 70 55 80" stroke="#bf00ff" stroke-width="8" stroke-linecap="round" fill="none" filter="url(#glow)">
+      <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <!-- Brônquio dir -->
+    <path d="M107 65 Q130 70 145 80" stroke="#bf00ff" stroke-width="8" stroke-linecap="round" fill="none" filter="url(#glow)">
+      <animate attributeName="stroke-opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <!-- Pulmão esq -->
+    <ellipse cx="60" cy="130" rx="42" ry="52" fill="rgba(191,0,255,0.15)" stroke="#bf00ff" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="ry" values="52;58;52" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="130;128;130" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- Pulmão dir -->
+    <ellipse cx="140" cy="130" rx="42" ry="52" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="2" filter="url(#glow)">
+      <animate attributeName="ry" values="52;58;52" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="cy" values="130;128;130" dur="2s" repeatCount="indefinite"/>
+    </ellipse>
+    <!-- Alvéolos -->
+    <circle cx="48" cy="125" r="10" fill="rgba(255,0,170,0.2)" stroke="#ff00aa" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="10;12;10" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="70" cy="145" r="8" fill="rgba(255,0,170,0.2)" stroke="#ff00aa" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="8;10;8" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="52" cy="148" r="7" fill="rgba(255,0,170,0.2)" stroke="#ff00aa" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="7;9;7" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="128" cy="125" r="10" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="10;12;10" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="145" r="8" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="8;10;8" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="135" cy="148" r="7" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1.5" filter="url(#glow)">
+      <animate attributeName="r" values="7;9;7" dur="1.8s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Moléculas de O2 -->
+    <text x="45" y="127" font-size="7" fill="#00f5ff" font-family="monospace" text-anchor="middle">O₂</text>
+    <text x="128" y="127" font-size="7" fill="#00f5ff" font-family="monospace" text-anchor="middle">O₂</text>
+    <text x="70" y="147" font-size="6" fill="#ff00aa" font-family="monospace" text-anchor="middle">CO₂</text>
+  </svg>
+
+  <div class="episode-badge">✦ DEMILMED-UL PRESENTS ✦</div>
+
+  <h1 class="hero-title">AS LEIS<br>DO AR</h1>
+  <p class="hero-subtitle">FISIOLOGIA RESPIRATÓRIA · LEIS DOS GASES</p>
+  <p class="hero-description">
+    Uma jornada épica pelo mundo invisível das moléculas — onde as leis da física governam cada respiração que você dá. Descubra Dalton, Henry, Boyle e os outros guardiões do seu sistema respiratório.
+  </p>
+  <a href="#intro" class="scroll-btn">▼ INICIAR JORNADA</a>
+</section>
+
+<!-- ==================== NAVEGAÇÃO ==================== -->
+<nav class="chapter-nav">
+  <a href="#intro" class="nav-pill" style="border-color:var(--neon-cyan);color:var(--neon-cyan)">PRÓLOGO</a>
+  <a href="#dalton" class="nav-pill" style="border-color:var(--neon-pink);color:var(--neon-pink)">DALTON</a>
+  <a href="#boyle" class="nav-pill" style="border-color:var(--neon-lime);color:var(--neon-lime)">BOYLE</a>
+  <a href="#henry" class="nav-pill" style="border-color:var(--neon-orange);color:var(--neon-orange)">HENRY</a>
+  <a href="#fick" class="nav-pill" style="border-color:var(--neon-violet);color:var(--neon-violet)">FICK</a>
+  <a href="#charles" class="nav-pill" style="border-color:var(--neon-gold);color:var(--neon-gold)">CHARLES</a>
+  <a href="#clinica" class="nav-pill" style="border-color:var(--neon-red);color:var(--neon-red)">CLÍNICA</a>
+  <a href="#quiz" class="nav-pill" style="border-color:var(--neon-cyan);color:var(--neon-cyan)">QUIZ</a>
+</nav>
+
+<!-- ==================== PRÓLOGO ==================== -->
+<section class="section" id="intro">
+  <div class="manga-panel" data-num="01" style="border-color:var(--neon-cyan);box-shadow:0 0 30px rgba(0,245,255,0.1)" >
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-cyan)">✦ PRÓLOGO · O MUNDO INVISÍVEL</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-cyan),var(--neon-violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        VOCÊ JÁ RESPIROU<br>HOJE?
+      </h2>
+
+      <p class="section-intro">
+        Obviamente que sim. Mas você <em>sabia</em> o que estava acontecendo? A cada inspiração, bilhões de moléculas de ar travam uma batalha regida por leis físicas descobertas há séculos. Essas leis não são "teoria abstrata" — são o motivo pelo qual você ainda está vivo agora, lendo isto.
+      </p>
+
+      <!-- SPEECH BUBBLE — personagem Médico estudante -->
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-cyan);color:var(--neon-cyan)">🧑‍⚕️</div>
+        <div class="speech-bubble" style="background:rgba(0,245,255,0.05);border:1px solid rgba(0,245,255,0.3);border-radius:0 16px 16px 16px">
+          <div class="speech-bubble::before" style="border-right-color:rgba(0,245,255,0.3)"></div>
+          <strong style="color:var(--neon-cyan)">O Estudante:</strong><br>
+          "Mas professor, por que eu preciso aprender lei de gases? Isso não é coisa de química?"
+        </div>
+      </div>
+
+      <div class="speech-container reverse reveal">
+        <div class="character-avatar" style="border-color:var(--neon-violet);color:var(--neon-violet)">🫁</div>
+        <div class="speech-bubble" style="background:rgba(191,0,255,0.05);border:1px solid rgba(191,0,255,0.3);border-radius:16px 0 16px 16px">
+          <strong style="color:var(--neon-violet)">O Pulmão (seu):</strong><br>
+          "Eu sou a prova de que não é — cada vez que você expande a caixa torácica, a Lei de Boyle decide se o ar entra ou não. Cada gás que te oxigena segue a Lei de Dalton. Cada molécula que atravessa minha membrana obedece a Fick. Sou física viva!"
+        </div>
+      </div>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-icon">⚛</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <h3 style="font-family:'Bangers',cursive;font-size:1.8rem;color:var(--neon-gold);margin-bottom:16px;letter-spacing:2px">O AR QUE RESPIRAMOS — COMPOSIÇÃO REAL</h3>
+
+      <p class="section-intro">Antes de qualquer lei, precisamos saber <em>com o quê</em> estamos lidando. O ar atmosférico não é puro — é uma <span class="hl-cyan">mistura de gases</span>, cada um exercendo sua própria pressão:</p>
+
+      <div class="info-grid">
+        <div class="info-tile reveal" style="background:rgba(0,245,255,0.05);border-color:rgba(0,245,255,0.3)">
+          <span class="icon">💨</span>
+          <div class="label">NITROGÊNIO (N₂)</div>
+          <div class="value" style="color:var(--neon-cyan)">78,09%</div>
+          <div style="font-family:'Rajdhani';font-size:0.8rem;color:var(--text-dim);margin-top:6px">Biologicamente inerte<br>P = 593 mmHg</div>
+        </div>
+        <div class="info-tile reveal" style="background:rgba(170,255,0,0.05);border-color:rgba(170,255,0,0.3)">
+          <span class="icon">🫧</span>
+          <div class="label">OXIGÊNIO (O₂)</div>
+          <div class="value" style="color:var(--neon-lime)">20,93%</div>
+          <div style="font-family:'Rajdhani';font-size:0.8rem;color:var(--text-dim);margin-top:6px">Essencial à vida<br>P = 159 mmHg</div>
+        </div>
+        <div class="info-tile reveal" style="background:rgba(255,102,0,0.05);border-color:rgba(255,102,0,0.3)">
+          <span class="icon">🌫</span>
+          <div class="label">CO₂ + OUTROS</div>
+          <div class="value" style="color:var(--neon-orange)">0,98%</div>
+          <div style="font-family:'Rajdhani';font-size:0.8rem;color:var(--text-dim);margin-top:6px">Dióxido de carbono<br>P = 0,3 mmHg</div>
+        </div>
+        <div class="info-tile reveal" style="background:rgba(191,0,255,0.05);border-color:rgba(191,0,255,0.3)">
+          <span class="icon">💧</span>
+          <div class="label">VAPOR D'ÁGUA</div>
+          <div class="value" style="color:var(--neon-violet)">variável</div>
+          <div style="font-family:'Rajdhani';font-size:0.8rem;color:var(--text-dim);margin-top:6px">Saturado nos alvéolos<br>P = 47 mmHg a 37°C</div>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        A pressão total do ar ao nível do mar = <strong style="color:var(--neon-red)">760 mmHg</strong> (1 atm). Esta é a "pressão barométrica" (P<sub>B</sub>). Em altitude, ela cai — e menos O₂ chega aos pulmões. É por isso que alpinistas no Everest precisam de oxigênio suplementar!
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEI DE DALTON ==================== -->
+<section class="section" id="dalton">
+  <div class="manga-panel" data-num="02" style="border-color:var(--neon-pink);box-shadow:0 0 30px rgba(255,0,170,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-pink)">✦ LEI Nº 01 · O SOBERANO DAS MISTURAS</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-pink),var(--neon-orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        LEI DE<br>DALTON
+      </h2>
+
+      <div class="timeline reveal">
+        <div class="timeline-item" style="border-color:rgba(255,0,170,0.3)">
+          <div class="timeline-year" style="color:var(--neon-pink)">1801 · MANCHESTER, ENGLAND</div>
+          <div class="timeline-content">
+            <strong style="color:var(--text-main)">John Dalton</strong> (1766–1844), um químico autodidata e daltoniano (sim, ele descobriu o daltonismo em si mesmo!), apresenta sua Lei das Pressões Parciais. Ele percebe que cada gás numa mistura age como se estivesse <em>sozinho</em>, e contribui com sua própria "fatia" de pressão.
+          </div>
+        </div>
+      </div>
+
+      <div class="etym-box reveal">
+        📖 <strong>Pressão Parcial</strong> <span>do lat. <em>partialis</em> = relativo a uma parte</span> — a pressão que um gás individual exerce dentro de uma mistura.
+      </div>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-pink);color:var(--neon-pink);font-size:1.8rem">🧪</div>
+        <div class="speech-bubble" style="background:rgba(255,0,170,0.05);border:1px solid rgba(255,0,170,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-pink)">John Dalton:</strong><br>
+          "Imagina uma festa. Há 100 pessoas numa sala. 78 são do grupo A, 21 do grupo B, 1 do grupo C. Cada grupo faz barulho proporcionalmente ao seu tamanho, sem se importar com os outros. O <em>barulho total</em> é a soma dos barulhos individuais. Os gases fazem exatamente isso!"
+        </div>
+      </div>
+
+      <div class="law-box" style="border-color:var(--neon-pink);background:rgba(255,0,170,0.05)">
+        <div class="law-title" style="color:var(--neon-pink)">🔴 LEI DE DALTON — PRESSÕES PARCIAIS</div>
+        <div class="law-formula" style="background:rgba(255,0,170,0.1);color:var(--neon-pink);border:1px solid rgba(255,0,170,0.4)">
+          P<sub>total</sub> = P<sub>1</sub> + P<sub>2</sub> + P<sub>3</sub> + ... + P<sub>n</sub>
+        </div>
+        <p class="law-text">
+          A <span class="hl-pink">pressão total</span> de uma mistura de gases é a <strong>soma das pressões parciais</strong> de cada gás componente. A pressão parcial de cada gás é calculada como:
+        </p>
+        <div class="law-formula" style="background:rgba(255,0,170,0.1);color:var(--neon-pink);border:1px solid rgba(255,0,170,0.4);margin-top:10px">
+          P<sub>x</sub> = Fração<sub>x</sub> × P<sub>total</sub>
+        </div>
+        <p class="law-text" style="margin-top:12px">
+          <strong>Exemplo prático:</strong> O₂ é 20,93% do ar. Ao nível do mar (760 mmHg):<br>
+          <span class="hl-pink">P(O₂) = 0,2093 × 760 = 159 mmHg</span> — essa é a pressão parcial de O₂ no ar atmosférico seco (P<sub>IO₂</sub>).
+        </p>
+      </div>
+
+      <!-- CANVAS ANIMADO DALTON -->
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.7rem;letter-spacing:3px;color:var(--neon-pink);margin-bottom:8px;text-align:center">
+        ▶ VISUALIZAÇÃO · MOLÉCULAS EM MOVIMENTO
+      </p>
+      <canvas class="mol-canvas" id="daltonCanvas" style="border:1px solid rgba(255,0,170,0.3);background:rgba(255,0,170,0.03)"></canvas>
+      <p style="font-family:'Rajdhani';font-size:0.8rem;color:var(--text-dim);text-align:center;margin-top:6px">
+        🟣 N₂ &nbsp;|&nbsp; 🟢 O₂ &nbsp;|&nbsp; 🔴 CO₂ — cada grupo age independentemente
+      </p>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-icon">🌬</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <h3 style="font-family:'Bangers',cursive;font-size:1.8rem;color:var(--neon-pink);margin-bottom:16px;letter-spacing:2px">DALTON NO TRAJETO DO OXIGÊNIO</h3>
+
+      <p class="section-intro">
+        O O₂ percorre uma "<span class="hl-pink">cascata de pressões</span>" desde o ar atmosférico até a mitocôndria. A cada etapa, a pressão parcial cai — e esta queda é o motor que move o O₂!
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card reveal" style="border-color:rgba(255,0,170,0.4);color:var(--neon-pink)">
+          <strong>Ar Atmosférico</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.6rem">159 mmHg</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">P(O₂) no ar seco ao nível do mar</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(255,102,0,0.4);color:var(--neon-orange)">
+          <strong>Ar Alveolar</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.6rem">104 mmHg</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Cai pois vapor d'água (47 mmHg) e CO₂ diluem o O₂</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(191,0,255,0.4);color:var(--neon-violet)">
+          <strong>Sangue Arterial</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.6rem">95–100 mmHg</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Após troca alvéolo-capilar (PaO₂ normal)</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(0,245,255,0.4);color:var(--neon-cyan)">
+          <strong>Mitocôndria</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.6rem">&lt; 5 mmHg</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">O destino final — onde o O₂ é consumido</p>
+        </div>
+      </div>
+
+      <div class="speech-container reverse reveal">
+        <div class="character-avatar" style="border-color:var(--neon-lime);color:var(--neon-lime)">⚡</div>
+        <div class="speech-bubble" style="background:rgba(170,255,0,0.05);border:1px solid rgba(170,255,0,0.3);border-radius:16px 0 16px 16px">
+          <strong style="color:var(--neon-lime)">Dalton explica:</strong><br>
+          "O O₂ não precisa de bomba ou motor para entrar no sangue. Ele simplesmente <em>escorrega</em> de onde a pressão é alta (alvéolo: 104 mmHg) para onde é baixa (capilares venosos: ~40 mmHg). É física pura — o gradiente de pressão é o motor da respiração!"
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <strong>Por que o ar alveolar tem MENOS O₂ que o ar atmosférico?</strong><br>
+        Dois motivos: (1) O vapor d'água nos pulmões aquecidos satura o ar — ocupa espaço — exercendo 47 mmHg. (2) O CO₂ produzido pelo metabolismo "entra" no alvéolo e displaca o O₂. A fórmula do <span class="hl-red">Gás Alveolar</span> é:<br><br>
+        <span style="font-family:'Orbitron';color:var(--neon-red)">PAO₂ = (PB − 47) × FIO₂ − PACO₂/R</span><br><br>
+        Onde PB = pressão barométrica, FIO₂ = fração inspirada de O₂, R = quociente respiratório (~0,8).
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEI DE BOYLE ==================== -->
+<section class="section" id="boyle">
+  <div class="manga-panel" data-num="03" style="border-color:var(--neon-lime);box-shadow:0 0 30px rgba(170,255,0,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-lime)">✦ LEI Nº 02 · O GUARDIÃO DA RESPIRAÇÃO</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-lime),var(--neon-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        LEI DE<br>BOYLE
+      </h2>
+
+      <div class="timeline reveal">
+        <div class="timeline-item" style="border-color:rgba(170,255,0,0.3)">
+          <div class="timeline-year" style="color:var(--neon-lime)">1662 · OXFORD, ENGLAND</div>
+          <div class="timeline-content">
+            <strong style="color:var(--text-main)">Robert Boyle</strong> (1627–1691) demonstra com uma bomba de ar caseira: comprima um gás e sua pressão aumenta; expanda-o e a pressão cai. A temperatura deve permanecer constante — por isso é chamada de transformação <em>isotérmica</em> (do grego: <em>iso</em> = igual, <em>therme</em> = calor).
+          </div>
+        </div>
+      </div>
+
+      <div class="law-box" style="border-color:var(--neon-lime);background:rgba(170,255,0,0.03)">
+        <div class="law-title" style="color:var(--neon-lime)">🟢 LEI DE BOYLE · PRESSÃO-VOLUME</div>
+        <div class="law-formula" style="background:rgba(170,255,0,0.1);color:var(--neon-lime);border:1px solid rgba(170,255,0,0.4)">
+          P × V = constante &nbsp;|&nbsp; P₁V₁ = P₂V₂
+        </div>
+        <p class="law-text">
+          A temperatura constante, a <span class="hl-lime">pressão</span> e o <span class="hl-lime">volume</span> de um gás são <strong>inversamente proporcionais</strong>. Se o volume dobra, a pressão cai à metade. Se o volume cai à metade, a pressão dobra.
+        </p>
+      </div>
+
+      <!-- SIMULADOR BOYLE -->
+      <div class="simulator reveal">
+        <div class="sim-title">⚡ SIMULADOR INTERATIVO · LEI DE BOYLE</div>
+        <canvas id="boyleCanvas" style="width:100%;height:200px;border-radius:8px;display:block;border:1px solid rgba(170,255,0,0.2);background:#050810"></canvas>
+        <div style="margin-top:16px" class="sim-controls">
+          <div class="sim-control">
+            <label>VOLUME DO RECIPIENTE: <span id="volumeVal" style="color:var(--neon-lime)">100</span> unidades</label>
+            <input type="range" id="volumeSlider" min="30" max="200" value="100" oninput="updateBoyle(this.value)" style="accent-color:var(--neon-lime)">
+          </div>
+        </div>
+        <div class="sim-display">
+          <div class="sim-value" style="border-color:rgba(170,255,0,0.3)">
+            <span class="val" id="pressureOut" style="color:var(--neon-lime)">760</span>
+            <span class="unit">mmHg · PRESSÃO</span>
+          </div>
+          <div class="sim-value" style="border-color:rgba(0,245,255,0.3)">
+            <span class="val" id="volumeOut" style="color:var(--neon-cyan)">100</span>
+            <span class="unit">unid · VOLUME</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-lime);color:var(--neon-lime)">🫁</div>
+        <div class="speech-bubble" style="background:rgba(170,255,0,0.05);border:1px solid rgba(170,255,0,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-lime)">O Pulmão explica:</strong><br>
+          "Quando o diafragma desce e os músculos intercostais se contraem, a caixa torácica expande. Meu volume aumenta. Pela Lei de Boyle, a pressão interna (intrapulmonar) cai <em>abaixo</em> da atmosférica — e o ar entra correndo para equalizar! Eu não 'aspiro' o ar — a pressão atmosférica o <em>empurra</em> para dentro de mim!"
+        </div>
+      </div>
+
+      <h3 style="font-family:'Bangers',cursive;font-size:1.8rem;color:var(--neon-lime);margin-bottom:16px;letter-spacing:2px;margin-top:30px">BOYLE E O CICLO RESPIRATÓRIO</h3>
+
+      <div class="accordion-item reveal">
+        <div class="accordion-header" onclick="toggleAccordion(this)" style="color:var(--neon-lime)">
+          INSPIRAÇÃO — como o ar entra? <span class="accordion-arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <strong style="color:var(--text-main)">1. Contração do diafragma</strong> → desce 1–1,5 cm (até 10 cm na inspiração forçada).<br><br>
+            <strong style="color:var(--text-main)">2. Aumento do volume torácico</strong> → volumes pulmonares aumentam cerca de 500 mL (volume corrente normal).<br><br>
+            <strong style="color:var(--text-main)">3. Lei de Boyle entra em ação:</strong> ↑ Volume → ↓ Pressão intrapulmonar de 760 → ~758 mmHg (apenas -2 mmHg é suficiente!)<br><br>
+            <strong style="color:var(--text-main)">4. Gradiente de pressão:</strong> Atmosférica (760) > Intrapulmonar (758) → ar entra até equalizar.<br><br>
+            <span style="color:var(--neon-lime)">Processo passivo? Não exatamente — a contração muscular é ativa!</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item reveal">
+        <div class="accordion-header" onclick="toggleAccordion(this)" style="color:var(--neon-cyan)">
+          EXPIRAÇÃO — como o ar sai? <span class="accordion-arrow">▼</span>
+        </div>
+        <div class="accordion-body">
+          <div class="accordion-body-inner">
+            <strong style="color:var(--text-main)">1. Relaxamento do diafragma</strong> → retorna ao cúpula por elasticidade.<br><br>
+            <strong style="color:var(--text-main)">2. Redução do volume torácico</strong> → volume pulmonar diminui.<br><br>
+            <strong style="color:var(--text-main)">3. Lei de Boyle:</strong> ↓ Volume → ↑ Pressão intrapulmonar (~762 mmHg)<br><br>
+            <strong style="color:var(--text-main)">4. Gradiente invertido:</strong> Intrapulmonar (762) > Atmosférica (760) → ar sai!<br><br>
+            <span style="color:var(--neon-cyan)">A expiração normal é PASSIVA — apenas recuo elástico. A expiração forçada (tosse, exercício) usa músculos abdominais.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <strong>Pneumotórax — quando Boyle vira vilão:</strong><br>
+        Quando o espaço pleural é violado (trauma, ruptura de bolha), o ar entra na pleura. O gradiente de pressão que normalmente mantém o pulmão expandido é destruído. O pulmão colapsa (atelectasia). Um pneumotórax hipertensivo pode desviar o mediastino e comprimir o coração — emergência absoluta! Tratamento: drenagem imediata para restaurar a diferença de pressão.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEI DE HENRY ==================== -->
+<section class="section" id="henry">
+  <div class="manga-panel" data-num="04" style="border-color:var(--neon-orange);box-shadow:0 0 30px rgba(255,102,0,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-orange)">✦ LEI Nº 03 · A SOLUBILIDADE DOS INVISÍVEIS</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-orange),var(--neon-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        LEI DE<br>HENRY
+      </h2>
+
+      <div class="timeline reveal">
+        <div class="timeline-item" style="border-color:rgba(255,102,0,0.3)">
+          <div class="timeline-year" style="color:var(--neon-orange)">1803 · MANCHESTER, ENGLAND</div>
+          <div class="timeline-content">
+            <strong style="color:var(--text-main)">William Henry</strong> (1774–1836) descobre que a quantidade de gás que se dissolve em um líquido é proporcional à pressão desse gás. Experimento clássico: abra uma garrafa de refrigerante — você acabou de reduzir a pressão de CO₂ e ele sai da solução como bolhas!
+          </div>
+        </div>
+      </div>
+
+      <div class="law-box" style="border-color:var(--neon-orange);background:rgba(255,102,0,0.03)">
+        <div class="law-title" style="color:var(--neon-orange)">🟠 LEI DE HENRY · GÁS + LÍQUIDO</div>
+        <div class="law-formula" style="background:rgba(255,102,0,0.1);color:var(--neon-orange);border:1px solid rgba(255,102,0,0.4)">
+          C = α × P<sub>gás</sub>
+        </div>
+        <p class="law-text">
+          Onde <span class="hl-orange">C</span> = concentração do gás dissolvido, <span class="hl-orange">α</span> = coeficiente de solubilidade (específico de cada gás), <span class="hl-orange">P</span> = pressão parcial do gás. 
+          <br><br>
+          Quanto maior a pressão, mais gás se dissolve. Quanto mais solúvel o gás, mais se dissolve na mesma pressão.
+        </p>
+      </div>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-orange);color:var(--neon-orange)">🥤</div>
+        <div class="speech-bubble" style="background:rgba(255,102,0,0.05);border:1px solid rgba(255,102,0,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-orange)">Henry explica com refrigerante:</strong><br>
+          "Numa garrafa de Coca-Cola, o CO₂ está sob alta pressão — por isso está dissolvido no líquido. Quando você abre: pressão cai → CO₂ sai → bolhas! Agora imagine isso no plasma sanguíneo: aumenta a pressão de O₂ → mais O₂ se dissolve. É assim que funciona a oxigenoterapia hiperbárica!"
+        </div>
+      </div>
+
+      <h3 style="font-family:'Bangers',cursive;font-size:1.8rem;color:var(--neon-orange);margin-bottom:16px;letter-spacing:2px;margin-top:30px">O COEFICIENTE DE SOLUBILIDADE — O HERÓI DO CO₂</h3>
+
+      <p class="section-intro">
+        Nem todo gás é igualmente solúvel. E aqui mora um <span class="hl-orange">fato surpreendente</span> da fisiologia:
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card reveal" style="border-color:rgba(170,255,0,0.4);color:var(--neon-lime)">
+          <strong>O₂ — Oxigênio</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.4rem">α = 0,003</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Muito pouco solúvel no plasma. Por isso 98% viaja ligado à hemoglobina!</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(255,102,0,0.4);color:var(--neon-orange)">
+          <strong>CO₂ — Dióxido de Carbono</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.4rem">α = 0,072</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">24× mais solúvel que O₂! Isso explica por que CO₂ difunde muito mais facilmente.</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(191,0,255,0.4);color:var(--neon-violet)">
+          <strong>N₂ — Nitrogênio</strong><br>
+          <span style="font-family:'Orbitron',sans-serif;font-size:1.4rem">α = 0,013</span>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Moderadamente solúvel — relevante na doença descompressiva (mergulho).</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <strong>🤿 Doença Descompressiva (Mal de Mergulhador):</strong><br>
+        Na profundidade, a pressão alta dissolve grandes quantidades de N₂ no sangue (Lei de Henry). Se o mergulhador sobe <em>rapidamente</em>, a pressão cai abruptamente — o N₂ forma bolhas no sangue, bloqueando capilares e causando dor intensa, embolia, isquemia. Exatamente como uma garrafa de refrigerante aberta de repente. Tratamento: câmara hiperbárica (↑ pressão → ↑ dissolução das bolhas → descompressão lenta).
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color:var(--neon-violet);background:rgba(191,0,255,0.05)">
+        <strong style="color:var(--neon-violet)">💉 Oxigenoterapia Hiperbárica (OHB):</strong><br>
+        Usando Henry ao contrário: numa câmara hiperbárica, a pressão pode ser 2–3 atm. Com FiO₂ de 100% → P(O₂) altíssima → muito mais O₂ se dissolve <em>fisicamente</em> no plasma (sem precisar de hemoglobina). Usos clínicos: intoxicação por monóxido de carbono (CO), gangrena gasosa, feridas difíceis.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEI DE FICK ==================== -->
+<section class="section" id="fick">
+  <div class="manga-panel" data-num="05" style="border-color:var(--neon-violet);box-shadow:0 0 30px rgba(191,0,255,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-violet)">✦ LEI Nº 04 · O MOTOR DA DIFUSÃO</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-violet),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        LEI DE<br>FICK
+      </h2>
+
+      <div class="timeline reveal">
+        <div class="timeline-item" style="border-color:rgba(191,0,255,0.3)">
+          <div class="timeline-year" style="color:var(--neon-violet)">1855 · ZÜRICH, SWITZERLAND</div>
+          <div class="timeline-content">
+            <strong style="color:var(--text-main)">Adolf Eugen Fick</strong> (1829–1901), fisiologista alemão, publica sua lei da difusão — a equação que governa como substâncias se movem de um lado para o outro de uma membrana. Aplicada à fisiologia respiratória, ela descreve a troca gasosa alvéolo-capilar com precisão cirúrgica.
+          </div>
+        </div>
+      </div>
+
+      <div class="law-box" style="border-color:var(--neon-violet);background:rgba(191,0,255,0.03)">
+        <div class="law-title" style="color:var(--neon-violet)">🟣 LEI DE FICK · DIFUSÃO ATRAVÉS DE MEMBRANA</div>
+        <div class="law-formula" style="background:rgba(191,0,255,0.1);color:var(--neon-violet);border:1px solid rgba(191,0,255,0.4);font-size:0.9rem">
+          V̇<sub>gás</sub> = D × A × (P₁ − P₂) / d
+        </div>
+        <p class="law-text" style="margin-top:14px">
+          Onde: <br>
+          <span class="hl-violet">V̇gás</span> = volume de gás que difunde por tempo<br>
+          <span class="hl-violet">D</span> = coeficiente de difusão (proporcional à solubilidade, inversamente proporcional à √massa molecular)<br>
+          <span class="hl-violet">A</span> = área da membrana<br>
+          <span class="hl-violet">(P₁ − P₂)</span> = gradiente de pressão parcial<br>
+          <span class="hl-violet">d</span> = espessura da membrana
+        </p>
+      </div>
+
+      <h3 style="font-family:'Bangers',cursive;font-size:1.6rem;color:var(--neon-violet);margin:24px 0 16px;letter-spacing:2px">A MEMBRANA ALVÉOLO-CAPILAR — OBRA-PRIMA DA EVOLUÇÃO</h3>
+
+      <div class="compare-grid">
+        <div class="compare-card reveal" style="border-color:rgba(191,0,255,0.4)">
+          <span class="icon" style="font-size:2rem;display:block;margin-bottom:8px">📐</span>
+          <div class="law-title" style="color:var(--neon-violet);font-size:1rem">ÁREA (A)</div>
+          <span style="font-family:'Orbitron';font-size:1.5rem;color:var(--neon-violet)">70–100 m²</span>
+          <p style="font-family:'Nunito';font-size:0.85rem;color:var(--text-dim);margin-top:8px">Equivalente a um campo de tênis! Gerada por ~300 milhões de alvéolos. ↑ Área = ↑ Difusão.</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(0,245,255,0.4)">
+          <span class="icon" style="font-size:2rem;display:block;margin-bottom:8px">🔬</span>
+          <div class="law-title" style="color:var(--neon-cyan);font-size:1rem">ESPESSURA (d)</div>
+          <span style="font-family:'Orbitron';font-size:1.5rem;color:var(--neon-cyan)">0,5 μm</span>
+          <p style="font-family:'Nunito';font-size:0.85rem;color:var(--text-dim);margin-top:8px">Extremamente fina: epitélio alveolar + membrana basal + endotélio capilar. ↓ d = ↑ Difusão.</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(255,0,170,0.4)">
+          <span class="icon" style="font-size:2rem;display:block;margin-bottom:8px">⚡</span>
+          <div class="law-title" style="color:var(--neon-pink);font-size:1rem">GRADIENTE (ΔP)</div>
+          <span style="font-family:'Orbitron';font-size:1.5rem;color:var(--neon-pink)">64 mmHg</span>
+          <p style="font-family:'Nunito';font-size:0.85rem;color:var(--text-dim);margin-top:8px">O₂: alvéolo (104) − capilar venoso (40) = 64 mmHg. Grande gradiente = ↑ Difusão.</p>
+        </div>
+      </div>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-violet);color:var(--neon-violet)">🔬</div>
+        <div class="speech-bubble" style="background:rgba(191,0,255,0.05);border:1px solid rgba(191,0,255,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-violet)">Fick explica o paradoxo do CO₂:</strong><br>
+          "O gradiente de pressão do CO₂ é menor: do capilar (46 mmHg) para o alvéolo (40 mmHg) = apenas 6 mmHg! Mas o CO₂ é 24 vezes mais solúvel que o O₂ — o seu coeficiente D é muito maior. No total, o CO₂ difunde 20 vezes mais rápido que o O₂ pela membrana!"
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <strong>Distúrbios de Difusão — quando Fick falha:</strong><br>
+        • <strong>↑ Espessura (d):</strong> Fibrose pulmonar, edema pulmonar, pneumonia. A membrana engrossa → difusão cai → hipoxemia.<br>
+        • <strong>↓ Área (A):</strong> Enfisema (destruição de alvéolos), ressecção pulmonar. Menos área → menos troca.<br>
+        • <strong>↓ Gradiente:</strong> Altitude alta, hipoventilação. P(O₂) alveolar cai → gradiente reduz → O₂ não difunde bem.<br>
+        <em>Sinal: em distúrbios de difusão, a hipoxemia piora com o exercício</em> (sangue passa mais rápido, tem menos tempo de contato com o alvéolo).
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LEI DE CHARLES E GAY-LUSSAC ==================== -->
+<section class="section" id="charles">
+  <div class="manga-panel" data-num="06" style="border-color:var(--neon-gold);box-shadow:0 0 30px rgba(255,204,0,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-gold)">✦ LEIS Nº 05 & 06 · TEMPERATURA E VOLUME</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-gold),var(--neon-orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        CHARLES &<br>GAY-LUSSAC
+      </h2>
+
+      <p class="section-intro">
+        Se Boyle governa a relação pressão-volume a temperatura constante, <span class="hl-gold">Jacques Charles</span> (1787) e <span class="hl-gold">Joseph Gay-Lussac</span> (1802) completam o quadro com a temperatura. Juntas, essas três leis formam a <strong>Lei dos Gases Ideais</strong>.
+      </p>
+
+      <div class="compare-grid">
+        <div class="compare-card reveal" style="border-color:rgba(255,204,0,0.4)">
+          <div class="law-title" style="color:var(--neon-gold)">Lei de Charles</div>
+          <div class="law-formula" style="background:rgba(255,204,0,0.1);color:var(--neon-gold);border:1px solid rgba(255,204,0,0.3);display:block;padding:10px;margin:10px 0;font-family:'Orbitron';font-size:0.9rem">V / T = cte &nbsp;|&nbsp; V₁/T₁ = V₂/T₂</div>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim)">A pressão constante: ↑ temperatura → ↑ volume. O gás "expande" quando aquece.</p>
+        </div>
+        <div class="compare-card reveal" style="border-color:rgba(255,102,0,0.4)">
+          <div class="law-title" style="color:var(--neon-orange)">Lei de Gay-Lussac</div>
+          <div class="law-formula" style="background:rgba(255,102,0,0.1);color:var(--neon-orange);border:1px solid rgba(255,102,0,0.3);display:block;padding:10px;margin:10px 0;font-family:'Orbitron';font-size:0.9rem">P / T = cte &nbsp;|&nbsp; P₁/T₁ = P₂/T₂</div>
+          <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim)">Volume constante: ↑ temperatura → ↑ pressão. Moléculas mais rápidas → mais colisões.</p>
+        </div>
+      </div>
+
+      <div class="law-box" style="border-color:var(--neon-gold);background:rgba(255,204,0,0.03);margin-top:20px">
+        <div class="law-title" style="color:var(--neon-gold)">⭐ LEI DOS GASES IDEAIS — A UNIFICAÇÃO</div>
+        <div class="law-formula" style="background:rgba(255,204,0,0.1);color:var(--neon-gold);border:1px solid rgba(255,204,0,0.4)">
+          PV = nRT
+        </div>
+        <p class="law-text">
+          Onde <span class="hl-gold">P</span> = pressão, <span class="hl-gold">V</span> = volume, <span class="hl-gold">n</span> = número de mols, <span class="hl-gold">R</span> = constante universal dos gases (8,314 J/mol·K), <span class="hl-gold">T</span> = temperatura em Kelvin (°C + 273,15).<br><br>
+          Esta equação unifica Boyle, Charles e Gay-Lussac num único modelo elegante.
+        </p>
+      </div>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-gold);color:var(--neon-gold)">🌡</div>
+        <div class="speech-bubble" style="background:rgba(255,204,0,0.05);border:1px solid rgba(255,204,0,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-gold)">Relevância clínica:</strong><br>
+          "O ar inspirado (temperatura ambiente, ~22°C) é aquecido para 37°C e humidificado até 100% de saturação nas vias aéreas superiores. Isso altera levemente o volume e a composição do gás — por isso os espirômetros corrigem os volumes para condições padronizadas: BTPS (Body Temperature, ambient Pressure, Saturated — Temperatura Corporal, Pressão Ambiente, Saturado) e STPD (Standard Temperature, Pressure, Dry — Temperatura e Pressão Padrão, Seco)."
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <strong>⚗ Lei de Graham (Difusão de Gases):</strong><br>
+        Complementar a Fick, a Lei de Graham diz que a velocidade de difusão de um gás é inversamente proporcional à raiz quadrada de sua massa molar.<br>
+        <span style="font-family:'Orbitron';color:var(--neon-red)">Taxa ∝ 1/√M</span><br><br>
+        O CO₂ (massa = 44 g/mol) difunde mais lentamente que o O₂ (32 g/mol) pela massa molecular, <em>mas</em> sua solubilidade muito maior compensa — e sobra! Resultado prático: CO₂ difunde ~20x mais rapidamente que O₂ na membrana alvéolo-capilar.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CLÍNICA INTEGRADA ==================== -->
+<section class="section" id="clinica">
+  <div class="manga-panel" data-num="07" style="border-color:var(--neon-red);box-shadow:0 0 30px rgba(255,34,68,0.1)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-red)">✦ CLÍNICA · TUDO JUNTO NO LEITO</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-red),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        O PACIENTE<br>QUE TESTA<br>TUDO
+      </h2>
+
+      <div class="speech-container reveal">
+        <div class="character-avatar" style="border-color:var(--neon-red);color:var(--neon-red)">🚨</div>
+        <div class="speech-bubble" style="background:rgba(255,34,68,0.05);border:1px solid rgba(255,34,68,0.3);border-radius:0 16px 16px 16px">
+          <strong style="color:var(--neon-red)">CASO CLÍNICO — UTI, 03:00:</strong><br>
+          Homem, 68 anos, ex-fumante de 40 maços/ano. Chega com dispneia grave, SpO₂ 82%, FR 30 irpm, expansibilidade reduzida bilateralmente. Raio-X: hiperinsuflação com diafragma achatado, bolhas apicais. Gasometria: pH 7,28, PaCO₂ 72, PaO₂ 45, HCO₃ 32.
+        </div>
+      </div>
+
+      <p class="section-intro" style="margin-top:24px">
+        Vamos desvendar este caso usando cada lei que aprendemos:
+      </p>
+
+      <div class="timeline reveal">
+        <div class="timeline-item" style="border-color:rgba(170,255,0,0.3)">
+          <div class="timeline-year" style="color:var(--neon-lime)">LEI DE BOYLE — HIPERINSUFLAÇÃO</div>
+          <div class="timeline-content">
+            O DPOC (Doença Pulmonar Obstrutiva Crônica) destrói os alvéolos (enfisema) e obstrui as vias aéreas. O ar fica preso: o volume aumenta (hiperinsuflação), o diafragma desce e achata. A mecânica de Boyle fica comprometida — o paciente precisa de mais trabalho muscular para criar o gradiente de pressão necessário para ventilar.
+          </div>
+        </div>
+        <div class="timeline-item" style="border-color:rgba(191,0,255,0.3)">
+          <div class="timeline-year" style="color:var(--neon-violet)">LEI DE FICK — DISTÚRBIO DE DIFUSÃO</div>
+          <div class="timeline-content">
+            A destruição alveolar reduz drasticamente a Área (A) disponível para troca gasosa. Menos alvéolos = menor superfície = difusão comprometida. PaO₂ de 45 mmHg confirma hipoxemia grave. A SpO₂ de 82% significa que apenas 82% da hemoglobina está saturada — insuficiente.
+          </div>
+        </div>
+        <div class="timeline-item" style="border-color:rgba(255,0,170,0.3)">
+          <div class="timeline-year" style="color:var(--neon-pink)">LEI DE DALTON — CASCATA COMPROMETIDA</div>
+          <div class="timeline-content">
+            PaCO₂ de 72 mmHg (normal: 35–45) indica retenção de CO₂. Com mais CO₂ no alvéolo (pela Lei de Dalton), o P(O₂) alveolar cai ainda mais — piorando o gradiente de difusão. Equação do gás alveolar explica o colapso da troca.
+          </div>
+        </div>
+        <div class="timeline-item" style="border-color:rgba(255,102,0,0.3)">
+          <div class="timeline-year" style="color:var(--neon-orange)">LEI DE HENRY — TRANSPORTE COMPROMETIDO</div>
+          <div class="timeline-content">
+            Com PaO₂ de 45 mmHg, a solubilidade de O₂ pelo plasma é minúscula (C = 0,003 × 45 = 0,135 mL/100mL). A hemoglobina precisa compensar, mas com SpO₂ de 82%, ela própria está sobrecarregada. Indicação de O₂ suplementar ou VNI (Ventilação Não-Invasiva).
+          </div>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color:var(--neon-gold);background:rgba(255,204,0,0.03)">
+        <strong style="color:var(--neon-gold)">💡 DIAGNÓSTICO INTEGRADO:</strong><br>
+        DPOC grave com exacerbação — insuficiência respiratória hipercápnica (tipo II). Gasometria mostra acidose respiratória com compensação metabólica (HCO₃ elevado = compensação renal crônica).<br><br>
+        <strong>Conduta urgente:</strong> O₂ controlado (cuidado com hipóxia como drive ventilatório!), VNI (BiPAP), broncodilatadores, corticosteróides. Talvez intubação.
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== QUIZ ==================== -->
+<section class="section" id="quiz">
+  <div class="manga-panel" data-num="08" style="border-color:var(--neon-gold);box-shadow:0 0 30px rgba(255,204,0,0.15)">
+    <div class="panel-inner">
+
+      <span class="section-tag" style="color:var(--neon-gold)">✦ TESTE FINAL · PROVA DO HERÓI</span>
+      <h2 class="section-title" style="background:linear-gradient(135deg,var(--neon-gold),var(--neon-lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+        QUIZ<br>ÉPICO
+      </h2>
+
+      <!-- Q1 -->
+      <div class="quiz-box reveal">
+        <p style="font-family:'Bangers';font-size:1rem;color:var(--neon-gold);letter-spacing:3px;margin-bottom:12px">QUESTÃO 01</p>
+        <p class="quiz-question">Um alpinista sobe ao Everest (altitude ~8.848 m, onde a pressão barométrica é ~253 mmHg). Sabendo que a fração de O₂ no ar é constante (20,93%), qual é a pressão parcial de O₂ no ar inspirado?</p>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q1')">A) 159 mmHg — igual ao nível do mar, pois a fração não muda</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q1')">B) 53 mmHg — usando apenas FiO₂ × altitude</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'correct','Q1')">C) ~53 mmHg — usando Lei de Dalton: 0,2093 × 253 ≈ 53 mmHg</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q1')">D) 104 mmHg — pois o organismo se adapta</button>
+        </div>
+        <div class="quiz-feedback" id="Q1-feedback"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-box reveal">
+        <p style="font-family:'Bangers';font-size:1rem;color:var(--neon-gold);letter-spacing:3px;margin-bottom:12px">QUESTÃO 02</p>
+        <p class="quiz-question">Durante a inspiração normal, a pressão intrapulmonar cai de 760 para aproximadamente 758 mmHg. Isso gera um gradiente de apenas 2 mmHg, mas o ar entra. Qual lei explica isso?</p>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q2')">A) Lei de Henry — o ar se dissolve no muco</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'correct','Q2')">B) Lei de Boyle — aumento de volume → queda de pressão → gradiente favorável</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q2')">C) Lei de Fick — gradiente de pressão determina difusão pela membrana</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q2')">D) Lei de Dalton — cada gás entra individualmente</button>
+        </div>
+        <div class="quiz-feedback" id="Q2-feedback"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-box reveal">
+        <p style="font-family:'Bangers';font-size:1rem;color:var(--neon-gold);letter-spacing:3px;margin-bottom:12px">QUESTÃO 03</p>
+        <p class="quiz-question">Um paciente com fibrose pulmonar tem espessamento progressivo da membrana alvéolo-capilar. Qual parâmetro da Lei de Fick é diretamente afetado, e em que sentido isso altera a difusão?</p>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q3')">A) Área (A) aumenta → difusão aumenta</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q3')">B) Gradiente (P₁-P₂) diminui → difusão diminui</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'correct','Q3')">C) Espessura (d) aumenta → difusão diminui</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q3')">D) Coeficiente D aumenta → difusão aumenta</button>
+        </div>
+        <div class="quiz-feedback" id="Q3-feedback"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-box reveal">
+        <p style="font-family:'Bangers';font-size:1rem;color:var(--neon-gold);letter-spacing:3px;margin-bottom:12px">QUESTÃO 04</p>
+        <p class="quiz-question">Por que o CO₂ consegue ser eficientemente eliminado pelos pulmões mesmo tendo um gradiente de pressão MUITO menor que o O₂ (6 mmHg vs 64 mmHg)?</p>
+        <div class="quiz-options">
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q4')">A) Porque o CO₂ tem menor massa molecular</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q4')">B) Porque o coração bombeia mais CO₂ para o pulmão</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'correct','Q4')">C) Porque o CO₂ é ~24x mais solúvel que o O₂, resultando em coeficiente de difusão ~20x maior</button>
+          <button class="quiz-option" onclick="checkQuiz(this,'wrong','Q4')">D) Porque o CO₂ usa transporte ativo pela membrana</button>
+        </div>
+        <div class="quiz-feedback" id="Q4-feedback"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== RESUMO FINAL ==================== -->
+<section class="section">
+  <div style="text-align:center;padding:40px 20px">
+    <h2 style="font-family:'Bangers',cursive;font-size:clamp(2rem,6vw,4rem);background:linear-gradient(135deg,var(--neon-cyan),var(--neon-violet),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:20px;letter-spacing:3px">
+      MAPA MENTAL FINAL
+    </h2>
+    <p style="font-family:'Nunito';color:var(--text-dim);max-width:600px;margin:0 auto 40px;line-height:1.8">
+      Cada lei que você aprendeu hoje governa uma etapa da vida das moléculas de ar — da atmosfera até a mitocôndria.
+    </p>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-card reveal" style="border-color:rgba(255,0,170,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">🔴</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-pink);letter-spacing:2px">DALTON</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Cada gás tem sua pressão parcial. P<sub>total</sub> = soma das parciais. Motor da cascata de O₂.</p>
+    </div>
+    <div class="compare-card reveal" style="border-color:rgba(170,255,0,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">🟢</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-lime);letter-spacing:2px">BOYLE</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">P × V = cte. O ciclo respiratório inteiro depende desta relação.</p>
+    </div>
+    <div class="compare-card reveal" style="border-color:rgba(255,102,0,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">🟠</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-orange);letter-spacing:2px">HENRY</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">C = α × P. Quanto mais pressão, mais gás se dissolve. CO₂ é 24× mais solúvel.</p>
+    </div>
+    <div class="compare-card reveal" style="border-color:rgba(191,0,255,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">🟣</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-violet);letter-spacing:2px">FICK</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">V = D × A × ΔP / d. Governa a troca alvéolo-capilar. Área 70m², espessura 0,5μm.</p>
+    </div>
+    <div class="compare-card reveal" style="border-color:rgba(255,204,0,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">🟡</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-gold);letter-spacing:2px">CHARLES</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">V/T = cte. Temperatura altera volume. Explica correções BTPS/STPD.</p>
+    </div>
+    <div class="compare-card reveal" style="border-color:rgba(0,245,255,0.5);text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:10px">💠</div>
+      <div style="font-family:'Bangers';font-size:1.5rem;color:var(--neon-cyan);letter-spacing:2px">PV = nRT</div>
+      <p style="font-family:'Nunito';font-size:0.9rem;color:var(--text-dim);margin-top:8px">Lei dos Gases Ideais — unifica tudo. A equação-mãe da fisiologia respiratória.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <p class="footer-info">
+    UNIVERSIDADE LICUNGO<br>
+    2º ANO DE MEDICINA · 2026<br>
+    FISIOLOGIA RESPIRATÓRIA · LEIS DOS GASES<br>
+    <span style="color:var(--neon-cyan);margin-top:8px;display:block">✦ EDUCAÇÃO MÉDICA COM EXCELÊNCIA ✦</span>
+  </p>
+</footer>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ========== BARRA DE PROGRESSO ==========
+window.addEventListener('scroll', () => {
+  const total = document.body.scrollHeight - window.innerHeight;
+  const progress = (window.scrollY / total) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+});
+
+// ========== PARTÍCULAS ==========
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const particles = [];
+const colors = ['#00f5ff','#ff00aa','#aaff00','#bf00ff','#ff6600','#ffcc00'];
+const labels = ['O₂','N₂','CO₂','O₂','N₂','H₂O'];
+
+for (let i = 0; i < 60; i++) {
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: Math.random() * 3 + 1.5,
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: (Math.random() - 0.5) * 0.6,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    alpha: Math.random() * 0.4 + 0.1
+  });
+}
+
+function animParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2,'0');
+    ctx.fill();
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 6;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ========== CANVAS DALTON ==========
+const dc = document.getElementById('daltonCanvas');
+const dctx = dc.getContext('2d');
+dc.width = dc.offsetWidth * window.devicePixelRatio || 600;
+dc.height = 200 * (window.devicePixelRatio || 1);
+dc.style.width = '100%';
+dc.style.height = '200px';
+
+const gasGroups = [
+  { label:'N₂', color:'#bf00ff', count:25 },
+  { label:'O₂', color:'#aaff00', count:8 },
+  { label:'CO₂', color:'#ff2244', count:1 }
+];
+
+const daltonMols = [];
+gasGroups.forEach(g => {
+  for (let i = 0; i < g.count; i++) {
+    daltonMols.push({
+      x: Math.random() * dc.width,
+      y: Math.random() * dc.height,
+      vx: (Math.random() - 0.5) * 2,
+      vy: (Math.random() - 0.5) * 2,
+      r: 12,
+      color: g.color,
+      label: g.label
+    });
+  }
+});
+
+function animDalton() {
+  dctx.clearRect(0, 0, dc.width, dc.height);
+  daltonMols.forEach(m => {
+    m.x += m.vx;
+    m.y += m.vy;
+    if (m.x - m.r < 0) { m.x = m.r; m.vx *= -1; }
+    if (m.x + m.r > dc.width) { m.x = dc.width - m.r; m.vx *= -1; }
+    if (m.y - m.r < 0) { m.y = m.r; m.vy *= -1; }
+    if (m.y + m.r > dc.height) { m.y = dc.height - m.r; m.vy *= -1; }
+
+    dctx.beginPath();
+    dctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
+    dctx.fillStyle = m.color + '33';
+    dctx.fill();
+    dctx.strokeStyle = m.color;
+    dctx.lineWidth = 1.5;
+    dctx.shadowColor = m.color;
+    dctx.shadowBlur = 8;
+    dctx.stroke();
+    dctx.shadowBlur = 0;
+
+    dctx.fillStyle = m.color;
+    dctx.font = `bold ${7 * (window.devicePixelRatio || 1)}px 'Orbitron', monospace`;
+    dctx.textAlign = 'center';
+    dctx.textBaseline = 'middle';
+    dctx.fillText(m.label, m.x, m.y);
+  });
+  requestAnimationFrame(animDalton);
+}
+animDalton();
+
+// ========== SIMULADOR BOYLE ==========
+const bc = document.getElementById('boyleCanvas');
+const bctx = bc.getContext('2d');
+const DPR = window.devicePixelRatio || 1;
+bc.width = bc.offsetWidth * DPR || 600;
+bc.height = 200 * DPR;
+bc.style.width = '100%';
+bc.style.height = '200px';
+
+let currentVolume = 100;
+const BASE_PRESSURE = 76000;
+
+const boyleMols = [];
+for (let i = 0; i < 20; i++) {
+  boyleMols.push({
+    x: Math.random(),
+    y: Math.random(),
+    vx: (Math.random() - 0.5) * 0.004,
+    vy: (Math.random() - 0.5) * 0.004,
+    r: 10 * DPR,
+    hue: 100
+  });
+}
+
+function updateBoyle(val) {
+  currentVolume = parseFloat(val);
+  document.getElementById('volumeVal').textContent = Math.round(currentVolume);
+  document.getElementById('volumeOut').textContent = Math.round(currentVolume);
+  const pressure = Math.round(BASE_PRESSURE / currentVolume);
+  document.getElementById('pressureOut').textContent = pressure;
+}
+
+function animBoyle() {
+  bctx.clearRect(0, 0, bc.width, bc.height);
+
+  const boxW = (currentVolume / 200) * bc.width * 0.8;
+  const boxH = bc.height * 0.8;
+  const boxX = (bc.width - boxW) / 2;
+  const boxY = (bc.height - boxH) / 2;
+
+  // Desenha container
+  bctx.strokeStyle = '#aaff00';
+  bctx.lineWidth = 3;
+  bctx.shadowColor = '#aaff00';
+  bctx.shadowBlur = 10;
+  bctx.strokeRect(boxX, boxY, boxW, boxH);
+  bctx.shadowBlur = 0;
+  bctx.fillStyle = 'rgba(170,255,0,0.03)';
+  bctx.fillRect(boxX, boxY, boxW, boxH);
+
+  // Speed da mol é inversamente proporcional ao volume (simula pressão)
+  const speedFactor = 100 / currentVolume;
+
+  boyleMols.forEach(m => {
+    let mx = boxX + m.x * boxW;
+    let my = boxY + m.y * boxH;
+
+    m.x += m.vx * speedFactor;
+    m.y += m.vy * speedFactor;
+
+    if (m.x < 0.05) { m.x = 0.05; m.vx = Math.abs(m.vx); }
+    if (m.x > 0.95) { m.x = 0.95; m.vx = -Math.abs(m.vx); }
+    if (m.y < 0.05) { m.y = 0.05; m.vy = Math.abs(m.vy); }
+    if (m.y > 0.95) { m.y = 0.95; m.vy = -Math.abs(m.vy); }
+
+    mx = boxX + m.x * boxW;
+    my = boxY + m.y * boxH;
+
+    bctx.beginPath();
+    bctx.arc(mx, my, m.r, 0, Math.PI * 2);
+    bctx.fillStyle = 'rgba(170,255,0,0.15)';
+    bctx.fill();
+    bctx.strokeStyle = '#aaff00';
+    bctx.lineWidth = 1.5;
+    bctx.shadowColor = '#aaff00';
+    bctx.shadowBlur = 6;
+    bctx.stroke();
+    bctx.shadowBlur = 0;
+
+    bctx.fillStyle = '#aaff00';
+    bctx.font = `bold ${6 * DPR}px Orbitron`;
+    bctx.textAlign = 'center';
+    bctx.textBaseline = 'middle';
+    bctx.fillText('O₂', mx, my);
+  });
+
+  // Label pressão
+  const pressure = Math.round(BASE_PRESSURE / currentVolume);
+  bctx.fillStyle = 'rgba(0,0,0,0.5)';
+  bctx.fillRect(boxX + 4, boxY + 4, 90 * DPR, 24 * DPR);
+  bctx.fillStyle = '#aaff00';
+  bctx.font = `${9 * DPR}px Orbitron`;
+  bctx.textAlign = 'left';
+  bctx.fillText('P = ' + pressure + ' mmHg', boxX + 8, boxY + 16 * DPR);
+
+  requestAnimationFrame(animBoyle);
+}
+animBoyle();
+
+// ========== ACCORDION ==========
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.accordion-arrow');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.accordion-arrow').forEach(a => a.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    arrow.classList.add('open');
+  }
+}
+
+// ========== QUIZ ==========
+const quizFeedback = {
+  Q1: {
+    correct: "✅ CORRETO! Pela Lei de Dalton: P(O₂) = FiO₂ × P_barométrica = 0,2093 × 253 ≈ 53 mmHg. Compare com os 159 mmHg ao nível do mar — quase um terço! Por isso os alpinistas sofrem altitude sickness e precisam de O₂ suplementar acima de ~5.500m.",
+    wrong: "❌ INCORRETO. A pressão barométrica CAI com a altitude, então o P(O₂) cai proporcionalmente, pela Lei de Dalton: P(O₂) = FiO₂ × P_B = 0,2093 × 253 ≈ 53 mmHg. A fração (%) de O₂ é constante, mas a pressão total é menor."
+  },
+  Q2: {
+    correct: "✅ CORRETO! A Lei de Boyle em ação: o diafragma contrai e expande o volume torácico. Maior volume → menor pressão (lei de Boyle). A pressão intrapulmonar cai 2 mmHg abaixo da atmosférica, e o ar flui de alta para baixa pressão.",
+    wrong: "❌ INCORRETO. É a Lei de Boyle que explica a ventilação: P × V = constante. Quando o volume aumenta na inspiração, a pressão cai. O gradiente gerado (mesmo que pequeno, -2 mmHg) é suficiente para mover 500 mL de ar por ciclo."
+  },
+  Q3: {
+    correct: "✅ CORRETO! Na equação de Fick: V̇ = D × A × (P₁−P₂) / d. A fibrose aumenta d (espessura da membrana). Como d está no denominador, ↑d → ↓difusão. É por isso que pacientes com fibrose pulmonar têm hipoxemia progressiva.",
+    wrong: "❌ INCORRETO. Na Lei de Fick, V̇ = D × A × ΔP / d. A fibrose pulmonar aumenta a espessura (d) da membrana alvéolo-capilar. Como d está no denominador, isso REDUZ a difusão, causando hipoxemia."
+  },
+  Q4: {
+    correct: "✅ CORRETO! O segredo é o coeficiente de solubilidade α. O CO₂ tem α ≈ 0,072, enquanto o O₂ tem α ≈ 0,003 — razão de 24:1. Na equação de Fick, isso se reflete num D muito maior para o CO₂, compensando com folga seu menor gradiente.",
+    wrong: "❌ INCORRETO. O CO₂ é muito mais solúvel que o O₂ (α = 0,072 vs 0,003 — 24× maior). Na Lei de Fick, o coeficiente de difusão D incorpora a solubilidade. Um D maior compensa o menor gradiente de pressão, resultando em difusão ~20× mais rápida para CO₂."
+  }
+};
+
+const answeredQuizzes = {};
+
+function checkQuiz(btn, result, qId) {
+  if (answeredQuizzes[qId]) return;
+  answeredQuizzes[qId] = true;
+
+  const options = btn.parentElement.querySelectorAll('.quiz-option');
+  options.forEach(o => o.disabled = true);
+
+  if (result === 'correct') {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    options.forEach(o => {
+      if (o.onclick.toString().includes("'correct'")) o.classList.add('correct');
+    });
+  }
+
+  const feedback = document.getElementById(qId + '-feedback');
+  feedback.style.display = 'block';
+  feedback.style.background = result === 'correct' ? 'rgba(170,255,0,0.08)' : 'rgba(255,34,68,0.08)';
+  feedback.style.border = '1px solid ' + (result === 'correct' ? 'var(--neon-lime)' : 'var(--neon-red)');
+  feedback.style.color = result === 'correct' ? 'var(--neon-lime)' : 'var(--neon-red)';
+  feedback.innerHTML = quizFeedback[qId][result];
+}
+
+// ========== REVEAL ON SCROLL ==========
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

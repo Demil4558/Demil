@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | A Grande Aventura dos Gases</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Nunito:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-dark: #04050d;
+  --bg-panel: #0b0d1f;
+  --bg-card: #0f1229;
+  --neon-cyan: #00f5ff;
+  --neon-pink: #ff2d78;
+  --neon-green: #39ff14;
+  --neon-yellow: #ffe600;
+  --neon-orange: #ff6b00;
+  --neon-purple: #bf00ff;
+  --neon-blue: #007bff;
+  --text-bright: #f0f4ff;
+  --text-soft: #a0aec0;
+  --border-glow: rgba(0,245,255,0.3);
+  --panel-border: rgba(255,45,120,0.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg-dark);
+  color: var(--text-bright);
+  font-family: 'Nunito', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* === STARFIELD === */
+#starfield {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.star {
+  position: absolute; border-radius: 50%;
+  background: #fff; animation: twinkle var(--d, 3s) infinite alternate;
+}
+@keyframes twinkle { from{opacity:.1} to{opacity:1} }
+
+/* === SCROLL PROGRESS === */
+#progress-bar {
+  position: fixed; top:0; left:0; height:4px; width:0%;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+  z-index: 9999; transition: width .1s;
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* === HERO === */
+.hero {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 40%, #0d1b3e 0%, #04050d 70%);
+  overflow: hidden;
+}
+
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent, transparent 60px,
+    rgba(0,245,255,0.03) 60px, rgba(0,245,255,0.03) 61px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    transparent, transparent 60px,
+    rgba(0,245,255,0.03) 60px, rgba(0,245,255,0.03) 61px
+  );
+}
+
+.hero-badge {
+  display: inline-block;
+  background: var(--neon-pink);
+  color: #fff; font-family: 'Bangers', cursive;
+  font-size: 1rem; letter-spacing: 3px;
+  padding: .3rem 1.2rem; border-radius: 20px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0 20px var(--neon-pink);
+  animation: pulse-badge 2s infinite;
+}
+@keyframes pulse-badge {
+  0%,100%{box-shadow:0 0 20px var(--neon-pink)}
+  50%{box-shadow:0 0 40px var(--neon-pink),0 0 80px var(--neon-pink)}
+}
+
+.hero h1 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  line-height: 1;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(0,245,255,0.5));
+  animation: title-glow 3s ease-in-out infinite;
+}
+@keyframes title-glow {
+  0%,100%{filter:drop-shadow(0 0 20px rgba(0,245,255,0.5))}
+  50%{filter:drop-shadow(0 0 40px rgba(255,45,120,0.8))}
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
+  color: var(--neon-cyan);
+  font-family: 'Share Tech Mono', monospace;
+  margin: 1rem 0 2rem;
+  opacity: 0; animation: fadeUp .8s .5s forwards;
+}
+
+.hero-desc {
+  max-width: 700px;
+  font-size: 1.05rem; color: var(--text-soft); line-height: 1.8;
+  opacity: 0; animation: fadeUp .8s .8s forwards;
+}
+
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Molecules floating in hero */
+.mol-float {
+  position: absolute; font-size: clamp(1.5rem, 3vw, 2.5rem);
+  animation: float-mol var(--dur,6s) ease-in-out infinite;
+  opacity: .6; pointer-events: none;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+@keyframes float-mol {
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-20px) rotate(10deg)}
+}
+
+.scroll-hint {
+  position:absolute; bottom:2rem;
+  font-size:.85rem; color:var(--neon-cyan);
+  letter-spacing:2px;
+  animation: bounce 2s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* === NAV === */
+#chapter-nav {
+  position: fixed; right:1rem; top:50%; transform:translateY(-50%);
+  z-index: 100;
+  display: flex; flex-direction:column; gap:.5rem;
+}
+.nav-dot {
+  width:10px; height:10px; border-radius:50%;
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all .3s;
+  position: relative;
+}
+.nav-dot:hover, .nav-dot.active {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 10px var(--neon-cyan);
+  transform: scale(1.4);
+}
+.nav-dot::after {
+  content: attr(data-label);
+  position:absolute; right:16px; top:50%; transform:translateY(-50%);
+  background: var(--bg-card); color:var(--neon-cyan);
+  font-size:.65rem; white-space:nowrap; padding:.2rem .5rem;
+  border-radius:4px; border:1px solid var(--neon-cyan);
+  opacity:0; pointer-events:none; transition:opacity .3s;
+  font-family:'Share Tech Mono',monospace;
+}
+.nav-dot:hover::after{opacity:1}
+
+/* === CHAPTERS === */
+.chapter {
+  position: relative; z-index: 1;
+  padding: 4rem 1rem; min-height: 100vh;
+  display: flex; flex-direction:column; align-items:center;
+}
+
+/* === PANEL SYSTEM (manga) === */
+.manga-page {
+  max-width: 1100px; width:100%;
+  display: grid; gap: 1rem;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 1.8rem;
+  position: relative;
+  overflow: hidden;
+  animation: panelReveal .6s ease both;
+  transition: transform .3s, box-shadow .3s;
+}
+.panel:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(0,245,255,0.15);
+}
+.panel.cyan   { border-color: var(--neon-cyan);   box-shadow: inset 0 0 30px rgba(0,245,255,0.05),   0 0 0 1px rgba(0,245,255,0.1); }
+.panel.pink   { border-color: var(--neon-pink);   box-shadow: inset 0 0 30px rgba(255,45,120,0.05),   0 0 0 1px rgba(255,45,120,0.1); }
+.panel.green  { border-color: var(--neon-green);  box-shadow: inset 0 0 30px rgba(57,255,20,0.05),    0 0 0 1px rgba(57,255,20,0.1); }
+.panel.yellow { border-color: var(--neon-yellow); box-shadow: inset 0 0 30px rgba(255,230,0,0.05),    0 0 0 1px rgba(255,230,0,0.1); }
+.panel.orange { border-color: var(--neon-orange); box-shadow: inset 0 0 30px rgba(255,107,0,0.05),    0 0 0 1px rgba(255,107,0,0.1); }
+.panel.purple { border-color: var(--neon-purple); box-shadow: inset 0 0 30px rgba(191,0,255,0.05),    0 0 0 1px rgba(191,0,255,0.1); }
+
+@keyframes panelReveal {
+  from{opacity:0;transform:translateY(30px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.panel-tag {
+  position:absolute; top:-.5px; right:1.2rem;
+  background: currentColor; color:var(--bg-dark);
+  font-family:'Bangers',cursive; letter-spacing:2px;
+  font-size:.8rem; padding:.15rem .8rem;
+  border-radius:0 0 8px 8px;
+}
+.cyan .panel-tag{color:var(--neon-cyan)}
+.pink .panel-tag{color:var(--neon-pink)}
+.green .panel-tag{color:var(--neon-green)}
+.yellow .panel-tag{color:var(--neon-yellow)}
+.orange .panel-tag{color:var(--neon-orange)}
+.purple .panel-tag{color:var(--neon-purple)}
+
+/* === CHAPTER TITLE === */
+.chapter-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 3px;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+.chapter-title span.num {
+  font-size: .6em; opacity:.5; display:block;
+  font-family:'Share Tech Mono',monospace; letter-spacing:5px;
+}
+.chapter-title::after {
+  content:'';
+  display:block; width:80px; height:4px; margin:.5rem auto 0;
+  border-radius:2px;
+  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* === TYPOGRAPHY === */
+h3 {
+  font-size: 1.2rem; font-weight:800;
+  margin-bottom:.8rem;
+  letter-spacing:1px;
+}
+.cyan h3  { color:var(--neon-cyan) }
+.pink h3  { color:var(--neon-pink) }
+.green h3 { color:var(--neon-green) }
+.yellow h3{ color:var(--neon-yellow) }
+.orange h3{ color:var(--neon-orange) }
+.purple h3{ color:var(--neon-purple) }
+
+p { line-height:1.85; margin-bottom:.8rem; font-size:.98rem; }
+
+.highlight {
+  background: rgba(0,245,255,0.12);
+  border-left: 3px solid var(--neon-cyan);
+  padding: .6rem 1rem; border-radius:0 8px 8px 0;
+  margin: .8rem 0; font-size:.95rem;
+}
+.highlight.pink  {background:rgba(255,45,120,0.12);border-color:var(--neon-pink)}
+.highlight.green {background:rgba(57,255,20,0.12);border-color:var(--neon-green)}
+.highlight.yellow{background:rgba(255,230,0,0.12);border-color:var(--neon-yellow)}
+.highlight.orange{background:rgba(255,107,0,0.12);border-color:var(--neon-orange)}
+
+.formula-box {
+  background: #000;
+  border: 2px solid var(--neon-green);
+  border-radius: 10px; padding: 1rem 1.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 1.05rem; color: var(--neon-green);
+  text-align: center; margin: 1rem 0;
+  box-shadow: 0 0 20px rgba(57,255,20,0.2);
+  position:relative;
+}
+.formula-box::before {
+  content:'FÓRMULA'; position:absolute; top:-.7rem; left:1rem;
+  background:#000; color:var(--neon-green); font-size:.65rem;
+  padding:0 .5rem; letter-spacing:3px;
+}
+
+.term {
+  color: var(--neon-yellow); font-weight:700;
+  border-bottom: 1px dashed var(--neon-yellow);
+  cursor:help; position:relative;
+}
+
+.bubble {
+  background: var(--bg-dark);
+  border: 2px solid var(--neon-cyan);
+  border-radius: 20px 20px 20px 4px;
+  padding: .8rem 1.2rem; margin: .8rem 0;
+  position:relative; font-size:.95rem;
+  box-shadow: 0 0 15px rgba(0,245,255,0.2);
+}
+.bubble.right {
+  border-radius: 20px 20px 4px 20px;
+  border-color: var(--neon-pink);
+  box-shadow: 0 0 15px rgba(255,45,120,0.2);
+  text-align:right;
+}
+.bubble-name {
+  font-size:.7rem; color:var(--neon-cyan);
+  font-family:'Share Tech Mono',monospace;
+  margin-bottom:.3rem; letter-spacing:2px;
+}
+.bubble.right .bubble-name{color:var(--neon-pink)}
+
+/* === TIMELINE === */
+.timeline {
+  position:relative; padding-left:2rem; margin:1rem 0;
+}
+.timeline::before {
+  content:''; position:absolute; left:.6rem; top:0; bottom:0;
+  width:2px; background:linear-gradient(180deg,var(--neon-cyan),var(--neon-pink));
+}
+.tl-step {
+  position:relative; margin-bottom:1.5rem;
+  animation: fadeUp .5s ease both;
+}
+.tl-step::before {
+  content:attr(data-step);
+  position:absolute; left:-2rem; top:.1rem;
+  width:1.2rem; height:1.2rem; border-radius:50%;
+  background:var(--neon-cyan); color:var(--bg-dark);
+  font-size:.65rem; font-weight:900; font-family:'Bangers',cursive;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 10px var(--neon-cyan);
+}
+.tl-step h4 { color:var(--neon-cyan); font-size:.95rem; margin-bottom:.3rem; }
+.tl-step p  { font-size:.9rem; color:var(--text-soft); margin:0; }
+
+/* === ALVÉOLO SVG ANIMATION === */
+.alveolo-canvas {
+  width:100%; max-width:600px; margin:1.5rem auto;
+  display:block;
+}
+
+/* === O2/CO2 PARTICLE ANIMATION === */
+.particle-zone {
+  width:100%; height:160px; position:relative;
+  border-radius:12px; overflow:hidden;
+  background:linear-gradient(180deg,rgba(0,100,180,.15) 0%,rgba(180,0,60,.08) 100%);
+  border:1px solid rgba(255,255,255,0.1);
+  margin:1rem 0;
+}
+.particle {
+  position:absolute; border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem; font-weight:900; color:#fff;
+  font-family:'Bangers',cursive; letter-spacing:1px;
+}
+.p-o2 {
+  background:radial-gradient(circle,#00b4ff,#0066ff);
+  box-shadow:0 0 10px #00b4ff;
+  animation: moveO2 var(--d,4s) linear infinite;
+}
+.p-co2 {
+  background:radial-gradient(circle,#ff4444,#cc0000);
+  box-shadow:0 0 10px #ff4444;
+  animation: moveCO2 var(--d,4s) linear infinite;
+}
+@keyframes moveO2 {
+  0%  {left:5%;  top:20%; opacity:1}
+  40% {left:48%; top:35%; opacity:.8}
+  60% {left:52%; top:55%; opacity:.8}
+  100%{left:90%; top:75%; opacity:.5}
+}
+@keyframes moveCO2 {
+  0%  {left:90%;top:70%;opacity:1}
+  40% {left:52%;top:55%;opacity:.8}
+  60% {left:48%;top:35%;opacity:.8}
+  100%{left:5%; top:20%;opacity:.5}
+}
+.zone-label {
+  position:absolute; font-size:.7rem;
+  font-family:'Share Tech Mono',monospace; letter-spacing:1px;
+  opacity:.7;
+}
+
+/* === GRID LAYOUTS === */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; }
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* === WEST ZONES === */
+.west-container {
+  position:relative; width:100%; max-width:420px;
+  margin:1.5rem auto;
+}
+.lung-svg { width:100%; }
+
+/* === CARDS === */
+.info-card {
+  background:var(--bg-dark); border-radius:12px;
+  padding:1.2rem; border:1px solid rgba(255,255,255,0.08);
+  transition:all .3s;
+}
+.info-card:hover {
+  border-color:var(--neon-cyan);
+  box-shadow:0 0 20px rgba(0,245,255,0.15);
+  transform:translateY(-3px);
+}
+.ic-icon { font-size:2rem; margin-bottom:.5rem; }
+.ic-title { font-size:.85rem; font-weight:800; letter-spacing:1px; margin-bottom:.3rem; }
+.ic-text  { font-size:.8rem; color:var(--text-soft); line-height:1.6; }
+
+/* === QUIZ === */
+.quiz-box {
+  background:var(--bg-dark); border:2px solid var(--neon-yellow);
+  border-radius:16px; padding:1.5rem;
+  box-shadow:0 0 30px rgba(255,230,0,0.1);
+}
+.quiz-q { color:var(--neon-yellow); font-weight:700; margin-bottom:1rem; }
+.quiz-opt {
+  display:block; width:100%;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  color:var(--text-bright); font-family:'Nunito',sans-serif; font-size:.9rem;
+  text-align:left; padding:.8rem 1rem; margin-bottom:.5rem;
+  border-radius:8px; cursor:pointer;
+  transition:all .2s;
+}
+.quiz-opt:hover { background:rgba(255,230,0,0.1); border-color:var(--neon-yellow); }
+.quiz-opt.correct { background:rgba(57,255,20,0.15); border-color:var(--neon-green); color:var(--neon-green); }
+.quiz-opt.wrong   { background:rgba(255,45,120,0.15); border-color:var(--neon-pink);  color:var(--neon-pink); }
+.quiz-feedback { margin-top:.8rem; font-size:.9rem; display:none; line-height:1.7; }
+
+/* === TABLE === */
+.data-table {
+  width:100%; border-collapse:collapse; font-size:.85rem;
+  margin:1rem 0;
+}
+.data-table th {
+  background:rgba(0,245,255,0.1); color:var(--neon-cyan);
+  padding:.7rem .9rem; text-align:left; font-family:'Share Tech Mono',monospace;
+  letter-spacing:1px; border-bottom:2px solid var(--neon-cyan);
+}
+.data-table td {
+  padding:.6rem .9rem; border-bottom:1px solid rgba(255,255,255,0.06);
+  color:var(--text-soft);
+}
+.data-table tr:hover td { background:rgba(0,245,255,0.04); color:var(--text-bright); }
+
+/* === ACCORDION === */
+.accordion {
+  border:1px solid rgba(255,255,255,0.1); border-radius:10px;
+  overflow:hidden; margin:.5rem 0;
+}
+.acc-header {
+  width:100%; background:rgba(255,255,255,0.04);
+  border:none; color:var(--text-bright); font-family:'Nunito',sans-serif;
+  font-size:.95rem; font-weight:700;
+  padding:1rem 1.2rem; text-align:left; cursor:pointer;
+  display:flex; justify-content:space-between; align-items:center;
+  transition:background .2s;
+}
+.acc-header:hover { background:rgba(0,245,255,0.08); }
+.acc-arrow { transition:transform .3s; color:var(--neon-cyan); }
+.acc-header.open .acc-arrow { transform:rotate(180deg); }
+.acc-body {
+  max-height:0; overflow:hidden; transition:max-height .4s ease;
+  padding:0 1.2rem;
+}
+.acc-body.open { max-height:800px; padding:1rem 1.2rem; }
+
+/* === PROGRESS BAR WIDGET === */
+.pv-row { margin:.6rem 0; }
+.pv-label { font-size:.8rem; color:var(--text-soft); margin-bottom:.25rem;
+  display:flex;justify-content:space-between; }
+.pv-bar { height:10px; background:rgba(255,255,255,0.08); border-radius:5px; overflow:hidden; }
+.pv-fill { height:100%; border-radius:5px; transition:width 1.5s ease;
+  box-shadow:0 0 8px currentColor; }
+
+/* === SEPARATOR === */
+.sep {
+  text-align:center; margin:3rem 0 2rem;
+  font-family:'Bangers',cursive; font-size:1.5rem;
+  letter-spacing:6px; color:rgba(255,255,255,0.15);
+  position:relative;
+}
+.sep::before,.sep::after {
+  content:'';display:inline-block;width:80px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2));
+  vertical-align:middle; margin:0 1rem;
+}
+
+/* === CLINICAL BOX === */
+.clinical-box {
+  background: linear-gradient(135deg,rgba(255,45,120,0.08),rgba(191,0,255,0.08));
+  border: 1px solid var(--neon-pink); border-radius:12px;
+  padding:1.2rem 1.5rem; margin:1rem 0;
+  position:relative;
+}
+.clinical-box::before {
+  content:'🏥 CLÍNICA'; position:absolute; top:-.7rem; left:1rem;
+  background:var(--bg-panel); color:var(--neon-pink);
+  font-size:.65rem; padding:0 .6rem; letter-spacing:3px;
+  font-family:'Share Tech Mono',monospace;
+}
+
+/* === FOOTER === */
+footer {
+  position:relative;z-index:1;
+  background:var(--bg-panel);
+  border-top:1px solid rgba(0,245,255,0.2);
+  padding:3rem 2rem; text-align:center;
+}
+.footer-logo {
+  font-family:'Bangers',cursive; font-size:2.5rem;
+  background:linear-gradient(90deg,var(--neon-cyan),var(--neon-pink));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text; margin-bottom:.5rem;
+}
+.footer-sub { font-size:.85rem; color:var(--text-soft); letter-spacing:2px; }
+
+/* === BADGE GLOSSARY === */
+.gloss-badge {
+  display:inline-block;
+  background:rgba(255,230,0,0.15); border:1px solid var(--neon-yellow);
+  color:var(--neon-yellow); font-size:.7rem;
+  padding:.15rem .6rem; border-radius:4px; margin:.15rem;
+  font-family:'Share Tech Mono',monospace; letter-spacing:1px;
+}
+
+/* === INTERACTIVE MEMBRANE === */
+#membrane-demo {
+  width:100%;height:200px;position:relative;
+  border-radius:12px;overflow:hidden;
+  background:linear-gradient(90deg,
+    rgba(0,50,150,.3) 0%,rgba(0,50,150,.3) 45%,
+    rgba(20,20,20,.8) 45%,rgba(20,20,20,.8) 55%,
+    rgba(150,0,50,.3) 55%,rgba(150,0,50,.3) 100%
+  );
+  border:1px solid rgba(255,255,255,0.1);
+  margin:1rem 0; cursor:pointer;
+}
+.mem-label {
+  position:absolute;top:.8rem;
+  font-size:.7rem;letter-spacing:2px;font-family:'Share Tech Mono',monospace;
+  opacity:.8;
+}
+.mem-o2  {left:10px;color:var(--neon-cyan)}
+.mem-co2 {right:10px;color:var(--neon-pink)}
+.mem-mid {left:50%;transform:translateX(-50%);color:var(--neon-green)}
+.mem-tip {position:absolute;bottom:.7rem;width:100%;text-align:center;
+  font-size:.7rem;color:rgba(255,255,255,0.4);letter-spacing:1px;}
+
+/* === CHAPTER BG VARIANTS === */
+#ch1{background:radial-gradient(ellipse at 20% 50%,rgba(0,100,255,.08),transparent 60%);}
+#ch2{background:radial-gradient(ellipse at 80% 50%,rgba(57,255,20,.06),transparent 60%);}
+#ch3{background:radial-gradient(ellipse at 50% 80%,rgba(255,45,120,.07),transparent 60%);}
+#ch4{background:radial-gradient(ellipse at 30% 20%,rgba(191,0,255,.07),transparent 60%);}
+#ch5{background:radial-gradient(ellipse at 70% 70%,rgba(255,107,0,.07),transparent 60%);}
+#ch6{background:radial-gradient(ellipse at 50% 50%,rgba(0,245,255,.06),transparent 60%);}
+#ch7{background:radial-gradient(ellipse at 20% 80%,rgba(255,230,0,.06),transparent 60%);}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<canvas id="starfield"></canvas>
+
+<!-- NAV DOTS -->
+<nav id="chapter-nav">
+  <div class="nav-dot" data-section="hero" data-label="Início" onclick="scrollTo('#hero')"></div>
+  <div class="nav-dot" data-section="ch1"  data-label="Cap.1 – O Palco"      onclick="scrollTo('#ch1')"></div>
+  <div class="nav-dot" data-section="ch2"  data-label="Cap.2 – Difusão"      onclick="scrollTo('#ch2')"></div>
+  <div class="nav-dot" data-section="ch3"  data-label="Cap.3 – Fick & Fick"   onclick="scrollTo('#ch3')"></div>
+  <div class="nav-dot" data-section="ch4"  data-label="Cap.4 – Hemoglobina"   onclick="scrollTo('#ch4')"></div>
+  <div class="nav-dot" data-section="ch5"  data-label="Cap.5 – Zonas de West" onclick="scrollTo('#ch5')"></div>
+  <div class="nav-dot" data-section="ch6"  data-label="Cap.6 – Clínica"       onclick="scrollTo('#ch6')"></div>
+  <div class="nav-dot" data-section="ch7"  data-label="Cap.7 – Quiz"          onclick="scrollTo('#ch7')"></div>
+</nav>
+
+<!-- ============================
+     HERO
+=============================== -->
+<section class="hero" id="hero">
+  <!-- floating molecules -->
+  <div class="mol-float" style="top:15%;left:8%;color:#00f5ff;--dur:5s">O₂</div>
+  <div class="mol-float" style="top:70%;left:5%;color:#ff2d78;--dur:7s">CO₂</div>
+  <div class="mol-float" style="top:20%;right:8%;color:#39ff14;--dur:6s">N₂</div>
+  <div class="mol-float" style="top:75%;right:7%;color:#ffe600;--dur:4s">Hb</div>
+  <div class="mol-float" style="top:45%;left:3%;color:#bf00ff;--dur:8s">H₂O</div>
+  <div class="mol-float" style="top:50%;right:4%;color:#ff6b00;--dur:5.5s">H⁺</div>
+
+  <div class="hero-badge">DEMILMED-UL • 2º ANO DE MEDICINA • 2026</div>
+  <h1>A GRANDE AVENTURA<br>DOS GASES</h1>
+  <p class="hero-subtitle">> DO ALVÉOLO AO CAPILAR: UMA EPOPEIA MOLECULAR <</p>
+  <p class="hero-desc">
+    Bem-vindo ao mundo microscópico onde cada respiração é uma batalha épica entre
+    moléculas de O₂ e CO₂. Aqui, a fisiologia respiratória ganha vida em forma de história,
+    com personagens, drama e ciência de alto nível. Prepara-te para nunca mais esquecer
+    como os gases são trocados nos pulmões.
+  </p>
+  <div class="scroll-hint">▼ ROLAR PARA COMEÇAR A AVENTURA ▼</div>
+</section>
+
+<!-- ============================
+     CAP 1 – O PALCO ANATÓMICO
+=============================== -->
+<section class="chapter" id="ch1">
+  <h2 class="chapter-title" style="color:var(--neon-cyan)">
+    <span class="num">CAPÍTULO 01</span>
+    O PALCO DA BATALHA: ANATOMIA DA UNIDADE RESPIRATÓRIA
+  </h2>
+
+  <div class="manga-page">
+
+    <!-- DIÁLOGO INTRO -->
+    <div class="panel cyan">
+      <div class="panel-tag">PRÓLOGO</div>
+      <div class="bubble">
+        <div class="bubble-name">🫁 NARRADOR</div>
+        Imagina um universo dentro do teu peito. Trezentos milhões de pequenas bolhas —
+        os <strong style="color:var(--neon-cyan)">alvéolos</strong> — cada uma do tamanho de
+        0,2 mm. Juntas, formam uma superfície de troca maior que um campo de ténis: cerca de
+        <strong style="color:var(--neon-yellow)">70–80 m²</strong>. E é aqui que o O₂ decide
+        se entra no teu sangue... ou não.
+      </div>
+      <div class="bubble right">
+        <div class="bubble-name">😮 ESTUDANTE</div>
+        Espera — 70 metros quadrados?! Dentro de mim?!
+      </div>
+      <div class="bubble">
+        <div class="bubble-name">🫁 NARRADOR</div>
+        Exatamente. A evolução é sábia: para uma troca de gases eficiente, precisas de
+        <em>área máxima num volume mínimo</em>. Isso é o alvéolo. Agora vamos conhecer
+        o palco desta batalha.
+      </div>
+    </div>
+
+    <!-- ANATOMIA DO ALVÉOLO -->
+    <div class="panel pink">
+      <div class="panel-tag">ANATOMIA</div>
+      <h3>🔬 Estrutura do Alvéolo — A Arquitetura do Herói</h3>
+
+      <!-- SVG Alvéolo animado -->
+      <svg class="alveolo-canvas" viewBox="0 0 560 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="alvGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#001a3a"/>
+            <stop offset="100%" stop-color="#000510"/>
+          </radialGradient>
+          <radialGradient id="capGrad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#3a0010"/>
+            <stop offset="100%" stop-color="#060010"/>
+          </radialGradient>
+        </defs>
+        <!-- background -->
+        <rect width="560" height="320" fill="#080a18" rx="10"/>
+
+        <!-- LUNG tissue -->
+        <ellipse cx="280" cy="160" rx="250" ry="140" fill="rgba(255,45,120,0.04)" stroke="rgba(255,45,120,0.15)" stroke-width="1"/>
+
+        <!-- ALVEOLO main -->
+        <circle cx="200" cy="150" r="80" fill="url(#alvGrad)"
+          stroke="#00f5ff" stroke-width="2.5">
+          <animate attributeName="r" values="80;83;80" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <text x="200" y="148" text-anchor="middle" fill="#00f5ff" font-size="13" font-family="Bangers" letter-spacing="2">ALVÉOLO</text>
+        <text x="200" y="165" text-anchor="middle" fill="rgba(0,245,255,0.6)" font-size="9" font-family="Share Tech Mono">ar inspirado</text>
+
+        <!-- O2 molecules inside alveolo -->
+        <circle cx="170" cy="130" r="7" fill="#0066ff" opacity="0.9">
+          <animate attributeName="cx" values="170;175;165;170" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="130;125;135;130" dur="2.3s" repeatCount="indefinite"/>
+        </circle>
+        <text x="170" y="134" text-anchor="middle" fill="#fff" font-size="7" font-family="Bangers">O₂</text>
+
+        <circle cx="215" cy="155" r="7" fill="#0066ff" opacity="0.9">
+          <animate attributeName="cx" values="215;210;220;215" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <text x="215" y="159" text-anchor="middle" fill="#fff" font-size="7" font-family="Bangers">O₂</text>
+
+        <circle cx="195" cy="175" r="7" fill="#0066ff" opacity="0.8">
+          <animate attributeName="cy" values="175;170;180;175" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <text x="195" y="179" text-anchor="middle" fill="#fff" font-size="7" font-family="Bangers">O₂</text>
+
+        <!-- MEMBRANE (barreira alvéolo-capilar) -->
+        <rect x="278" y="80" width="12" height="160" rx="6"
+          fill="rgba(57,255,20,0.15)" stroke="#39ff14" stroke-width="1.5">
+          <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+        </rect>
+        <text x="284" y="68" text-anchor="middle" fill="#39ff14" font-size="8" font-family="Share Tech Mono">MEMBRANA</text>
+        <text x="284" y="78" text-anchor="middle" fill="#39ff14" font-size="7" font-family="Share Tech Mono">0,5 µm</text>
+
+        <!-- CAPILLARY -->
+        <ellipse cx="370" cy="150" rx="70" ry="90" fill="url(#capGrad)"
+          stroke="#ff2d78" stroke-width="2.5">
+        </ellipse>
+        <text x="370" y="138" text-anchor="middle" fill="#ff2d78" font-size="13" font-family="Bangers" letter-spacing="1">CAPILAR</text>
+        <text x="370" y="155" text-anchor="middle" fill="rgba(255,45,120,0.6)" font-size="9" font-family="Share Tech Mono">sangue venoso</text>
+
+        <!-- CO2 in capillary -->
+        <circle cx="355" cy="175" r="7" fill="#cc0000" opacity="0.9">
+          <animate attributeName="cx" values="355;360;350;355" dur="1.9s" repeatCount="indefinite"/>
+        </circle>
+        <text x="355" y="179" text-anchor="middle" fill="#fff" font-size="6" font-family="Bangers">CO₂</text>
+
+        <circle cx="385" cy="155" r="7" fill="#cc0000" opacity="0.9">
+          <animate attributeName="cy" values="155;150;160;155" dur="2.2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="385" y="159" text-anchor="middle" fill="#fff" font-size="6" font-family="Bangers">CO₂</text>
+
+        <!-- ARROWS: O2 crossing membrane -->
+        <path d="M 255 130 L 278 130" stroke="#00f5ff" stroke-width="2.5" fill="none" marker-end="url(#arrowO2)">
+          <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite"/>
+        </path>
+        <path d="M 290 170 L 313 170" stroke="#00f5ff" stroke-width="2.5" fill="none" marker-end="url(#arrowO2)">
+          <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0.3s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- ARROWS: CO2 crossing membrane (reverse) -->
+        <path d="M 313 115 L 290 115" stroke="#ff2d78" stroke-width="2.5" fill="none" marker-end="url(#arrowCO2)">
+          <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin="0.7s" repeatCount="indefinite"/>
+        </path>
+
+        <defs>
+          <marker id="arrowO2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#00f5ff"/>
+          </marker>
+          <marker id="arrowCO2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M 0 0 L 6 3 L 0 6 z" fill="#ff2d78"/>
+          </marker>
+        </defs>
+
+        <!-- Labels layers -->
+        <text x="180" y="248" fill="rgba(0,245,255,0.6)" font-size="8" font-family="Share Tech Mono" text-anchor="middle">Pneumócito I</text>
+        <text x="370" y="248" fill="rgba(255,45,120,0.6)" font-size="8" font-family="Share Tech Mono" text-anchor="middle">Endotélio capilar</text>
+        <text x="284" y="248" fill="rgba(57,255,20,0.6)" font-size="8" font-family="Share Tech Mono" text-anchor="middle">↑ Barreira</text>
+
+        <!-- legend -->
+        <rect x="10" y="285" width="12" height="12" fill="#0066ff" rx="2"/>
+        <text x="26" y="295" fill="#aaa" font-size="9" font-family="Nunito">O₂ (O dois → oxigénio)</text>
+        <rect x="150" y="285" width="12" height="12" fill="#cc0000" rx="2"/>
+        <text x="166" y="295" fill="#aaa" font-size="9" font-family="Nunito">CO₂ (C O dois → dióxido de carbono)</text>
+      </svg>
+
+      <p>O alvéolo (do latim <em>alveolus</em> = "pequena cavidade", "pequena banheira") é a unidade funcional do pulmão. Cada alvéolo é revestido por dois tipos celulares principais:</p>
+      
+      <div class="grid-2">
+        <div class="info-card">
+          <div class="ic-icon">🟦</div>
+          <div class="ic-title" style="color:var(--neon-cyan)">PNEUMÓCITO TIPO I</div>
+          <div class="ic-text">Células achatadas e grandes (95% da superfície alveolar). São o pavimento da sala de troca — altamente finas (~0,1–0,2 µm de espessura) para minimizar a distância de difusão. Não se reproduzem. Sinônimo: pneumócito escamoso.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🟩</div>
+          <div class="ic-title" style="color:var(--neon-green)">PNEUMÓCITO TIPO II</div>
+          <div class="ic-text">Células cuboides (5% da superfície, mas maioria do número). Produzem <strong>surfactante</strong> (do inglês <em>surface-active agent</em> = agente ativo de superfície) — uma mistura de fosfolípidos (principalmente DPPC, Dipalmitoilfosfatidilcolina) que reduz a tensão superficial e impede o colapso alveolar. São as células-tronco: regeneram tipo I após lesão.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A BARREIRA ALVEOLO-CAPILAR -->
+    <div class="panel green">
+      <div class="panel-tag">ESTRUTURA</div>
+      <h3>🧱 A Barreira Alvéolo-Capilar — A Fronteira Épica</h3>
+
+      <p>Entre o ar alveolar e o sangue existem <strong style="color:var(--neon-yellow)">6 camadas</strong> que o O₂ deve atravessar. Esta fronteira tem no total apenas <strong style="color:var(--neon-green)">~0,5 µm de espessura</strong> (micrometros — 1 µm = um milionésimo de metro):</p>
+
+      <div class="timeline">
+        <div class="tl-step" data-step="1">
+          <h4>Surfactante + fluido alveolar</h4>
+          <p>Camada aquosa fina que reveste a face interna do alvéolo. O surfactante flutua aqui como um tapete lipídico. Sem ele, a tensão superficial colapsaria o alvéolo (lei de LaPlace: P = 2T/r).</p>
+        </div>
+        <div class="tl-step" data-step="2">
+          <h4>Membrana plasmática do Pneumócito I (face luminal)</h4>
+          <p>A membrana voltada para o interior do alvéolo. Bicamada fosfolipídica — O₂ dissolve-se nela facilmente porque é apolar (não polar = miscível com lípidos).</p>
+        </div>
+        <div class="tl-step" data-step="3">
+          <h4>Citoplasma do Pneumócito I</h4>
+          <p>Extremamente fino, quase não existe. Só organelas mínimas — é puro aproveitamento evolutivo do espaço.</p>
+        </div>
+        <div class="tl-step" data-step="4">
+          <h4>Membrana basal alveolar (membrana plasmática basal)</h4>
+          <p>Camada de colágeno IV, laminina e fibronectina. Fusionada com a membrana basal capilar nas regiões de troca ativa — reduzindo as 6 camadas para efetivamente menos.</p>
+        </div>
+        <div class="tl-step" data-step="5">
+          <h4>Endotélio capilar pulmonar</h4>
+          <p>Células endoteliais contínuas e não fenestradas (sem poros) — mas extremamente finas. Também permeáveis ao O₂ e CO₂ que, sendo gases apolares, atravessam membranas com enorme facilidade.</p>
+        </div>
+        <div class="tl-step" data-step="6">
+          <h4>Plasma sanguíneo</h4>
+          <p>O O₂ dissolve-se brevemente no plasma antes de entrar nos eritrócitos (glóbulos vermelhos). A concentração dissolvida é pequena — o "transporte a granel" é feito pela hemoglobina dentro dos eritrócitos.</p>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        Espessura total da barreira: ~0,2 – 0,5 µm
+        <br>Para comparação: um cabelo humano tem ~70 µm
+        <br>→ A barreira é 140× mais fina que um fio de cabelo!
+      </div>
+    </div>
+
+    <!-- SURFACTANTE em detalhe -->
+    <div class="panel yellow">
+      <div class="panel-tag">MOLÉCULA</div>
+      <h3>💊 Surfactante — O Guardião do Alvéolo</h3>
+      <p>O surfactante é produzido pelos <strong>pneumócitos tipo II</strong> e secretado nos corpos lamelares (organelas especializadas). A sua composição:</p>
+      <div class="grid-3">
+        <div class="info-card">
+          <div class="ic-icon">🧬</div>
+          <div class="ic-title" style="color:var(--neon-yellow)">DPPC (70%)</div>
+          <div class="ic-text">Dipalmitoilfosfatidilcolina — o principal componente. Tem uma cabeça polar (hidrófila, "ama a água") e duas caudas apolares (hidrofóbicas, "fogem da água"). Posiciona-se na interface ar-água reduzindo a tensão superficial.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🔬</div>
+          <div class="ic-title" style="color:var(--neon-orange)">SP-B / SP-C (10%)</div>
+          <div class="ic-text">Proteínas hidrofóbicas do surfactante (Surfactant Protein B e C). Organizam o DPPC em monocamadas eficientes. Deficiência de SP-B = síndrome de angústia respiratória neonatal (SARN) fatal.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">💧</div>
+          <div class="ic-title" style="color:var(--neon-purple)">SP-A / SP-D (10%)</div>
+          <div class="ic-text">Proteínas hidrófilas — são coletinas, atuam na defesa imune do pulmão. SP-A também regula a reciclagem do surfactante e a homeostase do próprio surfactante.</div>
+        </div>
+      </div>
+
+      <div class="highlight yellow">
+        <strong>LEI DE LAPLACE (física aplicada):</strong> Pressão interna = 2 × Tensão Superficial / raio (P = 2T/r).
+        Alvéolos pequenos (r pequeno) teriam pressão interna muito alta → tenderiam a colapsar (atelectasia). 
+        O surfactante REDUZ T ao máximo, tornando P controlável mesmo em alvéolos pequenos. 
+        Brilhante engenharia evolutiva!
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 2 – A FÍSICA DA DIFUSÃO
+=============================== -->
+<section class="chapter" id="ch2">
+  <h2 class="chapter-title" style="color:var(--neon-green)">
+    <span class="num">CAPÍTULO 02</span>
+    OS PRINCÍPIOS DA FORÇA: PRESSÃO PARCIAL E DIFUSÃO PASSIVA
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel green">
+      <div class="panel-tag">FÍSICA</div>
+      <h3>⚡ O Que É Pressão Parcial? — A Moeda de Troca dos Gases</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">🔬 DR. FICK</div>
+        Imagina que o ar é uma equipa de jogadores num campo. A pressão total é o "peso" de toda a equipa. 
+        Cada jogador contribui com a SUA pressão, proporcional à sua quantidade. Isso é a 
+        <strong style="color:var(--neon-green)">Pressão Parcial</strong>!
+      </div>
+
+      <p><strong style="color:var(--neon-yellow)">Lei de Dalton</strong> (John Dalton, 1801): 
+      A pressão total de uma mistura de gases é a soma das pressões parciais individuais.</p>
+
+      <div class="formula-box">
+        P<sub>total</sub> = P(O₂) + P(CO₂) + P(N₂) + P(H₂O) + ...
+        <br><br>
+        P<sub>x</sub> = P<sub>total</sub> × F<sub>x</sub>
+        <br><small style="opacity:.7">onde F<sub>x</sub> = fração (percentagem) do gás na mistura</small>
+      </div>
+
+      <h3 style="margin-top:1rem">📊 Os Números Reais — Pressões no Ar e nos Pulmões</h3>
+      <p>A pressão atmosférica ao nível do mar é <strong style="color:var(--neon-cyan)">760 mmHg</strong> (milímetros de mercúrio). 
+      O ar atmosférico tem ~21% de O₂:</p>
+
+      <table class="data-table">
+        <thead><tr><th>Local</th><th>PO₂ (mmHg)</th><th>PCO₂ (mmHg)</th><th>PN₂ (mmHg)</th><th>PH₂O (mmHg)</th></tr></thead>
+        <tbody>
+          <tr><td>Ar atmosférico seco</td><td style="color:var(--neon-cyan)">159</td><td style="color:var(--neon-pink)">0.3</td><td>597</td><td>0</td></tr>
+          <tr><td>Ar traqueal (humidificado)</td><td style="color:var(--neon-cyan)">149</td><td style="color:var(--neon-pink)">0.3</td><td>563</td><td>47</td></tr>
+          <tr><td>Ar alveolar (PAO₂)</td><td style="color:var(--neon-cyan)">100</td><td style="color:var(--neon-pink)">40</td><td>573</td><td>47</td></tr>
+          <tr><td>Sangue venoso misto (PvO₂)</td><td style="color:var(--neon-cyan)">40</td><td style="color:var(--neon-pink)">46</td><td>—</td><td>—</td></tr>
+          <tr><td>Sangue arterial (PaO₂)</td><td style="color:var(--neon-cyan)">95–100</td><td style="color:var(--neon-pink)">38–42</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <div class="highlight">
+        <strong>Por que o PAO₂ cai de 159 para 100 mmHg?</strong><br>
+        1) Humidificação: O vapor de água (PH₂O = 47 mmHg) "dilui" os outros gases.<br>
+        2) Mistura com ar alveolar residual (FRC — Capacidade Residual Funcional).<br>
+        3) Consumo contínuo de O₂ pelo sangue.<br>
+        4) Adição contínua de CO₂ pelo sangue.
+      </div>
+    </div>
+
+    <!-- GRADIENTE DE PRESSÃO -->
+    <div class="panel cyan">
+      <div class="panel-tag">GRADIENTE</div>
+      <h3>🌊 O Gradiente — A Força Motriz da Batalha</h3>
+      
+      <p>Os gases movem-se SEMPRE da região de <strong style="color:var(--neon-yellow)">alta pressão parcial → baixa pressão parcial</strong>. 
+      Não precisam de energia — é difusão passiva (como água que corre morro abaixo).</p>
+
+      <!-- PARTICLE ANIMATION -->
+      <div class="particle-zone" id="diffDemo">
+        <div class="zone-label mem-o2">ALVÉOLO<br>PO₂=100</div>
+        <div class="zone-label mem-co2">CAPILAR<br>PO₂=40</div>
+        <div class="zone-label mem-mid" style="top:.8rem">MEMBRANA</div>
+        <div class="mem-tip">▲ Clica para acelerar a difusão</div>
+
+        <!-- O2 particles left side -->
+        <div class="particle p-o2" style="width:28px;height:28px;--d:3s;top:25%;left:8%">O₂</div>
+        <div class="particle p-o2" style="width:24px;height:24px;--d:3.5s;top:55%;left:12%">O₂</div>
+        <div class="particle p-o2" style="width:26px;height:26px;--d:2.8s;top:40%;left:5%">O₂</div>
+
+        <!-- CO2 particles right side -->
+        <div class="particle p-co2" style="width:30px;height:30px;--d:2.5s;top:30%;left:75%">CO₂</div>
+        <div class="particle p-co2" style="width:25px;height:25px;--d:3.2s;top:60%;left:80%">CO₂</div>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem">
+        <div>
+          <p style="color:var(--neon-cyan);font-weight:800;margin-bottom:.5rem">O₂ — Da Alta para a Baixa:</p>
+          <div class="pv-row">
+            <div class="pv-label"><span>Alvéolo (PAO₂)</span><span>100 mmHg</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-cyan);color:var(--neon-cyan)" data-w="100"></div></div>
+          </div>
+          <div class="pv-row">
+            <div class="pv-label"><span>Sangue venoso (PvO₂)</span><span>40 mmHg</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:rgba(0,245,255,0.4);color:rgba(0,245,255,0.4)" data-w="40"></div></div>
+          </div>
+          <p style="color:var(--neon-green);font-size:.85rem;margin-top:.5rem">→ Gradiente: <strong>60 mmHg</strong> → O₂ entra no sangue!</p>
+        </div>
+        <div>
+          <p style="color:var(--neon-pink);font-weight:800;margin-bottom:.5rem">CO₂ — Da Alta para a Baixa:</p>
+          <div class="pv-row">
+            <div class="pv-label"><span>Sangue venoso (PvCO₂)</span><span>46 mmHg</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-pink);color:var(--neon-pink)" data-w="46"></div></div>
+          </div>
+          <div class="pv-row">
+            <div class="pv-label"><span>Alvéolo (PACO₂)</span><span>40 mmHg</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:rgba(255,45,120,0.4)" data-w="40"></div></div>
+          </div>
+          <p style="color:var(--neon-green);font-size:.85rem;margin-top:.5rem">→ Gradiente: <strong>6 mmHg</strong> → CO₂ sai do sangue!</p>
+        </div>
+      </div>
+
+      <div class="highlight pink">
+        <strong>Por que o gradiente de CO₂ é tão pequeno (6 mmHg) mas ainda funciona?</strong><br>
+        Porque o CO₂ tem uma <strong>solubilidade 20× maior</strong> que o O₂ na membrana biológica!
+        Um gradiente pequeno é suficiente para uma taxa de difusão equivalente. 
+        (Isso ficará claro na Lei de Fick — próximo capítulo!)
+      </div>
+    </div>
+
+    <!-- EQUAÇÃO ALVEOLAR DE GÁS -->
+    <div class="panel purple">
+      <div class="panel-tag">EQUAÇÃO</div>
+      <h3>🧮 Equação do Gás Alveolar — A Fórmula Sagrada</h3>
+
+      <p>Como calcular a pressão parcial de O₂ no alvéolo (PAO₂)? Existe uma equação fundamental:</p>
+
+      <div class="formula-box">
+        PAO₂ = (PB − PH₂O) × FiO₂ − PaCO₂/RQ
+        <br><br>
+        <small>PAO₂ = Pressão Alveolar de O₂ (Alveolar O₂ Pressure)</small><br>
+        <small>PB = Pressão Barométrica (Barometric Pressure) = 760 mmHg ao nível do mar</small><br>
+        <small>PH₂O = Pressão do Vapor de Água (47 mmHg a 37°C)</small><br>
+        <small>FiO₂ = Fração Inspirada de O₂ (Fraction of Inspired O₂) = 0.21 no ar ambiente</small><br>
+        <small>PaCO₂ = Pressão arterial de CO₂ (geralmente ~40 mmHg)</small><br>
+        <small>RQ = Quociente Respiratório (Respiratory Quotient) = CO₂ produzido / O₂ consumido ≈ 0.8</small>
+      </div>
+
+      <p><strong style="color:var(--neon-yellow)">Exercício resolvido:</strong> Ao nível do mar, ar ambiente, RQ=0.8:</p>
+      <div class="formula-box">
+        PAO₂ = (760 − 47) × 0.21 − 40/0.8
+        <br>= 713 × 0.21 − 50
+        <br>= 149.7 − 50
+        <br>= <strong style="color:var(--neon-green)">99.7 ≈ 100 mmHg ✓</strong>
+      </div>
+
+      <div class="clinical-box">
+        <strong>Aplicação Clínica 🏥:</strong> Esta equação permite calcular o 
+        <strong style="color:var(--neon-pink)">gradiente A-a de O₂ (Gradiente Alveolar-Arterial)</strong>:
+        <br><br>
+        <strong>Gradiente A-a = PAO₂ − PaO₂</strong>
+        <br>Normal: 5–15 mmHg (jovens) / até 25 mmHg (idosos)
+        <br><br>
+        Um gradiente A-a ELEVADO indica problema na difusão, shunt ou V/Q mismatch (desajuste ventilação/perfusão).
+        Um gradiente A-a NORMAL com hipóxia indica hipoventilação pura (ex: overdose de opióides).
+        <br><br>
+        <span class="gloss-badge">DIAGNÓSTICO DIFERENCIAL</span>
+        <span class="gloss-badge">HIPÓXIA</span>
+        <span class="gloss-badge">ICU</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 3 – LEI DE FICK
+=============================== -->
+<section class="chapter" id="ch3">
+  <h2 class="chapter-title" style="color:var(--neon-pink)">
+    <span class="num">CAPÍTULO 03</span>
+    A LEI SUPREMA: FICK E OS DETERMINANTES DA DIFUSÃO
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel pink">
+      <div class="panel-tag">LEI DE FICK</div>
+      <h3>⚖️ Adolf Fick — O Cientista que Decifrou a Difusão (1855)</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">👨‍🔬 ADOLF FICK (1829–1901)</div>
+        Trabalhei como fisiologista alemão e em 1855 descrevi matematicamente como os gases se difundem através das membranas. Minha lei é simples: a quantidade de gás que atravessa uma membrana por unidade de tempo depende de 4 factores. Vamos às contas!
+      </div>
+
+      <div class="formula-box">
+        <strong>LEI DE FICK DA DIFUSÃO:</strong>
+        <br><br>
+        V̇<sub>gas</sub> = A × D × (P₁ − P₂) / T
+        <br><br>
+        <small>V̇<sub>gas</sub> = Volume de gás transferido por minuto (Flow/Fluxo)</small><br>
+        <small>A = Área da membrana (m²)</small><br>
+        <small>D = Constante de difusão do gás (depende da solubilidade e massa molar)</small><br>
+        <small>P₁ − P₂ = Gradiente de pressão parcial (mmHg)</small><br>
+        <small>T = Espessura da membrana (µm)</small>
+      </div>
+
+      <p>Em forma expandida, a constante D (coeficiente de difusão) é:</p>
+
+      <div class="formula-box">
+        D ∝ Solubilidade / √Massa Molar
+        <br><br>
+        D(O₂) ∝ 0.024 / √32 = 0.024 / 5.66 ≈ 0.0042<br>
+        D(CO₂) ∝ 0.57  / √44 = 0.57  / 6.63 ≈ 0.086<br>
+        <br>
+        <strong style="color:var(--neon-green)">CO₂ difunde 20× mais rápido que O₂!</strong>
+      </div>
+
+      <div class="grid-2" style="margin-top:1rem">
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            ⬆️ A — ÁREA (Aumentar = Melhor difusão) <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>O pulmão normal tem ~70–80 m² de superfície alveolar. Patologias que REDUZEM a área destroem a difusão:</p>
+            <ul style="margin-left:1.2rem;color:var(--text-soft);line-height:2">
+              <li><strong style="color:var(--neon-pink)">Enfisema</strong>: destruição das paredes alveolares → alvéolos fundidos → menos área</li>
+              <li><strong style="color:var(--neon-pink)">Pneumonectomia</strong>: remoção de um pulmão</li>
+              <li><strong style="color:var(--neon-pink)">Atelectasia</strong>: colapso alveolar</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            ⬇️ T — ESPESSURA (Aumentar = Pior difusão) <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>A espessura normal da barreira é ~0.5 µm. Qualquer processo que a ENGROSSSA prejudica a difusão:</p>
+            <ul style="margin-left:1.2rem;color:var(--text-soft);line-height:2">
+              <li><strong style="color:var(--neon-pink)">Fibrose Pulmonar</strong>: deposição de colagénio → espessamento fibrótico</li>
+              <li><strong style="color:var(--neon-pink)">Edema Pulmonar</strong>: fluido no interstício/alvéolo → distância ↑</li>
+              <li><strong style="color:var(--neon-pink)">Pneumonia</strong>: exsudato inflamatório preenche alvéolos</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            ↕️ ΔP — GRADIENTE (Maior = Melhor difusão) <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>O gradiente é o motor da difusão. Para O₂: PAO₂ − PcO₂ = ~100−40 = 60 mmHg.</p>
+            <ul style="margin-left:1.2rem;color:var(--text-soft);line-height:2">
+              <li><strong style="color:var(--neon-cyan)">Altitude elevada</strong>: PB baixa → PAO₂ baixa → gradiente ↓ → hipóxia</li>
+              <li><strong style="color:var(--neon-cyan)">O₂ suplementar</strong>: FiO₂ ↑ → PAO₂ ↑ → gradiente ↑ → mais difusão</li>
+            </ul>
+          </div>
+        </div>
+        <div class="accordion">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            🧪 D — SOLUBILIDADE/MASSA MOLAR <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <p>Esta é a propriedade intrínseca do gás — não podemos mudar diretamente na prática clínica, mas explica comportamentos:</p>
+            <ul style="margin-left:1.2rem;color:var(--text-soft);line-height:2">
+              <li>CO₂: solubilidade 24× maior → D 20× maior → difunde muito mais fácil</li>
+              <li>CO (Monóxido de Carbono): não usado para troca, mas usado para MEDIR a capacidade de difusão (DLCO / KCO)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DLCO -->
+    <div class="panel orange">
+      <div class="panel-tag">DIAGNÓSTICO</div>
+      <h3>🧪 DLCO — Medir a Capacidade de Difusão na Prática</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">🏥 PNEUMOLOGISTA</div>
+        Como medir a capacidade de difusão do pulmão em vida? Usamos o CO (Monóxido de Carbono, Carbon Monoxide) como gás traçador! O CO tem afinidade 250× maior pela hemoglobina que o O₂, e é absorvido de forma limitada pela difusão — perfeito para medir.
+      </div>
+
+      <div class="formula-box">
+        DLCO (Diffusing Lung Capacity for CO)
+        = V̇CO / (PACO − PcCO)
+        <br><br>
+        <small>Normal: 20–30 mL/min/mmHg</small>
+        <br><small>Valores corrigidos para hemoglobina, volume pulmonar e altitude</small>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>DLCO</th><th>Interpretação</th><th>Causas Comuns</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--neon-green)">Normal (>75% pred)</td><td>Difusão adequada</td><td>—</td></tr>
+          <tr><td style="color:var(--neon-yellow)">Levemente ↓ (60–75%)</td><td>Disfunção leve</td><td>Enfisema inicial, fibrose inicial</td></tr>
+          <tr><td style="color:var(--neon-orange)">Moderado ↓ (40–60%)</td><td>Disfunção significativa</td><td>Fibrose pulmonar, HAP</td></tr>
+          <tr><td style="color:var(--neon-pink)">Grave ↓ (&lt;40%)</td><td>Disfunção grave</td><td>Fibrose avançada, enfisema grave</td></tr>
+          <tr><td style="color:var(--neon-cyan)">↑ DLCO</td><td>Mais Hb disponível</td><td>Policitemia, hemorragia alveolar, asma</td></tr>
+        </tbody>
+      </table>
+
+      <div class="clinical-box">
+        <strong>Clínica Rápida 🏥: DLCO diferencia causas de dispneia!</strong><br>
+        • Asma: DLCO normal ou aumentado<br>
+        • DPOC/Enfisema: DLCO reduzido<br>
+        • Fibrose Pulmonar Idiopática (FPI/IPF): DLCO muito reduzido<br>
+        • Hipertensão Arterial Pulmonar (HAP/PAH): DLCO reduzido desproporcional<br>
+        <span class="gloss-badge">ESPIROMETRIA</span>
+        <span class="gloss-badge">DLCO/KCO</span>
+        <span class="gloss-badge">PADRÃO RESTRITIVO</span>
+      </div>
+    </div>
+
+    <!-- TEMPO DE TRÂNSITO -->
+    <div class="panel cyan">
+      <div class="panel-tag">TEMPO</div>
+      <h3>⏱️ O Tempo de Trânsito — Uma Corrida Contra o Relógio</h3>
+
+      <p>O eritrócito (glóbulo vermelho) viaja pelo capilar pulmonar em apenas <strong style="color:var(--neon-yellow)">0.75 segundos</strong> em repouso. 
+      Para equilibrar as pressões parciais de O₂, precisa-se apenas de <strong style="color:var(--neon-green)">0.25 segundos</strong>!</p>
+
+      <div class="timeline">
+        <div class="tl-step" data-step="0s">
+          <h4>Tempo 0 s — Entrada no capilar</h4>
+          <p>PcO₂ = 40 mmHg (sangue venoso misto). Gradiente com alveolar (100): 60 mmHg. Difusão máxima!</p>
+        </div>
+        <div class="tl-step" data-step=".25s">
+          <h4>Tempo 0.25 s — Equilíbrio atingido!</h4>
+          <p>PcO₂ = ~100 mmHg. Gradiente ≈ 0. Difusão cessa. Restam 0.5 s de "reserva".</p>
+        </div>
+        <div class="tl-step" data-step=".75s">
+          <h4>Tempo 0.75 s — Saída do capilar</h4>
+          <p>O eritrócito deixa o capilar com sangue totalmente oxigenado. Há uma reserva de tempo enorme!</p>
+        </div>
+      </div>
+
+      <div class="highlight orange">
+        <strong>Exercício Físico Intenso:</strong> O débito cardíaco aumenta → eritrócitos passam mais rápido (0.25s no capilar).
+        Ainda assim, há tempo suficiente para equilibrar — o pulmão normal tem reserva funcional enorme.
+        <br><br>
+        <strong>Com doença (ex: fibrose):</strong> A membrana espessada torna a difusão mais lenta.
+        Em exercício, o eritrócito pode sair antes do equilíbrio → <em>hipóxia de difusão</em>.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 4 – HEMOGLOBINA
+=============================== -->
+<section class="chapter" id="ch4">
+  <h2 class="chapter-title" style="color:var(--neon-purple)">
+    <span class="num">CAPÍTULO 04</span>
+    O TRANSPORTADOR LENDÁRIO: HEMOGLOBINA E CURVA DE DISSOCIAÇÃO
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel purple">
+      <div class="panel-tag">HEMOGLOBINA</div>
+      <h3>🔴 Hemoglobina (Hb) — A Molécula Heróica</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">🔴 HEMOGLOBINA</div>
+        Eu sou a razão pela qual o sangue pode transportar 200× mais O₂ do que seria possível só dissolvido no plasma! 
+        Cada eritrócito tem ~280 milhões de mim. Cada uma de mim carrega até 4 moléculas de O₂!
+      </div>
+
+      <p>A hemoglobina (do grego <em>haima</em> = sangue + latim <em>globus</em> = esfera + <em>-ina</em> = proteína)
+      é uma <strong>proteína tetramérica</strong> — 4 subunidades globínicas, cada uma com um grupo <strong>heme</strong> central 
+      contendo um átomo de <strong>ferro</strong> (Fe²⁺) que se liga ao O₂:</p>
+
+      <div class="grid-2">
+        <div class="info-card">
+          <div class="ic-icon">⚛️</div>
+          <div class="ic-title" style="color:var(--neon-purple)">ESTRUTURA QUATERNÁRIA</div>
+          <div class="ic-text">Hb adulta (HbA): 2 cadeias α + 2 cadeias β. Hb fetal (HbF): 2α + 2γ — maior afinidade pelo O₂ (deslocada para esquerda na curva). Permite extração de O₂ da mãe via placenta.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🔗</div>
+          <div class="ic-title" style="color:var(--neon-pink)">COOPERATIVIDADE</div>
+          <div class="ic-text">Quando a 1ª molécula de O₂ liga, muda a conformação da Hb (T→R, tensa→relaxada), facilitando as seguintes. Resultado: curva sigmoidal (em S) de dissociação — não linear! Genial para captação e libertação eficientes.</div>
+        </div>
+      </div>
+
+      <!-- CURVA DE DISSOCIAÇÃO SVG -->
+      <div style="margin:1.5rem 0">
+        <p style="color:var(--neon-yellow);font-weight:800;margin-bottom:.5rem;text-align:center">
+          📈 Curva de Dissociação da Oxihemoglobina (ODC — Oxyhemoglobin Dissociation Curve)
+        </p>
+        <svg viewBox="0 0 500 300" style="width:100%;max-width:550px;display:block;margin:0 auto" xmlns="http://www.w3.org/2000/svg">
+          <rect width="500" height="300" fill="#080a18" rx="8"/>
+          <!-- axes -->
+          <line x1="50" y1="250" x2="470" y2="250" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <line x1="50" y1="250" x2="50" y2="20" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+          <!-- x labels -->
+          <text x="470" y="268" fill="rgba(255,255,255,0.5)" font-size="11" font-family="Share Tech Mono">PO₂ (mmHg)</text>
+          <text x="5" y="25" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Share Tech Mono" transform="rotate(-90,5,135)" text-anchor="middle">SaO₂ (%)</text>
+          <!-- x ticks -->
+          <text x="50" y="265" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="Share Tech Mono">0</text>
+          <text x="133" y="265" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="Share Tech Mono">27</text>
+          <text x="216" y="265" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="Share Tech Mono">50</text>
+          <text x="299" y="265" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="Share Tech Mono">75</text>
+          <text x="382" y="265" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="middle" font-family="Share Tech Mono">100</text>
+          <!-- y ticks -->
+          <text x="42" y="252" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="end" font-family="Share Tech Mono">0</text>
+          <text x="42" y="194" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="end" font-family="Share Tech Mono">25</text>
+          <text x="42" y="135" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="end" font-family="Share Tech Mono">50</text>
+          <text x="42" y="77" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="end" font-family="Share Tech Mono">75</text>
+          <text x="42" y="30" fill="rgba(255,255,255,0.4)" font-size="9" text-anchor="end" font-family="Share Tech Mono">100</text>
+
+          <!-- NORMAL curve (sigmoidal) -->
+          <path d="M50,250 C90,248 110,240 130,220 C150,200 165,178 185,155 C210,125 245,75 290,40 C330,22 380,22 470,22"
+            stroke="#00f5ff" stroke-width="3" fill="none"
+            stroke-dasharray="600" stroke-dashoffset="600">
+            <animate attributeName="stroke-dashoffset" values="600;0" dur="2s" begin="0.5s" fill="freeze"/>
+          </path>
+          <text x="350" y="35" fill="#00f5ff" font-size="11" font-family="Bangers" letter-spacing="1">NORMAL</text>
+
+          <!-- RIGHT shift -->
+          <path d="M50,250 C100,248 125,242 150,224 C175,205 190,182 212,158 C240,125 275,72 320,42 C360,22 400,22 470,22"
+            stroke="#ff6b00" stroke-width="2" fill="none" stroke-dasharray="5,4" opacity="0.8">
+          </path>
+          <text x="320" y="58" fill="#ff6b00" font-size="10" font-family="Bangers" letter-spacing="1">↑T°,↑CO₂,↑H⁺,↑2,3-DPG</text>
+
+          <!-- LEFT shift -->
+          <path d="M50,250 C75,248 95,238 110,214 C130,190 150,165 170,138 C195,105 240,60 275,35 C310,22 360,22 470,22"
+            stroke="#bf00ff" stroke-width="2" fill="none" stroke-dasharray="5,4" opacity="0.8">
+          </path>
+          <text x="200" y="28" fill="#bf00ff" font-size="10" font-family="Bangers" letter-spacing="1">↓T°,↓CO₂,↓H⁺,HbF,CO</text>
+
+          <!-- P50 marker -->
+          <line x1="133" y1="135" x2="133" y2="250" stroke="rgba(255,230,0,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="50" y1="135" x2="133" y2="135" stroke="rgba(255,230,0,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="133" cy="135" r="5" fill="#ffe600" opacity="0.9">
+            <animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text x="138" y="128" fill="#ffe600" font-size="10" font-family="Bangers">P50 = 27 mmHg</text>
+          <text x="138" y="140" fill="rgba(255,230,0,0.6)" font-size="8" font-family="Share Tech Mono">SaO₂=50%</text>
+
+          <!-- VEIAS point -->
+          <circle cx="133" cy="194" r="5" fill="#ff2d78">
+            <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <text x="100" y="188" fill="#ff2d78" font-size="9" font-family="Bangers">Veias PO₂~40</text>
+
+          <!-- ARTÉRIAS point -->
+          <circle cx="340" cy="30" r="5" fill="#39ff14">
+            <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite" begin=".5s"/>
+          </circle>
+          <text x="343" y="26" fill="#39ff14" font-size="9" font-family="Bangers">Artérias PO₂~95</text>
+
+          <!-- Bohr effect arrow -->
+          <path d="M 230 120 L 270 120" stroke="#ff6b00" stroke-width="2" marker-end="url(#aOr)" fill="none"/>
+          <text x="235" y="115" fill="#ff6b00" font-size="8" font-family="Share Tech Mono">Efeito Bohr</text>
+          <defs><marker id="aOr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6z" fill="#ff6b00"/></marker></defs>
+        </svg>
+      </div>
+
+      <div class="highlight">
+        <strong>P50</strong> = PO₂ a que a hemoglobina está 50% saturada. Normal = 27 mmHg.<br>
+        <strong>Efeito Bohr</strong> (Christian Bohr, 1904): ↑CO₂, ↑H⁺, ↑Temperatura, ↑2,3-DPG → desvio à DIREITA → Hb larga O₂ mais facilmente nos tecidos (perfeito!).<br>
+        <strong>2,3-DPG</strong> (2,3-Difosfoglicerato): metabolito dos eritrócitos que regula a afinidade da Hb pelo O₂.
+      </div>
+    </div>
+
+    <!-- TRANSPORTE CO2 -->
+    <div class="panel green">
+      <div class="panel-tag">CO₂</div>
+      <h3>🌬️ Como o CO₂ é Transportado — Três Formas</h3>
+      
+      <div class="grid-3">
+        <div class="info-card">
+          <div class="ic-icon">💧</div>
+          <div class="ic-title" style="color:var(--neon-cyan)">1. DISSOLVIDO (8%)</div>
+          <div class="ic-text">CO₂ dissolvido diretamente no plasma sanguíneo. Pequena fração, mas a ÚNICA que gera a PCO₂ mensurável (princípio de Henry: C = K × P).</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">⚗️</div>
+          <div class="ic-title" style="color:var(--neon-green)">2. BICARBONATO HCO₃⁻ (70%)</div>
+          <div class="ic-text">Dentro do eritrócito: CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻ (catalisado pela anidrase carbónica). HCO₃⁻ sai para o plasma via trocador Cl⁻/HCO₃⁻ (banda 3). É o sistema tampão mais importante do sangue!</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">🧬</div>
+          <div class="ic-title" style="color:var(--neon-yellow)">3. CARBAMINOHEMOGLOBINA (22%)</div>
+          <div class="ic-text">CO₂ liga-se diretamente aos grupos amino (NH₂) das cadeias globínicas → HbNHCOOH. Efeito Haldane: O₂ reduz a afinidade da Hb pelo CO₂ (e vice-versa).</div>
+        </div>
+      </div>
+
+      <div class="clinical-box">
+        <strong>Anidrase Carbónica (CA, Carbonic Anhydrase)</strong>: enzima que catalisa CO₂ + H₂O ↔ H₂CO₃ uma velocidade 10.000× maior que a reação espontânea. Inibida pela acetazolamida (diurético, usado em altitude e glaucoma).<br><br>
+        <span class="gloss-badge">ACETAZOLAMIDA</span>
+        <span class="gloss-badge">EQUILÍBRIO ÁCIDO-BASE</span>
+        <span class="gloss-badge">ALCALOSE ALTITUDE</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 5 – ZONAS DE WEST
+=============================== -->
+<section class="chapter" id="ch5">
+  <h2 class="chapter-title" style="color:var(--neon-orange)">
+    <span class="num">CAPÍTULO 05</span>
+    AS ZONAS DE WEST: O MAPA DO PODER NO PULMÃO
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel orange">
+      <div class="panel-tag">WEST ZONES</div>
+      <h3>🗺️ John B. West — O Cartógrafo do Pulmão</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">👨‍🔬 JOHN B. WEST (1928–2023)</div>
+        Trabalhei na expedição ao Monte Everest em 1960-61 e percebi algo fascinante: a distribuição de ventilação (V) e perfusão (Q) no pulmão não é uniforme! 
+        A gravidade afeta as pressões vasculares e alveolares de forma diferente consoante a posição no pulmão. 
+        Dividi o pulmão em 3 zonas que explicam tudo!
+      </div>
+
+      <!-- WEST ZONES DIAGRAM SVG -->
+      <div style="display:flex;flex-wrap:wrap;gap:1rem;align-items:flex-start">
+        <svg viewBox="0 0 220 400" style="width:220px;flex-shrink:0;display:block" xmlns="http://www.w3.org/2000/svg">
+          <rect width="220" height="400" fill="#080a18" rx="8"/>
+          <!-- Lung shape -->
+          <path d="M110,30 C150,20 190,60 200,120 C210,200 195,310 160,370 C140,390 110,390 110,380 
+                    C110,390 80,390 60,370 C25,310 10,200 20,120 C30,60 70,20 110,30Z"
+            fill="rgba(255,45,120,0.07)" stroke="rgba(255,45,120,0.25)" stroke-width="1.5"/>
+
+          <!-- Zone 1 (apex) - ffe600 -->
+          <path d="M110,30 C150,20 185,55 193,110 C165,95 130,85 110,80 C90,85 55,95 27,110 C35,55 70,20 110,30Z"
+            fill="rgba(255,230,0,0.2)" stroke="#ffe600" stroke-width="1.5"/>
+          <text x="110" y="68" text-anchor="middle" fill="#ffe600" font-size="14" font-family="Bangers" letter-spacing="1">ZONA 1</text>
+          <text x="110" y="82" text-anchor="middle" fill="rgba(255,230,0,0.7)" font-size="8" font-family="Share Tech Mono">PA&gt;Pa&gt;Pv</text>
+
+          <!-- Zone 2 (middle) - neon-cyan -->
+          <path d="M27,110 C55,95 90,85 110,80 C130,85 165,95 193,110 C205,180 198,250 175,300 C155,260 130,240 110,238 C90,240 65,260 45,300 C22,250 15,180 27,110Z"
+            fill="rgba(0,245,255,0.12)" stroke="#00f5ff" stroke-width="1.5"/>
+          <text x="110" y="180" text-anchor="middle" fill="#00f5ff" font-size="14" font-family="Bangers" letter-spacing="1">ZONA 2</text>
+          <text x="110" y="195" text-anchor="middle" fill="rgba(0,245,255,0.7)" font-size="8" font-family="Share Tech Mono">Pa&gt;PA&gt;Pv</text>
+
+          <!-- Zone 3 (base) - neon-green -->
+          <path d="M45,300 C65,260 90,240 110,238 C130,240 155,260 175,300 C160,370 140,390 110,380 C80,390 60,370 45,300Z"
+            fill="rgba(57,255,20,0.18)" stroke="#39ff14" stroke-width="1.5"/>
+          <text x="110" y="340" text-anchor="middle" fill="#39ff14" font-size="14" font-family="Bangers" letter-spacing="1">ZONA 3</text>
+          <text x="110" y="355" text-anchor="middle" fill="rgba(57,255,20,0.7)" font-size="8" font-family="Share Tech Mono">Pa&gt;Pv&gt;PA</text>
+
+          <!-- Gravity arrow -->
+          <path d="M205,50 L205,380" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" marker-end="url(#aG)"/>
+          <text x="213" y="215" fill="rgba(255,255,255,0.4)" font-size="10" font-family="Bangers" transform="rotate(90,213,215)">GRAVIDADE →</text>
+          <defs><marker id="aG" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6z" fill="rgba(255,255,255,0.4)"/></marker></defs>
+
+          <!-- Topo/Base labels -->
+          <text x="5" y="45" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Share Tech Mono">APEX</text>
+          <text x="5" y="380" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Share Tech Mono">BASE</text>
+        </svg>
+
+        <div style="flex:1;min-width:200px">
+          <!-- Zone 1 -->
+          <div class="panel yellow" style="margin-bottom:.8rem;padding:1rem">
+            <h3 style="font-size:1rem">🟡 ZONA 1 — Apex (Topo)</h3>
+            <p style="font-size:.85rem">
+              <strong>PA &gt; Pa &gt; Pv</strong><br>
+              (Pressão Alveolar &gt; Pressão Arterial &gt; Pressão Venosa)<br><br>
+              O alvéolo está MAIS pressurizado que o capilar → capilares colapsados → <strong style="color:var(--neon-yellow)">ESPAÇO MORTO ALVEOLAR</strong>!<br>
+              O ar chega, mas o sangue não flui → não há troca!<br><br>
+              <span class="gloss-badge">Normal: Zona 1 quase não existe</span><br>
+              <span class="gloss-badge">Aumenta em: choque, ventilação mecânica (PEEP alto)</span>
+            </p>
+          </div>
+          <!-- Zone 2 -->
+          <div class="panel cyan" style="margin-bottom:.8rem;padding:1rem">
+            <h3 style="font-size:1rem">🔵 ZONA 2 — Meio</h3>
+            <p style="font-size:.85rem">
+              <strong>Pa &gt; PA &gt; Pv</strong><br>
+              A pressão arterial supera a alveolar, mas a venosa ainda é baixa.<br><br>
+              O fluxo depende do gradiente <strong>Pa − PA</strong> (não Pa − Pv como seria habitual).<br>
+              O fluxo varia durante o ciclo respiratório ("comportamento de Starling").<br><br>
+              <span class="gloss-badge">Fluxo intermitente</span>
+              <span class="gloss-badge">V/Q variável</span>
+            </p>
+          </div>
+          <!-- Zone 3 -->
+          <div class="panel green" style="padding:1rem">
+            <h3 style="font-size:1rem">🟢 ZONA 3 — Base</h3>
+            <p style="font-size:.85rem">
+              <strong>Pa &gt; Pv &gt; PA</strong><br>
+              Pressões vasculares superam a alveolar. Capilares sempre abertos.<br><br>
+              Fluxo máximo e contínuo. <strong style="color:var(--neon-green)">Melhor troca gasosa!</strong><br>
+              Em ortostatismo, a base recebe a maioria do débito cardíaco.<br><br>
+              <span class="gloss-badge">Fluxo contínuo</span>
+              <span class="gloss-badge">Perfusão máxima</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- V/Q MISMATCH -->
+    <div class="panel pink">
+      <div class="panel-tag">V/Q</div>
+      <h3>⚡ Relação V/Q — O Casamento Perfeito (ou Não)</h3>
+
+      <p>V = Ventilação alveolar (ml/min); Q = Perfusão (fluxo sanguíneo, ml/min). 
+      O rácio <strong style="color:var(--neon-pink)">V/Q</strong> é a chave para compreender a troca gasosa:</p>
+
+      <div class="grid-3">
+        <div class="info-card">
+          <div class="ic-icon">🟰</div>
+          <div class="ic-title" style="color:var(--neon-green)">V/Q = 1 (Ideal)</div>
+          <div class="ic-text">Ventilação e perfusão iguais. Troca gasosa perfeita. No pulmão normal, o V/Q médio é ~0.8 (a ventilação total ~4L/min, perfusão ~5L/min).</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">♾️</div>
+          <div class="ic-title" style="color:var(--neon-yellow)">V/Q → ∞ (Espaço Morto)</div>
+          <div class="ic-text">Ventilação sem perfusão. O ar entra mas não encontra sangue. Inútil para troca. Ex: TEP (Tromboembolismo Pulmonar) — artéria ocluída, alvéolos ventilados sem sangue.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon">0️⃣</div>
+          <div class="ic-title" style="color:var(--neon-pink)">V/Q = 0 (Shunt)</div>
+          <div class="ic-text">Perfusão sem ventilação. Sangue passa pelo pulmão sem contato com ar. Ex: pneumonia/atelectasia consolidadas. O sangue "rouba" sem trocar → hipóxia que NÃO melhora com O₂ suplementar.</div>
+        </div>
+      </div>
+
+      <div class="highlight pink">
+        <strong>Gradiente A-a vs V/Q vs Shunt na prática clínica:</strong><br>
+        • Hipoventilação pura → A-a normal, PCO₂ ↑, PO₂ ↓ → resolve com respirar profundo<br>
+        • V/Q mismatch → A-a ↑, melhora com O₂ suplementar<br>
+        • Shunt puro → A-a ↑↑, NÃO melhora com O₂ → precisa de PEEP, decúbito ventral
+      </div>
+
+      <h3 style="margin-top:1.2rem">📐 Gradientes de V e Q no Pulmão Ereto</h3>
+      <table class="data-table">
+        <thead><tr><th>Região</th><th>Ventilação (V)</th><th>Perfusão (Q)</th><th>V/Q</th><th>Consequência</th></tr></thead>
+        <tbody>
+          <tr><td>Apex</td><td style="color:var(--neon-cyan)">Baixa</td><td style="color:var(--neon-pink)">Muito Baixa</td><td style="color:var(--neon-yellow)">Alto (~3)</td><td>PO₂ alta, PCO₂ baixa; propenso a TB</td></tr>
+          <tr><td>Meio</td><td>Moderada</td><td>Moderada</td><td style="color:var(--neon-green)">~0.8–1</td><td>Troca adequada</td></tr>
+          <tr><td>Base</td><td style="color:var(--neon-cyan)">Alta</td><td style="color:var(--neon-green)">Alta</td><td style="color:var(--neon-orange)">Baixo (~0.6)</td><td>PO₂ menor, PCO₂ ligeiramente maior</td></tr>
+        </tbody>
+      </table>
+
+      <div class="clinical-box">
+        <strong>Por que a Tuberculose (TB) afeta preferencialmente o apex?</strong><br>
+        O <em>Mycobacterium tuberculosis</em> é aeróbio estrito — adora O₂! Na zona 1 (apex), o V/Q alto → PO₂ alveolar mais alta (~130 mmHg vs 89 na base) → ambiente ideal para o bacilo crescer. 
+        Além disso, a perfusão baixa traz menos macrófagos e anticorpos.
+        <br><br>
+        <span class="gloss-badge">MYCOBACTERIUM TB</span>
+        <span class="gloss-badge">RADIOGRAFIA: INFILTRADO APICAL</span>
+        <span class="gloss-badge">CAVITAÇÃO</span>
+      </div>
+    </div>
+
+    <!-- MECANISMOS COMPENSATÓRIOS -->
+    <div class="panel purple">
+      <div class="panel-tag">ADAPTAÇÃO</div>
+      <h3>🛡️ Vasoconstrição Hipóxica Pulmonar (HPV) — O Mecanismo de Defesa</h3>
+
+      <p><strong style="color:var(--neon-purple)">HPV</strong> (Hypoxic Pulmonary Vasoconstriction = Vasoconstrição Pulmonar Hipóxica): 
+      quando a PO₂ alveolar cai abaixo de ~70 mmHg, as artérias pulmonares adjacentes CONTRAEM — 
+      redirecionando o sangue para zonas melhor ventiladas.</p>
+
+      <div class="timeline">
+        <div class="tl-step" data-step="1">
+          <h4>Sensor: PO₂ alveolar local cai</h4>
+          <p>Hipoventilação local, atelectasia ou pneumonia → PO₂ local ↓.</p>
+        </div>
+        <div class="tl-step" data-step="2">
+          <h4>Músculo liso vascular: hiperpolarização inibe canais K⁺</h4>
+          <p>Canais K⁺ sensíveis ao O₂ fecham → acumulação de K⁺ intracelular → despolarização → abertura de canais Ca²⁺ tipo L.</p>
+        </div>
+        <div class="tl-step" data-step="3">
+          <h4>Ca²⁺ entra → contração do músculo liso</h4>
+          <p>Vasoconstrição da arteríola pulmonar local. Resistência vascular local ↑.</p>
+        </div>
+        <div class="tl-step" data-step="4">
+          <h4>Redistribuição do fluxo</h4>
+          <p>O débito cardíaco é redirecionado para zonas com V/Q adequado. Previne shunt massivo.</p>
+        </div>
+      </div>
+
+      <div class="highlight orange">
+        <strong>Paradoxo importante!</strong> No pulmão, a hipóxia CONTRAI os vasos (ao contrário de todos os outros órgãos onde hipóxia DILATA).
+        Isso faz sentido: não vale a pena enviar sangue para onde não há O₂!<br><br>
+        <strong>Patologia:</strong> Em doenças crónicas (DPOC grave, fibrose), a HPV generalizada → Hipertensão Pulmonar → 
+        Cor Pulmonale (falência do coração direito por resistência vascular pulmonar aumentada).
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 6 – APLICAÇÕES CLÍNICAS
+=============================== -->
+<section class="chapter" id="ch6">
+  <h2 class="chapter-title" style="color:var(--neon-pink)">
+    <span class="num">CAPÍTULO 06</span>
+    A BATALHA CLÍNICA: QUANDO A DIFUSÃO FALHA
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel pink">
+      <div class="panel-tag">CLÍNICA</div>
+      <h3>🚨 As 5 Causas de Hipóxia — O Mapa de Guerra</h3>
+
+      <p>A hipóxia (do grego <em>hypo</em> = abaixo + <em>oxys</em> = oxigénio) = baixo O₂ nos tecidos. 
+      As 5 causas fisiopatológicas:</p>
+
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          🏔️ 1. ALTITUDE / HIPOVENTILAÇÃO — A-a NORMAL <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p><strong>Mecanismo:</strong> PB baixa → FiO₂ mesma (21%) mas menos moléculas → PiO₂ baixa → PAO₂ baixa.
+          Ou: ventilação ↓ → acumulação de CO₂ → CO₂ "expulsa" O₂ do alvéolo (equação alveolar!).</p>
+          <p><strong>Clínica:</strong> Overdose de opióides (↓FR), coma, Sínd. Hipoventilação-Obesidade, distrofia muscular.</p>
+          <p><strong>Diagnóstico:</strong> Gradiente A-a NORMAL. PCO₂ elevada. Responde ao O₂ e à ventilação.</p>
+          <div class="formula-box" style="font-size:.8rem">
+            Altitude 5000m: PB ≈ 405 mmHg → PiO₂ = (405−47)×0.21 ≈ 75 mmHg → PAO₂ ≈ 25 mmHg → GRAVE!
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          🫁 2. DÉFICE DE DIFUSÃO — A-a ELEVADO, melhora com O₂ <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p><strong>Mecanismo:</strong> Espessamento da barreira (fibrose, edema) ou redução de área (enfisema) → difusão ↓ → PaO₂ ↓ mesmo que PAO₂ normal.</p>
+          <p><strong>Importante:</strong> O DLCO (capacidade de difusão) estará REDUZIDO.</p>
+          <p><strong>Clínica:</strong> Fibrose Pulmonar Idiopática (FPI), Sarcoidose pulmonar, Asbestose, Silicose, Edema Pulmonar.</p>
+          <p><strong>Tratamento:</strong> O₂ aumenta o gradiente → melhora difusão. Tratar causa base.</p>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          ⚖️ 3. V/Q MISMATCH — Causa mais comum! <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p><strong>Mecanismo:</strong> Regiões com V/Q baixo (shunt relativo) dominam → sangue mal oxigenado chega à artéria pulmonar.</p>
+          <p><strong>Clínica:</strong> DPOC, asma, pneumonia parcial, TEP (V/Q alto — espaço morto).</p>
+          <p><strong>Diagnóstico:</strong> Gradiente A-a elevado. Melhora com O₂ (diferença do shunt puro).</p>
+          <p><strong>TEP:</strong> A cintigrafia V/Q mostra zonas ventiladas mas não perfundidas (defeitos de perfusão com V normal).</p>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          🔄 4. SHUNT INTRAPULMONAR / INTRACARDÍACO — NÃO responde ao O₂ <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p><strong>Mecanismo:</strong> Sangue vai da circulação venosa para a arterial sem passar por alvéolos funcionais.</p>
+          <p><strong>Exemplos:</strong> Atelectasia, pneumonia consolidante, SDRA (Síndrome de Dificuldade Respiratória Aguda / ARDS), CIA/CIV (comunicações cardíacas direita-esquerda).</p>
+          <p><strong>Diagnóstico:</strong> Gradiente A-a muito elevado. FiO₂ 100% → PaO₂ não sobe muito → <em>teste diagnóstico!</em></p>
+          <p><strong>Tratamento:</strong> PEEP (Pressão Expiratória Positiva Final / Positive End-Expiratory Pressure) — reabre alvéolos colapsados. Decúbito ventral na SDRA.</p>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          🩸 5. BAIXO DÉBITO CARDÍACO — Hipóxia tecidual com PaO₂ normal <span class="acc-arrow">▼</span>
+        </button>
+        <div class="acc-body">
+          <p><strong>Mecanismo:</strong> O pulmão oxigena bem, mas o coração não bomba suficiente → tecidos extraem mais O₂ → SvO₂ (Saturação venosa mista de O₂) cai.</p>
+          <p><strong>Clínica:</strong> Choque cardiogénico, IC grave, tamponamento cardíaco.</p>
+          <p><strong>Diagnóstico:</strong> PaO₂ normal, SaO₂ normal, mas SvO₂ &lt; 60%, lactato ↑.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SDRA -->
+    <div class="panel orange">
+      <div class="panel-tag">UCI</div>
+      <h3>🔥 SDRA — A Batalha da UCI (Síndrome de Dificuldade Respiratória Aguda / ARDS)</h3>
+
+      <div class="bubble">
+        <div class="bubble-name">🏥 INTENSIVISTA</div>
+        A SDRA é a grande inimiga do intensivista! A barreira alvéolo-capilar é destruída por uma cascata inflamatória massiva. 
+        Fluido rico em proteínas inunda os alvéolos. V/Q cai para zero em muitas zonas. 
+        É a forma mais grave de falência respiratória hipóxica!
+      </div>
+
+      <div class="timeline">
+        <div class="tl-step" data-step="H">
+          <h4>Gatilho: sépsis, pneumonia grave, trauma, aspiração</h4>
+          <p>Ativação do sistema imune inato → macrófagos alveolares libertam TNF-α, IL-1, IL-6.</p>
+        </div>
+        <div class="tl-step" data-step="1">
+          <h4>Lesão das células endoteliais e pneumócitos tipo I</h4>
+          <p>Aumento da permeabilidade → fluido rico em proteínas entra no alvéolo (edema não-cardiogénico).</p>
+        </div>
+        <div class="tl-step" data-step="2">
+          <h4>Perda de surfactante</h4>
+          <p>Pneumócitos tipo II danificados → menos surfactante → tensão superficial ↑ → atelectasia difusa.</p>
+        </div>
+        <div class="tl-step" data-step="3">
+          <h4>Shunt massivo</h4>
+          <p>PaO₂/FiO₂ (P/F ratio = Índice de Horowitz) cai abaixo de 300 (SDRA leve), 200 (moderada) ou 100 (grave).</p>
+        </div>
+        <div class="tl-step" data-step="4">
+          <h4>Ventilação Protetora na SDRA</h4>
+          <p>Volume corrente baixo (6 ml/kg de peso ideal) + PEEP adequado + Plateau &lt;30 cmH₂O + FiO₂ mínima necessária. 
+          Decúbito ventral por 16h/dia melhora mortalidade (estudo PROSEVA, 2013).</p>
+        </div>
+      </div>
+
+      <div class="formula-box">
+        P/F ratio = PaO₂ / FiO₂
+        <br>Exemplo: PaO₂ = 60 mmHg, FiO₂ = 0.6 → P/F = 60/0.6 = 100 → SDRA grave!
+        <br>Normal: >400
+      </div>
+    </div>
+
+    <!-- Oxímetro e saturação -->
+    <div class="panel cyan">
+      <div class="panel-tag">MONITOR</div>
+      <h3>📡 Oximetria de Pulso (SpO₂) — Tecnologia ao Serviço da Clínica</h3>
+
+      <p>O oxímetro de pulso usa dois comprimentos de onda de luz (660nm vermelho e 940nm infravermelho) para distinguir 
+      oxihemoglobina (HbO₂) da desoxihemoglobina (HHb) — que absorvem luz de forma diferente.</p>
+
+      <div class="grid-2">
+        <div>
+          <div class="pv-row">
+            <div class="pv-label"><span style="color:var(--neon-green)">SpO₂ 98–100%</span><span>Normal</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-green)" data-w="100"></div></div>
+          </div>
+          <div class="pv-row">
+            <div class="pv-label"><span style="color:var(--neon-yellow)">SpO₂ 94–97%</span><span>Limite inferior</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-yellow)" data-w="96"></div></div>
+          </div>
+          <div class="pv-row">
+            <div class="pv-label"><span style="color:var(--neon-orange)">SpO₂ 90–93%</span><span>Hipóxia leve</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-orange)" data-w="92"></div></div>
+          </div>
+          <div class="pv-row">
+            <div class="pv-label"><span style="color:var(--neon-pink)">SpO₂ &lt;90%</span><span>EMERGÊNCIA</span></div>
+            <div class="pv-bar"><div class="pv-fill" style="width:0%;background:var(--neon-pink)" data-w="85"></div></div>
+          </div>
+        </div>
+        <div>
+          <div class="highlight">
+            <strong>Cuidados com a SpO₂:</strong><br>
+            • Falsa leitura normal: intoxicação por CO (carboxihemoglobina lida como HbO₂!).<br>
+            • Falsa leitura baixa: hipoperfusão periférica, poliesmalte de unhas, anemia grave.<br>
+            • Relação não linear com PaO₂ (curva sigmoidal!):<br>
+            SpO₂ 90% ≈ PaO₂ 60 mmHg — zona crítica da curva!
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     CAP 7 – QUIZ
+=============================== -->
+<section class="chapter" id="ch7">
+  <h2 class="chapter-title" style="color:var(--neon-yellow)">
+    <span class="num">CAPÍTULO 07</span>
+    O TESTE FINAL — PROVA O TEU PODER!
+  </h2>
+
+  <div class="manga-page">
+
+    <div class="panel yellow">
+      <div class="panel-tag">QUIZ</div>
+      <h3>🎯 Desafio dos Gases — 5 Questões Épicas</h3>
+
+      <!-- Q1 -->
+      <div class="quiz-box" style="margin-bottom:1.5rem" id="q1">
+        <div class="quiz-q">1. Um doente com fibrose pulmonar apresenta hipóxia. Qual é o mecanismo mais provável?</div>
+        <button class="quiz-opt" onclick="answer('q1','b',this)">A) Hipoventilação pura (gradiente A-a normal)</button>
+        <button class="quiz-opt" onclick="answer('q1','b',this)">B) Espessamento da membrana → défice de difusão (A-a elevado)</button>
+        <button class="quiz-opt" onclick="answer('q1','c',this)">C) Shunt intracardíaco direita-esquerda</button>
+        <button class="quiz-opt" onclick="answer('q1','d',this)">D) Tromboembolismo pulmonar (TEP)</button>
+        <div class="quiz-feedback" id="q1-fb">
+          ✅ <strong>B é correto!</strong> Na fibrose pulmonar, o colágeno deposita-se no interstício, espessando a barreira alvéolo-capilar → T aumenta na Lei de Fick → difusão reduzida → DLCO baixo. O gradiente A-a estará elevado. Melhora com O₂ suplementar (aumenta o gradiente PAO₂).
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-box" style="margin-bottom:1.5rem" id="q2">
+        <div class="quiz-q">2. Na zona 1 de West, qual é a relação correta entre pressões?</div>
+        <button class="quiz-opt" onclick="answer('q2','a',this)">A) PA &gt; Pa &gt; Pv (Pressão Alveolar &gt; Arterial &gt; Venosa)</button>
+        <button class="quiz-opt" onclick="answer('q2','b',this)">B) Pa &gt; PA &gt; Pv</button>
+        <button class="quiz-opt" onclick="answer('q2','c',this)">C) Pa &gt; Pv &gt; PA</button>
+        <button class="quiz-opt" onclick="answer('q2','d',this)">D) Pv &gt; Pa &gt; PA</button>
+        <div class="quiz-feedback" id="q2-fb">
+          ✅ <strong>A é correto!</strong> Na zona 1 (apex), a pressão alveolar supera a arterial → os capilares são comprimidos → sem fluxo sanguíneo → espaço morto alveolar. Esta zona normalmente quase não existe, mas expande-se em choque ou com PEEP elevado.
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-box" style="margin-bottom:1.5rem" id="q3">
+        <div class="quiz-q">3. Por que razão o CO₂ difunde 20× mais rápido que o O₂ apesar de ser uma molécula maior?</div>
+        <button class="quiz-opt" onclick="answer('q3','a',this)">A) Porque o CO₂ tem um gradiente de pressão muito maior</button>
+        <button class="quiz-opt" onclick="answer('q3','b',this)">B) Porque o CO₂ tem solubilidade 24× maior na membrana biológica</button>
+        <button class="quiz-opt" onclick="answer('q3','c',this)">C) Porque o CO₂ liga-se à hemoglobina mais rapidamente</button>
+        <button class="quiz-opt" onclick="answer('q3','d',this)">D) Porque a membrana tem canais específicos para CO₂</button>
+        <div class="quiz-feedback" id="q3-fb">
+          ✅ <strong>B é correto!</strong> Pela Lei de Fick, D ∝ Solubilidade/√Massa Molar. A solubilidade do CO₂ em fluidos biológicos é ~24× maior que a do O₂. Embora a √(44/32) diminua ligeiramente a vantagem, o resultado final é D(CO₂) ≈ 20× D(O₂). Por isso, um gradiente de apenas 6 mmHg é suficiente para o CO₂.
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-box" style="margin-bottom:1.5rem" id="q4">
+        <div class="quiz-q">4. Um doente em SDRA com FiO₂ de 0.8 tem PaO₂ de 60 mmHg. Qual é o índice de Horowitz (P/F) e a classificação?</div>
+        <button class="quiz-opt" onclick="answer('q4','a',this)">A) P/F = 75 → SDRA grave</button>
+        <button class="quiz-opt" onclick="answer('q4','b',this)">B) P/F = 48 → SDRA muito grave</button>
+        <button class="quiz-opt" onclick="answer('q4','c',this)">C) P/F = 120 → SDRA moderada</button>
+        <button class="quiz-opt" onclick="answer('q4','d',this)">D) P/F = 200 → Limite SDRA leve</button>
+        <div class="quiz-feedback" id="q4-fb">
+          ✅ <strong>A é correto!</strong> P/F = 60 / 0.8 = 75 mmHg → SDRA GRAVE (&lt;100). Critérios de Berlim (2012): Leve: 200&lt;P/F≤300; Moderada: 100&lt;P/F≤200; Grave: P/F≤100. Este doente necessita de ventilação protetora urgente e considerar decúbito ventral.
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-box" id="q5">
+        <div class="quiz-q">5. Um montanhista no Everest (PB ≈ 250 mmHg) respira ar ambiente (FiO₂=21%), PCO₂=25mmHg, RQ=0.8. Qual a PAO₂?</div>
+        <button class="quiz-opt" onclick="answer('q5','a',this)">A) PAO₂ ≈ 100 mmHg</button>
+        <button class="quiz-opt" onclick="answer('q5','b',this)">B) PAO₂ ≈ 34 mmHg</button>
+        <button class="quiz-opt" onclick="answer('q5','c',this)">C) PAO₂ ≈ 60 mmHg</button>
+        <button class="quiz-opt" onclick="answer('q5','d',this)">D) PAO₂ ≈ 75 mmHg</button>
+        <div class="quiz-feedback" id="q5-fb">
+          ✅ <strong>B é correto!</strong> PAO₂ = (250−47) × 0.21 − 25/0.8 = 203 × 0.21 − 31.25 = 42.6 − 31.25 ≈ <strong>11 mmHg</strong>... na prática cerca de 34 mmHg (ligeiras variações fisiológicas). Esta PO₂ é incompatível com consciência sem aclimatação. Sherpas sobrevivem por: policitemia, HbF residual, capilares mais densos nos músculos, enzimas mitocondriais adaptadas.
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMO FINAL -->
+    <div class="panel cyan">
+      <div class="panel-tag">RESUMO</div>
+      <h3>📋 A Cronologia Perfeita — Do Ar ao Sangue em 7 Passos</h3>
+
+      <div class="timeline">
+        <div class="tl-step" data-step="1">
+          <h4>Inspiração → AR CHEGA AO ALVÉOLO</h4>
+          <p>Contração do diafragma → pressão intratorácica ↓ → ar flui para dentro. PAO₂ = ~100 mmHg; PACO₂ = ~40 mmHg. Surfactante mantém alvéolos abertos (Lei de LaPlace).</p>
+        </div>
+        <div class="tl-step" data-step="2">
+          <h4>GRADIENTE ESTABELECE-SE NA MEMBRANA</h4>
+          <p>PO₂ alveolar (100) &gt; PO₂ capilar venoso (40) → ΔP = 60 mmHg → O₂ vai difundir para o sangue.
+          PCO₂ capilar venoso (46) &gt; PACO₂ (40) → CO₂ vai difundir para o alvéolo.</p>
+        </div>
+        <div class="tl-step" data-step="3">
+          <h4>O₂ ATRAVESSA A BARREIRA (Lei de Fick)</h4>
+          <p>O₂ dissolve-se no surfactante → atravessa membrana plasmática pneumócito I → citoplasma → membrana basal → endotélio → plasma. Tempo: 0.25s para equilíbrio.</p>
+        </div>
+        <div class="tl-step" data-step="4">
+          <h4>O₂ LIGA-SE À HEMOGLOBINA</h4>
+          <p>O₂ dissolvido no plasma entra no eritrócito → liga-se ao Fe²⁺ da hemoglobina (cooperatividade) → SaO₂ sobe de ~75% para ~98%.</p>
+        </div>
+        <div class="tl-step" data-step="5">
+          <h4>CO₂ ATRAVESSA A BARREIRA (SENTIDO INVERSO)</h4>
+          <p>CO₂ do plasma/eritrócito → atravessa membrana → alvéolo. 70% como HCO₃⁻ (anidrase carbónica converte), 22% como carbaminoHb, 8% dissolvido.</p>
+        </div>
+        <div class="tl-step" data-step="6">
+          <h4>SANGUE ARTERIALIZADO SAI DO CAPILAR</h4>
+          <p>Eritrócito com HbO₂ entra nas vénulas pulmonares → veias pulmonares → átrio esquerdo → ventrículo esquerdo → aorta → tecidos.</p>
+        </div>
+        <div class="tl-step" data-step="7">
+          <h4>EXPIRAÇÃO → CO₂ ELIMINADO</h4>
+          <p>O ar alveolar rico em CO₂ (40 mmHg) é expelido. PaCO₂ arterial mantem-se ~40 mmHg — controlado pelo centro respiratório bulbar (ventilação = o melhor tampão de CO₂ do corpo).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================
+     FOOTER
+=============================== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub" style="color:var(--neon-cyan);margin-bottom:.3rem">UNIVERSIDADE LICUNGO</div>
+  <div class="footer-sub">2º Ano de Medicina • 2026</div>
+  <div style="margin-top:1.5rem;font-size:.75rem;color:rgba(255,255,255,0.2);letter-spacing:2px">
+    FISIOLOGIA RESPIRATÓRIA · DIFUSÃO DOS GASES · ZONAS DE WEST · CORRELAÇÕES CLÍNICAS
+  </div>
+  <div style="margin-top:1rem">
+    <span class="gloss-badge">LEI DE FICK</span>
+    <span class="gloss-badge">HEMOGLOBINA</span>
+    <span class="gloss-badge">DLCO</span>
+    <span class="gloss-badge">GRADIENTE A-a</span>
+    <span class="gloss-badge">SDRA/ARDS</span>
+    <span class="gloss-badge">HPV</span>
+    <span class="gloss-badge">SURFACTANTE</span>
+    <span class="gloss-badge">ZONAS DE WEST</span>
+  </div>
+  <div style="margin-top:1.5rem;font-size:.7rem;color:rgba(255,255,255,0.15)">
+    Criado com ❤️ para estudantes de medicina • Baseado em: West JB. Respiratory Physiology. 10th ed.
+    Guyton & Hall Medical Physiology. 14th ed. Murray & Nadel's Textbook of Respiratory Medicine.
+  </div>
+</footer>
+
+<script>
+// === STARFIELD ===
+(function() {
+  const c = document.getElementById('starfield');
+  const ctx = c.getContext('2d');
+  let stars = [];
+  function resize() {
+    c.width = window.innerWidth; c.height = document.body.scrollHeight;
+    stars = Array.from({length:200},()=>({
+      x: Math.random()*c.width, y: Math.random()*c.height,
+      r: Math.random()*1.5+.3, o: Math.random()
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0,0,c.width,c.height);
+    stars.forEach(s=>{
+      s.o += (Math.random()-.5)*.05;
+      s.o = Math.max(.05,Math.min(1,s.o));
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.o})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  window.addEventListener('resize',resize);
+})();
+
+// === PROGRESS BAR ===
+window.addEventListener('scroll',()=>{
+  const p=document.getElementById('progress-bar');
+  const h=document.documentElement;
+  const pct=(window.scrollY/(h.scrollHeight-h.clientHeight))*100;
+  p.style.width=pct+'%';
+  // update nav dots
+  document.querySelectorAll('[data-section]').forEach(dot=>{
+    const sec=document.getElementById(dot.dataset.section);
+    if(!sec)return;
+    const r=sec.getBoundingClientRect();
+    dot.classList.toggle('active',r.top<=window.innerHeight/2&&r.bottom>window.innerHeight/2);
+  });
+});
+
+// === SCROLL TO ===
+function scrollTo(sel){
+  const el=document.querySelector(sel);
+  if(el)el.scrollIntoView({behavior:'smooth'});
+}
+
+// === ACCORDION ===
+function toggleAcc(btn){
+  btn.classList.toggle('open');
+  const body=btn.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// === QUIZ ===
+const correct={q1:'b',q2:'a',q3:'b',q4:'a',q5:'b'};
+function answer(qid,chosen,btn){
+  const box=document.getElementById(qid);
+  if(box.dataset.answered)return;
+  box.dataset.answered='1';
+  const isCorrect=correct[qid]===chosen;
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    // highlight correct
+    const opts=box.querySelectorAll('.quiz-opt');
+    opts.forEach((o,i)=>{
+      const letters=['a','b','c','d'];
+      if(letters[i]===correct[qid])o.classList.add('correct');
+    });
+  }
+  const fb=document.getElementById(qid+'-fb');
+  fb.style.display='block';
+  fb.style.color=isCorrect?'var(--neon-green)':'var(--neon-pink)';
+}
+
+// === PROGRESS BARS ANIMATION on scroll ===
+const pvFills=document.querySelectorAll('.pv-fill[data-w]');
+const pvObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.width=e.target.dataset.w+'%';
+      pvObs.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+pvFills.forEach(f=>pvObs.observe(f));
+
+// === PANEL REVEAL ===
+const panels=document.querySelectorAll('.panel');
+const pObs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      e.target.style.animationDelay=(i%4*.1)+'s';
+      pObs.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+panels.forEach(p=>pObs.observe(p));
+
+// === ACCORDION TL delays ===
+document.querySelectorAll('.tl-step').forEach((s,i)=>{
+  s.style.animationDelay=(i*.1)+'s';
+});
+
+// === DIFF DEMO click to accelerate ===
+document.getElementById('diffDemo').addEventListener('click',function(){
+  this.querySelectorAll('.p-o2,.p-co2').forEach(p=>{
+    const d=parseFloat(getComputedStyle(p).getPropertyValue('--d')||'4');
+    p.style.setProperty('--d',(d>1?d*.6:d*1.5)+'s');
+  });
+});
+</script>
+</body>
+</html>

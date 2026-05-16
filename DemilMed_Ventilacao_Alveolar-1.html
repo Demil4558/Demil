@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | Ventilação Alveolar & Leis dos Gases</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Exo+2:ital,wght@0,300;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #060a12;
+    --bg2: #0a1020;
+    --panel: #0d1628;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff2d78;
+    --neon-green: #39ff14;
+    --neon-yellow: #ffe600;
+    --neon-purple: #bf5fff;
+    --neon-orange: #ff6b00;
+    --text: #e8f4ff;
+    --text-dim: #7a9cc0;
+    --border: rgba(0,245,255,0.2);
+    --glow-cyan: 0 0 20px #00f5ff, 0 0 40px rgba(0,245,255,0.3);
+    --glow-pink: 0 0 20px #ff2d78, 0 0 40px rgba(255,45,120,0.3);
+    --glow-green: 0 0 20px #39ff14, 0 0 40px rgba(57,255,20,0.3);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── CANVAS BACKGROUND ─── */
+  #bg-canvas {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    z-index: 0; pointer-events: none; opacity: 0.35;
+  }
+
+  /* ─── PROGRESS BAR ─── */
+  #progress-bar {
+    position: fixed; top:0; left:0; height:3px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-purple));
+    z-index: 9999; width:0%; transition: width 0.1s;
+    box-shadow: var(--glow-cyan);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top:3px; left:0; width:100%; z-index: 999;
+    background: rgba(6,10,18,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 2rem;
+  }
+  .nav-logo {
+    font-family: 'Orbitron', monospace; font-weight: 900;
+    font-size: 1rem; color: var(--neon-cyan);
+    text-shadow: var(--glow-cyan); letter-spacing: 2px;
+  }
+  .nav-links { display:flex; gap:1.2rem; flex-wrap: wrap; }
+  .nav-links a {
+    color: var(--text-dim); text-decoration: none;
+    font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    font-size: 0.8rem; letter-spacing: 1px;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .nav-links a:hover { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+
+  /* ─── HERO ─── */
+  #hero {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 6rem 2rem 4rem;
+    background: radial-gradient(ellipse at 50% 40%, rgba(0,245,255,0.07) 0%, transparent 65%),
+                radial-gradient(ellipse at 80% 80%, rgba(255,45,120,0.07) 0%, transparent 50%);
+  }
+  .hero-ep {
+    font-family: 'Orbitron', monospace; font-size: 0.75rem;
+    color: var(--neon-pink); letter-spacing: 5px; text-transform: uppercase;
+    margin-bottom: 1rem; animation: fadeSlideDown 1s ease both;
+    text-shadow: var(--glow-pink);
+  }
+  .hero-title {
+    font-family: 'Orbitron', monospace; font-weight: 900;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    line-height: 1.1; margin-bottom: 0.5rem;
+    animation: fadeSlideDown 1s ease 0.2s both;
+  }
+  .hero-title .t1 { color: var(--neon-cyan); text-shadow: var(--glow-cyan); display:block; }
+  .hero-title .t2 { color: var(--neon-yellow); text-shadow: 0 0 20px #ffe600; display:block; }
+  .hero-sub {
+    font-family: 'Exo 2', sans-serif; font-size:1.1rem; color: var(--text-dim);
+    max-width: 600px; margin: 1.5rem auto 2.5rem;
+    animation: fadeSlideDown 1s ease 0.4s both;
+  }
+  .hero-tags {
+    display: flex; gap:0.8rem; flex-wrap: wrap; justify-content: center;
+    animation: fadeSlideDown 1s ease 0.6s both;
+  }
+  .tag {
+    padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem;
+    font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    border: 1px solid;
+  }
+  .tag-cyan { border-color: var(--neon-cyan); color: var(--neon-cyan); background: rgba(0,245,255,0.08); }
+  .tag-pink { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,45,120,0.08); }
+  .tag-green { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.08); }
+  .tag-yellow { border-color: var(--neon-yellow); color: var(--neon-yellow); background: rgba(255,230,0,0.08); }
+
+  /* Lung SVG hero animation */
+  .hero-lung { margin: 2.5rem auto; animation: fadeSlideDown 1s ease 0.8s both; }
+
+  /* ─── SECTION GENERIC ─── */
+  section {
+    position: relative; z-index: 1;
+    padding: 5rem 2rem;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+
+  /* chapter label */
+  .chapter-label {
+    font-family: 'Orbitron', monospace; font-size: 0.65rem;
+    letter-spacing: 5px; text-transform: uppercase;
+    margin-bottom: 0.8rem; opacity: 0.7;
+  }
+  .cl-cyan { color: var(--neon-cyan); }
+  .cl-pink { color: var(--neon-pink); }
+  .cl-green { color: var(--neon-green); }
+  .cl-yellow { color: var(--neon-yellow); }
+  .cl-purple { color: var(--neon-purple); }
+  .cl-orange { color: var(--neon-orange); }
+
+  .section-title {
+    font-family: 'Orbitron', monospace; font-weight: 700;
+    font-size: clamp(1.6rem, 4vw, 2.6rem); margin-bottom: 1.5rem;
+    line-height: 1.2;
+  }
+
+  /* ─── SPEECH BUBBLE (MANGA) ─── */
+  .manga-panel {
+    display: grid; gap:1.5rem; margin: 2rem 0;
+  }
+  .manga-row { display: flex; gap:1.2rem; align-items: flex-start; }
+  .manga-row.right { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 64px; height: 64px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; border: 2px solid;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    animation: pulse-avatar 3s infinite;
+  }
+  .av-doc { border-color: var(--neon-cyan); background: rgba(0,245,255,0.1); }
+  .av-mol { border-color: var(--neon-pink); background: rgba(255,45,120,0.1); }
+  .av-lung { border-color: var(--neon-green); background: rgba(57,255,20,0.1); }
+  .av-blood { border-color: var(--neon-orange); background: rgba(255,107,0,0.1); }
+
+  .bubble {
+    flex:1; padding:1rem 1.3rem; border-radius: 12px;
+    border: 1px solid; position: relative; line-height: 1.7;
+    font-size: 0.97rem;
+  }
+  .bubble::before {
+    content: ''; position: absolute; top:16px;
+    width:0; height:0; border-style: solid;
+  }
+  .bubble-left::before {
+    left: -10px; border-width: 8px 10px 8px 0;
+  }
+  .bubble-right::before {
+    right: -10px; border-width: 8px 0 8px 10px;
+  }
+  .b-cyan { border-color: var(--neon-cyan); background: rgba(0,245,255,0.06); }
+  .b-cyan::before { border-color: transparent var(--neon-cyan) transparent transparent; }
+  .b-cyan.bubble-right::before { border-color: transparent transparent transparent var(--neon-cyan); }
+  .b-pink { border-color: var(--neon-pink); background: rgba(255,45,120,0.06); }
+  .b-pink::before { border-color: transparent var(--neon-pink) transparent transparent; }
+  .b-pink.bubble-right::before { border-color: transparent transparent transparent var(--neon-pink); }
+  .b-green { border-color: var(--neon-green); background: rgba(57,255,20,0.06); }
+  .b-green::before { border-color: transparent var(--neon-green) transparent transparent; }
+  .b-green.bubble-right::before { border-color: transparent transparent transparent var(--neon-green); }
+  .b-orange { border-color: var(--neon-orange); background: rgba(255,107,0,0.06); }
+  .b-orange::before { border-color: transparent var(--neon-orange) transparent transparent; }
+
+  .char-name {
+    font-family: 'Orbitron', monospace; font-size:0.65rem;
+    letter-spacing:2px; text-transform: uppercase; margin-bottom:0.4rem;
+    font-weight: 700;
+  }
+  .cn-cyan { color: var(--neon-cyan); }
+  .cn-pink { color: var(--neon-pink); }
+  .cn-green { color: var(--neon-green); }
+  .cn-orange { color: var(--neon-orange); }
+
+  /* ─── FORMULA CARDS ─── */
+  .formula-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+    gap: 1.2rem; margin: 2rem 0;
+  }
+  .formula-card {
+    background: var(--panel); border-radius: 16px;
+    border: 1px solid var(--border); padding: 1.5rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+  }
+  .formula-card:hover { transform: translateY(-4px); }
+  .formula-card::before {
+    content: ''; position: absolute; top:0; left:0; right:0; height:3px;
+    border-radius: 16px 16px 0 0;
+  }
+  .fc-cyan::before { background: var(--neon-cyan); box-shadow: var(--glow-cyan); }
+  .fc-pink::before { background: var(--neon-pink); box-shadow: var(--glow-pink); }
+  .fc-green::before { background: var(--neon-green); box-shadow: var(--glow-green); }
+  .fc-yellow::before { background: var(--neon-yellow); }
+  .fc-purple::before { background: var(--neon-purple); }
+  .fc-orange::before { background: var(--neon-orange); }
+
+  .formula-card:hover.fc-cyan { box-shadow: 0 8px 40px rgba(0,245,255,0.2); }
+  .formula-card:hover.fc-pink { box-shadow: 0 8px 40px rgba(255,45,120,0.2); }
+  .formula-card:hover.fc-green { box-shadow: 0 8px 40px rgba(57,255,20,0.2); }
+
+  .formula-name {
+    font-family: 'Orbitron', monospace; font-size: 0.65rem;
+    letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.8rem; opacity:0.7;
+  }
+  .formula-eq {
+    font-size: 1.5rem; font-weight: 700; margin-bottom: 0.8rem;
+    font-family: 'Exo 2', sans-serif; letter-spacing:1px;
+  }
+  .formula-desc { font-size:0.88rem; color: var(--text-dim); }
+  .formula-icon { font-size:2rem; float:right; margin-top:-0.5rem; opacity:0.4; }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    border-radius: 12px; padding: 1.5rem 1.8rem;
+    margin: 1.5rem 0; border-left: 4px solid;
+    background: var(--panel);
+    position: relative; overflow: hidden;
+  }
+  .ib-cyan { border-color: var(--neon-cyan); }
+  .ib-pink { border-color: var(--neon-pink); }
+  .ib-green { border-color: var(--neon-green); }
+  .ib-yellow { border-color: var(--neon-yellow); }
+  .ib-purple { border-color: var(--neon-purple); }
+  .ib-orange { border-color: var(--neon-orange); }
+
+  .ib-title {
+    font-family: 'Orbitron', monospace; font-size:0.75rem;
+    letter-spacing:3px; text-transform:uppercase; margin-bottom:0.5rem;
+  }
+  .ibt-cyan { color: var(--neon-cyan); }
+  .ibt-pink { color: var(--neon-pink); }
+  .ibt-green { color: var(--neon-green); }
+  .ibt-yellow { color: var(--neon-yellow); }
+  .ibt-purple { color: var(--neon-purple); }
+  .ibt-orange { color: var(--neon-orange); }
+
+  /* ─── SECTION SEPARATORS ─── */
+  .sep {
+    position: relative; z-index:1;
+    height: 80px; display: flex; align-items: center; justify-content: center;
+    gap: 1rem; overflow: hidden;
+  }
+  .sep-line { flex:1; height:1px; background: linear-gradient(90deg, transparent, var(--border), transparent); }
+  .sep-icon { font-size: 1.5rem; opacity: 0.5; }
+
+  /* ─── INTERACTIVE MOLECULE CANVAS ─── */
+  .molecule-stage {
+    position: relative; border-radius: 20px;
+    border: 1px solid var(--border); overflow: hidden;
+    background: var(--panel); margin: 2rem 0;
+  }
+  .mol-canvas { width:100%; height:320px; display:block; }
+  .mol-legend {
+    display: flex; gap:1.5rem; flex-wrap:wrap;
+    padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .mol-key { display:flex; align-items:center; gap:0.5rem; }
+  .mol-dot { width:14px; height:14px; border-radius:50%; }
+
+  /* ─── GRADIENT SECTION BACKGROUNDS ─── */
+  .sec-alt {
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%);
+  }
+  .sec-pink-bg {
+    background: radial-gradient(ellipse at 30% 50%, rgba(255,45,120,0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 30%, rgba(191,95,255,0.05) 0%, transparent 60%);
+  }
+  .sec-green-bg {
+    background: radial-gradient(ellipse at 60% 50%, rgba(57,255,20,0.04) 0%, transparent 60%);
+  }
+  .sec-orange-bg {
+    background: radial-gradient(ellipse at 40% 50%, rgba(255,107,0,0.05) 0%, transparent 60%);
+  }
+
+  /* ─── VQ VISUAL ─── */
+  .vq-diagram { display:flex; gap:0; margin: 2rem 0; border-radius:16px; overflow:hidden; border:1px solid var(--border); }
+  .vq-col { flex:1; padding:1.5rem; text-align:center; position:relative; }
+  .vq-col:not(:last-child) { border-right:1px solid var(--border); }
+  .vq-val { font-family:'Orbitron',monospace; font-size:2.5rem; font-weight:900; margin:0.5rem 0; }
+  .vq-label { font-size:0.8rem; color:var(--text-dim); letter-spacing:1px; }
+  .vq-title { font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:0.8rem; }
+
+  /* ─── DEAD SPACE ─── */
+  .dead-space-visual {
+    position:relative; border-radius:16px; overflow:hidden;
+    background:var(--panel); border:1px solid var(--border);
+    padding:2rem; margin:2rem 0; text-align:center;
+  }
+
+  /* ─── QUIZ ─── */
+  .quiz-card {
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:16px; padding:2rem; margin:2rem 0;
+  }
+  .quiz-q {
+    font-family:'Exo 2',sans-serif; font-size:1.1rem;
+    margin-bottom:1.2rem; font-weight:700; color:var(--neon-yellow);
+  }
+  .quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+  .quiz-btn {
+    padding:0.8rem 1rem; border-radius:10px; border:1px solid var(--border);
+    background:rgba(255,255,255,0.03); color:var(--text);
+    cursor:pointer; font-family:'Rajdhani',sans-serif; font-size:0.95rem; font-weight:600;
+    transition: all 0.3s; text-align:left;
+  }
+  .quiz-btn:hover { border-color:var(--neon-cyan); background:rgba(0,245,255,0.08); transform:translateX(4px); }
+  .quiz-btn.correct { border-color:var(--neon-green) !important; background:rgba(57,255,20,0.15) !important; color:var(--neon-green); }
+  .quiz-btn.wrong { border-color:var(--neon-pink) !important; background:rgba(255,45,120,0.15) !important; color:var(--neon-pink); }
+  .quiz-feedback { margin-top:1rem; padding:1rem; border-radius:10px; display:none; }
+  .qf-correct { background:rgba(57,255,20,0.1); border:1px solid var(--neon-green); color:var(--neon-green); }
+  .qf-wrong { background:rgba(255,45,120,0.1); border:1px solid var(--neon-pink); color:var(--neon-pink); }
+
+  /* ─── TABLE ─── */
+  .data-table { width:100%; border-collapse:collapse; margin:1.5rem 0; font-size:0.9rem; }
+  .data-table th {
+    background:rgba(0,245,255,0.1); color:var(--neon-cyan);
+    padding:0.8rem 1rem; text-align:left;
+    font-family:'Orbitron',monospace; font-size:0.65rem; letter-spacing:2px;
+    border-bottom:1px solid var(--neon-cyan);
+  }
+  .data-table td { padding:0.8rem 1rem; border-bottom:1px solid var(--border); }
+  .data-table tr:hover td { background:rgba(255,255,255,0.03); }
+
+  /* ─── TIMELINE ─── */
+  .timeline { position:relative; padding-left:2rem; }
+  .timeline::before { content:''; position:absolute; left:0.5rem; top:0; bottom:0; width:2px; background:linear-gradient(180deg,var(--neon-cyan),var(--neon-pink),var(--neon-purple)); border-radius:2px; }
+  .tl-item { position:relative; margin-bottom:2rem; }
+  .tl-dot { position:absolute; left:-1.65rem; top:0.25rem; width:14px; height:14px; border-radius:50%; border:2px solid; animation:pulse-avatar 2.5s infinite; }
+  .tld-cyan { border-color:var(--neon-cyan); background:rgba(0,245,255,0.3); }
+  .tld-pink { border-color:var(--neon-pink); background:rgba(255,45,120,0.3); }
+  .tld-green { border-color:var(--neon-green); background:rgba(57,255,20,0.3); }
+  .tld-yellow { border-color:var(--neon-yellow); background:rgba(255,230,0,0.3); }
+  .tl-title { font-family:'Orbitron',monospace; font-size:0.85rem; font-weight:700; margin-bottom:0.4rem; }
+  .tl-body { color:var(--text-dim); font-size:0.92rem; }
+
+  /* ─── ACCORDION ─── */
+  .accordion { margin:1.2rem 0; }
+  .acc-header {
+    width:100%; text-align:left; background:var(--panel);
+    border:1px solid var(--border); border-radius:10px; padding:1rem 1.3rem;
+    color:var(--text); cursor:pointer; font-family:'Rajdhani',sans-serif;
+    font-weight:700; font-size:1rem; display:flex; justify-content:space-between;
+    align-items:center; transition:all 0.3s;
+  }
+  .acc-header:hover { border-color:var(--neon-cyan); color:var(--neon-cyan); }
+  .acc-header.open { border-color:var(--neon-cyan); color:var(--neon-cyan); border-radius:10px 10px 0 0; }
+  .acc-icon { transition:transform 0.3s; font-size:1.2rem; }
+  .acc-header.open .acc-icon { transform:rotate(45deg); }
+  .acc-body {
+    background:rgba(0,245,255,0.04); border:1px solid var(--neon-cyan);
+    border-top:none; border-radius:0 0 10px 10px; padding:1.2rem 1.3rem;
+    display:none; font-size:0.92rem; color:var(--text-dim);
+  }
+  .acc-body.open { display:block; }
+
+  /* ─── HIGHLIGHT TEXT ─── */
+  .hl-cyan { color:var(--neon-cyan); font-weight:700; }
+  .hl-pink { color:var(--neon-pink); font-weight:700; }
+  .hl-green { color:var(--neon-green); font-weight:700; }
+  .hl-yellow { color:var(--neon-yellow); font-weight:700; }
+  .hl-purple { color:var(--neon-purple); font-weight:700; }
+  .hl-orange { color:var(--neon-orange); font-weight:700; }
+
+  /* ─── LUNG DIAGRAM INTERACTIVE ─── */
+  .lung-diagram-wrap { display:flex; gap:2rem; align-items:center; flex-wrap:wrap; margin:2rem 0; }
+  .lung-svg-wrap { flex:1; min-width:260px; }
+  .lung-info-side { flex:1; min-width:200px; }
+
+  /* ─── BAR COMPARISON ─── */
+  .bar-comparison { margin:2rem 0; }
+  .bar-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.8rem; }
+  .bar-label { width:140px; font-size:0.85rem; text-align:right; color:var(--text-dim); flex-shrink:0; }
+  .bar-track { flex:1; height:28px; background:rgba(255,255,255,0.05); border-radius:14px; overflow:hidden; position:relative; }
+  .bar-fill { height:100%; border-radius:14px; display:flex; align-items:center; padding-left:10px; font-size:0.8rem; font-weight:700; transition:width 1.5s ease; width:0%; }
+  .bar-val { margin-left:0.5rem; font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--text-dim); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    position:relative; z-index:1;
+    background:var(--bg2); border-top:1px solid var(--border);
+    padding:3rem 2rem; text-align:center;
+  }
+  .footer-logo { font-family:'Orbitron',monospace; font-weight:900; font-size:1.5rem; color:var(--neon-cyan); text-shadow:var(--glow-cyan); margin-bottom:0.5rem; }
+  .footer-sub { color:var(--text-dim); font-size:0.85rem; letter-spacing:2px; }
+  .footer-line { width:120px; height:1px; background:linear-gradient(90deg,transparent,var(--neon-cyan),transparent); margin:1rem auto; }
+  .footer-info { font-size:0.82rem; color:var(--text-dim); line-height:2; }
+  .footer-info span { color:var(--neon-yellow); font-weight:700; }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal { opacity:0; transform:translateY(30px); transition:all 0.8s ease; }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+  .reveal-left { opacity:0; transform:translateX(-30px); transition:all 0.8s ease; }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform:translateX(30px); transition:all 0.8s ease; }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* ─── KEYFRAMES ─── */
+  @keyframes fadeSlideDown {
+    from { opacity:0; transform:translateY(-20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes pulse-avatar {
+    0%,100% { box-shadow:0 0 8px currentColor; }
+    50% { box-shadow:0 0 20px currentColor, 0 0 40px currentColor; }
+  }
+  @keyframes float {
+    0%,100% { transform:translateY(0); }
+    50% { transform:translateY(-10px); }
+  }
+  @keyframes spin-slow {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+  }
+  @keyframes blink-cursor {
+    0%,100% { opacity:1; }
+    50% { opacity:0; }
+  }
+
+  .float-anim { animation:float 4s ease-in-out infinite; }
+  .spin-anim { animation:spin-slow 12s linear infinite; }
+
+  /* ─── SPECIAL PANELS ─── */
+  .epic-panel {
+    background: linear-gradient(135deg, rgba(0,245,255,0.08) 0%, rgba(255,45,120,0.08) 100%);
+    border: 1px solid rgba(0,245,255,0.3); border-radius:20px; padding:2.5rem;
+    margin:2rem 0; position:relative; overflow:hidden;
+  }
+  .epic-panel::before {
+    content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+    background: conic-gradient(from 0deg, transparent 0deg 330deg, rgba(0,245,255,0.05) 330deg 360deg);
+    animation:spin-slow 20s linear infinite;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:600px) {
+    .quiz-options { grid-template-columns:1fr; }
+    .vq-diagram { flex-direction:column; }
+    .vq-col:not(:last-child) { border-right:none; border-bottom:1px solid var(--border); }
+    .manga-row, .manga-row.right { flex-direction:column; }
+    .bubble::before { display:none; }
+    nav { padding:0.5rem 1rem; }
+    .nav-links { display:none; }
+    .formula-grid { grid-template-columns:1fr; }
+  }
+
+  /* number display */
+  .big-number {
+    font-family:'Orbitron',monospace; font-size:3.5rem; font-weight:900;
+    line-height:1; margin-bottom:0.2rem;
+  }
+  .number-unit { font-size:1rem; opacity:0.6; font-family:'Rajdhani',sans-serif; }
+
+  /* glow text */
+  .glow-cyan { color:var(--neon-cyan); text-shadow:var(--glow-cyan); }
+  .glow-pink { color:var(--neon-pink); text-shadow:var(--glow-pink); }
+  .glow-green { color:var(--neon-green); text-shadow:var(--glow-green); }
+</style>
+</head>
+<body>
+
+<!-- Animated background -->
+<canvas id="bg-canvas"></canvas>
+<div id="progress-bar"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">DemilMed · UL</div>
+  <div class="nav-links">
+    <a href="#gases">Leis dos Gases</a>
+    <a href="#espaco-morto">Espaço Morto</a>
+    <a href="#distribuicao">Distribuição</a>
+    <a href="#perfusao">Perfusão</a>
+    <a href="#relacao-vq">Relação V/Q</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section id="hero">
+  <div class="hero-ep">📖 Fisiologia Respiratória</div>
+  <h1 class="hero-title">
+    <span class="t1">VENTILAÇÃO ALVEOLAR</span>
+    <span class="t2">PERFUSÃO & RELAÇÃO V/Q</span>
+  </h1>
+  <p class="hero-sub">
+    Uma aventura visual pelos pulmões — do gás invisível ao sangue que respira.
+    Preparado para mergulhar no mundo molecular da respiração?
+  </p>
+  <div class="hero-tags">
+    <span class="tag tag-cyan">Leis dos Gases</span>
+    <span class="tag tag-pink">Pressões Parciais</span>
+    <span class="tag tag-green">Espaço Morto</span>
+    <span class="tag tag-yellow">Relação V/Q</span>
+  </div>
+
+  <!-- Animated lung SVG -->
+  <div class="hero-lung float-anim">
+    <svg width="200" height="180" viewBox="0 0 200 180">
+      <defs>
+        <radialGradient id="lgL" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#00f5ff" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#00f5ff" stop-opacity="0.05"/>
+        </radialGradient>
+        <radialGradient id="lgR" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff2d78" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ff2d78" stop-opacity="0.05"/>
+        </radialGradient>
+      </defs>
+      <!-- Trachea -->
+      <rect x="95" y="10" width="10" height="50" rx="5" fill="none" stroke="#00f5ff" stroke-width="2" opacity="0.8"/>
+      <!-- Bronchi -->
+      <path d="M100 60 Q70 70 55 90" fill="none" stroke="#00f5ff" stroke-width="2" opacity="0.8"/>
+      <path d="M100 60 Q130 70 145 90" fill="none" stroke="#ff2d78" stroke-width="2" opacity="0.8"/>
+      <!-- Left lung -->
+      <ellipse cx="55" cy="120" rx="42" ry="52" fill="url(#lgL)" stroke="#00f5ff" stroke-width="1.5" opacity="0.8">
+        <animate attributeName="rx" values="42;46;42" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="52;56;52" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- Right lung -->
+      <ellipse cx="145" cy="120" rx="42" ry="52" fill="url(#lgR)" stroke="#ff2d78" stroke-width="1.5" opacity="0.8">
+        <animate attributeName="rx" values="42;46;42" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="52;56;52" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <!-- O2 bubbles -->
+      <circle cx="55" cy="110" r="4" fill="#00f5ff" opacity="0.6"><animate attributeName="cy" values="130;90;130" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="2.5s" repeatCount="indefinite"/></circle>
+      <circle cx="42" cy="120" r="3" fill="#00f5ff" opacity="0.5"><animate attributeName="cy" values="140;100;140" dur="3.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0;0.5" dur="3.2s" repeatCount="indefinite"/></circle>
+      <circle cx="145" cy="115" r="4" fill="#ff2d78" opacity="0.6"><animate attributeName="cy" values="135;95;135" dur="2.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0;0.6" dur="2.8s" repeatCount="indefinite"/></circle>
+      <circle cx="158" cy="125" r="3" fill="#ff2d78" opacity="0.5"><animate attributeName="cy" values="145;105;145" dur="3.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0;0.5" dur="3.5s" repeatCount="indefinite"/></circle>
+      <!-- Labels -->
+      <text x="55" y="175" text-anchor="middle" font-size="9" fill="#00f5ff" font-family="Orbitron">V</text>
+      <text x="145" y="175" text-anchor="middle" font-size="9" fill="#ff2d78" font-family="Orbitron">Q</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ INTRO STORY ═══════════════════════════ -->
+<section class="sec-alt">
+  <div class="container">
+    <div class="chapter-label cl-cyan reveal">Prólogo · Conhecendo os Personagens</div>
+    <h2 class="section-title reveal" style="color:var(--neon-cyan)">O Mundo Dentro dos Pulmões 🌬️</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-doc">🧬</div>
+        <div class="bubble b-cyan bubble-left">
+          <div class="char-name cn-cyan">Dr. Alveoli · Narrador</div>
+          Bem-vindo ao interior dos pulmões! Eu sou o Dr. Alveoli, e serei o teu guia nesta aventura. Aqui dentro, somos governados por <span class="hl-cyan">leis implacáveis dos gases</span> — leis que determinam se o oxigénio chega ao teu cérebro agora mesmo enquanto lês isto!
+        </div>
+      </div>
+      <div class="manga-row right">
+        <div class="avatar av-mol">⚛️</div>
+        <div class="bubble b-pink bubble-right">
+          <div class="char-name cn-pink">Molécula O₂ · Protagonista</div>
+          Olá! Eu sou uma molécula de O₂. Viajei desde o ar que inspiraste, passei pela traqueia, brônquios... e agora estou AQUI no alvéolo! O meu destino? Atravessar a membrana e entrar no sangue. Mas para isso, muita física tem que acontecer primeiro!
+        </div>
+      </div>
+      <div class="manga-row">
+        <div class="avatar av-lung">🫁</div>
+        <div class="bubble b-green bubble-left">
+          <div class="char-name cn-green">Pulmão Esquerdo · Sábio Ancião</div>
+          Jovem O₂... a tua jornada só é possível porque existe um equilíbrio perfeito entre <span class="hl-green">Ventilação (V)</span> e <span class="hl-orange">Perfusão (Q)</span>. Quando esse equilíbrio falha — doenças surgem. Vamos compreender tudo isto juntos!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ LEIS DOS GASES ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">⚡</span><div class="sep-line"></div></div>
+
+<section id="gases" class="sec-pink-bg">
+  <div class="container">
+    <div class="chapter-label cl-pink reveal">Capítulo 1 · O Arsenal Físico</div>
+    <h2 class="section-title reveal" style="color:var(--neon-pink)">As Leis dos Gases 📐<br><small style="font-size:0.6em;color:var(--text-dim)">As Regras que Governam o Nosso Universo</small></h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-doc">🧬</div>
+        <div class="bubble b-cyan bubble-left">
+          <div class="char-name cn-cyan">Dr. Alveoli</div>
+          Para compreender a respiração, precisamos primeiro dominar as leis dos gases. Estas leis foram descobertas por cientistas geniais séculos atrás — e ainda governam cada respiração que dás. São as <span class="hl-pink">regras sagradas</span> do nosso mundo!
+        </div>
+      </div>
+    </div>
+
+    <!-- Gas Laws Cards -->
+    <div class="formula-grid reveal">
+      <div class="formula-card fc-cyan">
+        <div class="formula-icon">🔵</div>
+        <div class="formula-name">Lei de Boyle</div>
+        <div class="formula-eq glow-cyan">P₁V₁ = P₂V₂</div>
+        <div class="formula-desc">
+          <strong>A temperatura constante</strong>, pressão e volume são inversamente proporcionais. Se o volume aumenta → pressão diminui. É assim que inspiramos!
+          <br><br>
+          🫁 <em>Diafragma desce → Volume ↑ → Pressão ↓ → Ar entra</em>
+        </div>
+      </div>
+      <div class="formula-card fc-pink">
+        <div class="formula-icon">🌡️</div>
+        <div class="formula-name">Lei de Charles</div>
+        <div class="formula-eq glow-pink">V/T = constante</div>
+        <div class="formula-desc">
+          <strong>A pressão constante</strong>, volume e temperatura são directamente proporcionais. Ar quente ocupa mais espaço — por isso o ar que entra no pulmão <em>expande</em> ao aquecer para 37°C!
+        </div>
+      </div>
+      <div class="formula-card fc-green">
+        <div class="formula-icon">⚗️</div>
+        <div class="formula-name">Lei de Dalton</div>
+        <div class="formula-eq glow-green">P<sub>total</sub> = ΣP<sub>i</sub></div>
+        <div class="formula-desc">
+          A pressão total de uma mistura de gases é a <strong>soma das pressões parciais</strong> de cada gás. O ar tem N₂, O₂, CO₂, H₂O... cada um contribui com a sua parte!
+        </div>
+      </div>
+      <div class="formula-card fc-yellow">
+        <div class="formula-icon">💧</div>
+        <div class="formula-name">Lei de Henry</div>
+        <div class="formula-eq" style="color:var(--neon-yellow)">C = k × P<sub>gás</sub></div>
+        <div class="formula-desc">
+          A quantidade de gás dissolvido num líquido é proporcional à sua pressão parcial. É assim que o O₂ <strong>dissolve no plasma</strong> sanguíneo — e também por que mergulhadores têm doença de descompressão!
+        </div>
+      </div>
+      <div class="formula-card fc-purple">
+        <div class="formula-icon">🌬️</div>
+        <div class="formula-name">Lei de Graham</div>
+        <div class="formula-eq" style="color:var(--neon-purple)">Taxa ∝ 1/√M</div>
+        <div class="formula-desc">
+          Gases mais leves difundem <strong>mais rapidamente</strong>. O CO₂ (M=44) difunde ~20× mais rápido que O₂ (M=32) pela membrana alveolar — é por isso que o CO₂ raramente acumula mesmo em doenças!
+        </div>
+      </div>
+      <div class="formula-card fc-orange">
+        <div class="formula-icon">🔥</div>
+        <div class="formula-name">Lei dos Gases Perfeitos</div>
+        <div class="formula-eq" style="color:var(--neon-orange)">PV = nRT</div>
+        <div class="formula-desc">
+          Une pressão, volume, quantidade e temperatura. No corpo: <strong>BTPS</strong> = Body Temperature (37°C), Pressure (ambient), Saturated (vapor H₂O). Volumes sempre convertidos para BTPS!
+        </div>
+      </div>
+    </div>
+
+    <!-- Dalton deep dive -->
+    <div class="info-box ib-yellow reveal">
+      <div class="ib-title ibt-yellow">⚡ Lei de Dalton — O Grande Protagonista da Fisiologia Respiratória</div>
+      <p>O ar atmosférico tem pressão total de <span class="hl-yellow">760 mmHg</span> ao nível do mar. Esta pressão é a soma de todas as pressões parciais:</p>
+      <br>
+      <div class="bar-comparison" id="gas-bars">
+        <div class="bar-row">
+          <div class="bar-label">N₂ (78%)</div>
+          <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#7a9cc0,#4a6c90);width:0%" data-width="78%"><span>593 mmHg</span></div></div>
+          <div class="bar-val">593 mmHg</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">O₂ (21%)</div>
+          <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#00f5ff,#0099aa);width:0%" data-width="21%"><span>159 mmHg</span></div></div>
+          <div class="bar-val">159 mmHg</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">CO₂ (0.04%)</div>
+          <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#ff2d78,#aa1050);width:0%" data-width="0.4%"><span>0.3 mmHg</span></div></div>
+          <div class="bar-val">0.3 mmHg</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">H₂O vapor</div>
+          <div class="bar-track"><div class="bar-fill" style="background:linear-gradient(90deg,#39ff14,#1a8a00);width:0%" data-width="7.8%"><span>47 mmHg (37°C)</span></div></div>
+          <div class="bar-val">47 mmHg</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alveolar gas equation -->
+    <div class="epic-panel reveal">
+      <div style="position:relative;z-index:1">
+        <div class="chapter-label cl-yellow">⭐ FÓRMULA MESTRE</div>
+        <h3 style="font-family:'Orbitron',monospace;color:var(--neon-yellow);font-size:1.2rem;margin-bottom:1rem">Equação dos Gases Alveolares</h3>
+        <div style="text-align:center;margin:1.5rem 0">
+          <div style="font-family:'Exo 2',sans-serif;font-size:2rem;font-weight:700;color:var(--neon-cyan)">
+            P<sub>A</sub>O₂ = P<sub>i</sub>O₂ − (P<sub>A</sub>CO₂ / QR)
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-top:1.5rem;font-size:0.9rem">
+          <div><span class="hl-cyan">P<sub>A</sub>O₂</span> — Pressão parcial de O₂ no alvéolo</div>
+          <div><span class="hl-yellow">P<sub>i</sub>O₂</span> — PO₂ do ar inspirado = (760-47) × 0.21 ≈ <strong>149 mmHg</strong></div>
+          <div><span class="hl-pink">P<sub>A</sub>CO₂</span> — Pressão de CO₂ alveolar ≈ <strong>40 mmHg</strong></div>
+          <div><span class="hl-green">QR</span> — Quociente Respiratório ≈ <strong>0.8</strong> (CO₂ produzido / O₂ consumido)</div>
+        </div>
+        <div class="info-box ib-cyan" style="margin-top:1.5rem">
+          <div class="ib-title ibt-cyan">💡 Cálculo Real</div>
+          P<sub>A</sub>O₂ = 149 − (40 / 0.8) = 149 − 50 = <span class="hl-cyan">99 mmHg</span> ← Pressão de O₂ no alvéolo em repouso!
+        </div>
+      </div>
+    </div>
+
+    <!-- Molecule Canvas -->
+    <h3 class="reveal" style="font-family:'Orbitron',monospace;color:var(--neon-pink);margin-bottom:1rem;font-size:1rem">⚛️ Simulação Molecular — Pressões Parciais em Acção</h3>
+    <div class="molecule-stage reveal">
+      <canvas class="mol-canvas" id="mol-canvas" height="320"></canvas>
+      <div class="mol-legend">
+        <div class="mol-key"><div class="mol-dot" style="background:#7a9cc0"></div><span>N₂ — 78%</span></div>
+        <div class="mol-key"><div class="mol-dot" style="background:#00f5ff"></div><span>O₂ — 21%</span></div>
+        <div class="mol-key"><div class="mol-dot" style="background:#ff2d78"></div><span>CO₂ — 0.04%</span></div>
+        <div class="mol-key"><div class="mol-dot" style="background:#39ff14"></div><span>H₂O vapor</span></div>
+        <div style="margin-left:auto;font-size:0.78rem;color:var(--text-dim)">Moléculas em movimento browniano · Hover para interagir</div>
+      </div>
+    </div>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row right">
+        <div class="avatar av-mol">⚛️</div>
+        <div class="bubble b-pink bubble-right">
+          <div class="char-name cn-pink">Molécula O₂</div>
+          Vês como nos movemos aleatoriamente? Este é o <span class="hl-pink">movimento Browniano</span>! A pressão que exercemos contra as paredes do alvéolo é exatamente a nossa pressão parcial. Quanto mais moléculas somos, mais pressão fazemos. É pura física!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ ESPAÇO MORTO ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">💀</span><div class="sep-line"></div></div>
+
+<section id="espaco-morto">
+  <div class="container">
+    <div class="chapter-label cl-green reveal">Capítulo 2 · O Território Perdido</div>
+    <h2 class="section-title reveal" style="color:var(--neon-green)">Espaço Morto & Ventilação Alveolar 🫁</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-doc">🧬</div>
+        <div class="bubble b-cyan bubble-left">
+          <div class="char-name cn-cyan">Dr. Alveoli</div>
+          Aqui está um segredo sombrio: <span class="hl-pink">nem todo o ar que inspiras chega aos alvéolos!</span> Uma parte fica "presa" nas vias aéreas superiores — traqueia, brônquios, bronquíolos. Chamamos isso de <span class="hl-green">Espaço Morto</span>. É território morto para a troca gasosa!
+        </div>
+      </div>
+    </div>
+
+    <!-- Dead space visual -->
+    <div class="dead-space-visual reveal">
+      <svg width="100%" height="280" viewBox="0 0 800 280" style="max-width:800px;margin:0 auto;display:block">
+        <defs>
+          <linearGradient id="airway-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ff2d78" stop-opacity="0.3"/>
+            <stop offset="40%" stop-color="#ff2d78" stop-opacity="0.3"/>
+            <stop offset="41%" stop-color="#39ff14" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#39ff14" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+        <!-- Main airway tube -->
+        <rect x="20" y="110" width="760" height="60" rx="30" fill="url(#airway-grad)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+        <!-- Dead space zone -->
+        <rect x="20" y="100" width="305" height="80" rx="30" fill="rgba(255,45,120,0.1)" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="170" y="96" text-anchor="middle" font-size="11" fill="#ff2d78" font-family="Orbitron">ESPAÇO MORTO</text>
+        <text x="170" y="108" text-anchor="middle" font-size="9" fill="#ff2d78" font-family="Rajdhani">~150 mL</text>
+
+        <!-- Alveolar zone -->
+        <rect x="335" y="100" width="445" height="80" rx="30" fill="rgba(57,255,20,0.08)" stroke="#39ff14" stroke-width="1.5"/>
+        <text x="560" y="96" text-anchor="middle" font-size="11" fill="#39ff14" font-family="Orbitron">ZONA ALVEOLAR</text>
+        <text x="560" y="108" text-anchor="middle" font-size="9" fill="#39ff14" font-family="Rajdhani">~350 mL (troca gasosa)</text>
+
+        <!-- Air flow arrows -->
+        <text x="60" y="143" font-size="18" fill="#7a9cc0">→→→→→→→→</text>
+        <text x="20" y="220" font-size="12" fill="#7a9cc0" font-family="Rajdhani">Volume Corrente Total = 500 mL</text>
+        <text x="20" y="240" font-size="11" fill="#ff2d78" font-family="Rajdhani">Espaço Morto Anatómico = 150 mL (2 mL/kg)</text>
+        <text x="20" y="258" font-size="11" fill="#39ff14" font-family="Rajdhani">Ventilação Alveolar = 500 - 150 = 350 mL/respiração</text>
+
+        <!-- Labels -->
+        <text x="60" y="155" font-size="9" fill="#7a9cc0" font-family="Rajdhani">Nariz → Faringe → Laringe → Traqueia → Brônquios</text>
+        <text x="400" y="155" font-size="9" fill="#39ff14" font-family="Rajdhani">Bronquíolos → Ductos Alveolares → Alvéolos</text>
+
+        <!-- Molecule icons in dead space (faded) -->
+        <circle cx="80" cy="135" r="5" fill="#00f5ff" opacity="0.3"/>
+        <circle cx="120" cy="148" r="4" fill="#00f5ff" opacity="0.3"/>
+        <circle cx="160" cy="130" r="5" fill="#7a9cc0" opacity="0.3"/>
+        <circle cx="200" cy="145" r="4" fill="#00f5ff" opacity="0.3"/>
+        <circle cx="240" cy="135" r="5" fill="#7a9cc0" opacity="0.2"/>
+        <circle cx="280" cy="148" r="4" fill="#00f5ff" opacity="0.2"/>
+
+        <!-- Molecule icons in alveolar zone (bright) -->
+        <circle cx="420" cy="135" r="5" fill="#00f5ff" opacity="0.9"/>
+        <circle cx="480" cy="148" r="4" fill="#00f5ff" opacity="0.9"/>
+        <circle cx="540" cy="130" r="5" fill="#39ff14" opacity="0.8"/>
+        <circle cx="600" cy="145" r="4" fill="#00f5ff" opacity="0.9"/>
+        <circle cx="660" cy="135" r="5" fill="#39ff14" opacity="0.8"/>
+        <circle cx="720" cy="148" r="4" fill="#00f5ff" opacity="0.9"/>
+      </svg>
+    </div>
+
+    <!-- Types of dead space -->
+    <div class="formula-grid reveal">
+      <div class="formula-card fc-pink">
+        <div class="formula-name">Espaço Morto Anatómico</div>
+        <div class="formula-eq glow-pink">~150 mL</div>
+        <div class="formula-desc">
+          Volume das vias condutoras que <strong>não participam</strong> na troca gasosa. Nariz, faringe, laringe, traqueia, brônquios e bronquíolos. Corresponde a ~2 mL/kg de peso corporal.
+        </div>
+      </div>
+      <div class="formula-card fc-yellow">
+        <div class="formula-name">Espaço Morto Fisiológico</div>
+        <div class="formula-eq" style="color:var(--neon-yellow)">V<sub>D</sub>physio</div>
+        <div class="formula-desc">
+          Inclui o espaço morto anatómico <strong>MAIS</strong> os alvéolos ventilados mas não perfundidos. Em pessoas saudáveis, é ≈ anatómico. Em doenças (TEP!), pode ser muito maior!
+        </div>
+      </div>
+      <div class="formula-card fc-cyan">
+        <div class="formula-name">Fórmula de Bohr</div>
+        <div class="formula-eq glow-cyan">V<sub>D</sub>/V<sub>T</sub> = (PaCO₂ − PeCO₂)/PaCO₂</div>
+        <div class="formula-desc">
+          Mede a fracção de espaço morto. Normal: <strong>0.2–0.35</strong>. Em doença grave pode chegar a 0.6. V<sub>T</sub>=volume corrente, PeCO₂=CO₂ expirado.
+        </div>
+      </div>
+    </div>
+
+    <!-- Alveolar ventilation formula -->
+    <div class="info-box ib-green reveal">
+      <div class="ib-title ibt-green">🔑 Ventilação Alveolar (V̇A) — A Fórmula Chave</div>
+      <div style="text-align:center;font-size:1.8rem;font-family:'Exo 2',sans-serif;font-weight:700;color:var(--neon-green);margin:1rem 0">
+        V̇A = FR × (V<sub>T</sub> − V<sub>D</sub>)
+      </div>
+      <p>Onde: <span class="hl-green">FR</span> = Frequência Respiratória, <span class="hl-cyan">V<sub>T</sub></span> = Volume Corrente, <span class="hl-pink">V<sub>D</sub></span> = Espaço Morto</p>
+      <br>
+      <p>Exemplo normal: <span class="hl-yellow">12 resp/min × (500 − 150) mL = 4.200 mL/min = 4,2 L/min</span></p>
+      <br>
+      <div class="accordion">
+        <button class="acc-header" onclick="toggleAcc(this)">
+          ⚠️ Porque é que isto importa clinicamente? <span class="acc-icon">+</span>
+        </button>
+        <div class="acc-body">
+          <p>Se um doente respira <span class="hl-pink">superficialmente e rapidamente</span>: FR=30, V<sub>T</sub>=200 mL</p>
+          <p>V̇A = 30 × (200 − 150) = 30 × 50 = <span class="hl-pink">1.500 mL/min</span> — <strong>muito menos que o normal!</strong></p>
+          <br>
+          <p>Outro doente respira <span class="hl-green">lento e profundo</span>: FR=8, V<sub>T</sub>=800 mL</p>
+          <p>V̇A = 8 × (800 − 150) = 8 × 650 = <span class="hl-green">5.200 mL/min</span> — <strong>melhor ventilação alveolar!</strong></p>
+          <br>
+          <p>🎯 <strong>Conclusão:</strong> Respirar profundo e lento é mais eficiente que rápido e superficial!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline of a breath -->
+    <div class="chapter-label cl-cyan reveal" style="margin-top:3rem">Linha do Tempo de Uma Respiração</div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot tld-cyan"></div>
+        <div class="tl-title" style="color:var(--neon-cyan)">0 ms — Inspiração Inicia</div>
+        <div class="tl-body">Diafragma contrai → volume torácico ↑ → pressão intrapleural cai para −8 cmH₂O → pressão alveolar cai abaixo da atmosférica → <strong>ar entra</strong> (Lei de Boyle em acção!)</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tld-pink"></div>
+        <div class="tl-title" style="color:var(--neon-pink)">~0-100 ms — Zona de Espaço Morto</div>
+        <div class="tl-body">O ar fresco primeiro preenche as vias condutoras — traqueia e brônquios. Aqui: ZERO troca gasosa. É território morto.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tld-green"></div>
+        <div class="tl-title" style="color:var(--neon-green)">~100-500 ms — Chegada ao Alvéolo</div>
+        <div class="tl-body">O ar fresco (O₂ a 149 mmHg) chega ao alvéolo e mistura-se com ar alveolar (O₂ a 100 mmHg). O CO₂ (40 mmHg) move-se do sangue para o alvéolo por difusão simples.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot tld-yellow"></div>
+        <div class="tl-title" style="color:var(--neon-yellow)">~500-2000 ms — Troca Gasosa</div>
+        <div class="tl-body">O₂ difunde através da membrana alvéolo-capilar (0.2-0.5 μm!) para o sangue. CO₂ faz o caminho inverso. Tudo equilibrado em milissegundos!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ DISTRIBUIÇÃO VENTILAÇÃO ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">🌀</span><div class="sep-line"></div></div>
+
+<section id="distribuicao" class="sec-alt">
+  <div class="container">
+    <div class="chapter-label cl-purple reveal">Capítulo 3 · O Puzzle da Distribuição</div>
+    <h2 class="section-title reveal" style="color:var(--neon-purple)">Distribuição da Ventilação 🌀</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row right">
+        <div class="avatar av-lung">🫁</div>
+        <div class="bubble b-green bubble-right">
+          <div class="char-name cn-green">Pulmão Esquerdo</div>
+          Pensas que todos os alvéolos recebem a mesma quantidade de ar? <span class="hl-pink">Engano!</span> Existe uma distribuição regional — e a gravidade é a grande culpada. Os alvéolos das <span class="hl-green">bases pulmonares</span> recebem mais ventilação que os do ápice!
+        </div>
+      </div>
+    </div>
+
+    <!-- Lung zones diagram -->
+    <div class="lung-diagram-wrap reveal">
+      <div class="lung-svg-wrap">
+        <svg viewBox="0 0 300 400" width="100%" style="max-width:280px;margin:0 auto;display:block">
+          <defs>
+            <linearGradient id="vent-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#bf5fff" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#39ff14" stop-opacity="0.6"/>
+            </linearGradient>
+          </defs>
+          <!-- Lung outline -->
+          <path d="M150 30 Q100 40 80 80 Q40 130 45 200 Q50 280 80 340 Q110 380 150 385 Q190 380 220 340 Q250 280 255 200 Q260 130 220 80 Q200 40 150 30Z" fill="url(#vent-grad)" stroke="rgba(191,95,255,0.5)" stroke-width="2"/>
+          <!-- Trachea -->
+          <line x1="150" y1="0" x2="150" y2="30" stroke="rgba(191,95,255,0.8)" stroke-width="8" stroke-linecap="round"/>
+          <!-- Zone labels -->
+          <rect x="60" y="55" width="50" height="20" rx="5" fill="rgba(191,95,255,0.2)" stroke="#bf5fff" stroke-width="1"/>
+          <text x="85" y="69" text-anchor="middle" font-size="9" fill="#bf5fff" font-family="Orbitron">ÁPICE</text>
+          <rect x="60" y="185" width="55" height="20" rx="5" fill="rgba(57,255,20,0.2)" stroke="#39ff14" stroke-width="1"/>
+          <text x="87" y="199" text-anchor="middle" font-size="9" fill="#39ff14" font-family="Orbitron">MEIO</text>
+          <rect x="60" y="315" width="50" height="20" rx="5" fill="rgba(57,255,20,0.4)" stroke="#39ff14" stroke-width="1"/>
+          <text x="85" y="329" text-anchor="middle" font-size="9" fill="#39ff14" font-family="Orbitron">BASE</text>
+          <!-- Ventilation bars -->
+          <rect x="220" y="60" width="10" height="15" rx="3" fill="#bf5fff" opacity="0.6"/>
+          <text x="235" y="73" font-size="8" fill="#bf5fff" font-family="Rajdhani">Menos V</text>
+          <rect x="220" y="190" width="20" height="15" rx="3" fill="#39ff14" opacity="0.7"/>
+          <text x="245" y="203" font-size="8" fill="#39ff14" font-family="Rajdhani">Mais V</text>
+          <rect x="220" y="320" width="30" height="15" rx="3" fill="#39ff14" opacity="0.9"/>
+          <text x="255" y="333" font-size="8" fill="#39ff14" font-family="Rajdhani">Mais V</text>
+          <!-- Gravity arrow -->
+          <text x="15" y="200" font-size="9" fill="#ffe600" font-family="Rajdhani">g↓</text>
+          <line x1="20" y1="160" x2="20" y2="340" stroke="#ffe600" stroke-width="2" marker-end="url(#arrow)"/>
+          <defs>
+            <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill="#ffe600"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      <div class="lung-info-side">
+        <div class="info-box ib-purple">
+          <div class="ib-title ibt-purple">🌍 Efeito da Gravidade</div>
+          <p>Em posição vertical:</p>
+          <ul style="margin-top:0.5rem;padding-left:1.2rem;line-height:2">
+            <li><span class="hl-purple">Ápice</span>: alvéolos mais distendidos em repouso → menor compliance → <strong>menos ventilação</strong></li>
+            <li><span class="hl-green">Base</span>: alvéolos mais colapsados em repouso → maior compliance → <strong>mais ventilação</strong></li>
+          </ul>
+        </div>
+        <div class="info-box ib-cyan" style="margin-top:1rem">
+          <div class="ib-title ibt-cyan">💡 Compliance</div>
+          Compliance = ΔV/ΔP. Um alvéolo que parte de um volume menor <strong>expande mais</strong> com a mesma pressão — tem mais compliance disponível!
+        </div>
+        <div class="info-box ib-pink" style="margin-top:1rem">
+          <div class="ib-title ibt-pink">🔄 Em Decúbito</div>
+          Deitado, as diferenças anterior-posterior substituem as ápice-base. As regiões <strong>dependentes</strong> (posteriores) recebem mais ventilação!
+        </div>
+      </div>
+    </div>
+
+    <!-- Time constants -->
+    <div class="info-box ib-yellow reveal">
+      <div class="ib-title ibt-yellow">⏱️ Constantes de Tempo — Porque Uns Alvéolos Enchem Mais Rápido</div>
+      <div style="text-align:center;font-size:1.5rem;font-family:'Exo 2',sans-serif;font-weight:700;color:var(--neon-yellow);margin:1rem 0">
+        τ = R × C
+      </div>
+      <p>τ (tau) = constante de tempo = Resistência das vias aéreas × Compliance do alvéolo</p>
+      <br>
+      <p>⚡ Alvéolos com <span class="hl-green">τ pequeno</span> enchem rápido — ficam cheios antes dos outros</p>
+      <p>🐢 Alvéolos com <span class="hl-pink">τ grande</span> enchem devagar — em doença (ex: asma, DPOC), alguns nunca chegam a equalizar!</p>
+      <p style="margin-top:0.5rem;color:var(--text-dim);font-size:0.87rem">→ É por isto que na DPOC (resistência ↑) a distribuição da ventilação é tão desigual!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ DISTRIBUIÇÃO PERFUSÃO ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">🩸</span><div class="sep-line"></div></div>
+
+<section id="perfusao" class="sec-orange-bg">
+  <div class="container">
+    <div class="chapter-label cl-orange reveal">Capítulo 4 · O Rio de Sangue</div>
+    <h2 class="section-title reveal" style="color:var(--neon-orange)">Distribuição da Perfusão 🩸</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-blood">🩸</div>
+        <div class="bubble b-orange bubble-left">
+          <div class="char-name cn-orange">Glóbulo Vermelho · Transportador</div>
+          Olá! Eu sou um eritrócito e viajo pela circulação pulmonar. Aqui também domina a gravidade — as <span class="hl-orange">bases recebem mais fluxo sanguíneo</span> que o ápice. A pressão hidrostática faz com que o sangue "caia" para baixo. Física simples!
+        </div>
+      </div>
+    </div>
+
+    <!-- West Zones -->
+    <div class="info-box ib-orange reveal">
+      <div class="ib-title ibt-orange">🗺️ As 3 Zonas de West — O Mapa da Perfusão Pulmonar</div>
+      <p style="margin-bottom:1rem">John West descreveu 3 zonas baseadas na relação entre pressão arterial pulmonar (Pa), pressão venosa (Pv) e pressão alveolar (PA):</p>
+    </div>
+
+    <div class="formula-grid reveal">
+      <div class="formula-card fc-purple">
+        <div class="formula-name">Zona 1 — ÁPICE</div>
+        <div class="formula-eq" style="color:var(--neon-purple)">PA > Pa > Pv</div>
+        <div class="formula-desc">
+          Pressão alveolar COMPRIME os capilares → <strong>ZERO fluxo!</strong> Só ocorre em situações patológicas (hemorragia, ventilação com pressão positiva excessiva). Em condições normais, praticamente não existe zona 1.
+        </div>
+      </div>
+      <div class="formula-card fc-cyan">
+        <div class="formula-name">Zona 2 — MEIO</div>
+        <div class="formula-eq glow-cyan">Pa > PA > Pv</div>
+        <div class="formula-desc">
+          Fluxo intermitente — depende da diferença Pa − PA. Como uma "comporta": o fluxo ocorre quando Pa > PA. O fluxo aumenta progressivamente de cima para baixo. <strong>Comportamento tipo cachoeira!</strong>
+        </div>
+      </div>
+      <div class="formula-card fc-orange">
+        <div class="formula-name">Zona 3 — BASE</div>
+        <div class="formula-eq" style="color:var(--neon-orange)">Pa > Pv > PA</div>
+        <div class="formula-desc">
+          Fluxo contínuo — determinado pela diferença Pa − Pv. É aqui que ocorre a <strong>maior perfusão</strong>. Os capilares estão sempre abertos. É a zona que mais contribui para a oxigenação do sangue em repouso.
+        </div>
+      </div>
+    </div>
+
+    <!-- Blood flow canvas -->
+    <div class="molecule-stage reveal">
+      <canvas class="mol-canvas" id="blood-canvas" height="280"></canvas>
+      <div class="mol-legend">
+        <div class="mol-key"><div class="mol-dot" style="background:#ff6b00"></div><span>Eritrócitos com O₂</span></div>
+        <div class="mol-key"><div class="mol-dot" style="background:#8b0000"></div><span>Eritrócitos sem O₂</span></div>
+        <div style="margin-left:auto;font-size:0.78rem;color:var(--text-dim)">Fluxo sanguíneo pulmonar simulado</div>
+      </div>
+    </div>
+
+    <!-- Hypoxic vasoconstriction -->
+    <div class="manga-panel reveal">
+      <div class="manga-row right">
+        <div class="avatar av-blood">🩸</div>
+        <div class="bubble b-orange bubble-right">
+          <div class="char-name cn-orange">Glóbulo Vermelho</div>
+          Há um mecanismo incrível nos pulmões — a <span class="hl-orange">vasoconstrição hipóxica pulmonar</span>! Quando um alvéolo tem pouco O₂, os vasos que o irrigam <span class="hl-pink">contraem automaticamente</span> para desviar o sangue para alvéolos bem ventilados. É o oposto do que acontece no resto do corpo!
+        </div>
+      </div>
+      <div class="manga-row">
+        <div class="avatar av-doc">🧬</div>
+        <div class="bubble b-cyan bubble-left">
+          <div class="char-name cn-cyan">Dr. Alveoli</div>
+          Exactamente! É o mecanismo de protecção perfeito. Quando temos pneumonia — alvéolos cheios de pus e sem O₂ — a vasoconstrição hipóxica tenta <span class="hl-cyan">optimizar o V/Q</span> nessa região. Mas quando é muito extensa (ex: altitude elevada), causa hipertensão pulmonar!
+        </div>
+      </div>
+    </div>
+
+    <!-- Cardiac Output at rest -->
+    <div class="vq-diagram reveal">
+      <div class="vq-col" style="background:rgba(0,245,255,0.05)">
+        <div class="vq-title" style="color:var(--neon-cyan)">Débito Cardíaco Direito</div>
+        <div class="vq-val glow-cyan">5 L/min</div>
+        <div class="vq-label">em repouso</div>
+      </div>
+      <div class="vq-col" style="background:rgba(57,255,20,0.05)">
+        <div class="vq-title" style="color:var(--neon-green)">Para o Ápice</div>
+        <div class="vq-val" style="color:var(--neon-green)">~0.6 L/min</div>
+        <div class="vq-label">zona topo</div>
+      </div>
+      <div class="vq-col" style="background:rgba(255,107,0,0.05)">
+        <div class="vq-title" style="color:var(--neon-orange)">Para a Base</div>
+        <div class="vq-val" style="color:var(--neon-orange)">~2.4 L/min</div>
+        <div class="vq-label">zona base</div>
+      </div>
+      <div class="vq-col" style="background:rgba(255,45,120,0.05)">
+        <div class="vq-title" style="color:var(--neon-pink)">Shunt Anatómico</div>
+        <div class="vq-val" style="color:var(--neon-pink)">~2%</div>
+        <div class="vq-label">veias de Tebesio, brônquicas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ RELAÇÃO V/Q ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">⚖️</span><div class="sep-line"></div></div>
+
+<section id="relacao-vq" class="sec-pink-bg">
+  <div class="container">
+    <div class="chapter-label cl-cyan reveal">Capítulo 5 · O Grande Equilíbrio</div>
+    <h2 class="section-title reveal" style="color:var(--neon-cyan)">Relação Ventilação-Perfusão ⚖️<br><small style="font-size:0.55em;color:var(--text-dim)">O Segredo da Oxigenação Eficiente</small></h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-mol">⚛️</div>
+        <div class="bubble b-pink bubble-left">
+          <div class="char-name cn-pink">Molécula O₂</div>
+          Chegámos ao climax! A relação V/Q é o indicador SUPREMO da eficiência pulmonar. É a razão entre quanto ar chega a um alvéolo (V) e quanto sangue passa por ele (Q). Quando este rácio está perturbado... é o caos! E é a causa de hipoxémia mais comum em medicina!
+        </div>
+      </div>
+    </div>
+
+    <!-- V/Q ratio visual -->
+    <div class="epic-panel reveal">
+      <div style="position:relative;z-index:1;text-align:center">
+        <div class="chapter-label cl-cyan" style="text-align:center">A EQUAÇÃO DO DESTINO</div>
+        <div style="font-size:3.5rem;font-family:'Orbitron',monospace;font-weight:900;color:var(--neon-cyan);margin:1rem 0;text-shadow:var(--glow-cyan)">V̇/Q̇ = 0.8</div>
+        <div style="color:var(--text-dim);font-size:0.95rem">Valor normal: Ventilação 4 L/min ÷ Perfusão 5 L/min = 0.8</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:2rem">
+          <div style="background:rgba(255,45,120,0.1);border:1px solid var(--neon-pink);border-radius:12px;padding:1rem">
+            <div style="font-family:'Orbitron',monospace;font-size:0.65rem;color:var(--neon-pink);letter-spacing:2px">V/Q → 0</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--neon-pink)">SHUNT</div>
+            <div style="font-size:0.82rem;color:var(--text-dim)">Sangue passa sem ventilação. O₂ arterial ↓↓, mas CO₂ normal/baixo (compensação)</div>
+          </div>
+          <div style="background:rgba(57,255,20,0.1);border:1px solid var(--neon-green);border-radius:12px;padding:1rem">
+            <div style="font-family:'Orbitron',monospace;font-size:0.65rem;color:var(--neon-green);letter-spacing:2px">V/Q = 0.8</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--neon-green)">NORMAL ✓</div>
+            <div style="font-size:0.82rem;color:var(--text-dim)">Equilíbrio perfeito. PaO₂ ~95 mmHg, PaCO₂ ~40 mmHg</div>
+          </div>
+          <div style="background:rgba(191,95,255,0.1);border:1px solid var(--neon-purple);border-radius:12px;padding:1rem">
+            <div style="font-family:'Orbitron',monospace;font-size:0.65rem;color:var(--neon-purple);letter-spacing:2px">V/Q → ∞</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--neon-purple)">ESPAÇO MORTO</div>
+            <div style="font-size:0.82rem;color:var(--text-dim)">Alvéolo ventilado sem sangue. CO₂ não é removido eficientemente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regional V/Q -->
+    <div class="info-box ib-cyan reveal">
+      <div class="ib-title ibt-cyan">📍 V/Q Regional — Ápice vs Base</div>
+      <div class="data-table" style="margin-top:1rem">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Região</th>
+              <th>Ventilação (V)</th>
+              <th>Perfusão (Q)</th>
+              <th>Razão V/Q</th>
+              <th>PO₂ local</th>
+              <th>PCO₂ local</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="hl-purple">Ápice</span></td>
+              <td>Pouca</td>
+              <td>Muito pouca</td>
+              <td><span class="hl-purple">~3.3</span> (alto!)</td>
+              <td style="color:var(--neon-green)">132 mmHg</td>
+              <td style="color:var(--neon-pink)">28 mmHg</td>
+            </tr>
+            <tr>
+              <td><span class="hl-green">Meio</span></td>
+              <td>Moderada</td>
+              <td>Moderada</td>
+              <td><span class="hl-green">~0.8</span> (normal)</td>
+              <td style="color:var(--neon-green)">~100 mmHg</td>
+              <td>~40 mmHg</td>
+            </tr>
+            <tr>
+              <td><span class="hl-orange">Base</span></td>
+              <td>Mais</td>
+              <td>Muito mais</td>
+              <td><span class="hl-orange">~0.6</span> (baixo!)</td>
+              <td style="color:var(--neon-orange)">89 mmHg</td>
+              <td style="color:var(--neon-pink)">42 mmHg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:1rem;font-size:0.88rem;color:var(--text-dim)">🎯 Nota: O ápice tem PO₂ mais alto → por isso a tuberculose prefere o ápice (M. tuberculosis é aeróbio!)</p>
+    </div>
+
+    <!-- Disease states -->
+    <div class="chapter-label cl-pink reveal" style="margin-top:3rem">Efeitos das Alterações do V/Q</div>
+
+    <div class="accordion reveal">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        🩸 Shunt (V/Q → 0) — Ex: Atelectasia, Edema Pulmonar, Pneumonia <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <p>Sangue passa por alvéolos <strong>sem ventilação</strong>. O sangue venoso mistura-se com o arterial → <span class="hl-pink">hipoxémia</span>!</p>
+        <br>
+        <p>⚠️ Característica fundamental: <strong>NÃO responde a 100% O₂!</strong> Por quê? Porque o problema não é falta de O₂ no alvéolo — é que o sangue não passa pelo alvéolo. Dar mais O₂ não ajuda as unidades shuntadas.</p>
+        <br>
+        <p>📊 Para calcular o shunt: Equação do shunt: Q<sub>s</sub>/Q<sub>t</sub> = (CcO₂ - CaO₂)/(CcO₂ - CvO₂)</p>
+        <p style="margin-top:0.5rem;color:var(--text-dim)">Normal: &lt;5%. Em pneumonia grave: pode chegar a 30-40%!</p>
+      </div>
+    </div>
+
+    <div class="accordion reveal">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        💨 Espaço Morto Aumentado (V/Q → ∞) — Ex: TEP, Enfisema <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <p>Alvéolos ventilados mas <strong>sem perfusão</strong>. O ar não entra em contacto com sangue → ventilação desperdiçada!</p>
+        <br>
+        <p>✅ <strong>Responde bem a O₂ suplementar</strong>! Porque os alvéolos funcionantes recebem mais O₂.</p>
+        <br>
+        <p>🩺 <strong>TEP (Tromboembolismo Pulmonar):</strong> coágulo bloqueia artéria pulmonar → zona fica ventilada mas sem fluxo → espaço morto fisiológico ↑↑ → CO₂ não é removido → hipocapnia nas outras zonas que compensam → depois hipercapnia se falha total</p>
+        <br>
+        <p>Gradiente A-a de O₂ = P<sub>A</sub>O₂ - PaO₂ → normal &lt;10-15 mmHg → aumentado em shunt E em espaço morto elevado!</p>
+      </div>
+    </div>
+
+    <div class="accordion reveal">
+      <button class="acc-header" onclick="toggleAcc(this)">
+        🌀 V/Q Misto Heterogéneo — Ex: DPOC, Asma, Fibrose <span class="acc-icon">+</span>
+      </button>
+      <div class="acc-body">
+        <p>Na maioria das doenças pulmonares reais, coexistem <strong>unidades com V/Q baixo E alto</strong>.</p>
+        <br>
+        <p>Na DPOC: destruição alveolar (enfisema) → espaço morto ↑; + obstrução brônquica → shunt/V/Q baixo ↑. Duplo problema!</p>
+        <br>
+        <p>O gráfico V/Q (multicompartimento) é a ferramenta científica para estudar esta heterogeneidade — descreve a distribuição de V/Q em todo o pulmão usando gases inertes (técnica MIGET).</p>
+      </div>
+    </div>
+
+    <!-- Interactive V/Q slider -->
+    <div class="quiz-card reveal" style="margin-top:2rem">
+      <div style="font-family:'Orbitron',monospace;font-size:0.75rem;color:var(--neon-cyan);letter-spacing:3px;margin-bottom:1rem">🎮 SIMULADOR V/Q INTERACTIVO</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center;flex-wrap:wrap">
+        <div>
+          <label style="font-size:0.85rem;color:var(--text-dim)">Ventilação (V): <span id="v-val" class="hl-cyan">4.0</span> L/min</label>
+          <input type="range" id="v-slider" min="0" max="12" step="0.5" value="4" style="width:100%;margin:0.5rem 0;accent-color:var(--neon-cyan)" oninput="updateVQ()">
+          <label style="font-size:0.85rem;color:var(--text-dim)">Perfusão (Q): <span id="q-val" class="hl-orange">5.0</span> L/min</label>
+          <input type="range" id="q-slider" min="0.1" max="12" step="0.5" value="5" style="width:100%;margin:0.5rem 0;accent-color:var(--neon-orange)" oninput="updateVQ()">
+        </div>
+        <div style="text-align:center">
+          <div style="font-family:'Orbitron',monospace;font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:0.5rem">RAZÃO V/Q</div>
+          <div id="vq-display" style="font-family:'Orbitron',monospace;font-size:3.5rem;font-weight:900;color:var(--neon-green)">0.8</div>
+          <div id="vq-status" style="font-size:0.9rem;color:var(--neon-green);margin-top:0.3rem">✓ NORMAL</div>
+          <div id="vq-detail" style="font-size:0.8rem;color:var(--text-dim);margin-top:0.3rem"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ QUIZ ═══════════════════════════ -->
+<div class="sep"><div class="sep-line"></div><span class="sep-icon">🧠</span><div class="sep-line"></div></div>
+
+<section id="quiz">
+  <div class="container">
+    <div class="chapter-label cl-yellow reveal">Capítulo Final · Prova dos Heróis</div>
+    <h2 class="section-title reveal" style="color:var(--neon-yellow)">Quiz — Testa o teu Poder! 🧠</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row right">
+        <div class="avatar av-mol">⚛️</div>
+        <div class="bubble b-pink bubble-right">
+          <div class="char-name cn-pink">Molécula O₂</div>
+          Chegou a hora da verdade! Vamos ver se absorveste tudo. Sem stress — cada erro é uma oportunidade de aprender mais. Eu acredito em ti! 💪
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-card reveal">
+      <div class="quiz-q">❓ Q1: Um doente respira 20 vezes/min com volume corrente de 300 mL. Qual é a ventilação alveolar? (Espaço morto = 150 mL)</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz1')">A) 6.000 mL/min</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','quiz1')">B) 3.000 mL/min</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz1')">C) 4.500 mL/min</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz1')">D) 1.500 mL/min</button>
+      </div>
+      <div id="fb-quiz1" class="quiz-feedback">
+        <div class="qf-correct">✅ V̇A = FR × (VT − VD) = 20 × (300 − 150) = 20 × 150 = <strong>3.000 mL/min</strong>. Nota como com VT pequeno, muito do espaço morto "come" grande porção do volume corrente!</div>
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-card reveal">
+      <div class="quiz-q">❓ Q2: Um doente tem pneumonia no lobo inferior direito. Que alteração de V/Q esperas nessa região?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'correct','quiz2')">A) V/Q muito baixo (shunt)</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz2')">B) V/Q muito alto (espaço morto)</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz2')">C) V/Q normal de 0.8</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz2')">D) V/Q = infinito</button>
+      </div>
+      <div id="fb-quiz2" class="quiz-feedback">
+        <div class="qf-correct">✅ Na pneumonia, os alvéolos estão cheios de exsudado inflamatório → <strong>zero ventilação</strong>, mas a perfusão continua → V/Q → 0 = <strong>Shunt!</strong> É por isso que na pneumonia grave há hipoxémia marcada que melhora pouco com O₂.</div>
+      </div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-card reveal">
+      <div class="quiz-q">❓ Q3: Qual gás difunde mais rapidamente pela membrana alvéolo-capilar?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz3')">A) O₂ (massa molecular 32)</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','quiz3')">B) CO₂ (difunde ~20× mais rápido)</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz3')">C) N₂ (mais abundante)</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz3')">D) H₂O vapor</button>
+      </div>
+      <div id="fb-quiz3" class="quiz-feedback">
+        <div class="qf-correct">✅ <strong>CO₂ difunde ~20× mais rapidamente</strong> que O₂! Pela Lei de Graham (difusão ∝ 1/√M) e pela sua muito maior solubilidade no plasma. Por isso, a retenção de CO₂ em doenças pulmonares é relativamente tardia comparada com a hipoxémia!</div>
+      </div>
+    </div>
+
+    <!-- Quiz 4 -->
+    <div class="quiz-card reveal">
+      <div class="quiz-q">❓ Q4: Qual zona de West tem o V/Q mais ALTO (>1)?</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz4')">A) Base pulmonar</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','quiz4')">B) Ápice pulmonar</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz4')">C) Região média</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz4')">D) Todas as zonas têm V/Q igual</button>
+      </div>
+      <div id="fb-quiz4" class="quiz-feedback">
+        <div class="qf-correct">✅ O <strong>ápice</strong> tem V/Q ≈ 3.3! A perfusão é muito reduzida no ápice (gravidade impede o fluxo), enquanto a ventilação é relativamente menos afectada → V/Q alto. Daí a PO₂ local ser de ~132 mmHg — ambiente favorável à Tuberculose!</div>
+      </div>
+    </div>
+
+    <!-- Quiz 5 -->
+    <div class="quiz-card reveal">
+      <div class="quiz-q">❓ Q5: Um doente tem TEP maciço. O CO₂ arterial inicialmente estará:</div>
+      <div class="quiz-options">
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz5')">A) Aumentado (hipercapnia)</button>
+        <button class="quiz-btn" onclick="answer(this,'correct','quiz5')">B) Diminuído (hipocapnia) pela hiperventilação reflexa</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz5')">C) Normal sempre</button>
+        <button class="quiz-btn" onclick="answer(this,'wrong','quiz5')">D) Não muda</button>
+      </div>
+      <div id="fb-quiz5" class="quiz-feedback">
+        <div class="qf-correct">✅ No TEP: espaço morto ↑↑ → o CO₂ não é eliminado → CO₂ arterial tenderia a subir. MAS os pulmões respondem com <strong>hiperventilação reflexa</strong> (hipóxia + mediadores) → eliminam CO₂ em excesso → PaCO₂ ↓ = <strong>hipocapnia</strong>. A hipercapnia só surge em falência respiratória total!</div>
+      </div>
+    </div>
+
+    <!-- Score display -->
+    <div id="quiz-score" style="display:none" class="info-box ib-green reveal" style="text-align:center">
+      <div class="ib-title ibt-green" style="text-align:center">🏆 RESULTADO FINAL</div>
+      <div id="score-display" style="font-family:'Orbitron',monospace;font-size:3rem;font-weight:900;text-align:center;color:var(--neon-yellow);margin:1rem 0"></div>
+      <div id="score-msg" style="text-align:center;color:var(--text-dim)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SUMMARY ═══════════════════════════ -->
+<section class="sec-alt">
+  <div class="container">
+    <div class="chapter-label cl-cyan reveal">Epílogo · O Conhecimento Conquistado</div>
+    <h2 class="section-title reveal" style="color:var(--neon-cyan)">Resumo da Aventura 🎯</h2>
+
+    <div class="manga-panel reveal">
+      <div class="manga-row">
+        <div class="avatar av-doc">🧬</div>
+        <div class="bubble b-cyan bubble-left">
+          <div class="char-name cn-cyan">Dr. Alveoli</div>
+          Parabéns! Completaste a jornada pelo mundo da fisiologia respiratória. Agora és um guardião do conhecimento! Recapitulemos as armas que adquiriste...
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-grid reveal">
+      <div class="formula-card fc-cyan">
+        <div class="formula-icon">⚗️</div>
+        <div class="formula-name">Leis dos Gases</div>
+        <div class="formula-desc">Boyle (PV), Charles (VT), Dalton (pressões parciais), Henry (dissolução), Graham (difusão), Equação dos Gases Alveolares. Base de tudo!</div>
+      </div>
+      <div class="formula-card fc-green">
+        <div class="formula-icon">🌬️</div>
+        <div class="formula-name">Espaço Morto</div>
+        <div class="formula-desc">Anatómico (~150 mL) + Fisiológico. V̇A = FR × (VT − VD). Respirar profundo e lento > rápido e superficial.</div>
+      </div>
+      <div class="formula-card fc-purple">
+        <div class="formula-icon">🌀</div>
+        <div class="formula-name">Distribuição V</div>
+        <div class="formula-desc">Base > Ápice em ventilação. Compliance e constantes de tempo (τ = R×C) explicam distribuição desigual.</div>
+      </div>
+      <div class="formula-card fc-orange">
+        <div class="formula-icon">🩸</div>
+        <div class="formula-name">Zonas de West</div>
+        <div class="formula-desc">Zona 1 (PA>Pa>Pv): sem fluxo. Zona 2 (Pa>PA>Pv): cascata. Zona 3 (Pa>Pv>PA): fluxo máximo.</div>
+      </div>
+      <div class="formula-card fc-pink">
+        <div class="formula-icon">⚖️</div>
+        <div class="formula-name">Relação V/Q</div>
+        <div class="formula-desc">Normal = 0.8. V/Q→0 = Shunt (não responde a O₂). V/Q→∞ = Espaço Morto. Ápice V/Q alto, Base V/Q baixo.</div>
+      </div>
+      <div class="formula-card fc-yellow">
+        <div class="formula-icon">💊</div>
+        <div class="formula-name">Clínica</div>
+        <div class="formula-desc">TEP→espaço morto. Pneumonia→shunt. DPOC→misto. Hipóxia corrigível com O₂ = espaço morto; não corrigível = shunt.</div>
+      </div>
+    </div>
+
+    <!-- Authors reference -->
+    <div class="info-box ib-purple reveal" style="margin-top:3rem">
+      <div class="ib-title ibt-purple">📚 Referência Bibliográfica</div>
+      <p><strong style="color:var(--neon-purple)">Zin, Walter Araujo; Rocco, Patricia Rieken Macêdo; Faffe, Debora Souza.</strong></p>
+      <p style="color:var(--text-dim);margin-top:0.5rem">Capítulo 43: Ventilação Alveolar, Perfusão e Relação Ventilação-Perfusão.</p>
+      <p style="color:var(--text-dim)">In: Fisiologia Médica (Guyton & Hall, edição traduzida). Ver páginas 632–638.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  <div class="footer-logo">DemilMed · UL</div>
+  <div class="footer-line"></div>
+  <div class="footer-sub">Material Didáctico Interactivo</div>
+  <div class="footer-line"></div>
+  <div class="footer-info">
+    <span>UNIVERSIDADE LICUNGO</span><br>
+    Faculdade de Medicina · 2º Ano<br>
+    Fisiologia Respiratória · Capítulo 43<br>
+    <span>ANO 2026</span>
+  </div>
+  <div style="margin-top:1.5rem;font-size:0.75rem;color:rgba(122,156,192,0.4)">
+    Feito com ❤️ para futuros médicos de Moçambique
+  </div>
+</footer>
+
+<!-- ═══════════════════════════ JAVASCRIPT ═══════════════════════════ -->
+<script>
+// ─── BACKGROUND PARTICLES ───
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+let bgW, bgH, bgParticles = [];
+
+function initBg() {
+  bgW = bgCanvas.width = window.innerWidth;
+  bgH = bgCanvas.height = window.innerHeight;
+  bgParticles = [];
+  for(let i=0; i<80; i++) {
+    bgParticles.push({
+      x: Math.random()*bgW, y: Math.random()*bgH,
+      r: Math.random()*1.5+0.5, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+      color: ['#00f5ff','#ff2d78','#39ff14','#ffe600','#bf5fff'][Math.floor(Math.random()*5)],
+      a: Math.random()*0.5+0.1
+    });
+  }
+}
+
+function animBg() {
+  bgCtx.clearRect(0,0,bgW,bgH);
+  bgParticles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0) p.x=bgW; if(p.x>bgW) p.x=0;
+    if(p.y<0) p.y=bgH; if(p.y>bgH) p.y=0;
+    bgCtx.beginPath();
+    bgCtx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    bgCtx.fillStyle = p.color;
+    bgCtx.globalAlpha = p.a;
+    bgCtx.fill();
+    bgCtx.globalAlpha = 1;
+  });
+  requestAnimationFrame(animBg);
+}
+window.addEventListener('resize', initBg);
+initBg(); animBg();
+
+// ─── PROGRESS BAR ───
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('progress-bar');
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  bar.style.width = scrolled + '%';
+});
+
+// ─── SCROLL REVEAL ───
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+reveals.forEach(el => observer.observe(el));
+
+// ─── ANIMATED BARS ───
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.querySelectorAll('.bar-fill').forEach(bf => {
+        bf.style.width = bf.dataset.width;
+      });
+    }
+  });
+}, { threshold: 0.3 });
+const gasBars = document.getElementById('gas-bars');
+if(gasBars) barObserver.observe(gasBars);
+
+// ─── MOLECULE CANVAS ───
+const molCanvas = document.getElementById('mol-canvas');
+const molCtx = molCanvas.getContext('2d');
+let molW, molH, molecules = [];
+const molColors = [
+  {color:'#7a9cc0', count:78, label:'N₂', mass:28},
+  {color:'#00f5ff', count:21, label:'O₂', mass:32},
+  {color:'#ff2d78', count:1, label:'CO₂', mass:44},
+  {color:'#39ff14', count:2, label:'H₂O', mass:18}
+];
+
+function initMol() {
+  molW = molCanvas.width = molCanvas.offsetWidth;
+  molH = molCanvas.height = 320;
+  molecules = [];
+  molColors.forEach(mc => {
+    const n = Math.floor(mc.count * 0.8);
+    for(let i=0; i<n; i++) {
+      const speed = 2.5 / Math.sqrt(mc.mass / 18);
+      const angle = Math.random() * Math.PI * 2;
+      molecules.push({
+        x: Math.random()*molW, y: Math.random()*molH,
+        vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed,
+        r: mc.mass === 44 ? 5 : mc.mass === 18 ? 3 : 4,
+        color: mc.color, label: mc.label
+      });
+    }
+  });
+}
+
+let mouseX = -999, mouseY = -999;
+molCanvas.addEventListener('mousemove', e => {
+  const rect = molCanvas.getBoundingClientRect();
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+});
+molCanvas.addEventListener('mouseleave', () => { mouseX = -999; mouseY = -999; });
+
+function animMol() {
+  if(!molCtx) return;
+  molCtx.clearRect(0,0,molW,molH);
+  // Draw membrane line
+  molCtx.setLineDash([6,4]);
+  molCtx.strokeStyle = 'rgba(0,245,255,0.2)';
+  molCtx.beginPath();
+  molCtx.moveTo(molW/2, 0);
+  molCtx.lineTo(molW/2, molH);
+  molCtx.stroke();
+  molCtx.setLineDash([]);
+  molCtx.fillStyle = 'rgba(0,245,255,0.06)';
+  molCtx.font = '10px Orbitron';
+  molCtx.fillStyle = 'rgba(0,245,255,0.3)';
+  molCtx.fillText('ALVÉOLO', molW*0.25-30, 20);
+  molCtx.fillText('CAPILAR', molW*0.75-25, 20);
+
+  molecules.forEach(m => {
+    const dx = m.x - mouseX, dy = m.y - mouseY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist < 60) { m.vx += dx/dist*0.5; m.vy += dy/dist*0.5; }
+    const speed = Math.sqrt(m.vx*m.vx+m.vy*m.vy);
+    const maxSpeed = 4;
+    if(speed > maxSpeed) { m.vx = (m.vx/speed)*maxSpeed; m.vy = (m.vy/speed)*maxSpeed; }
+
+    m.x += m.vx; m.y += m.vy;
+    if(m.x < m.r) { m.x = m.r; m.vx = Math.abs(m.vx); }
+    if(m.x > molW-m.r) { m.x = molW-m.r; m.vx = -Math.abs(m.vx); }
+    if(m.y < m.r) { m.y = m.r; m.vy = Math.abs(m.vy); }
+    if(m.y > molH-m.r) { m.y = molH-m.r; m.vy = -Math.abs(m.vy); }
+
+    molCtx.beginPath();
+    const grad = molCtx.createRadialGradient(m.x-m.r*0.3, m.y-m.r*0.3, 0, m.x, m.y, m.r*1.5);
+    grad.addColorStop(0, m.color+'ff');
+    grad.addColorStop(1, m.color+'33');
+    molCtx.arc(m.x, m.y, m.r, 0, Math.PI*2);
+    molCtx.fillStyle = grad;
+    molCtx.shadowColor = m.color;
+    molCtx.shadowBlur = 8;
+    molCtx.fill();
+    molCtx.shadowBlur = 0;
+  });
+  requestAnimationFrame(animMol);
+}
+initMol(); animMol();
+window.addEventListener('resize', initMol);
+
+// ─── BLOOD CANVAS ───
+const bloodCanvas = document.getElementById('blood-canvas');
+const bloodCtx = bloodCanvas.getContext('2d');
+let bW, bH, rbcs = [];
+
+function initBlood() {
+  bW = bloodCanvas.width = bloodCanvas.offsetWidth;
+  bH = bloodCanvas.height = 280;
+  rbcs = [];
+  for(let i=0; i<40; i++) {
+    rbcs.push({
+      x: Math.random()*bW, y: Math.random()*bH,
+      vx: (Math.random()*1.5+0.5) * (Math.random()>0.5?1:-1),
+      vy: (Math.random()-0.5)*0.5,
+      oxygenated: Math.random() > 0.5,
+      r: Math.random()*3+5,
+      pulse: Math.random()*Math.PI*2
+    });
+  }
+}
+
+function animBlood() {
+  if(!bloodCtx) return;
+  bloodCtx.clearRect(0,0,bW,bH);
+
+  // Draw vessels
+  const zones = [
+    {y:bH*0.15, h:bH*0.2, label:'ÁPICE · Zona 1/2', flow:0.15},
+    {y:bH*0.45, h:bH*0.2, label:'MEIO · Zona 2', flow:0.4},
+    {y:bH*0.75, h:bH*0.2, label:'BASE · Zona 3', flow:1.0}
+  ];
+  zones.forEach(z => {
+    bloodCtx.fillStyle = `rgba(139,0,0,${z.flow*0.15+0.03})`;
+    bloodCtx.strokeStyle = `rgba(255,107,0,${z.flow*0.4+0.1})`;
+    bloodCtx.lineWidth = 1;
+    bloodCtx.beginPath();
+    bloodCtx.roundRect(20, z.y, bW-40, z.h, 8);
+    bloodCtx.fill(); bloodCtx.stroke();
+    bloodCtx.fillStyle = `rgba(255,107,0,${z.flow*0.5+0.2})`;
+    bloodCtx.font = '9px Orbitron';
+    bloodCtx.fillText(z.label, 30, z.y+z.h/2+4);
+    // Flow arrows
+    for(let i=0; i<Math.ceil(z.flow*6); i++) {
+      const arrowX = bW-80-i*60;
+      if(arrowX>100) {
+        bloodCtx.fillStyle = `rgba(255,107,0,${z.flow*0.5})`;
+        bloodCtx.font = '12px serif';
+        bloodCtx.fillText('→', arrowX, z.y+z.h/2+5);
+      }
+    }
+  });
+
+  rbcs.forEach(r => {
+    r.pulse += 0.05;
+    // Confine to vessel zones
+    const inZone = zones.some(z => r.y > z.y && r.y < z.y+z.h);
+    if(!inZone) { r.y += (bH*0.5 - r.y) * 0.01; }
+
+    zones.forEach(z => {
+      if(r.y > z.y && r.y < z.y+z.h) {
+        const targetV = z.flow * 2 + 0.3;
+        r.vx += (Math.sign(r.vx)*targetV - r.vx)*0.02;
+      }
+    });
+
+    r.x += r.vx; r.y += r.vy;
+    if(r.x < -20) r.x = bW+20;
+    if(r.x > bW+20) r.x = -20;
+    r.y = Math.max(15, Math.min(bH-15, r.y));
+
+    const pr = r.r + Math.sin(r.pulse)*1;
+    bloodCtx.beginPath();
+    bloodCtx.ellipse(r.x, r.y, pr*1.4, pr*0.9, Math.atan2(r.vy, r.vx), 0, Math.PI*2);
+    const color = r.oxygenated ? '#ff6b00' : '#8b0000';
+    const grad = bloodCtx.createRadialGradient(r.x-pr*0.3, r.y-pr*0.3, 0, r.x, r.y, pr);
+    grad.addColorStop(0, color+'ff');
+    grad.addColorStop(1, color+'88');
+    bloodCtx.fillStyle = grad;
+    bloodCtx.shadowColor = color;
+    bloodCtx.shadowBlur = 6;
+    bloodCtx.fill();
+    bloodCtx.shadowBlur = 0;
+  });
+  requestAnimationFrame(animBlood);
+}
+initBlood(); animBlood();
+window.addEventListener('resize', initBlood);
+
+// ─── ACCORDION ───
+function toggleAcc(btn) {
+  const body = btn.nextElementSibling;
+  btn.classList.toggle('open');
+  body.classList.toggle('open');
+}
+
+// ─── QUIZ ───
+let quizAnswers = {}, totalAnswered = 0;
+function answer(btn, type, quizId) {
+  if(quizAnswers[quizId]) return;
+  quizAnswers[quizId] = type;
+  const parent = btn.closest('.quiz-card');
+  const buttons = parent.querySelectorAll('.quiz-btn');
+  buttons.forEach(b => { b.style.pointerEvents='none'; });
+  btn.classList.add(type);
+  const fb = document.getElementById('fb-'+quizId);
+  fb.style.display = 'block';
+  const inner = fb.querySelector('div');
+  if(type === 'wrong') {
+    inner.className = 'qf-wrong';
+    inner.innerHTML = '❌ Não foi desta! ' + inner.innerHTML.replace('✅','');
+    // Mark correct
+    buttons.forEach(b => {
+      if(b.getAttribute('onclick').includes("'correct'")) b.classList.add('correct');
+    });
+  }
+  totalAnswered++;
+  if(totalAnswered === 5) showScore();
+}
+
+function showScore() {
+  const correct = Object.values(quizAnswers).filter(v=>v==='correct').length;
+  const scoreEl = document.getElementById('quiz-score');
+  const displayEl = document.getElementById('score-display');
+  const msgEl = document.getElementById('score-msg');
+  scoreEl.style.display = 'block';
+  displayEl.textContent = correct + '/5';
+  const msgs = ['Continue estudando! 💪','Bom esforço! 📚','Muito bom! ⭐','Excelente! 🌟','PERFEITO! 🏆 Guardião do Conhecimento!'];
+  msgEl.textContent = msgs[correct] || msgs[4];
+}
+
+// ─── V/Q SIMULATOR ───
+function updateVQ() {
+  const v = parseFloat(document.getElementById('v-slider').value);
+  const q = parseFloat(document.getElementById('q-slider').value);
+  const vq = (v/q).toFixed(2);
+  document.getElementById('v-val').textContent = v.toFixed(1);
+  document.getElementById('q-val').textContent = q.toFixed(1);
+  document.getElementById('vq-display').textContent = vq;
+  const display = document.getElementById('vq-display');
+  const status = document.getElementById('vq-status');
+  const detail = document.getElementById('vq-detail');
+  if(vq < 0.2) {
+    display.style.color='var(--neon-pink)'; status.style.color='var(--neon-pink)';
+    status.textContent='⚠️ SHUNT'; detail.textContent='Sangue sem oxigenação → hipoxémia grave. Não corrige com O₂!';
+  } else if(vq < 0.5) {
+    display.style.color='var(--neon-orange)'; status.style.color='var(--neon-orange)';
+    status.textContent='⬇️ V/Q BAIXO'; detail.textContent='Hipoventilação relativa → hipoxémia moderada.';
+  } else if(vq <= 1.2) {
+    display.style.color='var(--neon-green)'; status.style.color='var(--neon-green)';
+    status.textContent='✓ NORMAL'; detail.textContent='Equilíbrio V/Q óptimo → oxigenação eficiente!';
+  } else if(vq <= 3) {
+    display.style.color='var(--neon-yellow)'; status.style.color='var(--neon-yellow)';
+    status.textContent='⬆️ V/Q ALTO'; detail.textContent='Hiperventilação relativa → espaço morto funcional.';
+  } else {
+    display.style.color='var(--neon-purple)'; status.style.color='var(--neon-purple)';
+    status.textContent='⚠️ ESPAÇO MORTO'; detail.textContent='Ventilação desperdiçada → CO₂ não eliminado eficientemente.';
+  }
+}
+
+// ─── SMOOTH SCROLL ───
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2163 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Variações Anatómicas | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Rajdhani:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff00aa;
+    --neon-yellow: #ffee00;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6600;
+    --neon-purple: #bf00ff;
+    --dark-bg: #050510;
+    --dark-card: #0a0a1f;
+    --dark-panel: #0d0d2b;
+    --text-main: #e0e0ff;
+    --text-dim: #8888bb;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark-bg);
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ===== STARS BACKGROUND ===== */
+  .stars-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    animation: twinkle var(--dur) infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(0.8); }
+    to   { opacity: 0.9; transform: scale(1.2); }
+  }
+
+  /* ===== FLOATING MOLECULES ===== */
+  .molecules-layer {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .molecule {
+    position: absolute;
+    animation: floatMol var(--fdur, 8s) ease-in-out infinite alternate;
+  }
+  @keyframes floatMol {
+    from { transform: translate(0,0) rotate(0deg); }
+    to   { transform: translate(var(--fx,20px), var(--fy,-30px)) rotate(360deg); }
+  }
+  .mol-svg circle { fill: none; stroke-width: 2; }
+  .mol-svg line  { stroke-width: 2; }
+
+  /* ===== SCROLLING PROGRESS ===== */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+    z-index: 9999;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 4px; left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    background: rgba(5,5,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,245,255,0.2);
+  }
+  .nav-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+  .nav-links { display: flex; gap: 16px; flex-wrap: wrap; }
+  .nav-links a {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .nav-links a:hover {
+    color: var(--neon-yellow);
+    text-shadow: 0 0 8px var(--neon-yellow);
+  }
+
+  /* ===== SECTIONS ===== */
+  section { position: relative; z-index: 1; }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+    background: radial-gradient(ellipse at 50% 50%, #0a0040 0%, #050510 70%);
+  }
+  .hero-badge {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--neon-pink);
+    text-shadow: 0 0 10px var(--neon-pink);
+    margin-bottom: 16px;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(0,245,255,0.5));
+    margin-bottom: 10px;
+    animation: hero-appear 1.2s cubic-bezier(.16,1,.3,1) both;
+  }
+  @keyframes hero-appear {
+    from { opacity: 0; transform: translateY(60px) scale(0.8); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .hero-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: var(--neon-yellow);
+    text-shadow: 0 0 10px var(--neon-yellow);
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+    animation: hero-appear 1.2s 0.2s cubic-bezier(.16,1,.3,1) both;
+  }
+  .hero-desc {
+    max-width: 640px;
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin: 0 auto 40px;
+    animation: hero-appear 1.2s 0.4s cubic-bezier(.16,1,.3,1) both;
+  }
+  .hero-body-svg {
+    width: 220px;
+    margin: 20px auto;
+    animation: float-body 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(0,245,255,0.4));
+  }
+  @keyframes float-body {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-16px); }
+  }
+  .scroll-hint {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    animation: hero-appear 1.2s 0.8s both;
+  }
+  .scroll-hint span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .scroll-arrow {
+    width: 24px; height: 24px;
+    border-right: 2px solid var(--neon-cyan);
+    border-bottom: 2px solid var(--neon-cyan);
+    transform: rotate(45deg);
+    animation: bounce-arrow 1.2s ease-in-out infinite;
+    box-shadow: 4px 4px 6px rgba(0,245,255,0.3);
+  }
+  @keyframes bounce-arrow {
+    0%, 100% { transform: rotate(45deg) translate(0,0); opacity: 1; }
+    50% { transform: rotate(45deg) translate(4px,4px); opacity: 0.5; }
+  }
+
+  /* ===== CHAPTER HEADER ===== */
+  .chapter-header {
+    padding: 100px 20px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .chapter-number {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(5rem, 15vw, 12rem);
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.04;
+    letter-spacing: 10px;
+    color: #fff;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .chapter-tag {
+    display: inline-block;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 4px 16px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .tag-cyan  { background: rgba(0,245,255,0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+  .tag-pink  { background: rgba(255,0,170,0.15); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+  .tag-green { background: rgba(57,255,20,0.15); color: var(--neon-green); border: 1px solid var(--neon-green); }
+  .tag-orange{ background: rgba(255,102,0,0.15); color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+  .tag-purple{ background: rgba(191,0,255,0.15); color: var(--neon-purple); border: 1px solid var(--neon-purple); }
+  .tag-yellow{ background: rgba(255,238,0,0.15); color: var(--neon-yellow); border: 1px solid var(--neon-yellow); }
+
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 5vw, 4rem);
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .chapter-intro {
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  /* ===== MANGA SPEECH BUBBLE ===== */
+  .manga-scene {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .manga-scene.reverse { flex-direction: row-reverse; }
+  .manga-char {
+    width: 120px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .char-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 8px;
+    animation: avatar-bounce 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  .char-avatar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: inherit;
+    opacity: 0.15;
+    animation: avatar-pulse 3s ease-in-out infinite;
+  }
+  @keyframes avatar-bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes avatar-pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+  .char-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .char-role {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+  .speech-bubble {
+    flex: 1;
+    background: var(--dark-card);
+    border: 1px solid;
+    border-radius: 16px;
+    padding: 20px 24px;
+    position: relative;
+    min-width: 200px;
+    transition: transform 0.3s;
+  }
+  .speech-bubble:hover { transform: translateY(-4px); }
+  .bubble-tail-left, .bubble-tail-right {
+    position: absolute;
+    top: 28px;
+    width: 0; height: 0;
+  }
+  .bubble-tail-left {
+    left: -14px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 14px solid;
+  }
+  .bubble-tail-right {
+    right: -14px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 14px solid;
+  }
+  .bubble-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .bubble-text {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text-main);
+  }
+  .bubble-text strong { color: var(--neon-yellow); }
+  .bubble-text em { color: var(--neon-cyan); font-style: italic; }
+
+  /* Bubble color themes */
+  .bub-cyan  { border-color: var(--neon-cyan);   box-shadow: 0 0 20px rgba(0,245,255,0.12); }
+  .bub-cyan .bubble-tail-left { border-right-color: var(--neon-cyan); }
+  .bub-cyan .bubble-tail-right { border-left-color: var(--neon-cyan); }
+  .bub-cyan .bubble-title { color: var(--neon-cyan); }
+
+  .bub-pink  { border-color: var(--neon-pink);   box-shadow: 0 0 20px rgba(255,0,170,0.12); }
+  .bub-pink .bubble-tail-left { border-right-color: var(--neon-pink); }
+  .bub-pink .bubble-tail-right { border-left-color: var(--neon-pink); }
+  .bub-pink .bubble-title { color: var(--neon-pink); }
+
+  .bub-green { border-color: var(--neon-green);  box-shadow: 0 0 20px rgba(57,255,20,0.12); }
+  .bub-green .bubble-tail-left { border-right-color: var(--neon-green); }
+  .bub-green .bubble-tail-right { border-left-color: var(--neon-green); }
+  .bub-green .bubble-title { color: var(--neon-green); }
+
+  .bub-orange{ border-color: var(--neon-orange); box-shadow: 0 0 20px rgba(255,102,0,0.12); }
+  .bub-orange .bubble-tail-left { border-right-color: var(--neon-orange); }
+  .bub-orange .bubble-tail-right { border-left-color: var(--neon-orange); }
+  .bub-orange .bubble-title { color: var(--neon-orange); }
+
+  .bub-purple{ border-color: var(--neon-purple); box-shadow: 0 0 20px rgba(191,0,255,0.12); }
+  .bub-purple .bubble-tail-left { border-right-color: var(--neon-purple); }
+  .bub-purple .bubble-tail-right { border-left-color: var(--neon-purple); }
+  .bub-purple .bubble-title { color: var(--neon-purple); }
+
+  .bub-yellow{ border-color: var(--neon-yellow); box-shadow: 0 0 20px rgba(255,238,0,0.12); }
+  .bub-yellow .bubble-tail-left { border-right-color: var(--neon-yellow); }
+  .bub-yellow .bubble-tail-right { border-left-color: var(--neon-yellow); }
+  .bub-yellow .bubble-title { color: var(--neon-yellow); }
+
+  /* ===== INFO CARDS GRID ===== */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+  }
+  .info-card {
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    opacity: 0.06;
+    transition: opacity 0.3s;
+  }
+  .info-card:hover { transform: translateY(-8px); }
+  .info-card:hover::before { opacity: 0.15; }
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    display: block;
+    animation: icon-float 3s ease-in-out infinite;
+  }
+  @keyframes icon-float {
+    0%,100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-5px) rotate(5deg); }
+  }
+  .card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .card-text {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .card-text strong { font-weight: 700; }
+
+  .card-cyan   { border-color: rgba(0,245,255,0.25);   } .card-cyan::before   { background: var(--neon-cyan); } .card-cyan:hover   { border-color: var(--neon-cyan);   box-shadow: 0 0 30px rgba(0,245,255,0.2); }   .card-cyan .card-title { color: var(--neon-cyan); }
+  .card-pink   { border-color: rgba(255,0,170,0.25);   } .card-pink::before   { background: var(--neon-pink); } .card-pink:hover   { border-color: var(--neon-pink);   box-shadow: 0 0 30px rgba(255,0,170,0.2); }   .card-pink .card-title { color: var(--neon-pink); }
+  .card-green  { border-color: rgba(57,255,20,0.25);   } .card-green::before  { background: var(--neon-green);} .card-green:hover  { border-color: var(--neon-green);  box-shadow: 0 0 30px rgba(57,255,20,0.2); }   .card-green .card-title{ color: var(--neon-green); }
+  .card-orange { border-color: rgba(255,102,0,0.25);   } .card-orange::before { background: var(--neon-orange);}  .card-orange:hover { border-color: var(--neon-orange); box-shadow: 0 0 30px rgba(255,102,0,0.2); }   .card-orange .card-title{color: var(--neon-orange);}
+  .card-purple { border-color: rgba(191,0,255,0.25);   } .card-purple::before { background: var(--neon-purple);}  .card-purple:hover { border-color: var(--neon-purple); box-shadow: 0 0 30px rgba(191,0,255,0.2); }   .card-purple .card-title{color: var(--neon-purple);}
+  .card-yellow { border-color: rgba(255,238,0,0.25);   } .card-yellow::before { background: var(--neon-yellow);}  .card-yellow:hover { border-color: var(--neon-yellow); box-shadow: 0 0 30px rgba(255,238,0,0.2); }   .card-yellow .card-title{color: var(--neon-yellow);}
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    max-width: 800px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink), var(--neon-purple));
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+  .tl-item {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+    position: relative;
+    align-items: flex-start;
+  }
+  .tl-item:nth-child(even) { flex-direction: row-reverse; }
+  .tl-dot {
+    position: absolute;
+    left: 50%;
+    top: 12px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    border: 3px solid;
+    transform: translateX(-50%);
+    background: var(--dark-bg);
+    z-index: 2;
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%,100% { box-shadow: 0 0 6px currentColor; }
+    50% { box-shadow: 0 0 20px currentColor; }
+  }
+  .tl-content {
+    width: calc(50% - 30px);
+    background: var(--dark-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+    transition: transform 0.3s;
+  }
+  .tl-content:hover { transform: scale(1.03); }
+  .tl-year {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  .tl-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .tl-text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+
+  /* ===== BIG VISUAL SECTION ===== */
+  .visual-section {
+    max-width: 1000px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+  }
+  .vs-panel {
+    background: var(--dark-panel);
+    border-radius: 20px;
+    padding: 40px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 30px;
+  }
+  .vs-panel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(0,245,255,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* ===== FREQUENCY METER ===== */
+  .freq-bar-wrap {
+    margin: 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .freq-label {
+    width: 120px;
+    font-size: 0.8rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .freq-bar-bg {
+    flex: 1;
+    height: 14px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+  }
+  .freq-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    position: absolute;
+    left: 0; top: 0;
+    animation: bar-grow 1.5s cubic-bezier(.16,1,.3,1) both;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes bar-grow {
+    from { width: 0 !important; opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .freq-pct {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    width: 40px;
+    text-align: right;
+  }
+
+  /* ===== QUIZ ===== */
+  #quiz-section {
+    max-width: 800px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+  }
+  .quiz-box {
+    background: var(--dark-panel);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 20px;
+    padding: 36px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0,245,255,0.05);
+  }
+  .quiz-header {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    color: var(--neon-yellow);
+    text-shadow: 0 0 12px var(--neon-yellow);
+    margin-bottom: 6px;
+  }
+  .quiz-sub {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+  }
+  #quiz-question {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    color: var(--text-main);
+    min-height: 60px;
+  }
+  .quiz-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .quiz-opt {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px 12px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    text-align: left;
+  }
+  .quiz-opt:hover { background: rgba(0,245,255,0.08); border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .quiz-opt.correct { background: rgba(57,255,20,0.15); border-color: var(--neon-green); color: var(--neon-green); }
+  .quiz-opt.wrong   { background: rgba(255,0,80,0.15);  border-color: #ff0050; color: #ff0050; }
+  .quiz-opt:disabled { cursor: not-allowed; opacity: 0.7; }
+  #quiz-feedback {
+    font-size: 0.9rem;
+    min-height: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  #quiz-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  #quiz-next {
+    margin-top: 14px;
+    padding: 10px 28px;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: none;
+  }
+  #quiz-next:hover { background: var(--neon-cyan); color: var(--dark-bg); box-shadow: 0 0 20px var(--neon-cyan); }
+
+  /* ===== DIVIDER ===== */
+  .neon-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
+    margin: 60px 0;
+    box-shadow: 0 0 8px var(--neon-cyan);
+  }
+
+  /* ===== HIGHLIGHT BOX ===== */
+  .highlight-box {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+  .hb-inner {
+    border-radius: 16px;
+    padding: 28px 32px;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .hb-icon { font-size: 2.5rem; flex-shrink: 0; }
+  .hb-content { flex: 1; }
+  .hb-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .hb-text { font-size: 0.88rem; line-height: 1.6; color: var(--text-dim); }
+  .hb-text strong { font-weight: 700; }
+  .hb-cyan   { background: rgba(0,245,255,0.06);   border: 1px solid rgba(0,245,255,0.3);   } .hb-cyan .hb-title   { color: var(--neon-cyan); }
+  .hb-pink   { background: rgba(255,0,170,0.06);   border: 1px solid rgba(255,0,170,0.3);   } .hb-pink .hb-title   { color: var(--neon-pink); }
+  .hb-yellow { background: rgba(255,238,0,0.06);   border: 1px solid rgba(255,238,0,0.3);   } .hb-yellow .hb-title { color: var(--neon-yellow); }
+  .hb-green  { background: rgba(57,255,20,0.06);   border: 1px solid rgba(57,255,20,0.3);   } .hb-green .hb-title  { color: var(--neon-green); }
+  .hb-orange { background: rgba(255,102,0,0.06);   border: 1px solid rgba(255,102,0,0.3);   } .hb-orange .hb-title { color: var(--neon-orange); }
+
+  /* ===== BODY DIAGRAM INTERACTIVE ===== */
+  .body-diagram {
+    max-width: 700px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    text-align: center;
+  }
+  .body-diagram h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .body-interactive {
+    position: relative;
+    display: inline-block;
+  }
+  .body-hotspot {
+    position: absolute;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    z-index: 10;
+    animation: hotspot-pulse 2s ease-in-out infinite;
+  }
+  @keyframes hotspot-pulse {
+    0%,100% { box-shadow: 0 0 6px currentColor; }
+    50% { box-shadow: 0 0 18px currentColor; transform: scale(1.15); }
+  }
+  .body-hotspot:hover { transform: scale(1.3) !important; }
+  .hotspot-tooltip {
+    position: absolute;
+    background: var(--dark-card);
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 12px 16px;
+    width: 200px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    z-index: 20;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    text-align: left;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+  .body-hotspot:hover .hotspot-tooltip { display: block; }
+  .hotspot-tooltip strong { display: block; margin-bottom: 4px; }
+
+  /* ===== COMPARISON TABLE ===== */
+  .comp-table-wrap {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    overflow-x: auto;
+  }
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  .comp-table th {
+    background: rgba(0,245,255,0.1);
+    border: 1px solid rgba(0,245,255,0.2);
+    padding: 14px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: var(--neon-cyan);
+    text-align: left;
+  }
+  .comp-table td {
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 12px 16px;
+    vertical-align: top;
+    line-height: 1.5;
+    color: var(--text-dim);
+    transition: background 0.2s;
+  }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.03); color: var(--text-main); }
+  .td-name {
+    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+  }
+  .td-example { font-style: italic; }
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-common  { background: rgba(57,255,20,0.15);  color: var(--neon-green);  border: 1px solid var(--neon-green); }
+  .badge-rare    { background: rgba(255,102,0,0.15);  color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+  .badge-very-rare { background: rgba(255,0,170,0.15); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+
+  /* ===== ACCORDION ===== */
+  .accordion {
+    max-width: 800px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+  }
+  .acc-item {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .acc-item:hover { border-color: rgba(0,245,255,0.3); }
+  .acc-header {
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    background: var(--dark-card);
+  }
+  .acc-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .acc-icon { font-size: 1.3rem; }
+  .acc-arrow {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    transition: transform 0.3s;
+  }
+  .acc-item.open .acc-arrow { transform: rotate(180deg); color: var(--neon-cyan); }
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background: var(--dark-panel);
+  }
+  .acc-item.open .acc-body { max-height: 600px; }
+  .acc-body-inner {
+    padding: 20px 22px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+  .acc-body-inner strong { color: var(--text-main); }
+  .acc-body-inner ul { margin: 10px 0 0 16px; }
+  .acc-body-inner li { margin-bottom: 6px; }
+
+  /* ===== FINAL SUMMARY ===== */
+  .summary-section {
+    max-width: 900px;
+    margin: 0 auto 80px;
+    padding: 0 20px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 30px;
+  }
+  .sum-card {
+    background: var(--dark-card);
+    border-radius: 14px;
+    padding: 24px 20px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .sum-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+  .sum-num {
+    font-family: 'Bangers', cursive;
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .sum-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ===== MANGA PANEL GRID ===== */
+  .manga-panels {
+    max-width: 1000px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 12px;
+  }
+  .mp {
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: var(--dark-card);
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mp:hover { border-color: var(--neon-cyan); box-shadow: 0 0 24px rgba(0,245,255,0.1); }
+  .mp.big { grid-row: 1 / 3; display: flex; flex-direction: column; justify-content: center; }
+  .mp-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .mp-text {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .mp-emoji { font-size: 3rem; margin-bottom: 12px; display: block; }
+
+  /* ===== MOLECULE CANVAS SECTION ===== */
+  #mol-canvas-section {
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 20px;
+    text-align: center;
+  }
+  #mol-canvas-section h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    color: var(--neon-pink);
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+  #mol-canvas-section p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  #dna-canvas {
+    width: 100%;
+    max-width: 700px;
+    height: 180px;
+    background: var(--dark-card);
+    border: 1px solid rgba(255,0,170,0.2);
+    border-radius: 16px;
+    margin: 0 auto;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--dark-card);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  .footer-org {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--neon-yellow);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .footer-ul {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .footer-year {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .footer-line {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 16px auto;
+  }
+  .footer-note {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* ===== SECTION BG VARIANTS ===== */
+  .bg-v1 { background: radial-gradient(ellipse at 20% 80%, rgba(0,245,255,0.04) 0%, transparent 60%), var(--dark-bg); }
+  .bg-v2 { background: radial-gradient(ellipse at 80% 20%, rgba(255,0,170,0.04) 0%, transparent 60%), var(--dark-bg); }
+  .bg-v3 { background: radial-gradient(ellipse at 50% 50%, rgba(57,255,20,0.03) 0%, transparent 70%), var(--dark-bg); }
+  .bg-v4 { background: radial-gradient(ellipse at 30% 50%, rgba(191,0,255,0.04) 0%, transparent 60%), var(--dark-bg); }
+  .bg-v5 { background: radial-gradient(ellipse at 70% 70%, rgba(255,102,0,0.04) 0%, transparent 60%), var(--dark-bg); }
+
+  /* ===== FADE-IN ANIMATION ===== */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .quiz-options { grid-template-columns: 1fr; }
+    .manga-panels { grid-template-columns: 1fr; }
+    .mp.big { grid-row: auto; }
+    .timeline::before { left: 20px; }
+    .tl-item, .tl-item:nth-child(even) { flex-direction: column; padding-left: 50px; }
+    .tl-dot { left: 20px; }
+    .tl-content { width: 100%; }
+    nav { flex-wrap: wrap; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars-bg" id="stars"></div>
+
+<!-- Floating Molecules -->
+<div class="molecules-layer" id="molecules"></div>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">⚕ DemilMed</div>
+  <div class="nav-links">
+    <a href="#intro">Intro</a>
+    <a href="#conceito">Conceito</a>
+    <a href="#tipos">Tipos</a>
+    <a href="#classificacao">Classificação</a>
+    <a href="#clinica">Clínica</a>
+    <a href="#quiz-section">Quiz</a>
+  </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section id="hero">
+  <div class="hero-badge">📖 Anatomia — 1º Ano</div>
+  <h1 class="hero-title">VARIAÇÕES<br>ANATÓMICAS</h1>
+  <div class="hero-subtitle">A Aventura do Corpo Humano Imperfeito</div>
+  <p class="hero-desc">
+    Cada ser humano é <strong style="color:var(--neon-cyan)">único</strong>. O teu corpo pode ter estruturas que o teu colega não tem — e isso é completamente <em style="color:var(--neon-green)">normal</em>. Prepara-te para descobrir por que o corpo humano é a maior aventura da anatomia!
+  </p>
+
+  <!-- Animated body SVG -->
+  <div class="hero-body-svg">
+    <svg viewBox="0 0 160 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Body outline -->
+      <ellipse cx="80" cy="40" rx="28" ry="32" stroke="#00f5ff" stroke-width="2"/>
+      <!-- Eyes -->
+      <circle cx="70" cy="36" r="5" fill="#00f5ff" opacity="0.8"/>
+      <circle cx="90" cy="36" r="5" fill="#00f5ff" opacity="0.8"/>
+      <circle cx="71" cy="36" r="2" fill="#fff"/>
+      <circle cx="91" cy="36" r="2" fill="#fff"/>
+      <!-- Smile -->
+      <path d="M72 50 Q80 58 88 50" stroke="#ff00aa" stroke-width="2" stroke-linecap="round"/>
+      <!-- Neck -->
+      <rect x="74" y="70" width="12" height="16" rx="4" fill="none" stroke="#00f5ff" stroke-width="1.5"/>
+      <!-- Torso -->
+      <path d="M48 86 Q44 130 50 170 L110 170 Q116 130 112 86 Q96 80 80 80 Q64 80 48 86Z" stroke="#00f5ff" stroke-width="2" fill="none"/>
+      <!-- Heart glow -->
+      <path d="M72 105 Q72 96 80 102 Q88 96 88 105 Q88 116 80 122 Q72 116 72 105Z" fill="rgba(255,0,170,0.3)" stroke="#ff00aa" stroke-width="1.5"/>
+      <!-- Lung left -->
+      <path d="M54 100 Q50 115 54 128 Q60 132 66 126 Q68 112 64 100Z" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1" stroke-dasharray="3 2"/>
+      <!-- Lung right -->
+      <path d="M106 100 Q110 115 106 128 Q100 132 94 126 Q92 112 96 100Z" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1" stroke-dasharray="3 2"/>
+      <!-- Spine dots -->
+      <circle cx="80" cy="95" r="2" fill="#ffee00"/>
+      <circle cx="80" cy="107" r="2" fill="#ffee00"/>
+      <circle cx="80" cy="119" r="2" fill="#ffee00"/>
+      <circle cx="80" cy="131" r="2" fill="#ffee00"/>
+      <circle cx="80" cy="143" r="2" fill="#ffee00"/>
+      <circle cx="80" cy="155" r="2" fill="#ffee00"/>
+      <!-- Arms -->
+      <path d="M48 90 Q30 110 28 150" stroke="#00f5ff" stroke-width="2" stroke-linecap="round"/>
+      <path d="M112 90 Q130 110 132 150" stroke="#00f5ff" stroke-width="2" stroke-linecap="round"/>
+      <!-- Hands -->
+      <ellipse cx="26" cy="158" rx="8" ry="10" stroke="#ff00aa" stroke-width="1.5" fill="none"/>
+      <ellipse cx="134" cy="158" rx="8" ry="10" stroke="#ff00aa" stroke-width="1.5" fill="none"/>
+      <!-- Legs -->
+      <path d="M60 170 Q56 220 54 270" stroke="#00f5ff" stroke-width="2"/>
+      <path d="M100 170 Q104 220 106 270" stroke="#00f5ff" stroke-width="2"/>
+      <!-- Feet -->
+      <ellipse cx="52" cy="278" rx="12" ry="7" stroke="#ff00aa" stroke-width="1.5" fill="none"/>
+      <ellipse cx="108" cy="278" rx="12" ry="7" stroke="#ff00aa" stroke-width="1.5" fill="none"/>
+      <!-- Variation sparks -->
+      <circle cx="54" cy="95" r="4" fill="#39ff14" opacity="0.7">
+        <animate attributeName="opacity" values="0.7;0.2;0.7" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="115" cy="140" r="3" fill="#ffee00" opacity="0.8">
+        <animate attributeName="opacity" values="0.8;0.1;0.8" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="66" cy="155" r="3.5" fill="#bf00ff" opacity="0.6">
+        <animate attributeName="opacity" values="0.6;0.15;0.6" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Rolar para explorar</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ==================== CAP 1: INTRO ==================== -->
+<section id="intro" class="bg-v1" style="padding-bottom:40px">
+  <div class="chapter-header">
+    <div class="chapter-number">01</div>
+    <div class="chapter-tag tag-cyan">Capítulo 1</div>
+    <h2 class="chapter-title" style="color:var(--neon-cyan)">A Grande Revelação</h2>
+    <p class="chapter-intro">O teu primeiro dia na sala de dissecção. Estás nervoso. O Professor entra e diz algo que vai mudar tudo…</p>
+  </div>
+
+  <div class="manga-scene fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(0,245,255,0.1); border-color:var(--neon-cyan)">🧑‍🏫</div>
+      <div class="char-name" style="color:var(--neon-cyan)">Prof. Anatomus</div>
+      <div class="char-role">Mestre da Estrutura</div>
+    </div>
+    <div class="speech-bubble bub-cyan">
+      <div class="bubble-tail-left"></div>
+      <div class="bubble-title">O Segredo do Corpo Humano!</div>
+      <p class="bubble-text">
+        Atenção, futuros médicos! Olhem para o cadáver à vossa frente. Agora olhem para o do vosso colega ao lado. <strong>São iguais?</strong> Nunca! O corpo humano não é uma máquina fabricada em série. É uma obra <em>única</em>, feita à mão pela natureza — e por isso tem variações!
+      </p>
+    </div>
+  </div>
+
+  <div class="manga-scene reverse fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(255,0,170,0.1); border-color:var(--neon-pink)">🧑‍🎓</div>
+      <div class="char-name" style="color:var(--neon-pink)">Ana</div>
+      <div class="char-role">Estudante Curiosa</div>
+    </div>
+    <div class="speech-bubble bub-pink">
+      <div class="bubble-tail-right"></div>
+      <div class="bubble-title">Mas… variações?</div>
+      <p class="bubble-text">
+        Professor, mas os livros mostram sempre o mesmo corpo! Uma artéria aqui, um músculo ali. <strong>Isso não é sempre assim?</strong> Estou confusa…
+      </p>
+    </div>
+  </div>
+
+  <div class="manga-scene fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(0,245,255,0.1); border-color:var(--neon-cyan)">🧑‍🏫</div>
+      <div class="char-name" style="color:var(--neon-cyan)">Prof. Anatomus</div>
+      <div class="char-role">Mestre da Estrutura</div>
+    </div>
+    <div class="speech-bubble bub-cyan">
+      <div class="bubble-tail-left"></div>
+      <div class="bubble-title">Excelente Pergunta, Ana!</div>
+      <p class="bubble-text">
+        Os livros mostram o <em>padrão mais comum</em> — o que chamamos de <strong>norma anatómica</strong>. Mas a natureza gosta de surpresas! Quando uma estrutura aparece de forma diferente do padrão, mas ainda é completamente <strong>saudável e funcional</strong>, chamamos de <em>variação anatómica</em>. E elas são muito mais frequentes do que imaginas!
+      </p>
+    </div>
+  </div>
+
+  <div class="highlight-box fade-in">
+    <div class="hb-inner hb-cyan">
+      <span class="hb-icon">📌</span>
+      <div class="hb-content">
+        <div class="hb-title">DEFINIÇÃO OFICIAL</div>
+        <p class="hb-text">
+          <strong>Variação Anatómica</strong> é qualquer diferença morfológica de uma estrutura do corpo humano em relação ao padrão descrito nos atlas de anatomia, que <strong>não causa doença nem disfunção</strong>. É considerada uma expressão da diversidade biológica normal da espécie humana. Pode envolver forma, tamanho, número, posição ou relações de estruturas anatómicas.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CAP 2: CONCEITO ==================== -->
+<section id="conceito" class="bg-v2" style="padding-bottom:40px">
+  <div class="chapter-header">
+    <div class="chapter-number">02</div>
+    <div class="chapter-tag tag-pink">Capítulo 2</div>
+    <h2 class="chapter-title" style="color:var(--neon-pink)">Variação vs Anomalia</h2>
+    <p class="chapter-intro">Muitos estudantes confundem estes dois conceitos. Vamos resolver isso de uma vez por todas!</p>
+  </div>
+
+  <div class="manga-scene fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(57,255,20,0.1); border-color:var(--neon-green)">👨‍🎓</div>
+      <div class="char-name" style="color:var(--neon-green)">Deco</div>
+      <div class="char-role">O Confuso</div>
+    </div>
+    <div class="speech-bubble bub-green">
+      <div class="bubble-tail-left"></div>
+      <div class="bubble-title">Não entendo a diferença!</div>
+      <p class="bubble-text">
+        Professor, se alguém tem <strong>dois rins do lado esquerdo</strong>, isso é variação ou anomalia? E se alguém nasce sem um rim? Como eu sei a diferença?
+      </p>
+    </div>
+  </div>
+
+  <div class="manga-scene reverse fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(0,245,255,0.1); border-color:var(--neon-cyan)">🧑‍🏫</div>
+      <div class="char-name" style="color:var(--neon-cyan)">Prof. Anatomus</div>
+      <div class="char-role">Mestre da Estrutura</div>
+    </div>
+    <div class="speech-bubble bub-cyan">
+      <div class="bubble-tail-right"></div>
+      <div class="bubble-title">A Pergunta de Ouro!</div>
+      <p class="bubble-text">
+        A chave está em <em>duas perguntas</em>: <strong>1)</strong> A pessoa tem sintomas ou doenças por causa disso? <strong>2)</strong> A função está comprometida? Se a resposta a ambas for <em>NÃO</em> → é variação. Se for <em>SIM</em> → pode ser anomalia ou malformação!
+      </p>
+    </div>
+  </div>
+
+  <div class="cards-grid fade-in">
+    <div class="info-card card-green">
+      <span class="card-icon">✅</span>
+      <div class="card-title">VARIAÇÃO ANATÓMICA</div>
+      <p class="card-text">
+        Diferença morfológica <strong>dentro do espectro normal</strong>. O individuo está saudável. A estrutura funciona perfeitamente. Apenas tem uma forma, posição ou número diferente do padrão nos livros.<br><br>
+        <em>Exemplo: artéria renal dupla — dois rins perfeitos, pessoa saudável.</em>
+      </p>
+    </div>
+    <div class="info-card card-orange">
+      <span class="card-icon">⚠️</span>
+      <div class="card-title">ANOMALIA / MALFORMAÇÃO</div>
+      <p class="card-text">
+        Diferença morfológica que <strong>causa doença, disfunção ou sintomas</strong>. Pode ser por erro do desenvolvimento embriológico.<br><br>
+        <em>Exemplo: agenesia renal bilateral (ausência dos dois rins) — incompatível com a vida.</em>
+      </p>
+    </div>
+    <div class="info-card card-purple">
+      <span class="card-icon">🔬</span>
+      <div class="card-title">ZONA CINZENTA</div>
+      <p class="card-text">
+        Algumas variações podem tornar-se <strong>clinicamente relevantes</strong> em certas situações — por exemplo, durante uma cirurgia ou ao interpretar exames de imagem. Por isso o médico precisa conhecê-las!<br><br>
+        <em>Exemplo: artéria hepática direita nascendo da mesentérica superior.</em>
+      </p>
+    </div>
+  </div>
+
+  <!-- Manga panels grid -->
+  <div class="manga-panels fade-in" style="max-width:900px;margin:0 auto 40px;padding:0 20px;">
+    <div class="mp big">
+      <span class="mp-emoji">🧬</span>
+      <div class="mp-label" style="color:var(--neon-cyan);font-size:1.4rem;">POR QUE EXISTEM VARIAÇÕES?</div>
+      <p class="mp-text" style="font-size:0.9rem;">
+        Durante o desenvolvimento embrionário, bilhões de células migram, dividem-se e diferenciam-se. Pequenas variações nos genes, na expressão génica, nos gradientes químicos ou nas forças mecânicas podem resultar em estruturas anatomicamente diferentes — mas funcionalmente perfeitas. É a beleza caótica da biologia!
+      </p>
+      <br>
+      <p class="mp-text">
+        Factores que influenciam: <strong style="color:var(--neon-yellow)">genética</strong>, <strong style="color:var(--neon-pink)">ambiente intrauterino</strong>, <strong style="color:var(--neon-green)">acaso do desenvolvimento</strong>.
+      </p>
+    </div>
+    <div class="mp">
+      <span class="mp-emoji">📊</span>
+      <div class="mp-label" style="color:var(--neon-pink);">PREVALÊNCIA</div>
+      <p class="mp-text">Até <strong style="color:var(--neon-yellow)">45%</strong> das pessoas têm pelo menos uma variação anatómica clinicamente detectável.</p>
+    </div>
+    <div class="mp">
+      <span class="mp-emoji">🩺</span>
+      <div class="mp-label" style="color:var(--neon-green);">IMPORTÂNCIA CLÍNICA</div>
+      <p class="mp-text">Conhecer variações evita <strong style="color:var(--neon-orange)">erros cirúrgicos</strong> e melhora o diagnóstico por imagem.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CAP 3: TIPOS ==================== -->
+<section id="tipos" class="bg-v3" style="padding-bottom:40px">
+  <div class="chapter-header">
+    <div class="chapter-number">03</div>
+    <div class="chapter-tag tag-green">Capítulo 3</div>
+    <h2 class="chapter-title" style="color:var(--neon-green)">Os Tipos de Variações</h2>
+    <p class="chapter-intro">Chegou a hora de conhecer os "personagens" desta história. Cada tipo de variação tem a sua personalidade!</p>
+  </div>
+
+  <!-- Interactive accordion for each type -->
+  <div class="accordion fade-in">
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-cyan)"><span class="acc-icon">🔢</span> Variação de NÚMERO</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> Uma estrutura aparece em número diferente do habitual.<br><br>
+          <strong>Por excesso (supranumerário):</strong>
+          <ul>
+            <li>Costela cervical — costela extra a partir da 7ª vértebra cervical. Ocorre em ~0,5–1% das pessoas.</li>
+            <li>Rim supranumerário — um terceiro rim pequeno (extremamente raro).</li>
+            <li>Dentes supranumerários (mesiodens) — dente a mais, frequentemente entre os incisivos centrais.</li>
+            <li>Mamilo / glândula mamária supranumerária (politelia / polimastia) — pode ocorrer ao longo da linha mamária.</li>
+            <li>Baço acessório — tecido esplénico extra, ocorre em ~20% das pessoas!</li>
+          </ul>
+          <br>
+          <strong>Por défice (agenesia/hipoplasia):</strong>
+          <ul>
+            <li>Rim único (agenesia renal unilateral) — ~1 em 1000 nados-vivos; o rim restante hipertrofia.</li>
+            <li>Ausência do músculo palmaris longus — ausente em ~14% das pessoas, sem qualquer disfunção.</li>
+            <li>Vértebra lombar extra (lombariização do S1) ou a menos (sacraliização de L5).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-pink)"><span class="acc-icon">📏</span> Variação de FORMA e TAMANHO</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> A estrutura existe, mas tem forma ou dimensão diferente do descrito nos atlas.<br><br>
+          <strong>Exemplos:</strong>
+          <ul>
+            <li><strong>Rim ferradura (horseshoe kidney):</strong> os dois rins fundem-se pelo polo inferior, formando um "U". Ocorre em ~1 em 400–500. Pode complicar cirurgias abdominais e aumentar risco de hidronefrose.</li>
+            <li><strong>Fígado em língua de Riedel:</strong> lobo direito do fígado muito alongado, descendo até a fossa ilíaca. Pode ser confundido com massa abdominal.</li>
+            <li><strong>Variações das válvulas cardíacas:</strong> cúspides em número diferente (ex: válvula aórtica bicúspide — tem 2 cúspides em vez de 3; ocorre em ~1–2% da população).</li>
+            <li><strong>Músculo piriforme bífido:</strong> o nervo ciático passa através dele (em vez de por baixo), podendo causar síndrome do piriforme.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-yellow)"><span class="acc-icon">📍</span> Variação de POSIÇÃO / LOCALIZAÇÃO</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> A estrutura está num local anatómico diferente do habitual.<br><br>
+          <strong>Exemplos:</strong>
+          <ul>
+            <li><strong>Situs inversus totalis:</strong> todos os órgãos viscerais estão espelhados (coração à direita, fígado à esquerda…). Ocorre em ~1 em 10.000. A pessoa pode ser completamente saudável!</li>
+            <li><strong>Artéria renal dupla / tripla:</strong> duas ou três artérias renais saem da aorta para o mesmo rim (em vez de uma). Muito comum — até 28% das pessoas!</li>
+            <li><strong>Rim pélvico / rim ectópico:</strong> rim não migrou para a posição lombar durante o desenvolvimento. Pode causar obstrução urinária.</li>
+            <li><strong>Apêndice retrocecal:</strong> o apêndice fica atrás do ceco. Ocorre em ~65% dos casos e pode tornar a apendicite mais difícil de diagnosticar clinicamente.</li>
+            <li><strong>Artéria hepática direita acessória:</strong> origem na artéria mesentérica superior (em vez da hepática comum). Crítica em cirurgias biliares e transplantes hepáticos.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-orange)"><span class="acc-icon">🌿</span> Variação de TRAJECTO / RELAÇÕES</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> Vasos, nervos ou ductos percorrem caminhos diferentes, alterando as suas relações com outras estruturas.<br><br>
+          <strong>Exemplos:</strong>
+          <ul>
+            <li><strong>Nervo ciático dividido:</strong> divide-se em nervos tibial e fibular comum antes de sair da pelve — pode ser comprimido pelo piriforme.</li>
+            <li><strong>Artéria obturatória acessória ("Corona mortis"):</strong> ramo anastomótico entre as artérias epigástrica inferior e obturatória. Risco de hemorragia grave em cirurgias da região inguinal e hérnia femoral.</li>
+            <li><strong>Nervo laríngeo recorrente não-recorrente:</strong> no lado direito, pode entrar directamente na laringe sem "dar a volta" ao subclávia. Risco em cirurgias da tiróide!</li>
+            <li><strong>Ducto biliar acessório (ducto de Luschka):</strong> pequenos canalículos biliares que drenam directamente da superfície hepática para a vesícula biliar. Podem causar fuga biliar pós-colecistectomia.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-purple)"><span class="acc-icon">🧩</span> Variação de ESTRUTURA INTERNA</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> A organização interna de um órgão ou estrutura difere do padrão descrito, mas sem perda de função.<br><br>
+          <strong>Exemplos:</strong>
+          <ul>
+            <li><strong>Padrão de ramificação do plexo braquial:</strong> pré-fixado (C4-C8) ou pós-fixado (C6-T2), em vez do padrão C5-T1. Altera a origem dos nervos do braço.</li>
+            <li><strong>Fissura hepática acessória:</strong> sulcos extra na superfície do fígado, criando "lóbulos" adicionais aparentes.</li>
+            <li><strong>Músculos palmares acessórios:</strong> variações do lumbrical ou dos músculos tenares, sem perda de função mas relevantes em cirurgia da mão.</li>
+            <li><strong>Variações nas anastomoses dos nervos cranianos:</strong> ex. anastomose entre o nervo facial e o glossofaríngeo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="acc-item">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-title" style="color:var(--neon-green)"><span class="acc-icon">🔄</span> Variação de FUSÃO / PERSISTÊNCIA</div>
+        <span class="acc-arrow">▼</span>
+      </div>
+      <div class="acc-body">
+        <div class="acc-body-inner">
+          <strong>O quê?</strong> Estruturas que deviam separar-se ficam unidas (fusão), ou estruturas embriológicas que deviam desaparecer persistem no adulto.<br><br>
+          <strong>Fusão:</strong>
+          <ul>
+            <li><strong>Rim ferradura:</strong> fusão dos polos inferiores dos dois rins.</li>
+            <li><strong>Bloco vertebral (fusão de vértebras):</strong> duas vértebras fundidas congenitamente, podendo causar limitação de movimento.</li>
+            <li><strong>Sinostose radio-cubital proximal:</strong> fusão dos ossos do antebraço ao nível do cotovelo.</li>
+          </ul>
+          <strong>Persistência:</strong>
+          <ul>
+            <li><strong>Artéria ciática (artéria isquiática persistente):</strong> vaso embriológico que normalmente regride, mas persiste como artéria principal do membro inferior. Risco de aneurisma.</li>
+            <li><strong>Ducto de Meckel (divertículo de Meckel):</strong> persistência do ducto onfalomesentérico; ocorre em ~2% das pessoas.</li>
+            <li><strong>Veia cava inferior dupla:</strong> persistência da veia cardinal posterior esquerda.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- fim accordion -->
+</section>
+
+<!-- ==================== CAP 4: CLASSIFICAÇÃO ==================== -->
+<section id="classificacao" class="bg-v4" style="padding-bottom:40px">
+  <div class="chapter-header">
+    <div class="chapter-number">04</div>
+    <div class="chapter-tag tag-purple">Capítulo 4</div>
+    <h2 class="chapter-title" style="color:var(--neon-purple)">Como Classificar?</h2>
+    <p class="chapter-intro">Os anatomistas criaram formas de organizar todas estas variações. Vamos entender como!</p>
+  </div>
+
+  <!-- Frequency bars -->
+  <div class="visual-section fade-in">
+    <div class="vs-panel">
+      <h3 style="font-family:'Bangers',cursive;font-size:1.6rem;color:var(--neon-purple);letter-spacing:2px;margin-bottom:6px;">📊 CLASSIFICAÇÃO POR FREQUÊNCIA</h3>
+      <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:24px;">Quanto mais comum, mais o médico deve conhecer!</p>
+
+      <div class="freq-bar-wrap">
+        <span class="freq-label" style="color:var(--neon-green)">Muito Comum</span>
+        <div class="freq-bar-bg">
+          <div class="freq-bar-fill" style="width:85%; background: linear-gradient(90deg, var(--neon-green), #00ff88); --delay:0.1s; box-shadow: 0 0 8px var(--neon-green)"></div>
+        </div>
+        <span class="freq-pct" style="color:var(--neon-green)">&gt;10%</span>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-dim);margin:-8px 0 16px 132px;">Ex: apêndice retrocecal (65%), baço acessório (20%), ausência do palmaris longus (14%)</p>
+
+      <div class="freq-bar-wrap">
+        <span class="freq-label" style="color:var(--neon-cyan)">Comum</span>
+        <div class="freq-bar-bg">
+          <div class="freq-bar-fill" style="width:50%; background: linear-gradient(90deg, var(--neon-cyan), #0099ff); --delay:0.2s; box-shadow: 0 0 8px var(--neon-cyan)"></div>
+        </div>
+        <span class="freq-pct" style="color:var(--neon-cyan)">1–10%</span>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-dim);margin:-8px 0 16px 132px;">Ex: artéria renal dupla (28%), válvula aórtica bicúspide (1–2%), costela cervical (0,5–1%)</p>
+
+      <div class="freq-bar-wrap">
+        <span class="freq-label" style="color:var(--neon-orange)">Rara</span>
+        <div class="freq-bar-bg">
+          <div class="freq-bar-fill" style="width:22%; background: linear-gradient(90deg, var(--neon-orange), #ff8800); --delay:0.3s; box-shadow: 0 0 8px var(--neon-orange)"></div>
+        </div>
+        <span class="freq-pct" style="color:var(--neon-orange)">0.1–1%</span>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-dim);margin:-8px 0 16px 132px;">Ex: situs inversus (0.01%), artéria ciática persistente</p>
+
+      <div class="freq-bar-wrap">
+        <span class="freq-label" style="color:var(--neon-pink)">Muito Rara</span>
+        <div class="freq-bar-bg">
+          <div class="freq-bar-fill" style="width:6%; background: linear-gradient(90deg, var(--neon-pink), #ff0055); --delay:0.4s; box-shadow: 0 0 8px var(--neon-pink)"></div>
+        </div>
+        <span class="freq-pct" style="color:var(--neon-pink)">&lt;0.1%</span>
+      </div>
+      <p style="font-size:0.75rem;color:var(--text-dim);margin:-8px 0 0 132px;">Ex: rim supranumerário, nervo laríngeo recorrente não-recorrente bilateral</p>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="comp-table-wrap fade-in">
+    <h3 style="font-family:'Bangers',cursive;font-size:1.6rem;color:var(--neon-yellow);letter-spacing:2px;margin-bottom:20px;text-align:center;">📋 TABELA COMPARATIVA DOS TIPOS</h3>
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Tipo de Variação</th>
+          <th>O que muda?</th>
+          <th>Exemplo clássico</th>
+          <th>Frequência</th>
+          <th>Importância clínica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-cyan)">🔢 Número</span></td>
+          <td>Quantidade de estruturas</td>
+          <td class="td-example">Costela cervical, baço acessório</td>
+          <td><span class="badge badge-common">Comum</span></td>
+          <td>Alta — pode comprimir estruturas</td>
+        </tr>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-pink)">📏 Forma/Tamanho</span></td>
+          <td>Morfologia da estrutura</td>
+          <td class="td-example">Rim em ferradura, válvula bicúspide</td>
+          <td><span class="badge badge-common">Comum</span></td>
+          <td>Alta — risco cirúrgico e disfunção</td>
+        </tr>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-yellow)">📍 Posição</span></td>
+          <td>Localização no corpo</td>
+          <td class="td-example">Situs inversus, rim pélvico</td>
+          <td><span class="badge badge-rare">Rara</span></td>
+          <td>Muito alta — erro de diagnóstico</td>
+        </tr>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-orange)">🌿 Trajecto</span></td>
+          <td>Caminho de vasos/nervos</td>
+          <td class="td-example">Corona mortis, n. laríngeo não-recorrente</td>
+          <td><span class="badge badge-common">Comum</span></td>
+          <td>Muito alta — risco intraoperatório</td>
+        </tr>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-purple)">🧩 Estrutura interna</span></td>
+          <td>Organização interna</td>
+          <td class="td-example">Plexo braquial pré/pós-fixado</td>
+          <td><span class="badge badge-common">Comum</span></td>
+          <td>Moderada — afecta padrão neurológico</td>
+        </tr>
+        <tr>
+          <td><span class="td-name" style="color:var(--neon-green)">🔄 Fusão/Persistência</span></td>
+          <td>União ou persistência embrionária</td>
+          <td class="td-example">Divertículo de Meckel, VCI dupla</td>
+          <td><span class="badge badge-rare">Rara</span></td>
+          <td>Alta — complicações imprevistas</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== CAP 5: DNA CANVAS ==================== -->
+<section class="bg-v5" style="padding: 60px 0">
+  <div id="mol-canvas-section" class="fade-in">
+    <h3>🧬 A DANÇA DO DNA</h3>
+    <p>É aqui que tudo começa — pequenas variações no código genético criam grandes diferenças anatómicas</p>
+    <canvas id="dna-canvas"></canvas>
+  </div>
+</section>
+
+<!-- ==================== CAP 6: CLÍNICA ==================== -->
+<section id="clinica" class="bg-v1" style="padding-bottom:40px">
+  <div class="chapter-header">
+    <div class="chapter-number">06</div>
+    <div class="chapter-tag tag-orange">Capítulo 6</div>
+    <h2 class="chapter-title" style="color:var(--neon-orange)">Importância Clínica</h2>
+    <p class="chapter-intro">Por que um futuro médico PRECISA de conhecer variações anatómicas? A resposta pode salvar vidas!</p>
+  </div>
+
+  <div class="manga-scene fade-in">
+    <div class="manga-char">
+      <div class="char-avatar" style="background:rgba(255,102,0,0.1); border-color:var(--neon-orange)">🚨</div>
+      <div class="char-name" style="color:var(--neon-orange)">Cirurgião</div>
+      <div class="char-role">Na Sala de Op.</div>
+    </div>
+    <div class="speech-bubble bub-orange">
+      <div class="bubble-tail-left"></div>
+      <div class="bubble-title">SITUAÇÃO DE EMERGÊNCIA!</div>
+      <p class="bubble-text">
+        Estou a operar uma vesícula biliar. Vejo uma artéria estranha. Não está no lugar habitual. Se eu a cortar pensando que é outra… <strong>hemorragia massiva!</strong> Mas eu sei que a artéria hepática direita pode ter origem na mesentérica superior. <em>Paro, verifico, procedo com segurança.</em> Conhecer variações salvou este doente!
+      </p>
+    </div>
+  </div>
+
+  <div class="cards-grid fade-in">
+    <div class="info-card card-orange">
+      <span class="card-icon">🏥</span>
+      <div class="card-title">CIRURGIA</div>
+      <p class="card-text">
+        Variações vasculares e nervosas são a principal causa de <strong>lesões iatrogénicas</strong> (causadas pelo próprio médico) em cirurgias. Identificar antes ou durante a cirurgia é essencial.<br><br>
+        Ex: artéria hepática acessória em colecistectomia, "corona mortis" em herniorrafia inguinal.
+      </p>
+    </div>
+    <div class="info-card card-cyan">
+      <span class="card-icon">📡</span>
+      <div class="card-title">RADIOLOGIA / IMAGEM</div>
+      <p class="card-text">
+        Uma variação pode ser confundida com uma <strong>massa tumoral</strong> ou uma <strong>doença</strong>. O radiologista que conhece variações evita biopsias e cirurgias desnecessárias.<br><br>
+        Ex: língua de Riedel (fígado) confundido com tumor hepático em ecografia.
+      </p>
+    </div>
+    <div class="info-card card-pink">
+      <span class="card-icon">💊</span>
+      <div class="card-title">ANESTESIOLOGIA</div>
+      <p class="card-text">
+        Bloqueios nervosos regionais dependem do conhecimento exacto do trajecto dos nervos. Variações do plexo braquial ou do nervo femoral alteram a técnica anestésica.<br><br>
+        Ex: plexo braquial pós-fixado — bloqueio interescalénico pode ser incompleto.
+      </p>
+    </div>
+    <div class="info-card card-green">
+      <span class="card-icon">💉</span>
+      <div class="card-title">MEDICINA INTERNA</div>
+      <p class="card-text">
+        Variações explicam apresentações clínicas <strong>atípicas</strong> de doenças comuns. O médico que conhece variações pensa mais longe.<br><br>
+        Ex: apendicite com dor atípica por apêndice retrocecal; situs inversus com dextrocardia.
+      </p>
+    </div>
+    <div class="info-card card-yellow">
+      <span class="card-icon">🔬</span>
+      <div class="card-title">ANATOMIA PATOLÓGICA</div>
+      <p class="card-text">
+        O patologista precisa distinguir variação normal de patologia real ao examinar peças cirúrgicas e biopsias.<br><br>
+        Ex: ducto de Luschka vesicular — não é uma fístula biliar, é uma variação normal!
+      </p>
+    </div>
+    <div class="info-card card-purple">
+      <span class="card-icon">🧬</span>
+      <div class="card-title">TRANSPLANTES</div>
+      <p class="card-text">
+        Na avaliação de dadores de órgãos, conhecer variações vasculares é <strong>crítico</strong> para planear a cirurgia de transplante e garantir a perfusão adequada do órgão transplantado.<br><br>
+        Ex: rim dador com artéria dupla — anastomose mais complexa no receptor.
+      </p>
+    </div>
+  </div>
+
+  <div class="highlight-box fade-in">
+    <div class="hb-inner hb-orange">
+      <span class="hb-icon">⚡</span>
+      <div class="hb-content">
+        <div class="hb-title">REGRA DE OURO PARA O ESTUDANTE</div>
+        <p class="hb-text">
+          Ao estudar anatomia, aprende sempre <strong>o padrão típico MAIS as variações mais comuns</strong>. A frase mágica que deves usar em atlas é: <em>"Qual é a variação mais comum desta estrutura? Tem relevância clínica?"</em>. Este hábito, desde o 1º ano, faz-te um médico muito melhor!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== CRONOLOGIA ==================== -->
+<section class="bg-v2" style="padding-bottom:60px">
+  <div class="chapter-header fade-in">
+    <div class="chapter-tag tag-yellow">Linha do Tempo</div>
+    <h2 class="chapter-title" style="color:var(--neon-yellow)">📅 CRONOLOGIA: Como as Variações São Descobertas</h2>
+    <p class="chapter-intro">Da embriologia ao diagnóstico — o caminho das variações anatómicas na medicina</p>
+  </div>
+
+  <div class="timeline fade-in">
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-cyan); border-color:var(--neon-cyan)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-cyan)">⚡ FECUNDAÇÃO — Dia 0</div>
+        <div class="tl-title" style="color:var(--neon-cyan)">O Código é Escrito</div>
+        <p class="tl-text">A combinação de genes do pai e da mãe cria um genoma único. As variantes genéticas que irão influenciar a morfologia já estão presentes desde o primeiro momento.</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-pink); border-color:var(--neon-pink)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-pink)">🧫 SEMANAS 3–8: Período Embrionário</div>
+        <div class="tl-title" style="color:var(--neon-pink)">A Grande Construção</div>
+        <p class="tl-text">A organogénese acontece aqui. É o período mais crítico — pequenas diferenças nos gradientes de factores de crescimento e na migração celular determinam as variações anatómicas futuras.</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-yellow); border-color:var(--neon-yellow)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-yellow)">🌱 SEMANAS 9–40: Período Fetal</div>
+        <div class="tl-title" style="color:var(--neon-yellow)">Crescimento e Consolidação</div>
+        <p class="tl-text">Os órgãos crescem e refinam-se. Estruturas embriológicas como o ducto onfalomesentérico regridem. Se não regredirem completamente → divertículo de Meckel!</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-green); border-color:var(--neon-green)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-green)">👶 NASCIMENTO</div>
+        <div class="tl-title" style="color:var(--neon-green)">A Variação Existe</div>
+        <p class="tl-text">O bebé nasce com a sua variação anatómica. Na maioria dos casos, nem ele nem a família sabem — porque não causa sintomas!</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-orange); border-color:var(--neon-orange)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-orange)">🏫 1ª ANO DE MEDICINA</div>
+        <div class="tl-title" style="color:var(--neon-orange)">O Estudante Aprende</div>
+        <p class="tl-text">O futuro médico estuda anatomia e aprende a identificar variações em cadáveres, atlas e exames de imagem. Prepara-se para a prática clínica futura!</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-cyan); border-color:var(--neon-cyan)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-cyan)">🩺 DIAGNÓSTICO POR IMAGEM</div>
+        <div class="tl-title" style="color:var(--neon-cyan)">A Variação É Detectada</div>
+        <p class="tl-text">Numa ecografia, TAC ou RMN de rotina, a variação é identificada. O radiologista regista no relatório: "variante anatómica normal, sem significado patológico".</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-dot" style="color:var(--neon-purple); border-color:var(--neon-purple)"></div>
+      <div class="tl-content">
+        <div class="tl-year" style="color:var(--neon-purple)">🏥 CIRURGIA (se necessário)</div>
+        <div class="tl-title" style="color:var(--neon-purple)">O Cirurgião Age com Conhecimento</div>
+        <p class="tl-text">Graças ao conhecimento pré-operatório da variação, o cirurgião adapta a técnica. A operação é bem-sucedida. O doente recupera sem complicações.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== QUIZ ==================== -->
+<section id="quiz-section" style="background: radial-gradient(ellipse at 50% 0%, rgba(255,238,0,0.05) 0%, transparent 70%), var(--dark-bg); padding: 80px 0">
+  <div class="chapter-header fade-in">
+    <div class="chapter-tag tag-yellow">Teste Final</div>
+    <h2 class="chapter-title" style="color:var(--neon-yellow)">⚡ Prova os teus Conhecimentos!</h2>
+  </div>
+
+  <div id="quiz-section" class="fade-in">
+    <div class="quiz-box">
+      <div class="quiz-header">🧠 QUIZ — VARIAÇÕES ANATÓMICAS</div>
+      <div class="quiz-sub">Responde corretamente para avançar. Boa sorte, futuro médico!</div>
+      <div id="quiz-question">A carregar questão…</div>
+      <div class="quiz-options" id="quiz-opts"></div>
+      <div id="quiz-feedback"></div>
+      <div id="quiz-score">Pontuação: 0 / 0</div>
+      <button id="quiz-next" onclick="nextQuestion()">PRÓXIMA ▶</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== RESUMO FINAL ==================== -->
+<section class="bg-v3" style="padding: 80px 0">
+  <div class="chapter-header fade-in">
+    <div class="chapter-tag tag-green">Resumo</div>
+    <h2 class="chapter-title" style="color:var(--neon-green)">O Que Aprendeste Hoje</h2>
+  </div>
+
+  <div class="summary-section fade-in">
+    <div class="summary-grid">
+      <div class="sum-card">
+        <span class="sum-num" style="color:var(--neon-cyan)">6</span>
+        <span class="sum-label">Tipos de Variações</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num" style="color:var(--neon-pink)">45%</span>
+        <span class="sum-label">Pessoas com variações detectáveis</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num" style="color:var(--neon-green)">∞</span>
+        <span class="sum-label">Combinações possíveis no corpo humano</span>
+      </div>
+      <div class="sum-card">
+        <span class="sum-num" style="color:var(--neon-yellow)">1º</span>
+        <span class="sum-label">Ano — Base de toda a medicina clínica</span>
+      </div>
+    </div>
+
+    <div style="margin-top:40px; text-align:center;">
+      <div style="background:var(--dark-card); border:1px solid rgba(57,255,20,0.25); border-radius:20px; padding:36px; max-width:700px; margin:0 auto;">
+        <div style="font-family:'Bangers',cursive; font-size:1.8rem; color:var(--neon-green); letter-spacing:2px; margin-bottom:16px;">🎯 MENSAGEM FINAL</div>
+        <p style="font-size:0.95rem; line-height:1.8; color:var(--text-dim);">
+          <strong style="color:var(--text-main)">O corpo humano não tem um único design correcto.</strong> Cada pessoa é uma obra original. Como futuro médico, nunca assumas que o corpo do teu doente é exactamente como o do atlas. <em style="color:var(--neon-cyan)">Questiona, verifica, adapta.</em> As variações anatómicas não são excepções — são parte da regra da diversidade humana. Quem conhece as variações, conhece a anatomia verdadeira!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="neon-divider"></div>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-logo">⚕ DemilMed-UL</div>
+  <div class="footer-org">Universidade Licungo</div>
+  <div class="footer-ul">UL — UNIVERSIDADE LICUNGO</div>
+  <div class="footer-year">ANO 2026 · 2º ANO DE MEDICINA</div>
+  <div class="footer-line"></div>
+  <div class="footer-note">Variações Anatómicas — Anatomia 1º Ano · Material Didáctico Interactivo · DemilMed-UL © 2026</div>
+</footer>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ===== STARS =====
+(function() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;top:${Math.random()*100}%;
+      width:${size}px;height:${size}px;
+      --dur:${(Math.random()*3+2).toFixed(1)}s;
+      animation-delay:${(Math.random()*4).toFixed(1)}s;
+    `;
+    c.appendChild(s);
+  }
+})();
+
+// ===== FLOATING MOLECULES =====
+(function() {
+  const layer = document.getElementById('molecules');
+  const configs = [
+    { color: '#00f5ff', r: 18 },
+    { color: '#ff00aa', r: 14 },
+    { color: '#ffee00', r: 12 },
+    { color: '#39ff14', r: 16 },
+    { color: '#bf00ff', r: 10 },
+    { color: '#ff6600', r: 13 },
+  ];
+  for (let i = 0; i < 14; i++) {
+    const cfg = configs[i % configs.length];
+    const el = document.createElement('div');
+    el.className = 'molecule';
+    const x = Math.random() * 95;
+    const y = Math.random() * 95;
+    const fdur = (Math.random() * 8 + 6).toFixed(1);
+    const fx = (Math.random() * 60 - 30).toFixed(0);
+    const fy = (Math.random() * 60 - 40).toFixed(0);
+    el.style.cssText = `left:${x}%;top:${y}%;--fdur:${fdur}s;--fx:${fx}px;--fy:${fy}px;animation-delay:${(Math.random()*5).toFixed(1)}s;opacity:0.25;`;
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox',`0 0 60 60`);
+    svg.setAttribute('width','60');
+    svg.setAttribute('height','60');
+    svg.classList.add('mol-svg');
+
+    // Simple molecule: central circle + branches
+    const cx = 30, cy = 30, cr = cfg.r;
+    const angles = [0, 90, 180, 270].slice(0, 2 + Math.floor(Math.random()*3));
+    angles.forEach(a => {
+      const rad = a * Math.PI / 180;
+      const ex = cx + Math.cos(rad) * (cr + 10);
+      const ey = cy + Math.sin(rad) * (cr + 10);
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+      line.setAttribute('x2', ex); line.setAttribute('y2', ey);
+      line.setAttribute('stroke', cfg.color); line.setAttribute('stroke-width','1.5');
+      svg.appendChild(line);
+      const sc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      sc.setAttribute('cx', ex); sc.setAttribute('cy', ey); sc.setAttribute('r', 5);
+      sc.setAttribute('fill','none'); sc.setAttribute('stroke', cfg.color); sc.setAttribute('stroke-width','1.5');
+      svg.appendChild(sc);
+    });
+    const mc = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    mc.setAttribute('cx', cx); mc.setAttribute('cy', cy); mc.setAttribute('r', cr);
+    mc.setAttribute('fill','none'); mc.setAttribute('stroke', cfg.color); mc.setAttribute('stroke-width','2');
+    svg.appendChild(mc);
+
+    el.appendChild(svg);
+    layer.appendChild(el);
+  }
+})();
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const el = document.getElementById('progress-bar');
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  el.style.width = pct + '%';
+});
+
+// ===== FADE-IN OBSERVER =====
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ===== ACCORDION =====
+function toggleAcc(header) {
+  const item = header.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.acc-item.open').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ===== DNA CANVAS =====
+(function() {
+  const canvas = document.getElementById('dna-canvas');
+  const ctx = canvas.getContext('2d');
+  let t = 0;
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2;
+    const amp = H * 0.3;
+    const freq = 0.04;
+    const speed = 0.03;
+
+    // Draw two helices
+    for (let side = 0; side < 2; side++) {
+      ctx.beginPath();
+      const colors = ['#00f5ff', '#ff00aa'];
+      ctx.strokeStyle = colors[side];
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = colors[side];
+      ctx.shadowBlur = 8;
+      for (let x = 0; x < W; x++) {
+        const y = H/2 + Math.sin(x * freq + t + side * Math.PI) * amp;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+
+    // Draw rungs (connections between helices)
+    const step = 28;
+    for (let x = step; x < W; x += step) {
+      const y1 = H/2 + Math.sin(x * freq + t) * amp;
+      const y2 = H/2 + Math.sin(x * freq + t + Math.PI) * amp;
+      const mid = (y1 + y2) / 2;
+
+      // Alternate colors for rungs
+      const varColors = ['#39ff14', '#ffee00', '#bf00ff', '#ff6600'];
+      const ci = Math.floor(x / step) % varColors.length;
+      ctx.strokeStyle = varColors[ci];
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.7;
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y2);
+      ctx.stroke();
+
+      // Dot at mid
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = varColors[ci];
+      ctx.beginPath();
+      ctx.arc(x, mid, 3, 0, Math.PI*2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    t += speed;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===== QUIZ =====
+const questions = [
+  {
+    q: "O que é uma variação anatómica?",
+    opts: [
+      "Uma doença genética que afecta a morfologia",
+      "Uma diferença morfológica sem causar doença ou disfunção",
+      "Sempre uma malformação congénita",
+      "Uma lesão traumática de estrutura anatómica"
+    ],
+    correct: 1,
+    exp: "Variação anatómica é uma diferença morfológica normal que NÃO causa doença nem disfunção!"
+  },
+  {
+    q: "O apêndice vermiforme é retrocecal em aproximadamente que percentagem das pessoas?",
+    opts: ["10%", "30%", "65%", "95%"],
+    correct: 2,
+    exp: "Cerca de 65% dos apêndices são retrocecais — a posição MAIS COMUM! Isso explica apresentações atípicas de apendicite."
+  },
+  {
+    q: "Um doente tem situs inversus totalis. O que isso significa?",
+    opts: [
+      "Tem os órgãos espelhados mas pode estar completamente saudável",
+      "É uma doença fatal que requer cirurgia urgente",
+      "Tem os rins trocados de posição",
+      "Tem coração ausente"
+    ],
+    correct: 0,
+    exp: "Situs inversus é uma variação de posição — todos os órgãos viscerais estão espelhados. Ocorre em ~1/10.000 pessoas e a maioria é completamente saudável!"
+  },
+  {
+    q: "Qual destas é uma variação de NÚMERO?",
+    opts: [
+      "Rim em ferradura",
+      "Apêndice retrocecal",
+      "Costela cervical",
+      "Situs inversus"
+    ],
+    correct: 2,
+    exp: "A costela cervical é uma costela EXTRA (supranumerária) a partir da 7ª vértebra cervical — variação de número! O rim em ferradura é de forma."
+  },
+  {
+    q: "A 'Corona mortis' é uma variação importante em que especialidade?",
+    opts: [
+      "Cardiologia — risco de enfarte",
+      "Cirurgia — risco de hemorragia em herniorrafia inguinal",
+      "Neurologia — risco de AVC",
+      "Ortopedia — risco de fractura"
+    ],
+    correct: 1,
+    exp: "A 'Corona mortis' (arco mortal) é uma anastomose entre a artéria epigástrica inferior e a obturatória. Pode causar hemorragia fatal durante cirurgia de hérnia inguinal!"
+  },
+  {
+    q: "A ausência do músculo palmaris longus (cerca de 14% das pessoas) é:",
+    opts: [
+      "Uma malformação que causa fraqueza grave",
+      "Uma variação anatómica sem disfunção funcional significativa",
+      "Uma doença muscular degenerativa",
+      "Sempre acompanhada por outros défices musculares"
+    ],
+    correct: 1,
+    exp: "O palmaris longus está ausente em ~14% das pessoas sem qualquer problema funcional! É tão inútil que é usado como enxerto tendinoso em cirurgia plástica quando presente."
+  },
+  {
+    q: "O que distingue uma variação anatómica de uma anomalia congénita?",
+    opts: [
+      "O tamanho da estrutura afectada",
+      "O facto de a variação não causar doença ou disfunção",
+      "A raridade da condição",
+      "A presença ou ausência de tratamento cirúrgico"
+    ],
+    correct: 1,
+    exp: "A chave é: variação anatómica = sem doença ou disfunção. Anomalia = causa doença, disfunção ou sintomas. Simples assim!"
+  },
+  {
+    q: "Num transplante renal, descobriu-se que o rim do dador tem artéria dupla. Isso significa:",
+    opts: [
+      "O rim não pode ser transplantado",
+      "É impossível — artérias renais são sempre únicas",
+      "A anastomose cirúrgica será mais complexa, mas o transplante é possível",
+      "O receptor terá função renal reduzida obrigatoriamente"
+    ],
+    correct: 2,
+    exp: "Artéria renal dupla ocorre em até 28% das pessoas! É uma variação de número/trajecto que torna a cirurgia mais técnica, mas não impossível."
+  }
+];
+
+let currentQ = 0, score = 0, answered = false;
+
+function loadQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('quiz-question').textContent = `(${currentQ+1}/${questions.length}) ${q.q}`;
+  const opts = document.getElementById('quiz-opts');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = o;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next').style.display = 'none';
+  answered = false;
+  updateScore();
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns.forEach(b => b.disabled = true);
+  btns[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  if (idx !== q.correct) btns[q.correct].classList.add('correct');
+  const fb = document.getElementById('quiz-feedback');
+  if (idx === q.correct) {
+    score++;
+    fb.style.color = 'var(--neon-green)';
+    fb.textContent = '✅ Correcto! ' + q.exp;
+  } else {
+    fb.style.color = '#ff4466';
+    fb.textContent = '❌ Incorreto. ' + q.exp;
+  }
+  updateScore();
+  const nxt = document.getElementById('quiz-next');
+  nxt.style.display = 'inline-block';
+  if (currentQ === questions.length - 1) nxt.textContent = 'VER RESULTADO 🏆';
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ >= questions.length) {
+    showResult();
+    return;
+  }
+  loadQuestion();
+}
+
+function showResult() {
+  const pct = Math.round((score / questions.length) * 100);
+  const emojis = pct >= 80 ? '🏆🔥' : pct >= 60 ? '👍✨' : '📚💪';
+  const msgs = pct >= 80 ? 'Excelente! Estás pronto para a clínica!' : pct >= 60 ? 'Bom trabalho! Revê os pontos errados.' : 'Não desistas! Relê o material e tenta de novo.';
+  document.getElementById('quiz-question').innerHTML = `<span style="font-size:1.8rem">${emojis}</span><br><br><strong style="color:var(--neon-yellow)">RESULTADO: ${score}/${questions.length} (${pct}%)</strong><br><br>${msgs}`;
+  document.getElementById('quiz-opts').innerHTML = '';
+  document.getElementById('quiz-feedback').textContent = '';
+  const nxt = document.getElementById('quiz-next');
+  nxt.textContent = '↺ TENTAR NOVAMENTE';
+  nxt.onclick = () => { currentQ = 0; score = 0; loadQuestion(); nxt.onclick = nextQuestion; nxt.textContent = 'PRÓXIMA ▶'; };
+  nxt.style.display = 'inline-block';
+  updateScore();
+}
+
+function updateScore() {
+  document.getElementById('quiz-score').textContent = `Pontuação: ${score} / ${Math.min(currentQ + (answered?1:0), questions.length)}`;
+}
+
+loadQuestion();
+
+// ===== MOUSE GLOW ON PANELS =====
+document.querySelectorAll('.vs-panel').forEach(panel => {
+  panel.addEventListener('mousemove', (e) => {
+    const rect = panel.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+    panel.style.setProperty('--mx', x + '%');
+    panel.style.setProperty('--my', y + '%');
+  });
+});
+</script>
+</body>
+</html>

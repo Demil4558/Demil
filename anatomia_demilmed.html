@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANATOMIA ÉPICA — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;400;700&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg-deep: #02040a;
+    --bg-mid: #080c18;
+    --neon-cyan: #00fff5;
+    --neon-pink: #ff007c;
+    --neon-yellow: #ffee00;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6a00;
+    --neon-purple: #bf00ff;
+    --neon-blue: #007bff;
+    --text-main: #e8f4f8;
+    --text-dim: #8899aa;
+    --glass: rgba(0,255,245,0.05);
+    --glass-border: rgba(0,255,245,0.2);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 16px; height: 16px;
+    border: 2px solid var(--neon-cyan);
+    border-radius: 50%;
+    position: fixed; top:0; left:0;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: screen;
+  }
+  .cursor-trail {
+    width: 6px; height: 6px;
+    background: var(--neon-pink);
+    border-radius: 50%;
+    position: fixed; top:0; left:0;
+    pointer-events: none;
+    z-index: 99998;
+    transition: all 0.2s ease;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius:2px; }
+
+  /* ============ INTRO / HERO ============ */
+  #intro {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 50%, #0a1628 0%, #02040a 70%);
+  }
+
+  .star-field {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.2; transform: scale(1); }
+    100% { opacity: 1; transform: scale(1.5); }
+  }
+
+  .intro-content { position: relative; z-index:5; text-align: center; }
+
+  .pre-title {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--neon-cyan);
+    font-size: 0.85rem;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    animation: fadeInDown 1s ease forwards;
+    opacity: 0;
+  }
+
+  .main-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    margin: 1rem 0;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-pink) 50%, var(--neon-yellow) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 2s ease-in-out infinite alternate, fadeIn 1.2s ease 0.3s forwards;
+    opacity: 0;
+    filter: drop-shadow(0 0 30px rgba(0,255,245,0.5));
+  }
+
+  @keyframes titleGlow {
+    0% { filter: drop-shadow(0 0 20px rgba(0,255,245,0.3)); }
+    100% { filter: drop-shadow(0 0 50px rgba(255,0,124,0.6)); }
+  }
+
+  .sub-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--neon-yellow);
+    letter-spacing: 4px;
+    animation: fadeIn 1s ease 0.8s forwards;
+    opacity: 0;
+    margin-bottom: 2rem;
+  }
+
+  .intro-badge {
+    display: inline-block;
+    padding: 0.5rem 2rem;
+    border: 1px solid var(--neon-pink);
+    color: var(--neon-pink);
+    font-family: 'Share Tech Mono';
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    animation: fadeIn 1s ease 1.2s forwards;
+    opacity: 0;
+    margin-bottom: 3rem;
+  }
+
+  .start-btn {
+    display: inline-flex; align-items: center; gap: 1rem;
+    padding: 1rem 3rem;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron';
+    font-size: 1rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 1s ease 1.5s forwards;
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .start-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--neon-cyan);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .start-btn:hover::before { transform: scaleX(1); }
+  .start-btn:hover { color: var(--bg-deep); }
+
+  /* MOLECULE CANVAS */
+  #molecule-canvas {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--text-dim); font-size: 0.75rem; letter-spacing: 3px;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint::after {
+    content: '▼';
+    color: var(--neon-cyan);
+  }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(-10px)} }
+
+  /* ============ NAVIGATION ============ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(2,4,10,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,255,245,0.1);
+    transform: translateY(-100%);
+    transition: transform 0.5s ease;
+  }
+  nav.visible { transform: translateY(0); }
+  .nav-logo {
+    font-family: 'Orbitron'; font-size: 0.9rem;
+    color: var(--neon-cyan); letter-spacing: 3px;
+  }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--neon-cyan); }
+
+  /* ============ PROGRESS BAR ============ */
+  .progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+    z-index: 1001;
+    transition: width 0.1s;
+  }
+
+  /* ============ CHAPTER SYSTEM ============ */
+  .chapter {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* CHAPTER TRANSITION BADGE */
+  .chapter-badge {
+    display: inline-flex; align-items: center; gap: 1rem;
+    padding: 0.4rem 1.5rem;
+    background: rgba(0,255,245,0.1);
+    border-left: 3px solid var(--neon-cyan);
+    font-family: 'Share Tech Mono';
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+  }
+
+  .chapter-number {
+    font-family: 'Orbitron';
+    font-size: 0.6rem;
+    background: var(--neon-cyan);
+    color: var(--bg-deep);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* ============ CHAPTER 1 — POSIÇÃO ANATÓMICA ============ */
+  #ch1 {
+    background: linear-gradient(160deg, #020818 0%, #050d1a 50%, #080418 100%);
+    padding: 8rem 2rem 4rem;
+  }
+
+  .ch1-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: center;
+  }
+
+  .speech-bubble {
+    position: relative;
+    background: rgba(0,255,245,0.05);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px 20px 20px 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: 20px;
+    width: 0; height: 0;
+    border-left: 12px solid transparent;
+    border-right: 0 solid transparent;
+    border-bottom: 12px solid var(--glass-border);
+  }
+
+  .character-name {
+    font-family: 'Orbitron';
+    font-size: 0.7rem;
+    color: var(--neon-pink);
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+  }
+
+  .speech-text {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-main);
+  }
+  .speech-text em { color: var(--neon-yellow); font-style: normal; font-weight: 600; }
+  .speech-text strong { color: var(--neon-cyan); }
+
+  /* BODY FIGURE */
+  .body-figure-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+
+  .body-svg-container {
+    position: relative;
+    width: 280px; height: 420px;
+  }
+
+  .body-svg-container svg {
+    width: 100%; height: 100%;
+    filter: drop-shadow(0 0 20px rgba(0,255,245,0.3));
+  }
+
+  /* POSICAO LABELS */
+  .pos-label {
+    position: absolute;
+    font-family: 'Share Tech Mono';
+    font-size: 0.65rem;
+    color: var(--neon-yellow);
+    background: rgba(8,12,24,0.9);
+    border: 1px solid var(--neon-yellow);
+    padding: 0.2rem 0.6rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .pos-label:hover { background: var(--neon-yellow); color: var(--bg-deep); }
+  .pos-label::after {
+    content: '';
+    position: absolute;
+    width: 30px; height: 1px;
+    background: var(--neon-yellow);
+  }
+
+  /* INFO CARDS */
+  .info-card {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 1.5rem;
+    margin: 0.8rem 0;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .info-card.cyan { border-color: rgba(0,255,245,0.3); }
+  .info-card.cyan::before { background: var(--neon-cyan); }
+  .info-card.pink { border-color: rgba(255,0,124,0.3); }
+  .info-card.pink::before { background: var(--neon-pink); }
+  .info-card.yellow { border-color: rgba(255,238,0,0.3); }
+  .info-card.yellow::before { background: var(--neon-yellow); }
+  .info-card.green { border-color: rgba(57,255,20,0.3); }
+  .info-card.green::before { background: var(--neon-green); }
+  .info-card.orange { border-color: rgba(255,106,0,0.3); }
+  .info-card.orange::before { background: var(--neon-orange); }
+  .info-card.purple { border-color: rgba(191,0,255,0.3); }
+  .info-card.purple::before { background: var(--neon-purple); }
+
+  .info-card:hover { transform: translateX(5px); }
+  .info-card h4 {
+    font-family: 'Orbitron';
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+  .info-card.cyan h4 { color: var(--neon-cyan); }
+  .info-card.pink h4 { color: var(--neon-pink); }
+  .info-card.yellow h4 { color: var(--neon-yellow); }
+  .info-card.green h4 { color: var(--neon-green); }
+  .info-card.orange h4 { color: var(--neon-orange); }
+  .info-card.purple h4 { color: var(--neon-purple); }
+  .info-card p { font-size: 0.95rem; line-height: 1.6; color: var(--text-main); }
+  .info-card p em { color: var(--neon-yellow); font-style: normal; }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family: 'Orbitron';
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    margin: 2rem 0 1rem;
+    position: relative;
+    display: inline-block;
+  }
+  .section-title.cyan { color: var(--neon-cyan); text-shadow: 0 0 30px rgba(0,255,245,0.5); }
+  .section-title.pink { color: var(--neon-pink); text-shadow: 0 0 30px rgba(255,0,124,0.5); }
+  .section-title.yellow { color: var(--neon-yellow); text-shadow: 0 0 30px rgba(255,238,0,0.5); }
+  .section-title.green { color: var(--neon-green); text-shadow: 0 0 30px rgba(57,255,20,0.5); }
+  .section-title.orange { color: var(--neon-orange); text-shadow: 0 0 30px rgba(255,106,0,0.5); }
+  .section-title.purple { color: var(--neon-purple); text-shadow: 0 0 30px rgba(191,0,255,0.5); }
+
+  /* ============ CHAPTER 2 — PLANOS ============ */
+  #ch2 {
+    background: linear-gradient(200deg, #050010 0%, #0a0520 50%, #020510 100%);
+    padding: 6rem 2rem;
+  }
+
+  .planes-container {
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .plane-tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap;
+  }
+  .plane-tab {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid;
+    background: transparent;
+    font-family: 'Orbitron';
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .plane-tab.sagital { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .plane-tab.sagital.active,
+  .plane-tab.sagital:hover { background: var(--neon-cyan); color: var(--bg-deep); }
+  .plane-tab.frontal { border-color: var(--neon-pink); color: var(--neon-pink); }
+  .plane-tab.frontal.active,
+  .plane-tab.frontal:hover { background: var(--neon-pink); color: var(--bg-deep); }
+  .plane-tab.transversal { border-color: var(--neon-yellow); color: var(--neon-yellow); }
+  .plane-tab.transversal.active,
+  .plane-tab.transversal:hover { background: var(--neon-yellow); color: var(--bg-deep); }
+  .plane-tab.obliquo { border-color: var(--neon-green); color: var(--neon-green); }
+  .plane-tab.obliquo.active,
+  .plane-tab.obliquo:hover { background: var(--neon-green); color: var(--bg-deep); }
+
+  .plane-display {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  .plane-display.active { display: grid; }
+
+  .plane-3d {
+    width: 100%; aspect-ratio: 1;
+    max-width: 350px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+
+  .plane-info h3 {
+    font-family: 'Orbitron';
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+  }
+  .plane-info p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-main);
+    margin-bottom: 1rem;
+  }
+  .plane-info p em { color: var(--neon-yellow); font-style: normal; }
+
+  .tag-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+  .tag {
+    padding: 0.3rem 0.8rem;
+    font-family: 'Share Tech Mono';
+    font-size: 0.7rem;
+    border-radius: 2px;
+  }
+  .tag.cyan { background: rgba(0,255,245,0.15); color: var(--neon-cyan); border: 1px solid rgba(0,255,245,0.4); }
+  .tag.pink { background: rgba(255,0,124,0.15); color: var(--neon-pink); border: 1px solid rgba(255,0,124,0.4); }
+  .tag.yellow { background: rgba(255,238,0,0.15); color: var(--neon-yellow); border: 1px solid rgba(255,238,0,0.4); }
+  .tag.green { background: rgba(57,255,20,0.15); color: var(--neon-green); border: 1px solid rgba(57,255,20,0.4); }
+  .tag.orange { background: rgba(255,106,0,0.15); color: var(--neon-orange); border: 1px solid rgba(255,106,0,0.4); }
+  .tag.purple { background: rgba(191,0,255,0.15); color: var(--neon-purple); border: 1px solid rgba(191,0,255,0.4); }
+
+  /* ============ CHAPTER 3 — CAVIDADES ============ */
+  #ch3 {
+    background: linear-gradient(170deg, #001008 0%, #001520 50%, #080208 100%);
+    padding: 6rem 2rem;
+  }
+
+  .cavidades-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .cavity-tree {
+    position: relative;
+  }
+
+  .tree-node {
+    position: relative;
+    margin: 0.5rem 0;
+  }
+  .tree-node-main {
+    padding: 0.8rem 1.5rem;
+    border: 1px solid;
+    cursor: pointer;
+    font-family: 'Orbitron';
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    transition: all 0.3s;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .tree-node-main .arrow { transition: transform 0.3s; }
+  .tree-node-main.open .arrow { transform: rotate(90deg); }
+
+  .tree-children {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.5s ease;
+    padding-left: 1.5rem;
+  }
+  .tree-children.open { max-height: 600px; }
+
+  .tree-leaf {
+    padding: 0.5rem 1rem;
+    border-left: 2px solid;
+    margin: 0.3rem 0;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    background: rgba(0,0,0,0.3);
+  }
+  .tree-leaf strong { color: var(--neon-yellow); font-family: 'Share Tech Mono'; }
+
+  /* ============ CHAPTER 4 — TERMINOLOGIA ============ */
+  #ch4 {
+    background: linear-gradient(150deg, #10000a 0%, #0a0020 50%, #000f10 100%);
+    padding: 6rem 2rem;
+  }
+
+  .termo-categories {
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .termo-section { margin: 3rem 0; }
+
+  .termo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .termo-card {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 1.2rem;
+    border-radius: 2px;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .termo-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .termo-card:hover { transform: translateY(-3px); }
+  .termo-card:hover::after { opacity: 1; }
+
+  .termo-word {
+    font-family: 'Orbitron';
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .termo-opposite {
+    font-family: 'Share Tech Mono';
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-bottom: 0.5rem;
+  }
+  .termo-def { font-size: 0.9rem; line-height: 1.5; color: var(--text-dim); }
+  .termo-example { font-size: 0.8rem; margin-top: 0.5rem; font-style: italic; }
+
+  /* VS BADGE */
+  .vs-badge {
+    display: inline-block;
+    padding: 0.1rem 0.6rem;
+    background: rgba(255,238,0,0.1);
+    border: 1px solid var(--neon-yellow);
+    color: var(--neon-yellow);
+    font-family: 'Share Tech Mono';
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    margin: 0 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* ============ CHAPTER 5 — REGIÕES ============ */
+  #ch5 {
+    background: linear-gradient(180deg, #08020a 0%, #020810 50%, #080510 100%);
+    padding: 6rem 2rem;
+  }
+
+  .regions-container {
+    max-width: 1200px; margin: 0 auto;
+  }
+
+  .region-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 600px; margin: 2rem auto;
+  }
+
+  .region-cell {
+    padding: 1rem;
+    border: 1px solid rgba(0,255,245,0.2);
+    text-align: center;
+    font-family: 'Share Tech Mono';
+    font-size: 0.7rem;
+    color: var(--neon-cyan);
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(0,255,245,0.03);
+  }
+  .region-cell:hover {
+    background: rgba(0,255,245,0.1);
+    border-color: var(--neon-cyan);
+    transform: scale(1.05);
+  }
+  .region-cell.highlight {
+    background: rgba(0,255,245,0.15);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0,255,245,0.3);
+  }
+
+  /* ============ CHAPTER 6 — MOVIMENTOS ============ */
+  #ch6 {
+    background: linear-gradient(160deg, #020a00 0%, #000a15 50%, #0a0208 100%);
+    padding: 6rem 2rem;
+  }
+
+  .movement-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .movement-card {
+    border: 1px solid;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .movement-card:hover { transform: translateY(-5px); }
+  .movement-card .move-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+  .movement-card h4 {
+    font-family: 'Orbitron';
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+  .movement-card .opposite {
+    font-family: 'Share Tech Mono';
+    font-size: 0.65rem;
+    opacity: 0.5;
+    margin-bottom: 0.8rem;
+  }
+  .movement-card p { font-size: 0.9rem; line-height: 1.5; color: var(--text-dim); }
+
+  /* ============ QUIZ ============ */
+  #quiz {
+    background: linear-gradient(180deg, #060010 0%, #000820 100%);
+    padding: 6rem 2rem;
+  }
+
+  .quiz-container { max-width: 700px; margin: 0 auto; }
+
+  .quiz-card {
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--glass-border);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    display: none;
+    animation: slideIn 0.5s ease;
+  }
+  .quiz-card.active { display: block; }
+
+  @keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+
+  .quiz-question {
+    font-family: 'Orbitron';
+    font-size: 1rem;
+    color: var(--neon-yellow);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+  }
+  .quiz-sub {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 0.8rem; }
+  .quiz-option {
+    padding: 1rem 1.5rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.03);
+    color: var(--text-main);
+    font-family: 'Rajdhani';
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .quiz-option:hover { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .quiz-option.correct { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.1); }
+  .quiz-option.wrong { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,0,124,0.1); }
+  .option-letter {
+    font-family: 'Orbitron';
+    font-size: 0.7rem;
+    width: 28px; height: 28px;
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .quiz-feedback {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    display: none;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { border-left: 3px solid var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.05); }
+  .quiz-feedback.wrong { border-left: 3px solid var(--neon-pink); color: var(--text-main); background: rgba(255,0,124,0.05); }
+
+  .quiz-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.5rem;
+  }
+  .quiz-btn {
+    padding: 0.6rem 2rem;
+    border: 1px solid var(--neon-cyan);
+    background: transparent;
+    color: var(--neon-cyan);
+    font-family: 'Orbitron';
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .quiz-btn:hover { background: var(--neon-cyan); color: var(--bg-deep); }
+  .quiz-progress {
+    font-family: 'Share Tech Mono';
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+  .quiz-score {
+    font-family: 'Orbitron';
+    font-size: 0.9rem;
+    color: var(--neon-yellow);
+  }
+
+  /* ============ TIMELINE ============ */
+  #timeline-section {
+    background: linear-gradient(180deg, #000820 0%, #020020 100%);
+    padding: 6rem 2rem;
+  }
+
+  .timeline {
+    max-width: 900px; margin: 0 auto;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 50%; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+    transform: translateX(-50%);
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    align-items: center;
+  }
+
+  .tl-left { text-align: right; }
+  .tl-right { text-align: left; }
+
+  .tl-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-deep);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .tl-dot::before {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: ripple 2s infinite;
+  }
+  @keyframes ripple { 0%{transform:scale(1);opacity:0.3} 100%{transform:scale(2);opacity:0} }
+
+  .tl-label {
+    font-family: 'Share Tech Mono';
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.3rem;
+  }
+  .tl-title { font-family: 'Orbitron'; font-size: 0.9rem; margin-bottom: 0.3rem; }
+  .tl-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: rgba(0,0,0,0.95);
+    border-top: 1px solid rgba(0,255,245,0.1);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron';
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  .footer-sub {
+    font-family: 'Share Tech Mono';
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-bottom: 1.5rem;
+  }
+  .footer-line {
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 1.5rem auto;
+  }
+  .footer-info { font-size: 0.85rem; color: var(--text-dim); line-height: 2; }
+  .footer-info strong { color: var(--neon-yellow); }
+
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes fadeInDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeInLeft { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes fadeInRight { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ============ SCAN LINES EFFECT ============ */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px);
+    pointer-events: none;
+    z-index: 9997;
+  }
+
+  /* ============ CORNER DECORATIONS ============ */
+  .corner-deco {
+    position: absolute;
+    width: 40px; height: 40px;
+    border-color: var(--neon-cyan);
+    border-style: solid;
+  }
+  .corner-deco.tl { top: 1rem; left: 1rem; border-width: 2px 0 0 2px; }
+  .corner-deco.tr { top: 1rem; right: 1rem; border-width: 2px 2px 0 0; }
+  .corner-deco.bl { bottom: 1rem; left: 1rem; border-width: 0 0 2px 2px; }
+  .corner-deco.br { bottom: 1rem; right: 1rem; border-width: 0 2px 2px 0; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .ch1-grid, .cavidades-grid, .plane-display { grid-template-columns: 1fr; }
+    .timeline::before { left: 20px; }
+    .tl-item { grid-template-columns: 40px 1fr; }
+    .tl-left { display: none; }
+    nav .nav-links { display: none; }
+    .region-map { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* GLITCH ANIMATION */
+  .glitch {
+    position: relative;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .glitch::before {
+    color: var(--neon-pink);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+  }
+  .glitch::after {
+    color: var(--neon-cyan);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  }
+  @keyframes glitch1 {
+    0%,100%{transform:translate(0)} 20%{transform:translate(-2px,2px)} 40%{transform:translate(2px,-2px)} 60%{transform:translate(0)}
+  }
+  @keyframes glitch2 {
+    0%,100%{transform:translate(0)} 20%{transform:translate(2px,-2px)} 40%{transform:translate(-2px,2px)} 60%{transform:translate(0)}
+  }
+
+  /* PARTICLE SYSTEM */
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    animation: particleMove linear infinite;
+  }
+  @keyframes particleMove {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+  }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-content {
+    position: absolute; bottom: 130%; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.95);
+    border: 1px solid var(--neon-cyan);
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 100;
+    min-width: 200px;
+    white-space: normal;
+    text-align: center;
+  }
+  .tooltip-wrap:hover .tooltip-content { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <div class="nav-logo">◈ DEMILMED</div>
+  <div class="nav-links">
+    <a href="#ch1">Posição</a>
+    <a href="#ch2">Planos</a>
+    <a href="#ch3">Cavidades</a>
+    <a href="#ch4">Terminologia</a>
+    <a href="#ch6">Movimentos</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- ====================================
+     INTRO
+==================================== -->
+<section id="intro">
+  <canvas id="molecule-canvas"></canvas>
+  <div class="star-field" id="starField"></div>
+
+  <div class="intro-content">
+    <div class="pre-title">▸ DEMILMED-UL | 2º ANO DE MEDICINA | 2026</div>
+    <h1 class="main-title glitch" data-text="ANATOMIA">ANATOMIA</h1>
+    <div class="sub-title">解剖学 ｜ A ODISSEIA DO CORPO HUMANO</div>
+    <div class="intro-badge">▸ POSIÇÃO · CAVIDADES · PLANOS · TERMINOLOGIA ANATÓMICA ◂</div>
+    <button class="start-btn" onclick="document.getElementById('ch1').scrollIntoView({behavior:'smooth'})">
+      ▸ INICIAR JORNADA
+    </button>
+  </div>
+
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- ====================================
+     CHAPTER 1: POSIÇÃO ANATÓMICA
+==================================== -->
+<section id="ch1" class="chapter">
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco tr"></div>
+  <div class="corner-deco bl"></div>
+  <div class="corner-deco br"></div>
+
+  <div class="ch1-grid">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 01</span>
+        POSIÇÃO ANATÓMICA
+      </div>
+      <h2 class="section-title cyan">O Ponto de Partida</h2>
+
+      <div class="speech-bubble">
+        <div class="character-name">▸ PROFESSOR NEXUS</div>
+        <p class="speech-text">
+          Antes de qualquer coisa — imagina que os anatomistas do mundo inteiro precisavam de <em>uma língua comum</em>. Precisavam de dizer: <strong>"este músculo está ACIMA daquele osso"</strong>... mas acima como? Deitado? De pé? De cabeça para baixo?<br><br>
+          A solução foi genial: criaram uma <em>posição padrão universal</em>. Como um personagem de videogame em modo estático. Tudo descrito a partir daí!
+        </p>
+      </div>
+
+      <div class="info-card cyan reveal">
+        <h4>⬡ DEFINIÇÃO OFICIAL</h4>
+        <p>O indivíduo está em pé (<em>ereta</em>), olhando para frente (plano frontal), membros superiores ao longo do corpo com as <em>palmas das mãos voltadas para a frente</em> (supinadas), pés unidos e paralelos.</p>
+      </div>
+
+      <div class="info-card pink reveal">
+        <h4>⬡ POR QUE PALMAS PARA A FRENTE?</h4>
+        <p>Porque o antebraço tem dois ossos (rádio e ulna) que se cruzam na posição "normal" de descanso. Voltando as palmas para frente, os ossos ficam paralelos — o estado de <em>referência anatómica neutro</em>.</p>
+      </div>
+
+      <div class="info-card yellow reveal">
+        <h4>⬡ POSIÇÕES CLÍNICAS</h4>
+        <p>
+          <em>Decúbito Dorsal</em> — deitado de costas (supino)<br>
+          <em>Decúbito Ventral</em> — deitado de bruços (prono)<br>
+          <em>Decúbito Lateral D/E</em> — de lado direito/esquerdo<br>
+          <em>Fowler</em> — semi-sentado (30°–90°)<br>
+          <em>Trendelenburg</em> — cabeça mais baixa que os pés<br>
+          <em>Litotomia</em> — deitado, joelhos dobrados e elevados
+        </p>
+      </div>
+    </div>
+
+    <div class="body-figure-wrap reveal">
+      <div style="position:relative;">
+        <svg viewBox="0 0 200 400" style="width:250px;height:400px;" fill="none">
+          <!-- Body outline glowing -->
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#00fff5;stop-opacity:0.6"/>
+              <stop offset="100%" style="stop-color:#ff007c;stop-opacity:0.4"/>
+            </linearGradient>
+          </defs>
+          <!-- Head -->
+          <ellipse cx="100" cy="35" rx="28" ry="32" stroke="url(#bodyGrad)" stroke-width="1.5" filter="url(#glow)"/>
+          <!-- Neck -->
+          <rect x="88" y="64" width="24" height="18" rx="3" stroke="url(#bodyGrad)" stroke-width="1.5" filter="url(#glow)"/>
+          <!-- Torso -->
+          <path d="M60 82 L140 82 L145 200 L55 200 Z" stroke="url(#bodyGrad)" stroke-width="1.5" filter="url(#glow)"/>
+          <!-- Left arm -->
+          <path d="M60 90 L30 100 L20 180 L35 182 L42 110" stroke="#00fff5" stroke-width="1.5" fill="none" filter="url(#glow)"/>
+          <!-- Right arm -->
+          <path d="M140 90 L170 100 L180 180 L165 182 L158 110" stroke="#00fff5" stroke-width="1.5" fill="none" filter="url(#glow)"/>
+          <!-- Left hand -->
+          <ellipse cx="27" cy="188" rx="10" ry="14" stroke="#00fff5" stroke-width="1" filter="url(#glow)"/>
+          <!-- Right hand -->
+          <ellipse cx="173" cy="188" rx="10" ry="14" stroke="#00fff5" stroke-width="1" filter="url(#glow)"/>
+          <!-- Left leg -->
+          <path d="M80 200 L70 310 L65 360 L78 360 L85 310 L95 200" stroke="#ff007c" stroke-width="1.5" fill="none" filter="url(#glow)"/>
+          <!-- Right leg -->
+          <path d="M120 200 L130 310 L135 360 L122 360 L115 310 L105 200" stroke="#ff007c" stroke-width="1.5" fill="none" filter="url(#glow)"/>
+          <!-- Left foot -->
+          <ellipse cx="71" cy="366" rx="12" ry="7" stroke="#ff007c" stroke-width="1" filter="url(#glow)"/>
+          <!-- Right foot -->
+          <ellipse cx="129" cy="366" rx="12" ry="7" stroke="#ff007c" stroke-width="1" filter="url(#glow)"/>
+
+          <!-- Midline -->
+          <line x1="100" y1="20" x2="100" y2="390" stroke="#ffee00" stroke-width="0.5" stroke-dasharray="6,4" opacity="0.6"/>
+
+          <!-- LABELS with dots -->
+          <circle cx="100" cy="35" r="3" fill="#00fff5" opacity="0.8">
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="100" cy="140" r="3" fill="#ff007c" opacity="0.8">
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="27" cy="188" r="3" fill="#ffee00" opacity="0.8">
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="173" cy="188" r="3" fill="#ffee00" opacity="0.8">
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="100" cy="380" r="3" fill="#39ff14" opacity="0.8">
+            <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+
+        <!-- Labels -->
+        <div style="position:absolute;top:5px;right:-130px;font-family:'Share Tech Mono';font-size:0.65rem;color:var(--neon-cyan);border:1px solid var(--neon-cyan);padding:2px 8px;background:rgba(0,0,0,0.8)">SUPERIOR ▲</div>
+        <div style="position:absolute;top:140px;right:-130px;font-family:'Share Tech Mono';font-size:0.65rem;color:var(--neon-pink);border:1px solid var(--neon-pink);padding:2px 8px;background:rgba(0,0,0,0.8)">MEDIAL ←→</div>
+        <div style="position:absolute;top:170px;left:-110px;font-family:'Share Tech Mono';font-size:0.65rem;color:var(--neon-yellow);border:1px solid var(--neon-yellow);padding:2px 8px;background:rgba(0,0,0,0.8)">LATERAL →</div>
+        <div style="position:absolute;bottom:10px;right:-110px;font-family:'Share Tech Mono';font-size:0.65rem;color:var(--neon-green);border:1px solid var(--neon-green);padding:2px 8px;background:rgba(0,0,0,0.8)">INFERIOR ▼</div>
+        <div style="position:absolute;top:80px;left:-80px;font-family:'Share Tech Mono';font-size:0.6rem;color:var(--neon-orange);border:1px solid var(--neon-orange);padding:2px 6px;background:rgba(0,0,0,0.8)">PALMAS →</div>
+      </div>
+      <div style="margin-top:1.5rem;font-family:'Share Tech Mono';font-size:0.7rem;color:var(--text-dim);text-align:center;letter-spacing:2px;">
+        POSIÇÃO ANATÓMICA PADRÃO
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     CHAPTER 2: PLANOS ANATÓMICOS
+==================================== -->
+<section id="ch2" class="chapter">
+  <div class="planes-container">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 02</span>
+        PLANOS ANATÓMICOS
+      </div>
+      <h2 class="section-title purple">Cortando a Realidade</h2>
+    </div>
+
+    <div class="speech-bubble reveal" style="max-width:700px;margin-bottom:2rem;">
+      <div class="character-name">▸ PROFESSOR NEXUS</div>
+      <p class="speech-text">
+        Imagina o corpo humano como um <em>cubo de gelatina</em>. Para ver o que há dentro, precisamos de o <em>cortar</em>! Mas onde cortar? Como descrever onde cortamos? Para isso, usamos os <strong>planos anatómicos</strong> — como coordenadas num mapa tridimensional do corpo.
+      </p>
+    </div>
+
+    <div class="plane-tabs reveal">
+      <button class="plane-tab sagital active" onclick="showPlane('sagital')">▸ SAGITAL</button>
+      <button class="plane-tab frontal" onclick="showPlane('frontal')">▸ FRONTAL (CORONAL)</button>
+      <button class="plane-tab transversal" onclick="showPlane('transversal')">▸ TRANSVERSAL</button>
+      <button class="plane-tab obliquo" onclick="showPlane('obliquo')">▸ OBLÍQUO</button>
+    </div>
+
+    <!-- SAGITAL -->
+    <div class="plane-display active" id="plane-sagital">
+      <div class="plane-3d">
+        <svg viewBox="0 0 300 300" width="100%" height="100%">
+          <defs>
+            <filter id="glow2"><feGaussianBlur stdDeviation="4" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Body silhouette side view -->
+          <ellipse cx="150" cy="50" rx="25" ry="28" stroke="#00fff5" stroke-width="1.5" fill="rgba(0,255,245,0.05)" filter="url(#glow2)"/>
+          <rect x="120" y="75" width="60" height="130" rx="15" stroke="#00fff5" stroke-width="1.5" fill="rgba(0,255,245,0.05)" filter="url(#glow2)"/>
+          <path d="M135 205 L125 280 L145 280 L150 230 L155 280 L175 280 L165 205 Z" stroke="#00fff5" stroke-width="1.5" fill="rgba(0,255,245,0.05)" filter="url(#glow2)"/>
+          <!-- Sagital plane — vertical left-right cut -->
+          <line x1="150" y1="0" x2="150" y2="300" stroke="#00fff5" stroke-width="2.5" stroke-dasharray="8,4" filter="url(#glow2)"/>
+          <!-- Shaded half -->
+          <rect x="0" y="0" width="150" height="300" fill="rgba(0,255,245,0.04)"/>
+          <!-- Labels -->
+          <text x="30" y="20" fill="#00fff5" font-family="Share Tech Mono" font-size="10" opacity="0.7">ESQUERDO</text>
+          <text x="175" y="20" fill="#00fff5" font-family="Share Tech Mono" font-size="10" opacity="0.7">DIREITO</text>
+          <text x="140" y="295" fill="#ffee00" font-family="Share Tech Mono" font-size="9">MEDIANO</text>
+        </svg>
+      </div>
+      <div class="plane-info">
+        <h3 style="color:var(--neon-cyan)">Plano Sagital</h3>
+        <p>O plano sagital corre <em>verticalmente</em>, dividindo o corpo em metade <em>esquerda</em> e metade <em>direita</em>. É como a página de um livro aberto no meio do corpo.</p>
+        <p>Quando passa exactamente pelo centro, chama-se <em>Plano Sagital Médiano (ou Plano Mediano)</em>. Quando é paralelo ao médiano mas deslocado, é um <em>Plano Parasagital</em>.</p>
+        <div class="tag-list">
+          <span class="tag cyan">Vertical</span>
+          <span class="tag cyan">Anteroposterior</span>
+          <span class="tag cyan">D / E</span>
+          <span class="tag yellow">Mediano = centro exato</span>
+          <span class="tag yellow">Parasagital = deslocado</span>
+        </div>
+        <div class="info-card cyan" style="margin-top:1rem;">
+          <h4>⬡ EXEMPLO CLÍNICO</h4>
+          <p>Uma ressonância magnética (RM) em corte sagital mostra o perfil do cérebro — consegues ver o corpo caloso, o cerebelo e o tronco cerebral todos ao mesmo tempo!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FRONTAL -->
+    <div class="plane-display" id="plane-frontal">
+      <div class="plane-3d">
+        <svg viewBox="0 0 300 300" width="100%" height="100%">
+          <defs>
+            <filter id="glow3"><feGaussianBlur stdDeviation="4" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <ellipse cx="150" cy="50" rx="30" ry="30" stroke="#ff007c" stroke-width="1.5" fill="rgba(255,0,124,0.05)" filter="url(#glow3)"/>
+          <rect x="105" y="78" width="90" height="130" rx="15" stroke="#ff007c" stroke-width="1.5" fill="rgba(255,0,124,0.05)" filter="url(#glow3)"/>
+          <path d="M120 205 L105 280 L125 280 L150 230 L175 280 L195 280 L180 205 Z" stroke="#ff007c" stroke-width="1.5" fill="rgba(255,0,124,0.05)" filter="url(#glow3)"/>
+          <!-- Arms -->
+          <path d="M105 90 L60 150 L55 185" stroke="#ff007c" stroke-width="1.5" fill="none" filter="url(#glow3)"/>
+          <path d="M195 90 L240 150 L245 185" stroke="#ff007c" stroke-width="1.5" fill="none" filter="url(#glow3)"/>
+          <!-- Frontal plane -->
+          <line x1="0" y1="150" x2="300" y2="150" stroke="#ff007c" stroke-width="2.5" stroke-dasharray="8,4" filter="url(#glow3)"/>
+          <rect x="0" y="0" width="300" height="150" fill="rgba(255,0,124,0.04)"/>
+          <text x="10" y="140" fill="#ff007c" font-family="Share Tech Mono" font-size="10" opacity="0.8">ANTERIOR</text>
+          <text x="10" y="175" fill="#ff007c" font-family="Share Tech Mono" font-size="10" opacity="0.8">POSTERIOR</text>
+        </svg>
+      </div>
+      <div class="plane-info">
+        <h3 style="color:var(--neon-pink)">Plano Frontal (Coronal)</h3>
+        <p>O plano frontal corre <em>verticalmente</em>, mas perpendicular ao sagital — divide o corpo em metade <em>anterior (frente)</em> e metade <em>posterior (costas)</em>.</p>
+        <p>Também chamado <em>Plano Coronal</em> porque passa pelo osso coronal do crânio. É como dividir o corpo com uma parede de vidro que o atravessa de um lado ao outro.</p>
+        <div class="tag-list">
+          <span class="tag pink">Vertical</span>
+          <span class="tag pink">Frente / Costas</span>
+          <span class="tag pink">Anterior / Posterior</span>
+          <span class="tag yellow">= Plano Coronal</span>
+        </div>
+        <div class="info-card pink" style="margin-top:1rem;">
+          <h4>⬡ EXEMPLO CLÍNICO</h4>
+          <p>O corte coronal de um TAC do cérebro mostra os dois hemisférios lado a lado — ideal para comparar simetria!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSVERSAL -->
+    <div class="plane-display" id="plane-transversal">
+      <div class="plane-3d">
+        <svg viewBox="0 0 300 300" width="100%" height="100%">
+          <defs>
+            <filter id="glow4"><feGaussianBlur stdDeviation="4" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <ellipse cx="150" cy="50" rx="30" ry="30" stroke="#ffee00" stroke-width="1.5" fill="rgba(255,238,0,0.05)" filter="url(#glow4)"/>
+          <rect x="105" y="78" width="90" height="130" rx="15" stroke="#ffee00" stroke-width="1.5" fill="rgba(255,238,0,0.05)" filter="url(#glow4)"/>
+          <path d="M120 205 L105 280 L125 280 L150 230 L175 280 L195 280 L180 205 Z" stroke="#ffee00" stroke-width="1.5" fill="rgba(255,238,0,0.05)" filter="url(#glow4)"/>
+          <path d="M105 90 L60 150 L55 185" stroke="#ffee00" stroke-width="1.5" fill="none" filter="url(#glow4)"/>
+          <path d="M195 90 L240 150 L245 185" stroke="#ffee00" stroke-width="1.5" fill="none" filter="url(#glow4)"/>
+          <!-- Transverse plane — horizontal cut -->
+          <ellipse cx="150" cy="140" rx="80" ry="15" stroke="#ffee00" stroke-width="2.5" fill="rgba(255,238,0,0.1)" stroke-dasharray="8,4" filter="url(#glow4)"/>
+          <line x1="70" y1="140" x2="230" y2="140" stroke="#ffee00" stroke-width="1" opacity="0.5"/>
+          <text x="240" y="135" fill="#ffee00" font-family="Share Tech Mono" font-size="9" opacity="0.8">SUPERIOR</text>
+          <text x="240" y="150" fill="#ffee00" font-family="Share Tech Mono" font-size="9" opacity="0.8">INFERIOR</text>
+        </svg>
+      </div>
+      <div class="plane-info">
+        <h3 style="color:var(--neon-yellow)">Plano Transversal (Horizontal)</h3>
+        <p>O plano transversal é <em>horizontal</em> — perpendicular ao eixo longo do corpo. Divide o corpo em metade <em>superior (cranial)</em> e metade <em>inferior (caudal)</em>.</p>
+        <p>É o plano dos <em>TAC axiais</em> — as "fatias" que vês quando fazes um escâner! Imagina cortar um salame — cada fatia é uma secção transversal.</p>
+        <div class="tag-list">
+          <span class="tag yellow">Horizontal</span>
+          <span class="tag yellow">Cima / Baixo</span>
+          <span class="tag yellow">Superior / Inferior</span>
+          <span class="tag green">= Plano Axial</span>
+        </div>
+        <div class="info-card yellow" style="margin-top:1rem;">
+          <h4>⬡ EXEMPLO CLÍNICO</h4>
+          <p>O TAC abdominal em corte axial/transversal permite ver o fígado, rins e aorta na mesma "fatia" do corpo!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBLIQUO -->
+    <div class="plane-display" id="plane-obliquo">
+      <div class="plane-3d">
+        <svg viewBox="0 0 300 300" width="100%" height="100%">
+          <defs>
+            <filter id="glow5"><feGaussianBlur stdDeviation="4" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <ellipse cx="150" cy="50" rx="30" ry="30" stroke="#39ff14" stroke-width="1.5" fill="rgba(57,255,20,0.05)" filter="url(#glow5)"/>
+          <rect x="105" y="78" width="90" height="130" rx="15" stroke="#39ff14" stroke-width="1.5" fill="rgba(57,255,20,0.05)" filter="url(#glow5)"/>
+          <path d="M120 205 L105 280 L125 280 L150 230 L175 280 L195 280 L180 205 Z" stroke="#39ff14" stroke-width="1.5" fill="rgba(57,255,20,0.05)" filter="url(#glow5)"/>
+          <!-- Oblique plane — diagonal cut -->
+          <line x1="30" y1="80" x2="270" y2="220" stroke="#39ff14" stroke-width="2.5" stroke-dasharray="8,4" filter="url(#glow5)"/>
+          <text x="30" y="75" fill="#39ff14" font-family="Share Tech Mono" font-size="9">PLANO OBLÍQUO</text>
+          <text x="100" y="160" fill="#39ff14" font-family="Share Tech Mono" font-size="8" opacity="0.6">qualquer ângulo</text>
+        </svg>
+      </div>
+      <div class="plane-info">
+        <h3 style="color:var(--neon-green)">Plano Oblíquo</h3>
+        <p>O plano oblíquo não é vertical nem horizontal — cruza o corpo em <em>qualquer ângulo diagonal</em>. Não é paralelo a nenhum dos planos principais.</p>
+        <p>Embora menos usado como referência padrão, é fundamental em <em>exames de imagem e cirurgia</em> para visualizar estruturas que não se alinham com os planos cardinais.</p>
+        <div class="tag-list">
+          <span class="tag green">Diagonal</span>
+          <span class="tag green">Qualquer ângulo</span>
+          <span class="tag green">Não é cardinal</span>
+        </div>
+        <div class="info-card green" style="margin-top:1rem;">
+          <h4>⬡ EXEMPLO CLÍNICO</h4>
+          <p>Ecocardiogramas usam planos oblíquos para visualizar as válvulas cardíacas, que não se alinham com nenhum plano padrão!</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================
+     CHAPTER 3: CAVIDADES CORPORAIS
+==================================== -->
+<section id="ch3" class="chapter">
+  <div class="cavidades-grid">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 03</span>
+        CAVIDADES CORPORAIS
+      </div>
+      <h2 class="section-title green">Os "Compartimentos" do Corpo</h2>
+
+      <div class="speech-bubble">
+        <div class="character-name">▸ PROFESSOR NEXUS</div>
+        <p class="speech-text">
+          O corpo humano não é um bloco sólido — é cheio de <em>espaços organizados</em>, como um apartamento com quartos separados! Cada cavidade aloja e <em>protege órgãos específicos</em>. Conhecer estas cavidades é saber onde "moram" os órgãos!
+        </p>
+      </div>
+
+      <!-- TREE: Cavidade Dorsal -->
+      <div class="tree-node reveal">
+        <div class="tree-node-main" style="border-color:var(--neon-cyan);color:var(--neon-cyan);" onclick="toggleTree(this)">
+          <span>◈ CAVIDADE DORSAL (POSTERIOR)</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="tree-children">
+          <div class="tree-leaf" style="border-color:var(--neon-cyan)">
+            <strong>Cavidade Craniana</strong><br>
+            Aloja o <em>encéfalo</em> (cérebro, cerebelo, tronco cerebral). Protegida pelos ossos do crânio (calvária).
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-cyan)">
+            <strong>Canal Vertebral (Raquidiano)</strong><br>
+            Corre ao longo de toda a coluna vertebral. Aloja a <em>medula espinhal</em> e as meninges. Contínuo com a cavidade craniana.
+          </div>
+        </div>
+      </div>
+
+      <!-- TREE: Cavidade Ventral -->
+      <div class="tree-node reveal">
+        <div class="tree-node-main" style="border-color:var(--neon-pink);color:var(--neon-pink);" onclick="toggleTree(this)">
+          <span>◈ CAVIDADE VENTRAL (ANTERIOR)</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="tree-children">
+          <div class="tree-leaf" style="border-color:var(--neon-pink)">
+            <strong>Cavidade Torácica</strong><br>
+            Separada da abdominal pelo <em>diafragma</em>. Contém: <em>pulmões + pleura, coração + pericárdio, esófago, traqueia, grandes vasos.</em>
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-pink)">
+            <strong>↳ Mediastino</strong><br>
+            Compartimento central do tórax, entre os dois pulmões. Aloja coração, grandes vasos, esófago, traqueia e nervos.
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-pink)">
+            <strong>↳ Cavidades Pleurais (×2)</strong><br>
+            Envolvem cada pulmão. Entre a pleura visceral (pulmão) e parietal (parede). Contêm líquido pleural.
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-orange)">
+            <strong>Cavidade Abdominopélvica</strong><br>
+            É uma cavidade contínua, mas dividida didacticamente em abdominal e pélvica.
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-orange)">
+            <strong>↳ Cavidade Abdominal</strong><br>
+            Estômago, intestinos, fígado, vesícula, pâncreas, baço, rins (retroperitoneal).
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-orange)">
+            <strong>↳ Cavidade Pélvica</strong><br>
+            Abaixo do promontório sacral. Bexiga, recto, órgãos reprodutores.
+          </div>
+        </div>
+      </div>
+
+      <!-- TREE: Outras Cavidades -->
+      <div class="tree-node reveal">
+        <div class="tree-node-main" style="border-color:var(--neon-yellow);color:var(--neon-yellow);" onclick="toggleTree(this)">
+          <span>◈ OUTRAS CAVIDADES MENORES</span>
+          <span class="arrow">▶</span>
+        </div>
+        <div class="tree-children">
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidade Oral</strong> — boca (dentes, língua, glândulas)
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidade Nasal</strong> — septo nasal, conchas nasais, órgão olfativo
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidades Orbitárias (×2)</strong> — olhos + estruturas de suporte
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidades do Ouvido Médio (×2)</strong> — ossículos: martelo, bigorna, estribo
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidade Sinovial</strong> — espaço nas articulações (lubrificação)
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidade Pericárdica</strong> — envolve o coração; líquido pericárdico
+          </div>
+          <div class="tree-leaf" style="border-color:var(--neon-yellow)">
+            <strong>Cavidade Peritoneal</strong> — dentro do abdómen; líquido ascítico em patologia
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-green);font-size:1rem;letter-spacing:2px;margin-bottom:1.5rem;">DIAGRAMA CAVIDADES</h3>
+      <!-- Body with cavities highlighted -->
+      <svg viewBox="0 0 200 450" style="width:100%;max-width:300px;" fill="none">
+        <defs>
+          <filter id="g6"><feGaussianBlur stdDeviation="3" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Body outline -->
+        <ellipse cx="100" cy="35" rx="28" ry="30" stroke="#888" stroke-width="1" fill="rgba(255,255,255,0.02)"/>
+        <rect x="70" y="63" width="60" height="15" rx="4" stroke="#888" stroke-width="1" fill="rgba(255,255,255,0.02)"/>
+        <path d="M60 78 L140 78 L145 200 L55 200 Z" stroke="#888" stroke-width="1" fill="rgba(255,255,255,0.02)"/>
+        <path d="M58 200 L50 310 L62 310 L68 248 L100 260 L132 248 L138 310 L150 310 L142 200 Z" stroke="#888" stroke-width="1" fill="rgba(255,255,255,0.02)"/>
+
+        <!-- Cranial cavity -->
+        <ellipse cx="100" cy="30" rx="20" ry="22" fill="rgba(0,255,245,0.2)" stroke="#00fff5" stroke-width="1.5" filter="url(#g6)"/>
+        <text x="125" y="28" fill="#00fff5" font-family="Share Tech Mono" font-size="7">CRANIANA</text>
+        <line x1="120" y1="28" x2="135" y2="28" stroke="#00fff5" stroke-width="0.8"/>
+
+        <!-- Spinal canal -->
+        <rect x="96" y="65" width="8" height="130" rx="2" fill="rgba(0,255,245,0.15)" stroke="#00fff5" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="108" y="130" fill="#00fff5" font-family="Share Tech Mono" font-size="6">CANAL</text>
+        <text x="108" y="140" fill="#00fff5" font-family="Share Tech Mono" font-size="6">VERT.</text>
+
+        <!-- Thoracic cavity -->
+        <path d="M68 85 L132 85 L136 150 L64 150 Z" fill="rgba(255,0,124,0.15)" stroke="#ff007c" stroke-width="1.5" filter="url(#g6)"/>
+        <text x="30" y="110" fill="#ff007c" font-family="Share Tech Mono" font-size="7">TORÁCICA</text>
+        <line x1="67" y1="110" x2="55" y2="110" stroke="#ff007c" stroke-width="0.8"/>
+
+        <!-- Abdominal cavity -->
+        <path d="M65 152 L135 152 L140 195 L60 195 Z" fill="rgba(255,106,0,0.15)" stroke="#ff6a00" stroke-width="1.5" filter="url(#g6)"/>
+        <text x="148" y="170" fill="#ff6a00" font-family="Share Tech Mono" font-size="7">ABDOM.</text>
+        <line x1="138" y1="170" x2="147" y2="170" stroke="#ff6a00" stroke-width="0.8"/>
+
+        <!-- Pelvic cavity -->
+        <path d="M62 197 L138 197 L135 230 L65 230 Z" fill="rgba(191,0,255,0.2)" stroke="#bf00ff" stroke-width="1.5" filter="url(#g6)"/>
+        <text x="148" y="215" fill="#bf00ff" font-family="Share Tech Mono" font-size="7">PÉLVICA</text>
+        <line x1="136" y1="215" x2="147" y2="215" stroke="#bf00ff" stroke-width="0.8"/>
+
+        <!-- Diaphragm line -->
+        <path d="M63 152 Q100 148 137 152" stroke="#ffee00" stroke-width="2" fill="none"/>
+        <text x="30" y="147" fill="#ffee00" font-family="Share Tech Mono" font-size="6">DIAFRAGMA</text>
+        <line x1="63" y1="148" x2="45" y2="148" stroke="#ffee00" stroke-width="0.8"/>
+
+        <!-- Dorsal vs Ventral label -->
+        <text x="5" y="290" fill="#39ff14" font-family="Share Tech Mono" font-size="7" writing-mode="vertical-rl">DORSAL</text>
+        <text x="185" y="290" fill="#ff007c" font-family="Share Tech Mono" font-size="7" writing-mode="vertical-rl">VENTRAL</text>
+      </svg>
+
+      <div class="info-card orange reveal" style="margin-top:1.5rem;">
+        <h4>⬡ PERITONEU — O "SACO" ABDOMINAL</h4>
+        <p>O peritoneu é uma membrana serosa que reveste a cavidade abdominal. Os órgãos podem ser:<br>
+        <em>Intraperitoneais</em> — envolvidos pelo peritoneu (estômago, jejuno, íleon, cólon transverso, baço, fígado)<br>
+        <em>Retroperitoneais</em> — atrás do peritoneu (rins, uréteres, pâncreas, aorta, VCI)<br>
+        <em>Subperitoneais</em> — abaixo do peritoneu (bexiga, útero, recto distal)
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     CHAPTER 4: TERMINOLOGIA ANATÓMICA
+==================================== -->
+<section id="ch4" class="chapter">
+  <div class="termo-categories">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 04</span>
+        TERMINOLOGIA ANATÓMICA
+      </div>
+      <h2 class="section-title orange">A Linguagem do Corpo</h2>
+      <div class="speech-bubble" style="max-width:800px;">
+        <div class="character-name">▸ PROFESSOR NEXUS</div>
+        <p class="speech-text">
+          A terminologia anatómica é a <em>linguagem universal dos médicos</em>. Sem ela, seria como tentar dar direções sem usar "norte/sul/direita/esquerda". Cada termo tem um <strong>oposto</strong> — sempre em pares! Vamos descobrir todos!
+        </p>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 1: POSIÇÃO RELATIVA -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-cyan);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 01 — POSIÇÃO RELATIVA NO EIXO VERTICAL
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>SUPERIOR / CRANIAL</h4>
+          <div class="termo-opposite">↔ oposto: INFERIOR / CAUDAL</div>
+          <p>Mais próximo da <em>cabeça</em> (extremidade cranial). Em estruturas do tronco, usa-se "superior"; em membros, preferem-se outros termos.</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: O coração é superior ao diafragma.</p>
+        </div>
+        <div class="info-card pink">
+          <h4>INFERIOR / CAUDAL</h4>
+          <div class="termo-opposite">↔ oposto: SUPERIOR / CRANIAL</div>
+          <p>Mais próximo dos <em>pés</em> (extremidade caudal). Caudal — do latim "cauda" (cauda/rabo).</p>
+          <p class="termo-example" style="color:var(--neon-pink)">Ex: O umbigo é inferior ao esterno.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 2: FRENTE/COSTAS -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-pink);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 02 — POSIÇÃO RELATIVA FRENTE / COSTAS
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>ANTERIOR / VENTRAL</h4>
+          <div class="termo-opposite">↔ oposto: POSTERIOR / DORSAL</div>
+          <p>Em direção à <em>frente do corpo</em>. "Ventral" vem de "ventre" (barriga). Nos membros, usa-se <em>flexor</em> como sinónimo contextual.</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: O esterno é anterior ao coração.</p>
+        </div>
+        <div class="info-card pink">
+          <h4>POSTERIOR / DORSAL</h4>
+          <div class="termo-opposite">↔ oposto: ANTERIOR / VENTRAL</div>
+          <p>Em direção às <em>costas</em>. "Dorsal" vem de "dorsum" (dorso). Nos membros, lado das costas da mão/pé.</p>
+          <p class="termo-example" style="color:var(--neon-pink)">Ex: A coluna vertebral é posterior ao coração.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 3: MÉDIO/LATERAL -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-yellow);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 03 — POSIÇÃO RELATIVA AO EIXO CENTRAL
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>MEDIAL / INTERNO</h4>
+          <div class="termo-opposite">↔ oposto: LATERAL / EXTERNO</div>
+          <p>Mais próximo do <em>plano mediano</em> (linha central do corpo). Também "interno" (dentro de uma cavidade).</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: O nariz é medial aos olhos.</p>
+        </div>
+        <div class="info-card yellow">
+          <h4>LATERAL / EXTERNO</h4>
+          <div class="termo-opposite">↔ oposto: MEDIAL / INTERNO</div>
+          <p>Mais afastado do <em>plano mediano</em>. "Externo" — fora de uma cavidade ou estrutura.</p>
+          <p class="termo-example" style="color:var(--neon-yellow)">Ex: As orelhas são laterais ao nariz.</p>
+        </div>
+        <div class="info-card green">
+          <h4>IPSILATERAL / HOMOLATERAL</h4>
+          <div class="termo-opposite">↔ oposto: CONTRALATERAL</div>
+          <p>Do <em>mesmo lado</em>. "Ipsi" = mesmo (latim). Ipsilateral ao acidente vascular = no mesmo lado da lesão.</p>
+          <p class="termo-example" style="color:var(--neon-green)">Ex: A mão ipsilateral ao AVC = mão do mesmo lado da lesão.</p>
+        </div>
+        <div class="info-card orange">
+          <h4>CONTRALATERAL</h4>
+          <div class="termo-opposite">↔ oposto: IPSILATERAL</div>
+          <p>Do <em>lado oposto</em>. As fibras motoras cruzam-se no tronco cerebral, por isso uma lesão cerebral causa défice contralateral!</p>
+          <p class="termo-example" style="color:var(--neon-orange)">Ex: AVC no hemisfério E → fraqueza contralateral D.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 4: PROXIMAL/DISTAL -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-green);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 04 — POSIÇÃO NOS MEMBROS (PROXIMIDADE COM RAIZ)
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>PROXIMAL</h4>
+          <div class="termo-opposite">↔ oposto: DISTAL</div>
+          <p>Mais próximo da <em>raiz / origem / ponto de inserção</em> do membro ou estrutura. "Proximo" = perto.</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: O cotovelo é proximal ao pulso. / A aorta proximal = perto do coração.</p>
+        </div>
+        <div class="info-card pink">
+          <h4>DISTAL</h4>
+          <div class="termo-opposite">↔ oposto: PROXIMAL</div>
+          <p>Mais afastado da <em>raiz / origem</em>. "Distans" = distante. Nos vasos = afastado do coração.</p>
+          <p class="termo-example" style="color:var(--neon-pink)">Ex: Os dedos são distais ao cotovelo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 5: SUPERFICIAL/PROFUNDO -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-purple);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 05 — PROFUNDIDADE TECIDUAL
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>SUPERFICIAL</h4>
+          <div class="termo-opposite">↔ oposto: PROFUNDO</div>
+          <p>Mais próximo da <em>superfície externa</em> do corpo (pele). Tendões superficiais, fascia superficial.</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: A veia cefálica é superficial à fáscia braquial.</p>
+        </div>
+        <div class="info-card purple">
+          <h4>PROFUNDO / INTERNO</h4>
+          <div class="termo-opposite">↔ oposto: SUPERFICIAL</div>
+          <p>Mais afastado da superfície, em direção ao <em>interior do corpo</em>. Veias profundas = próximas do osso.</p>
+          <p class="termo-example" style="color:var(--neon-purple)">Ex: O fémur é profundo à musculatura da coxa.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 6: PALMAR/PLANTAR/DORSAL -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-orange);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 06 — TERMOS ESPECÍFICOS DA MÃO E DO PÉ
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card orange">
+          <h4>PALMAR / VOLAR</h4>
+          <div class="termo-opposite">↔ oposto: DORSAL (da mão)</div>
+          <p>Relativo à <em>palma da mão</em>. "Palmar" é o lado que toca nos objetos. "Volar" é sinónimo antigo.</p>
+          <p class="termo-example" style="color:var(--neon-orange)">Ex: Os músculos lumbricais são palmares.</p>
+        </div>
+        <div class="info-card cyan">
+          <h4>DORSAL (da mão)</h4>
+          <div class="termo-opposite">↔ oposto: PALMAR</div>
+          <p>Relativo ao <em>dorso da mão</em> (costas da mão). Veias dorsais da mão são visíveis neste lado.</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: Os tendões extensores são dorsais.</p>
+        </div>
+        <div class="info-card yellow">
+          <h4>PLANTAR</h4>
+          <div class="termo-opposite">↔ oposto: DORSAL (do pé)</div>
+          <p>Relativo à <em>planta do pé</em>. É o lado que toca no chão quando caminhamos.</p>
+          <p class="termo-example" style="color:var(--neon-yellow)">Ex: A fáscia plantar é na sola do pé.</p>
+        </div>
+        <div class="info-card green">
+          <h4>DORSAL (do pé)</h4>
+          <div class="termo-opposite">↔ oposto: PLANTAR</div>
+          <p>Relativo ao <em>dorso do pé</em> (peito do pé). A artéria dorsal do pé pulsa aqui!</p>
+          <p class="termo-example" style="color:var(--neon-green)">Ex: Extensão dorsal dos dedos do pé.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECÇÃO 7: RADIAL/ULNAR/TIBIAL/FIBULAR -->
+    <div class="termo-section reveal">
+      <h3 style="font-family:'Orbitron';color:var(--neon-cyan);font-size:1rem;letter-spacing:3px;margin-bottom:1rem;">
+        ◈ 07 — TERMOS ESPECÍFICOS DOS MEMBROS
+      </h3>
+      <div class="termo-grid">
+        <div class="info-card cyan">
+          <h4>RADIAL</h4>
+          <div class="termo-opposite">↔ oposto: ULNAR / CUBITAL</div>
+          <p>Lado do <em>rádio</em> no antebraço — lado do <em>polegar</em>. Artéria radial é onde se mede o pulso!</p>
+          <p class="termo-example" style="color:var(--neon-cyan)">Ex: Desvio radial do pulso = desvio para o lado do polegar.</p>
+        </div>
+        <div class="info-card pink">
+          <h4>ULNAR / CUBITAL</h4>
+          <div class="termo-opposite">↔ oposto: RADIAL</div>
+          <p>Lado da <em>ulna</em> no antebraço — lado do <em>dedo mindinho</em>. Nervo ulnar passa aqui.</p>
+          <p class="termo-example" style="color:var(--neon-pink)">Ex: Desvio ulnar = para o lado do mindinho.</p>
+        </div>
+        <div class="info-card yellow">
+          <h4>TIBIAL / MEDIAL (da perna)</h4>
+          <div class="termo-opposite">↔ oposto: FIBULAR / PERONEAL</div>
+          <p>Lado da <em>tíbia</em> na perna — lado <em>medial</em> (interno). Artéria tibial posterior aqui.</p>
+          <p class="termo-example" style="color:var(--neon-yellow)">Ex: Maléolo tibial = o "calombo" interno do tornozelo.</p>
+        </div>
+        <div class="info-card green">
+          <h4>FIBULAR / PERONEAL</h4>
+          <div class="termo-opposite">↔ oposto: TIBIAL</div>
+          <p>Lado da <em>fíbula/peróneo</em> na perna — lado <em>lateral</em> (externo). Nervo fibular comum passa aqui.</p>
+          <p class="termo-example" style="color:var(--neon-green)">Ex: Maléolo fibular = "calombo" externo do tornozelo.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ====================================
+     CHAPTER 5: REGIÕES ABDOMINAIS
+==================================== -->
+<section id="ch5" class="chapter" style="background:linear-gradient(180deg,#08020a 0%,#020810 100%);padding:6rem 2rem;">
+  <div class="regions-container">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 05</span>
+        REGIÕES CORPORAIS & ABDOMINAIS
+      </div>
+      <h2 class="section-title yellow">O Mapa do Abdómen</h2>
+      <div class="speech-bubble" style="max-width:700px;">
+        <div class="character-name">▸ PROFESSOR NEXUS</div>
+        <p class="speech-text">Para localizar a dor ou um órgão no abdómen, os médicos usam um <em>sistema de coordenadas</em>! Há duas formas: dividir em <em>4 quadrantes</em> (mais simples) ou em <em>9 regiões</em> (mais preciso).</p>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;">
+      <div class="reveal">
+        <h3 style="font-family:'Orbitron';color:var(--neon-yellow);font-size:0.9rem;letter-spacing:2px;margin-bottom:1rem;">▸ 4 QUADRANTES (CLÍNICO)</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;max-width:280px;">
+          <div style="padding:1rem;background:rgba(0,255,245,0.1);border:1px solid rgba(0,255,245,0.4);font-family:'Share Tech Mono';font-size:0.7rem;color:var(--neon-cyan);text-align:center;">
+            QSE<br><span style="font-size:0.55rem;opacity:0.7">Quadrante</span><br><span style="font-size:0.55rem;opacity:0.7">Superior Esquerdo</span>
+          </div>
+          <div style="padding:1rem;background:rgba(255,0,124,0.1);border:1px solid rgba(255,0,124,0.4);font-family:'Share Tech Mono';font-size:0.7rem;color:var(--neon-pink);text-align:center;">
+            QSD<br><span style="font-size:0.55rem;opacity:0.7">Quadrante</span><br><span style="font-size:0.55rem;opacity:0.7">Superior Direito</span>
+          </div>
+          <div style="padding:1rem;background:rgba(255,238,0,0.1);border:1px solid rgba(255,238,0,0.4);font-family:'Share Tech Mono';font-size:0.7rem;color:var(--neon-yellow);text-align:center;">
+            QIE<br><span style="font-size:0.55rem;opacity:0.7">Quadrante</span><br><span style="font-size:0.55rem;opacity:0.7">Inferior Esquerdo</span>
+          </div>
+          <div style="padding:1rem;background:rgba(57,255,20,0.1);border:1px solid rgba(57,255,20,0.4);font-family:'Share Tech Mono';font-size:0.7rem;color:var(--neon-green);text-align:center;">
+            QID<br><span style="font-size:0.55rem;opacity:0.7">Quadrante</span><br><span style="font-size:0.55rem;opacity:0.7">Inferior Direito</span>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:0.85rem;color:var(--text-dim);line-height:1.7;">
+          <span style="color:var(--neon-cyan)">QSD:</span> Fígado, vesícula, flexura hepática do cólon, parte do rim D<br>
+          <span style="color:var(--neon-pink)">QSE:</span> Estômago, baço, pâncreas, flexura esplénica, rim E<br>
+          <span style="color:var(--neon-yellow)">QIE:</span> Cólon sigmoide, ovário E, parte do intestino delgado<br>
+          <span style="color:var(--neon-green)">QID:</span> Apêndice, ceco, ovário D, íleon terminal
+        </div>
+      </div>
+
+      <div class="reveal">
+        <h3 style="font-family:'Orbitron';color:var(--neon-purple);font-size:0.9rem;letter-spacing:2px;margin-bottom:1rem;">▸ 9 REGIÕES (PRECISO)</h3>
+        <div class="region-map" id="regionMap">
+          <div class="region-cell" onclick="selectRegion(this,'Hipocôndrio Esquerdo','Baço, fundo gástrico, pâncreas corpo, ângulo esplénico do cólon, polo sup. rim E')">HC ESQ</div>
+          <div class="region-cell" onclick="selectRegion(this,'Epigástrio','Estômago, duodeno proximal, fígado (esq), pâncreas, aorta abdominal, plexo celíaco')">EPIGÁSTRIO</div>
+          <div class="region-cell" onclick="selectRegion(this,'Hipocôndrio Direito','Fígado (lobo D), vesícula biliar, ângulo hepático do cólon, polo sup. rim D, glândula suprarrenal D')">HC DIR</div>
+          <div class="region-cell" onclick="selectRegion(this,'Flanco Esquerdo','Rim E (corpo), ureter E, cólon descendente, jejuno distal')">FLANCO ESQ</div>
+          <div class="region-cell" onclick="selectRegion(this,'Umbilical','Intestino delgado, cólon transverso, vasos mesentéricos, porção inferior aorta e VCI')">UMBILICAL</div>
+          <div class="region-cell" onclick="selectRegion(this,'Flanco Direito','Rim D (corpo), ureter D, cólon ascendente, parte do duodeno')">FLANCO DIR</div>
+          <div class="region-cell" onclick="selectRegion(this,'Fossa Ilíaca Esquerda','Cólon sigmoide, ovário E, trompa E, ureter E distal')">FI ESQ</div>
+          <div class="region-cell" onclick="selectRegion(this,'Hipogástrio / Púbico','Bexiga, útero, próstata, recto, cólon sigmoide, vasos ilíacos')">HIPOGÁSTRIO</div>
+          <div class="region-cell" onclick="selectRegion(this,'Fossa Ilíaca Direita','Apêndice vermiforme, ceco, ovário D, trompa D, ureter D distal, íleon terminal')">FI DIR</div>
+        </div>
+        <div id="regionInfo" style="margin-top:1rem;padding:1rem;border:1px solid rgba(191,0,255,0.3);background:rgba(191,0,255,0.05);display:none;border-radius:2px;">
+          <div id="regionName" style="font-family:'Orbitron';font-size:0.8rem;color:var(--neon-purple);margin-bottom:0.5rem;"></div>
+          <div id="regionOrgans" style="font-size:0.85rem;color:var(--text-main);line-height:1.5;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     CHAPTER 6: MOVIMENTOS
+==================================== -->
+<section id="ch6" class="chapter">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CAP. 06</span>
+        MOVIMENTOS ANATÓMICOS
+      </div>
+      <h2 class="section-title green">O Dicionário do Movimento</h2>
+      <div class="speech-bubble" style="max-width:700px;margin-bottom:2rem;">
+        <div class="character-name">▸ PROFESSOR NEXUS</div>
+        <p class="speech-text">Os movimentos do corpo também têm <em>nomes precisos</em> — cada movimento tem um par oposto! Conhecê-los é essencial para a clínica: "flexão do joelho", "abdução do ombro", "pronação do antebraço"...</p>
+      </div>
+    </div>
+
+    <div class="movement-grid reveal">
+      <div class="movement-card" style="border-color:rgba(0,255,245,0.4);">
+        <span class="move-icon">↗</span>
+        <h4 style="color:var(--neon-cyan)">FLEXÃO</h4>
+        <div class="opposite" style="color:var(--neon-pink)">↔ EXTENSÃO</div>
+        <p>Diminui o ângulo entre os ossos de uma articulação. Dobrar o joelho, o cotovelo, fechar a mão.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,0,124,0.4);">
+        <span class="move-icon">↙</span>
+        <h4 style="color:var(--neon-pink)">EXTENSÃO</h4>
+        <div class="opposite" style="color:var(--neon-cyan)">↔ FLEXÃO</div>
+        <p>Aumenta o ângulo entre os ossos. Esticar o joelho, o cotovelo, abrir a mão.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,238,0,0.4);">
+        <span class="move-icon">↔</span>
+        <h4 style="color:var(--neon-yellow)">ABDUÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-orange)">↔ ADUÇÃO</div>
+        <p>Afasta o membro do <em>plano mediano</em>. "Ab" = afastar. Levantar o braço lateralmente.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,106,0,0.4);">
+        <span class="move-icon">⇔</span>
+        <h4 style="color:var(--neon-orange)">ADUÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-yellow)">↔ ABDUÇÃO</div>
+        <p>Aproxima o membro do <em>plano mediano</em>. "Ad" = em direção a. Baixar o braço ao longo do corpo.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(57,255,20,0.4);">
+        <span class="move-icon">↻</span>
+        <h4 style="color:var(--neon-green)">ROTAÇÃO MEDIAL</h4>
+        <div class="opposite" style="color:var(--neon-purple)">↔ ROT. LATERAL</div>
+        <p>Roda o membro em direção ao <em>plano mediano</em>. Também chamada rotação interna.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(191,0,255,0.4);">
+        <span class="move-icon">↺</span>
+        <h4 style="color:var(--neon-purple)">ROTAÇÃO LATERAL</h4>
+        <div class="opposite" style="color:var(--neon-green)">↔ ROT. MEDIAL</div>
+        <p>Roda o membro para <em>afastar do plano mediano</em>. Também chamada rotação externa.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(0,123,255,0.4);">
+        <span class="move-icon">🔄</span>
+        <h4 style="color:var(--neon-blue)">CIRCUNDUÇÃO</h4>
+        <div class="opposite" style="color:var(--text-dim)">combina todos</div>
+        <p>Movimento <em>circular</em> = combinação sequencial de flexão, abdução, extensão, adução. "Rodopiar" o braço.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(0,255,245,0.4);">
+        <span class="move-icon">✋</span>
+        <h4 style="color:var(--neon-cyan)">SUPINAÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-pink)">↔ PRONAÇÃO</div>
+        <p>Palma volta para <em>cima/frente</em> (posição anatómica). Rádio e ulna ficam paralelos. "Aceitar sopa numa colher."</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,0,124,0.4);">
+        <span class="move-icon">🤚</span>
+        <h4 style="color:var(--neon-pink)">PRONAÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-cyan)">↔ SUPINAÇÃO</div>
+        <p>Palma volta para <em>baixo/trás</em>. Rádio cruza sobre a ulna. "Virar a colher ao contrário."</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,238,0,0.4);">
+        <span class="move-icon">👣</span>
+        <h4 style="color:var(--neon-yellow)">DORSIFLEXÃO</h4>
+        <div class="opposite" style="color:var(--neon-orange)">↔ FLEXÃO PLANTAR</div>
+        <p>No pé: puxar os dedos para cima (dorso). "Levantar a ponta do pé".</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,106,0,0.4);">
+        <span class="move-icon">🩰</span>
+        <h4 style="color:var(--neon-orange)">FLEXÃO PLANTAR</h4>
+        <div class="opposite" style="color:var(--neon-yellow)">↔ DORSIFLEXÃO</div>
+        <p>No pé: apontar os dedos para baixo. "Ficar na ponta dos pés".</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(57,255,20,0.4);">
+        <span class="move-icon">↕</span>
+        <h4 style="color:var(--neon-green)">ELEVAÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-purple)">↔ DEPRESSÃO</div>
+        <p>Mover uma estrutura para <em>cima</em>. Encolher os ombros = elevação da escápula.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(191,0,255,0.4);">
+        <span class="move-icon">⬇</span>
+        <h4 style="color:var(--neon-purple)">DEPRESSÃO</h4>
+        <div class="opposite" style="color:var(--neon-green)">↔ ELEVAÇÃO</div>
+        <p>Mover uma estrutura para <em>baixo</em>. Descer os ombros = depressão da escápula.</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(0,255,245,0.4);">
+        <span class="move-icon">↗↖</span>
+        <h4 style="color:var(--neon-cyan)">PROTRACÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-pink)">↔ RETRACÇÃO</div>
+        <p>Mover para <em>frente</em> no plano transversal. "Empurrar os ombros para a frente".</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,0,124,0.4);">
+        <span class="move-icon">↙↘</span>
+        <h4 style="color:var(--neon-pink)">RETRACÇÃO</h4>
+        <div class="opposite" style="color:var(--neon-cyan)">↔ PROTRACÇÃO</div>
+        <p>Mover para <em>trás</em> no plano transversal. "Juntar as omoplatas".</p>
+      </div>
+      <div class="movement-card" style="border-color:rgba(255,238,0,0.4);">
+        <span class="move-icon">🦶</span>
+        <h4 style="color:var(--neon-yellow)">INVERSÃO</h4>
+        <div class="opposite" style="color:var(--neon-orange)">↔ EVERSÃO</div>
+        <p>No pé: planta vira para <em>dentro</em>. Movimento que ocorre nas entorses do tornozelo!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     TIMELINE CRONOLÓGICA
+==================================== -->
+<section id="timeline-section">
+  <div style="max-width:900px;margin:0 auto;">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">CRONOLOGIA</span>
+        HISTÓRIA DA ANATOMIA
+      </div>
+      <h2 class="section-title cyan">Da Antiguidade à Modernidade</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-left">
+          <div class="tl-label" style="color:var(--neon-cyan)">~ 300 a.C.</div>
+          <div class="tl-title" style="color:var(--neon-cyan)">Herófilo e Erasístrato</div>
+          <div class="tl-desc">Escola de Alexandria. Primeiras dissecações humanas sistemáticas. Distinguem nervos motores de sensitivos.</div>
+        </div>
+        <div class="tl-dot" style="border-color:var(--neon-cyan)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-cyan);opacity:0.3;animation:ripple 2s infinite;"></div>
+        </div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-left"></div>
+        <div class="tl-dot" style="border-color:var(--neon-pink)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-pink);opacity:0.3;animation:ripple 2.2s infinite;"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-label" style="color:var(--neon-pink)">130–200 d.C.</div>
+          <div class="tl-title" style="color:var(--neon-pink)">Galeno de Pérgamo</div>
+          <div class="tl-desc">Médico de gladiadores. Sistematizou anatomia animal (galenos anatomizava macacos). Dominou medicina por 1400 anos!</div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-left">
+          <div class="tl-label" style="color:var(--neon-yellow)">1543</div>
+          <div class="tl-title" style="color:var(--neon-yellow)">Andreas Vesalius</div>
+          <div class="tl-desc">"De Humani Corporis Fabrica" — primeiro atlas anatómico preciso, baseado em dissecações humanas reais. Corrigiu mais de 200 erros de Galeno!</div>
+        </div>
+        <div class="tl-dot" style="border-color:var(--neon-yellow)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-yellow);opacity:0.3;animation:ripple 1.8s infinite;"></div>
+        </div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-left"></div>
+        <div class="tl-dot" style="border-color:var(--neon-green)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-green);opacity:0.3;animation:ripple 2.5s infinite;"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-label" style="color:var(--neon-green)">1895</div>
+          <div class="tl-title" style="color:var(--neon-green)">Röntgen & os Raios X</div>
+          <div class="tl-desc">Anatomia passa do bisturi para a radiação! Pela primeira vez, é possível ver o interior do corpo sem dissecar.</div>
+        </div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-left">
+          <div class="tl-label" style="color:var(--neon-orange)">1955</div>
+          <div class="tl-title" style="color:var(--neon-orange)">Nómina Anatómica</div>
+          <div class="tl-desc">Paris — 1ª nomenclatura anatómica internacional unificada em latim. Hoje: Terminologia Anatómica Internacional (1998, FCAT).</div>
+        </div>
+        <div class="tl-dot" style="border-color:var(--neon-orange)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-orange);opacity:0.3;animation:ripple 2s infinite;"></div>
+        </div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item reveal">
+        <div class="tl-left"></div>
+        <div class="tl-dot" style="border-color:var(--neon-purple)">
+          <div style="position:absolute;inset:-4px;border-radius:50%;background:var(--neon-purple);opacity:0.3;animation:ripple 2.3s infinite;"></div>
+        </div>
+        <div class="tl-right">
+          <div class="tl-label" style="color:var(--neon-purple)">1970–2000</div>
+          <div class="tl-title" style="color:var(--neon-purple)">Era da Imagem</div>
+          <div class="tl-desc">TAC (1972), RM (1977), PET-scan, ecografia. Os planos anatómicos tornaram-se a linguagem da radiologia moderna!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     QUIZ
+==================================== -->
+<section id="quiz">
+  <div class="quiz-container">
+    <div class="reveal">
+      <div class="chapter-badge">
+        <span class="chapter-number">QUIZ</span>
+        TESTE OS SEUS CONHECIMENTOS
+      </div>
+      <h2 class="section-title pink" style="margin-bottom:2rem;">Missão: Anatomia</h2>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <div class="quiz-progress">PERGUNTA <span id="qCurrent">1</span> / 8</div>
+      <div class="quiz-score">PONTOS: <span id="qScore">0</span></div>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-card active" data-q="1">
+      <div class="quiz-question">PERGUNTA 01</div>
+      <div class="quiz-sub">Na posição anatómica padrão, as palmas das mãos estão voltadas para:</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'A posição anatómica exige palmas para a FRENTE (supinação) — não para dentro.')"><span class="option-letter">A</span> Para dentro (lado do corpo)</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Correcto! Palmas para a frente = supinação. Isso mantém rádio e ulna paralelos — a posição de referência.')"><span class="option-letter">B</span> Para a frente (anterior)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'As costas das mãos ficariam para a frente se as palmas olhassem para trás — errado!')"><span class="option-letter">C</span> Para trás (posterior)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Palmas para cima seria a posição só se deitado. A posição anatómica é de pé com palmas para a FRENTE.')"><span class="option-letter">D</span> Para cima (superior)</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav">
+        <div></div>
+        <button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn1">PRÓXIMA ▶</button>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-card" data-q="2">
+      <div class="quiz-question">PERGUNTA 02</div>
+      <div class="quiz-sub">O plano que divide o corpo em metade ANTERIOR e metade POSTERIOR é:</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'O plano sagital divide esquerda/direita — não frente/costas.')"><span class="option-letter">A</span> Plano Sagital Médiano</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'O plano transversal divide superior/inferior (como fatias de salame) — não frente/costas.')"><span class="option-letter">B</span> Plano Transversal</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Perfeito! O plano FRONTAL (ou Coronal) divide o corpo em frente (anterior) e costas (posterior).')"><span class="option-letter">C</span> Plano Frontal (Coronal)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'O plano oblíquo não é cardinal — cruza em qualquer ângulo diagonal.')"><span class="option-letter">D</span> Plano Oblíquo</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn2">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-card" data-q="3">
+      <div class="quiz-question">PERGUNTA 03</div>
+      <div class="quiz-sub">O DIAFRAGMA separa qual par de cavidades corporais?</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'A cavidade craniana e a vertebral formam a cavidade DORSAL — não são separadas pelo diafragma.')"><span class="option-letter">A</span> Cavidade Craniana e Canal Vertebral</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Exactamente! O diafragma (músculo respiratório principal) separa a cavidade torácica (acima) da abdominopélvica (abaixo).')"><span class="option-letter">B</span> Cavidade Torácica e Cavidade Abdominopélvica</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'A cavidade pélvica e a abdominal são contínuas — separadas apenas didacticamente, não pelo diafragma.')"><span class="option-letter">C</span> Cavidade Abdominal e Cavidade Pélvica</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'As cavidades pleurais estão DENTRO da cavidade torácica, não separadas do tórax pelo diafragma.')"><span class="option-letter">D</span> Cavidades Pleurais e Cavidade Torácica</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn3">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-card" data-q="4">
+      <div class="quiz-question">PERGUNTA 04</div>
+      <div class="quiz-sub">Um médico diz que "a lesão está DISTAL à articulação do joelho." Isso significa:</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'Acima = superior (eixo vertical). Distal refere-se à distância do ponto de origem do membro, não à posição vertical.')"><span class="option-letter">A</span> A lesão está acima do joelho</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Abaixo = inferior. Mas distal é específico dos membros — afastado da raiz. Pode coincidir, mas não é o mesmo conceito.')"><span class="option-letter">B</span> A lesão está abaixo do joelho (apenas no eixo vertical)</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Correcto! Distal = mais afastado da raiz do membro. O joelho está a meio — distal ao joelho = na perna, tornozelo ou pé.')"><span class="option-letter">C</span> A lesão está mais afastada da raiz do membro (ex: na perna, tornozelo)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Proximal = mais próximo da raiz. É o oposto de distal!')"><span class="option-letter">D</span> A lesão está mais próxima da raiz do membro</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn4">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-card" data-q="5">
+      <div class="quiz-question">PERGUNTA 05</div>
+      <div class="quiz-sub">A dor na Fossa Ilíaca DIREITA é clássica de qual condição?</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'A vesícula biliar está no hipocôndrio DIREITO (QSD). A cólica biliar dói nessa região superior, não na FID.')"><span class="option-letter">A</span> Cólica biliar (vesícula)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'O baço está no hipocôndrio ESQUERDO (QSE). Dor esplénica dói à esquerda.')"><span class="option-letter">B</span> Esplenomegalia (baço)</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Perfeito! O apêndice vermiforme localiza-se na FID, por isso a apendicite clássica dói no ponto de McBurney (FID).')"><span class="option-letter">C</span> Apendicite aguda</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'O cólon sigmoide está na fossa ilíaca ESQUERDA. Diverticulite causa dor na FIE.')"><span class="option-letter">D</span> Diverticulite do sigmoide</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn5">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quiz-card" data-q="6">
+      <div class="quiz-question">PERGUNTA 06</div>
+      <div class="quiz-sub">Quando giramos o antebraço com a palma para BAIXO (como virar uma panela), este movimento chama-se:</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'Supinação = palma para CIMA ou frente (posição anatómica). O oposto do que descrevemos!')"><span class="option-letter">A</span> Supinação</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Exacto! Pronação = palma para baixo/trás. O rádio cruza sobre a ulna. Memória: "pro"nação = "pro"blemático = palma para o chão!')"><span class="option-letter">B</span> Pronação</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Adução = aproximar do plano mediano. Não tem relação com rotação do antebraço.')"><span class="option-letter">C</span> Adução</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Extensão = aumentar o ângulo articular. Não é rotação do antebraço.')"><span class="option-letter">D</span> Extensão</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn6">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quiz-card" data-q="7">
+      <div class="quiz-question">PERGUNTA 07</div>
+      <div class="quiz-sub">O MEDIASTINO é um compartimento localizado:</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'O mediastino está no TÓRAX, não no abdómen. Confundir com retroperitóneo é erro clássico!')"><span class="option-letter">A</span> No abdómen, entre o peritoneu e a coluna vertebral</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'A cavidade pélvica está abaixo do anel pélvico. O mediastino está muito mais acima, no tórax.')"><span class="option-letter">B</span> Na cavidade pélvica, abaixo da bexiga</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Perfeito! O mediastino é o espaço central do tórax, entre os dois pulmões. Contém coração, grandes vasos, esófago e traqueia.')"><span class="option-letter">C</span> No tórax, entre as duas cavidades pleurais</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'A cavidade craniana aloja o encéfalo. O mediastino é torácico.')"><span class="option-letter">D</span> Na cavidade craniana, entre os dois hemisférios</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="nextQ()" style="display:none" id="nextBtn7">PRÓXIMA ▶</button></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quiz-card" data-q="8">
+      <div class="quiz-question">PERGUNTA 08 — FINAL</div>
+      <div class="quiz-sub">Um AVC lesiona o hemisfério ESQUERDO do cérebro. Qual membro inferior ficará parético (fraco)?</div>
+      <div class="quiz-options">
+        <button class="quiz-option" onclick="answerQ(this,false,'Membro inferior esquerdo seria ipsilateral. As vias motoras CRUZAM-SE (decussação das pirâmides), por isso a fraqueza é CONTRALATERAL.')"><span class="option-letter">A</span> Membro inferior esquerdo (ipsilateral)</button>
+        <button class="quiz-option" onclick="answerQ(this,true,'Excelente! As fibras motoras cruzam no tronco cerebral (decussação das pirâmides). Lesão no hemisfério E → paresia CONTRALATERAL = membro D!')"><span class="option-letter">B</span> Membro inferior direito (contralateral)</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Os dois membros só seriam afectados em lesão bilateral ou medular — não num AVC unilateral.')"><span class="option-letter">C</span> Ambos os membros inferiores</button>
+        <button class="quiz-option" onclick="answerQ(this,false,'Nenhum membro afectado seria para uma lesão cerebral sem envolvimento motor, o que não é o caso descrito.')"><span class="option-letter">D</span> Nenhum membro inferior</button>
+      </div>
+      <div class="quiz-feedback"></div>
+      <div class="quiz-nav"><div></div><button class="quiz-btn" onclick="showResults()" style="display:none" id="nextBtn8">VER RESULTADO ▶</button></div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="quizResult" style="display:none;text-align:center;padding:3rem;">
+      <div style="font-family:'Orbitron';font-size:3rem;font-weight:900;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem;" id="resultScore"></div>
+      <div style="font-family:'Share Tech Mono';font-size:0.9rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:1rem;" id="resultMsg"></div>
+      <button class="quiz-btn" onclick="restartQuiz()">↺ TENTAR NOVAMENTE</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================
+     FOOTER
+==================================== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">ANATOMIA HUMANA | GUIA INTERACTIVO</div>
+  <div class="footer-line"></div>
+  <div class="footer-info">
+    <strong>DemilMed-UL</strong><br>
+    UL — Universidade Licungo<br>
+    2º Ano de Medicina | Ano 2026<br>
+    <br>
+    <span style="color:var(--neon-cyan);font-family:'Share Tech Mono';font-size:0.7rem;letter-spacing:2px;">
+      Posição Anatómica · Cavidades Corporais · Planos Anatómicos · Terminologia Anatómica
+    </span>
+  </div>
+  <div class="footer-line"></div>
+  <div style="font-family:'Share Tech Mono';font-size:0.65rem;color:rgba(255,255,255,0.2);letter-spacing:2px;margin-top:1rem;">
+    ◈ FEITO POR DEMILMED-UL ◈ UNIVERSIDADE LICUNGO ◈ 2026 ◈
+  </div>
+</footer>
+
+<!-- ====================================
+     JAVASCRIPT
+==================================== -->
+<script>
+// === CURSOR ===
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursorTrail');
+let mx=0,my=0,tx=0,ty=0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx-8+'px';
+  cursor.style.top = my-8+'px';
+});
+
+setInterval(()=>{
+  tx += (mx-tx)*0.15; ty += (my-ty)*0.15;
+  trail.style.left = tx-3+'px';
+  trail.style.top = ty-3+'px';
+},16);
+
+// === STARS ===
+const sf = document.getElementById('starField');
+for(let i=0;i<120;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const sz=Math.random()*3+1;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+  sf.appendChild(s);
+}
+
+// === MOLECULE CANVAS ===
+const canvas = document.getElementById('molecule-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize',()=>{
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+});
+
+const nodes=[];
+for(let i=0;i<60;i++){
+  nodes.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    vx:(Math.random()-.5)*1.2,
+    vy:(Math.random()-.5)*1.2,
+    r:Math.random()*4+2,
+    color:['#00fff5','#ff007c','#ffee00','#39ff14','#ff6a00','#bf00ff'][Math.floor(Math.random()*6)]
+  });
+}
+
+function animMol(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  nodes.forEach(n=>{
+    n.x+=n.vx; n.y+=n.vy;
+    if(n.x<0||n.x>canvas.width) n.vx*=-1;
+    if(n.y<0||n.y>canvas.height) n.vy*=-1;
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=n.color;
+    ctx.shadowColor=n.color;
+    ctx.shadowBlur=15;
+    ctx.fill();
+    ctx.shadowBlur=0;
+  });
+  // Connect nearby nodes
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x;
+      const dy=nodes[i].y-nodes[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<120){
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.strokeStyle=`rgba(0,255,245,${(1-d/120)*0.3})`;
+        ctx.lineWidth=0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animMol);
+}
+animMol();
+
+// === SCROLL EFFECTS ===
+const nav = document.getElementById('mainNav');
+const progressBar = document.getElementById('progressBar');
+
+window.addEventListener('scroll',()=>{
+  const scrollTop=window.pageYOffset;
+  const docH=document.documentElement.scrollHeight-window.innerHeight;
+  progressBar.style.width=(scrollTop/docH*100)+'%';
+  if(scrollTop>100) nav.classList.add('visible');
+  else nav.classList.remove('visible');
+  revealEls();
+});
+
+function revealEls(){
+  document.querySelectorAll('.reveal').forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight-80) el.classList.add('visible');
+  });
+}
+revealEls();
+
+// === PLANE TABS ===
+function showPlane(id){
+  document.querySelectorAll('.plane-display').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.plane-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('plane-'+id).classList.add('active');
+  document.querySelector('.plane-tab.'+id).classList.add('active');
+}
+
+// === TREE TOGGLE ===
+function toggleTree(el){
+  const children=el.nextElementSibling;
+  el.classList.toggle('open');
+  children.classList.toggle('open');
+}
+
+// === REGION MAP ===
+function selectRegion(el, name, organs){
+  document.querySelectorAll('.region-cell').forEach(c=>c.classList.remove('highlight'));
+  el.classList.add('highlight');
+  document.getElementById('regionName').textContent=name;
+  document.getElementById('regionOrgans').textContent=organs;
+  document.getElementById('regionInfo').style.display='block';
+}
+
+// === QUIZ ===
+let currentQ=1, score=0;
+const totalQ=8;
+
+function answerQ(btn, correct, feedback){
+  const card=btn.closest('.quiz-card');
+  const btns=card.querySelectorAll('.quiz-option');
+  btns.forEach(b=>b.disabled=true);
+  const fb=card.querySelector('.quiz-feedback');
+  const nextBtn=card.querySelector('.quiz-btn');
+  
+  if(correct){
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('qScore').textContent=score;
+    fb.className='quiz-feedback show correct';
+    fb.innerHTML='✔ ' + feedback;
+  } else {
+    btn.classList.add('wrong');
+    fb.className='quiz-feedback show wrong';
+    fb.innerHTML='✘ ' + feedback;
+  }
+  nextBtn.style.display='inline-flex';
+}
+
+function nextQ(){
+  document.querySelector('.quiz-card.active').classList.remove('active');
+  currentQ++;
+  document.getElementById('qCurrent').textContent=currentQ;
+  const nextCard=document.querySelector(`.quiz-card[data-q="${currentQ}"]`);
+  if(nextCard) nextCard.classList.add('active');
+}
+
+function showResults(){
+  document.querySelector('.quiz-card.active').classList.remove('active');
+  const res=document.getElementById('quizResult');
+  res.style.display='block';
+  const pct=Math.round(score/totalQ*100);
+  document.getElementById('resultScore').textContent=`${score}/${totalQ} — ${pct}%`;
+  let msg='';
+  if(pct>=87) msg='EXCELENTE! FUTURO MÉDICO NOTÁVEL!';
+  else if(pct>=62) msg='BOM TRABALHO! MAIS UM POUCO!';
+  else if(pct>=37) msg='EM DESENVOLVIMENTO. ESTUDE MAIS!';
+  else msg='NÃO DESISTAS! REVÊ O MATERIAL!';
+  document.getElementById('resultMsg').textContent=msg;
+}
+
+function restartQuiz(){
+  currentQ=1; score=0;
+  document.getElementById('qCurrent').textContent='1';
+  document.getElementById('qScore').textContent='0';
+  document.getElementById('quizResult').style.display='none';
+  document.querySelectorAll('.quiz-card').forEach(c=>{
+    c.classList.remove('active');
+    c.querySelectorAll('.quiz-option').forEach(b=>{
+      b.classList.remove('correct','wrong');
+      b.disabled=false;
+    });
+    const fb=c.querySelector('.quiz-feedback');
+    if(fb){ fb.className='quiz-feedback'; fb.innerHTML=''; }
+    const nb=c.querySelector('.quiz-btn');
+    if(nb) nb.style.display='none';
+  });
+  document.querySelector('.quiz-card[data-q="1"]').classList.add('active');
+}
+
+// === FLOATING PARTICLES ===
+function createParticle(){
+  const p=document.createElement('div');
+  p.className='particle';
+  const sz=Math.random()*6+2;
+  const colors=['#00fff5','#ff007c','#ffee00','#39ff14'];
+  p.style.cssText=`
+    width:${sz}px;height:${sz}px;
+    left:${Math.random()*100}%;
+    background:${colors[Math.floor(Math.random()*colors.length)]};
+    animation-duration:${8+Math.random()*15}s;
+    animation-delay:${Math.random()*10}s;
+    opacity:0.4;
+  `;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),25000);
+}
+setInterval(createParticle,1200);
+
+</script>
+</body>
+</html>

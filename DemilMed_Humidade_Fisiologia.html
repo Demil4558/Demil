@@ -1,0 +1,2399 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | A Saga do Ar Invisível</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+JP:wght@300;700&family=Orbitron:wght@400;900&family=Exo+2:wght@300;600;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #050a0f;
+    --bg-panel: #0a1520;
+    --bg-card: #0d1f2d;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff006e;
+    --neon-gold: #ffd700;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6b00;
+    --neon-purple: #bf00ff;
+    --text-bright: #e8f4ff;
+    --text-dim: #7ba3c0;
+    --border-glow: rgba(0,245,255,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-bright);
+    font-family: 'Exo 2', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── SCANLINES OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top:0; left:0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+    z-index: 10000;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 12px 30px;
+    background: rgba(5,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-glow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px var(--neon-cyan);
+    letter-spacing: 2px;
+  }
+
+  .nav-chapters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .nav-ch {
+    background: transparent;
+    border: 1px solid rgba(0,245,255,0.3);
+    color: var(--text-dim);
+    padding: 4px 10px;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.72rem;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+
+  .nav-ch:hover {
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    background: rgba(0,245,255,0.08);
+    box-shadow: 0 0 10px rgba(0,245,255,0.3);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 80px 20px 40px;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(255,0,110,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 80%, rgba(191,0,255,0.04) 0%, transparent 60%);
+  }
+
+  /* Floating molecules */
+  .molecule-field {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .molecule {
+    position: absolute;
+    border-radius: 50%;
+    animation: floatMol linear infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes floatMol {
+    0% { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-100px) rotate(720deg) scale(1.2); opacity: 0; }
+  }
+
+  .mol-h2o {
+    width: 16px; height: 16px;
+    background: radial-gradient(circle, var(--neon-cyan), transparent);
+    box-shadow: 0 0 12px var(--neon-cyan), 0 0 24px rgba(0,245,255,0.3);
+  }
+
+  .mol-o2 { width: 12px; height: 12px; background: radial-gradient(circle, var(--neon-green), transparent); box-shadow: 0 0 10px var(--neon-green); }
+  .mol-n2 { width: 10px; height: 10px; background: radial-gradient(circle, var(--neon-purple), transparent); box-shadow: 0 0 10px var(--neon-purple); }
+  .mol-co2 { width: 14px; height: 14px; background: radial-gradient(circle, var(--neon-orange), transparent); box-shadow: 0 0 10px var(--neon-orange); }
+
+  .hero-badge {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--neon-pink);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    border: 1px solid var(--neon-pink);
+    padding: 6px 16px;
+    border-radius: 2px;
+    box-shadow: 0 0 15px rgba(255,0,110,0.3);
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 10px rgba(255,0,110,0.3); }
+    50% { box-shadow: 0 0 25px rgba(255,0,110,0.7), inset 0 0 10px rgba(255,0,110,0.1); }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 9vw, 7rem);
+    line-height: 0.95;
+    text-align: center;
+    letter-spacing: 3px;
+    color: #fff;
+    text-shadow:
+      0 0 20px var(--neon-cyan),
+      0 0 60px rgba(0,245,255,0.4),
+      4px 4px 0 var(--neon-pink),
+      6px 6px 0 rgba(255,0,110,0.4);
+    margin-bottom: 10px;
+    animation: hero-flicker 4s ease-in-out infinite;
+  }
+
+  @keyframes hero-flicker {
+    0%, 100% { opacity: 1; }
+    95% { opacity: 1; }
+    96% { opacity: 0.8; }
+    97% { opacity: 1; }
+  }
+
+  .hero-subtitle {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.4rem, 4vw, 2.5rem);
+    color: var(--neon-gold);
+    text-shadow: 0 0 20px var(--neon-gold), 2px 2px 0 rgba(0,0,0,0.8);
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .hero-desc {
+    max-width: 700px;
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  .hero-desc span { color: var(--neon-cyan); font-weight: 600; }
+
+  .start-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    padding: 16px 40px;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+    transition: all 0.3s;
+    text-shadow: 0 0 10px var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.3), inset 0 0 20px rgba(0,245,255,0.05);
+  }
+
+  .start-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,245,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .start-btn:hover::before { left: 100%; }
+  .start-btn:hover {
+    background: rgba(0,245,255,0.1);
+    box-shadow: 0 0 40px rgba(0,245,255,0.6), inset 0 0 30px rgba(0,245,255,0.1);
+    transform: translateY(-2px);
+  }
+
+  /* ── CHAPTER SECTIONS ── */
+  .chapter {
+    min-height: 100vh;
+    padding: 100px 20px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ch-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* Chapter themes */
+  .ch-1 { background: linear-gradient(180deg, var(--bg-dark) 0%, #080f18 100%); }
+  .ch-2 { background: linear-gradient(180deg, #080f18 0%, #0a0510 100%); }
+  .ch-3 { background: linear-gradient(180deg, #0a0510 0%, #05100a 100%); }
+  .ch-4 { background: linear-gradient(180deg, #05100a 0%, #100a05 100%); }
+  .ch-5 { background: linear-gradient(180deg, #100a05 0%, #0a0515 100%); }
+  .ch-6 { background: linear-gradient(180deg, #0a0515 0%, #050810 100%); }
+
+  /* ── MANGA PANEL HEADER ── */
+  .manga-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 50px;
+    position: relative;
+  }
+
+  .ch-number {
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    line-height: 1;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .ch-1 .ch-number { color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan); }
+  .ch-2 .ch-number { color: var(--neon-purple); text-shadow: 0 0 30px var(--neon-purple); }
+  .ch-3 .ch-number { color: var(--neon-green); text-shadow: 0 0 30px var(--neon-green); }
+  .ch-4 .ch-number { color: var(--neon-orange); text-shadow: 0 0 30px var(--neon-orange); }
+  .ch-5 .ch-number { color: var(--neon-pink); text-shadow: 0 0 30px var(--neon-pink); }
+  .ch-6 .ch-number { color: var(--neon-gold); text-shadow: 0 0 30px var(--neon-gold); }
+
+  .ch-title-block { flex: 1; }
+
+  .ch-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    opacity: 0.6;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .ch-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    letter-spacing: 2px;
+    line-height: 1.1;
+  }
+
+  .ch-1 .ch-title { color: var(--neon-cyan); text-shadow: 0 0 20px rgba(0,245,255,0.5); }
+  .ch-2 .ch-title { color: var(--neon-purple); text-shadow: 0 0 20px rgba(191,0,255,0.5); }
+  .ch-3 .ch-title { color: var(--neon-green); text-shadow: 0 0 20px rgba(57,255,20,0.5); }
+  .ch-4 .ch-title { color: var(--neon-orange); text-shadow: 0 0 20px rgba(255,107,0,0.5); }
+  .ch-5 .ch-title { color: var(--neon-pink); text-shadow: 0 0 20px rgba(255,0,110,0.5); }
+  .ch-6 .ch-title { color: var(--neon-gold); text-shadow: 0 0 20px rgba(255,215,0,0.5); }
+
+  .ch-tagline {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── SPEECH BUBBLES ── */
+  .speech-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin: 30px 0;
+  }
+
+  .speech-wrap.right { flex-direction: row-reverse; }
+
+  .char-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .char-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 70%);
+  }
+
+  .icon-sensei { background: radial-gradient(circle, #001a3a, #000510); border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,245,255,0.5); }
+  .icon-aluno { background: radial-gradient(circle, #1a000a, #050000); border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,110,0.5); }
+  .icon-h2o { background: radial-gradient(circle, #001a2a, #000515); border-color: #00aaff; box-shadow: 0 0 15px rgba(0,170,255,0.5); }
+  .icon-alveo { background: radial-gradient(circle, #1a0a00, #050200); border-color: var(--neon-orange); box-shadow: 0 0 15px rgba(255,107,0,0.5); }
+  .icon-febre { background: radial-gradient(circle, #1a0005, #050000); border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,110,0.5); }
+
+  .char-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    margin-top: 6px;
+    text-align: center;
+    opacity: 0.8;
+  }
+
+  .speech-bubble {
+    background: var(--bg-card);
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 18px 22px;
+    position: relative;
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  .speech-bubble.cyan { border-color: rgba(0,245,255,0.4); box-shadow: 0 0 20px rgba(0,245,255,0.08); }
+  .speech-bubble.pink { border-color: rgba(255,0,110,0.4); box-shadow: 0 0 20px rgba(255,0,110,0.08); }
+  .speech-bubble.blue { border-color: rgba(0,170,255,0.4); box-shadow: 0 0 20px rgba(0,170,255,0.08); }
+  .speech-bubble.orange { border-color: rgba(255,107,0,0.4); box-shadow: 0 0 20px rgba(255,107,0,0.08); }
+
+  .speech-bubble .speaker-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    opacity: 0.6;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .speech-bubble strong { color: var(--neon-gold); }
+  .speech-bubble em { color: var(--neon-cyan); font-style: normal; }
+  .speech-bubble .hi { color: var(--neon-pink); font-weight: 600; }
+  .speech-bubble .gr { color: var(--neon-green); font-weight: 600; }
+  .speech-bubble .or { color: var(--neon-orange); font-weight: 600; }
+  .speech-bubble .pu { color: var(--neon-purple); font-weight: 600; }
+
+  /* ── PANEL GRID ── */
+  .panel-grid {
+    display: grid;
+    gap: 20px;
+    margin: 40px 0;
+  }
+
+  .panel-grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .panel-grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .panel:hover {
+    transform: translateY(-4px);
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .panel-cyan { border-color: rgba(0,245,255,0.3); }
+  .panel-cyan::before { background: linear-gradient(90deg, var(--neon-cyan), transparent); }
+  .panel-cyan:hover { box-shadow: 0 8px 30px rgba(0,245,255,0.15); }
+
+  .panel-pink { border-color: rgba(255,0,110,0.3); }
+  .panel-pink::before { background: linear-gradient(90deg, var(--neon-pink), transparent); }
+  .panel-pink:hover { box-shadow: 0 8px 30px rgba(255,0,110,0.15); }
+
+  .panel-green { border-color: rgba(57,255,20,0.3); }
+  .panel-green::before { background: linear-gradient(90deg, var(--neon-green), transparent); }
+  .panel-green:hover { box-shadow: 0 8px 30px rgba(57,255,20,0.15); }
+
+  .panel-gold { border-color: rgba(255,215,0,0.3); }
+  .panel-gold::before { background: linear-gradient(90deg, var(--neon-gold), transparent); }
+  .panel-gold:hover { box-shadow: 0 8px 30px rgba(255,215,0,0.15); }
+
+  .panel-orange { border-color: rgba(255,107,0,0.3); }
+  .panel-orange::before { background: linear-gradient(90deg, var(--neon-orange), transparent); }
+  .panel-orange:hover { box-shadow: 0 8px 30px rgba(255,107,0,0.15); }
+
+  .panel-purple { border-color: rgba(191,0,255,0.3); }
+  .panel-purple::before { background: linear-gradient(90deg, var(--neon-purple), transparent); }
+  .panel-purple:hover { box-shadow: 0 8px 30px rgba(191,0,255,0.15); }
+
+  .panel-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+  .panel-title { font-family: 'Bangers', cursive; font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 10px; }
+  .panel-body { font-size: 0.88rem; line-height: 1.7; color: var(--text-dim); }
+  .panel-body strong { color: var(--text-bright); }
+
+  /* ── MOLECULAR VISUALIZER ── */
+  .mol-canvas-wrap {
+    background: #020810;
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mol-canvas-wrap h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: var(--neon-cyan);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  canvas.mol-canvas {
+    width: 100%;
+    height: 200px;
+    display: block;
+    border-radius: 8px;
+  }
+
+  /* ── HUMIDITY SLIDER ── */
+  .interactive-demo {
+    background: #020c18;
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px 0;
+  }
+
+  .interactive-demo h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: var(--neon-gold);
+    margin-bottom: 8px;
+  }
+
+  .interactive-demo p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .slider-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    min-width: 130px;
+    letter-spacing: 1px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(0,245,255,0.2);
+    outline: none;
+    min-width: 100px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px rgba(0,245,255,0.4);
+  }
+
+  .slider-val {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    color: var(--neon-cyan);
+    min-width: 70px;
+    text-align: right;
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* Alveolo visualization */
+  .alveolo-viz {
+    margin-top: 20px;
+    position: relative;
+    height: 220px;
+    background: radial-gradient(ellipse at center, #001020 0%, #000508 100%);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0,245,255,0.15);
+  }
+
+  #alveolo-svg {
+    width: 100%; height: 100%;
+    position: absolute;
+    top:0; left:0;
+  }
+
+  .alveolo-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .info-chip {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+  }
+
+  .info-chip .ic-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .info-chip .ic-val {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px var(--neon-cyan);
+  }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: linear-gradient(135deg, rgba(0,245,255,0.05), rgba(191,0,255,0.05));
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .formula-box::before {
+    content: '∿∿∿';
+    position: absolute;
+    top: 8px; right: 12px;
+    font-size: 1.5rem;
+    color: rgba(0,245,255,0.15);
+    letter-spacing: 4px;
+  }
+
+  .formula-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    color: var(--neon-purple);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .formula-text {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: var(--neon-gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+    margin-bottom: 12px;
+    word-break: break-all;
+  }
+
+  .formula-explain {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .formula-explain span { color: var(--neon-gold); }
+
+  /* ── STORY PANEL ── */
+  .story-panel {
+    background: linear-gradient(135deg, rgba(5,10,20,0.9), rgba(10,5,20,0.9));
+    border-left: 4px solid;
+    border-radius: 0 10px 10px 0;
+    padding: 24px 28px;
+    margin: 30px 0;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.85;
+  }
+
+  .story-panel-cyan { border-color: var(--neon-cyan); box-shadow: -4px 0 20px rgba(0,245,255,0.2); }
+  .story-panel-pink { border-color: var(--neon-pink); box-shadow: -4px 0 20px rgba(255,0,110,0.2); }
+  .story-panel-green { border-color: var(--neon-green); box-shadow: -4px 0 20px rgba(57,255,20,0.2); }
+  .story-panel-gold { border-color: var(--neon-gold); box-shadow: -4px 0 20px rgba(255,215,0,0.2); }
+  .story-panel-orange { border-color: var(--neon-orange); box-shadow: -4px 0 20px rgba(255,107,0,0.2); }
+
+  .story-panel-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    opacity: 0.6;
+    display: block;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* ── QUIZ ── */
+  .quiz-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 30px 0;
+  }
+
+  .quiz-box h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    color: var(--neon-gold);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .quiz-q {
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: var(--text-bright);
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+  .quiz-opt {
+    background: rgba(255,215,0,0.04);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 6px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    transition: all 0.3s;
+    text-align: left;
+  }
+
+  .quiz-opt:hover {
+    border-color: var(--neon-gold);
+    color: var(--neon-gold);
+    background: rgba(255,215,0,0.08);
+  }
+
+  .quiz-opt.correct {
+    border-color: var(--neon-green);
+    background: rgba(57,255,20,0.1);
+    color: var(--neon-green);
+  }
+
+  .quiz-opt.wrong {
+    border-color: var(--neon-pink);
+    background: rgba(255,0,110,0.1);
+    color: var(--neon-pink);
+  }
+
+  .quiz-feedback {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    display: none;
+    line-height: 1.7;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(57,255,20,0.08); border: 1px solid rgba(57,255,20,0.3); color: var(--neon-green); }
+  .quiz-feedback.wrong { background: rgba(255,0,110,0.08); border: 1px solid rgba(255,0,110,0.3); color: var(--neon-pink); }
+
+  /* ── TEMPERATURE TIMELINE ── */
+  .fever-timeline {
+    position: relative;
+    padding: 20px 0;
+    margin: 30px 0;
+  }
+
+  .fever-line {
+    position: absolute;
+    left: 30px;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--neon-orange), var(--neon-pink), var(--neon-cyan));
+    box-shadow: 0 0 10px rgba(255,107,0,0.4);
+  }
+
+  .fever-event {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding-left: 60px;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .fever-event.visible { opacity: 1; transform: translateX(0); }
+
+  .fever-dot {
+    position: absolute;
+    left: 22px;
+    top: 8px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-dark);
+    box-shadow: 0 0 12px currentColor;
+  }
+
+  .fever-dot-orange { border-color: var(--neon-orange); color: var(--neon-orange); }
+  .fever-dot-pink { border-color: var(--neon-pink); color: var(--neon-pink); }
+  .fever-dot-cyan { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+  .fever-dot-gold { border-color: var(--neon-gold); color: var(--neon-gold); }
+
+  .fever-content { flex: 1; }
+
+  .fever-temp {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .fever-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .fever-desc { font-size: 0.88rem; line-height: 1.7; color: var(--text-dim); }
+  .fever-desc strong { color: var(--text-bright); }
+
+  /* ── GLOSSARY ── */
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 30px 0;
+  }
+
+  .glos-term {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 8px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: all 0.3s;
+  }
+
+  .glos-term:hover {
+    border-color: rgba(255,215,0,0.5);
+    box-shadow: 0 0 20px rgba(255,215,0,0.1);
+  }
+
+  .glos-term::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 40px; height: 40px;
+    background: radial-gradient(circle at bottom right, rgba(255,215,0,0.1), transparent);
+  }
+
+  .glos-word {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    color: var(--neon-gold);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .glos-etym {
+    font-size: 0.72rem;
+    color: var(--neon-purple);
+    font-style: italic;
+    margin-bottom: 8px;
+    font-family: 'Orbitron', monospace;
+    letter-spacing: 1px;
+  }
+
+  .glos-def { font-size: 0.84rem; color: var(--text-dim); line-height: 1.6; }
+
+  /* ── SUMMARY TABLE ── */
+  .sum-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.85rem;
+  }
+
+  .sum-table th {
+    background: rgba(0,245,255,0.08);
+    border: 1px solid rgba(0,245,255,0.2);
+    padding: 12px 16px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--neon-cyan);
+    text-align: left;
+  }
+
+  .sum-table td {
+    border: 1px solid rgba(0,245,255,0.1);
+    padding: 12px 16px;
+    color: var(--text-dim);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .sum-table tr:hover td { background: rgba(0,245,255,0.03); }
+  .sum-table td strong { color: var(--text-bright); }
+  .sum-table td .tag-cyan { color: var(--neon-cyan); }
+  .sum-table td .tag-pink { color: var(--neon-pink); }
+  .sum-table td .tag-green { color: var(--neon-green); }
+  .sum-table td .tag-gold { color: var(--neon-gold); }
+
+  /* ── SEPARATOR ── */
+  .separator {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 60px 0;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  .sep-label {
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 5px;
+    color: var(--text-dim);
+    margin: -30px 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── EXPLOSION TEXT ── */
+  .explosion {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    text-align: center;
+    letter-spacing: 3px;
+    margin: 30px 0;
+    position: relative;
+    text-transform: uppercase;
+  }
+
+  .explosion-cyan { color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px rgba(0,245,255,0.3); }
+  .explosion-gold { color: var(--neon-gold); text-shadow: 0 0 30px var(--neon-gold), 0 0 60px rgba(255,215,0,0.3); }
+
+  /* ── CALLOUT ── */
+  .callout {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: rgba(255,215,0,0.04);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin: 20px 0;
+  }
+
+  .callout-icon { font-size: 1.8rem; flex-shrink: 0; }
+  .callout-body { font-size: 0.88rem; line-height: 1.75; color: var(--text-dim); }
+  .callout-body strong { color: var(--neon-gold); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #020810;
+    border-top: 1px solid rgba(0,245,255,0.2);
+    padding: 60px 20px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), transparent);
+    box-shadow: 0 0 20px var(--neon-cyan);
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 30px var(--neon-cyan), 3px 3px 0 var(--neon-pink);
+    margin-bottom: 10px;
+  }
+
+  .footer-uni {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: var(--neon-gold);
+    text-shadow: 0 0 10px rgba(255,215,0,0.4);
+    margin-bottom: 6px;
+  }
+
+  .footer-sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-bottom: 30px;
+  }
+
+  .footer-divider {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 20px auto;
+  }
+
+  .footer-copy {
+    font-size: 0.72rem;
+    color: rgba(123,163,192,0.5);
+    letter-spacing: 2px;
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  .fade-in-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in-left.visible { opacity: 1; transform: translateX(0); }
+
+  .fade-in-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .fade-in-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* ── MOLECULE WATER SVG ANIMATION ── */
+  .h2o-molecule {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    animation: wobble 3s ease-in-out infinite;
+  }
+
+  @keyframes wobble {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    25% { transform: translate(2px,-3px) rotate(5deg); }
+    50% { transform: translate(-2px,2px) rotate(-3deg); }
+    75% { transform: translate(3px,1px) rotate(2deg); }
+  }
+
+  /* Stagger animations */
+  .stagger-1 { transition-delay: 0.1s; }
+  .stagger-2 { transition-delay: 0.2s; }
+  .stagger-3 { transition-delay: 0.3s; }
+  .stagger-4 { transition-delay: 0.4s; }
+  .stagger-5 { transition-delay: 0.5s; }
+
+  /* ── THERMOMETER ── */
+  .thermo-wrap {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+    flex-wrap: wrap;
+  }
+
+  .thermo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .thermo-tube {
+    width: 28px;
+    height: 150px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .thermo-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    border-radius: 12px;
+    transition: height 1s ease;
+  }
+
+  .thermo-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .thermo-val {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    text-align: center;
+    color: var(--text-dim);
+  }
+
+  /* Glow pulse on elements */
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 10px currentColor; }
+    50% { box-shadow: 0 0 30px currentColor, 0 0 60px currentColor; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .speech-wrap { flex-direction: column; }
+    .speech-wrap.right { flex-direction: column; }
+    nav { padding: 10px 15px; }
+    .nav-chapters { display: none; }
+    .manga-header { flex-direction: column; gap: 10px; }
+    .ch-number { font-size: 3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">DemilMed-UL</div>
+  <div class="nav-chapters">
+    <button class="nav-ch" onclick="scrollTo('#hero')">INTRO</button>
+    <button class="nav-ch" onclick="scrollTo('#ch1')">CAP.1</button>
+    <button class="nav-ch" onclick="scrollTo('#ch2')">CAP.2</button>
+    <button class="nav-ch" onclick="scrollTo('#ch3')">CAP.3</button>
+    <button class="nav-ch" onclick="scrollTo('#ch4')">CAP.4</button>
+    <button class="nav-ch" onclick="scrollTo('#ch5')">CAP.5</button>
+    <button class="nav-ch" onclick="scrollTo('#ch6')">CAP.6</button>
+    <button class="nav-ch" onclick="scrollTo('#glossary')">GLOSSÁRIO</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero" class="chapter">
+  <div class="hero-bg"></div>
+  <div class="molecule-field" id="mol-field"></div>
+
+  <div class="hero-badge">DemilMed-UL · 2º Ano · Fisiologia Respiratória</div>
+
+  <h1 class="hero-title">A SAGA<br>DO AR<br>INVISÍVEL</h1>
+  <div class="hero-subtitle">💧 Humidade, Vapor & o Pulmão Vivo</div>
+
+  <p class="hero-desc">
+    Bem-vindo à saga mais épica da fisiologia.<br>
+    Neste universo, <span>moléculas de água</span> são guerreiras invisíveis que controlam
+    a vida dos teus alvéolos. Aprende o que é <span>humidade absoluta</span>,
+    <span>humidade relativa</span>, <span>pressão de vapor</span> e como tudo isso
+    impacta a tua respiração, saúde e até a febre.
+  </p>
+
+  <button class="start-btn" onclick="document.getElementById('ch1').scrollIntoView({behavior:'smooth'})">
+    ▶ COMEÇAR A SAGA
+  </button>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 1 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch1" class="chapter ch-1">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">01</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-cyan)">· CAPÍTULO UM ·</div>
+        <div class="ch-title">O QUE É A ÁGUA NO AR?</div>
+        <div class="ch-tagline">"Antes de entender o pulmão, tens de entender o que respiras."</div>
+      </div>
+    </div>
+
+    <!-- Speech bubble: Sensei -->
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-sensei">🧑‍🔬</div>
+        <div class="char-name" style="color:var(--neon-cyan)">SENSEI</div>
+      </div>
+      <div class="speech-bubble cyan">
+        <span class="speaker-tag">PROF. VAPOR · MESTRE DA FISIOLOGIA</span>
+        Olha para o ar à tua volta. Parece vazio, certo? <strong>ERRADO!</strong>
+        O ar está cheio de moléculas invisíveis de água — H₂O — voando a alta velocidade.
+        Estas moléculas são os personagens principais da nossa história.
+        E antes de falarmos de pulmões, precisamos de entender
+        <em>como a água existe no ar.</em>
+      </div>
+    </div>
+
+    <!-- Speech bubble: Aluno -->
+    <div class="speech-wrap right fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-aluno">🧑‍🎓</div>
+        <div class="char-name" style="color:var(--neon-pink)">ESTUDANTE</div>
+      </div>
+      <div class="speech-bubble pink">
+        <span class="speaker-tag">AMARA · ESTUDANTE DE MEDICINA · 2º ANO</span>
+        Mas... a água não é sempre líquida? Como pode estar "no ar"
+        sem eu ver? Não vejo nada voar por aí!
+      </div>
+    </div>
+
+    <!-- Story panel -->
+    <div class="story-panel story-panel-cyan fade-in">
+      <span class="story-panel-tag">⚡ LIÇÃO FUNDAMENTAL</span>
+      A água pode existir em <strong>três estados</strong>: sólido (gelo), líquido e <strong>gasoso (vapor)</strong>.
+      Quando falamos de humidade no ar, falamos de moléculas de H₂O no estado <strong>gasoso</strong>.
+      Elas são invisíveis, sem cor, sem cheiro — mas estão lá, sempre.
+      Imagina um exército de soldados microscópicos tão pequenos que atravessam paredes
+      sem que os vejas. É exactamente isso que as moléculas de vapor de água fazem.
+    </div>
+
+    <!-- Molecule visualizer -->
+    <div class="mol-canvas-wrap fade-in">
+      <h3>⬡ VISUALIZADOR MOLECULAR · H₂O EM MOVIMENTO</h3>
+      <canvas id="waterCanvas" class="mol-canvas" height="200"></canvas>
+      <p style="text-align:center;font-size:0.75rem;color:var(--text-dim);margin-top:10px">
+        Cada ponto é uma molécula de H₂O a voar no ar. <span style="color:var(--neon-cyan)">Azul</span> = vapor de água · <span style="color:var(--neon-green)">Verde</span> = O₂ · <span style="color:var(--neon-purple)">Roxo</span> = N₂
+      </p>
+    </div>
+
+    <!-- Panels: Components -->
+    <div class="explosion explosion-cyan fade-in">O AR É UMA MISTURA!</div>
+
+    <div class="panel-grid panel-grid-3 fade-in">
+      <div class="panel panel-purple stagger-1">
+        <span class="panel-icon">💜</span>
+        <div class="panel-title" style="color:var(--neon-purple)">AZOTO (N₂)</div>
+        <div class="panel-body">
+          <strong>78% do ar</strong> que respiras. É inerte — não participa em trocas gasosas.
+          Mas serve de "veículo" para o O₂ e o vapor de água.
+          <br><br>Do grego <em>azôtos</em> = "sem vida". Não sustenta a vida por si só.
+        </div>
+      </div>
+      <div class="panel panel-green stagger-2">
+        <span class="panel-icon">💚</span>
+        <div class="panel-title" style="color:var(--neon-green)">OXIGÉNIO (O₂)</div>
+        <div class="panel-body">
+          <strong>21% do ar.</strong> O herói das trocas gasosas. É o que vai
+          dos alvéolos para o sangue. Sem ele, as células morrem em segundos.
+          <br><br>Do grego <em>oxys</em> = "ácido" + <em>genes</em> = "que gera".
+        </div>
+      </div>
+      <div class="panel panel-cyan stagger-3">
+        <span class="panel-icon">💧</span>
+        <div class="panel-title" style="color:var(--neon-cyan)">VAPOR H₂O</div>
+        <div class="panel-body">
+          <strong>0–4% do ar</strong>, mas com impacto gigante na fisiologia respiratória.
+          A quantidade de vapor de água no ar é o que chamamos de <strong>humidade</strong>.
+          <br><br>Do latim <em>humor</em> = "líquido, fluido".
+        </div>
+      </div>
+    </div>
+
+    <!-- Formula: Dalton -->
+    <div class="formula-box fade-in">
+      <span class="formula-label">⚛ LEI DE DALTON DAS PRESSÕES PARCIAIS</span>
+      <div class="formula-text">P<sub style="font-size:0.6em">total</sub> = P<sub style="font-size:0.6em">N₂</sub> + P<sub style="font-size:0.6em">O₂</sub> + P<sub style="font-size:0.6em">CO₂</sub> + P<sub style="font-size:0.6em">H₂O</sub> + ...</div>
+      <div class="formula-explain">
+        John Dalton (1801) descobriu que cada gás numa mistura exerce a sua própria pressão
+        como se os outros não existissem. A pressão do vapor de água (<span>P<sub>H₂O</sub></span>)
+        é a <strong>pressão de vapor</strong> — e vai ser a nossa protagonista!
+        <br><br>
+        No nível do mar: P total = 760 mmHg. O vapor de água pode contribuir com até
+        <span>47 mmHg</span> quando o ar está completamente saturado a 37°C.
+      </div>
+    </div>
+
+    <div class="callout fade-in">
+      <span class="callout-icon">🎯</span>
+      <div class="callout-body">
+        <strong>Clínica Directa:</strong> Quando analisas gases arteriais (gasometria), o laboratório
+        usa a lei de Dalton para calcular a pressão alveolar de O₂ (PAO₂).
+        Se não subtrai a pressão de vapor de água (47 mmHg a 37°C), o cálculo fica errado.
+        Esta é a base da <strong>equação alveolar dos gases</strong>.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 2 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch2" class="chapter ch-2">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">02</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-purple)">· CAPÍTULO DOIS ·</div>
+        <div class="ch-title">HUMIDADE ABSOLUTA<br>VS RELATIVA</div>
+        <div class="ch-tagline">"Dois modos de medir o invisível."</div>
+      </div>
+    </div>
+
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-h2o">💧</div>
+        <div class="char-name" style="color:#00aaff">H₂O</div>
+      </div>
+      <div class="speech-bubble blue">
+        <span class="speaker-tag">MOLÉCULA DE ÁGUA · NARRADORA</span>
+        Olá! Sou uma molécula de H₂O e vivo no ar que respiras.
+        Existem <strong>duas formas</strong> de saber quantas de nós
+        existem num determinado volume de ar.
+        Uma diz <em>exactamente quantas somos</em>.
+        A outra diz <em>o quão cheio está o "hotel"</em> onde vivemos.
+        Vou explicar as duas!
+      </div>
+    </div>
+
+    <!-- Absolute humidity -->
+    <div class="story-panel story-panel-cyan fade-in">
+      <span class="story-panel-tag">💧 HUMIDADE ABSOLUTA</span>
+      <strong style="color:var(--neon-cyan); font-size:1.1em">Humidade Absoluta (HA)</strong> — do latim
+      <em>absolutus</em> (completo, independente) — é a quantidade real, concreta, de vapor
+      de água presente num volume de ar. Mede-se em <strong>g/m³</strong> (gramas por metro cúbico)
+      ou mg/L. É como contar os soldados: "há exactamente 17 gramas de água em cada metro cúbico de ar."
+      <br><br>
+      Não depende de temperatura. Não depende de nada mais. É um número puro e directo.
+      Se a HA = 10 g/m³, significa que se pegasses num cubo de 1 metro de lado de ar
+      e removesses toda a água, pesaria exactamente 10 gramas.
+    </div>
+
+    <div class="formula-box fade-in">
+      <span class="formula-label">⚛ HUMIDADE ABSOLUTA</span>
+      <div class="formula-text">HA = massa de vapor H₂O / volume de ar</div>
+      <div class="formula-explain">
+        Unidades: <span>g/m³</span> ou <span>mg/L</span>
+        <br><br>
+        Valores típicos: Ar seco do deserto ≈ 1–3 g/m³ · Ar tropical húmido ≈ 25–30 g/m³
+        · Ar expirado pelos pulmões ≈ <span>43–44 g/m³ a 37°C</span>
+        (porque os pulmões saturaram completamente o ar antes de expirar!)
+      </div>
+    </div>
+
+    <div class="explosion explosion-gold fade-in">MAS HÁ UM LIMITE!</div>
+
+    <!-- Relative humidity -->
+    <div class="story-panel story-panel-gold fade-in">
+      <span class="story-panel-tag">☁️ SATURAÇÃO E HUMIDADE RELATIVA</span>
+      O ar tem uma capacidade máxima de segurar vapor de água — como um esponja.
+      Quando aquece, aguenta mais. Quando arrefece, aguenta menos.
+      Quando essa capacidade está <strong>no limite</strong>, dizemos que o ar está
+      <em>saturado</em>. A quantidade máxima de vapor que o ar aguenta a uma dada
+      temperatura chama-se <strong>pressão de vapor de saturação</strong>.
+      <br><br>
+      A <strong>Humidade Relativa (HR)</strong> compara o que existe com o máximo possível.
+      É a percentagem de "ocupação do hotel".
+    </div>
+
+    <div class="formula-box fade-in">
+      <span class="formula-label">⚛ HUMIDADE RELATIVA</span>
+      <div class="formula-text">HR (%) = (HA actual / HA máxima) × 100</div>
+      <div class="formula-explain">
+        Ou equivalentemente: <span>HR = P<sub>vapor actual</sub> / P<sub>vapor saturação</sub> × 100</span>
+        <br><br>
+        HR = 0% → ar completamente seco, sem nenhuma molécula de água.<br>
+        HR = 50% → o ar contém metade do vapor que poderia conter.<br>
+        HR = 100% → ar saturado. Se adicionares mais vapor → <span>condensação → chuva, nevoeiro.</span>
+      </div>
+    </div>
+
+    <!-- Interactive slider -->
+    <div class="interactive-demo fade-in">
+      <h3>🎮 LABORATÓRIO INTERACTIVO · HUMIDADE</h3>
+      <p>Mexe nos sliders e observa o que acontece no modelo do ar.</p>
+
+      <div class="slider-row">
+        <div class="slider-label">🌡 TEMPERATURA</div>
+        <input type="range" id="tempSlider" min="0" max="50" value="25" oninput="updateHumidity()">
+        <div class="slider-val" id="tempVal">25°C</div>
+      </div>
+
+      <div class="slider-row">
+        <div class="slider-label">💧 VAPOR ACTUAL</div>
+        <input type="range" id="vaporSlider" min="0" max="100" value="50" oninput="updateHumidity()">
+        <div class="slider-val" id="vaporVal" style="color:var(--neon-green)">50%</div>
+      </div>
+
+      <div class="alveolo-info">
+        <div class="info-chip">
+          <span class="ic-label">HUMIDADE RELATIVA</span>
+          <span class="ic-val" id="hrVal">50%</span>
+        </div>
+        <div class="info-chip">
+          <span class="ic-label">PRESSÃO DE VAPOR (mmHg)</span>
+          <span class="ic-val" id="pvapVal" style="color:var(--neon-gold)">15.8</span>
+        </div>
+        <div class="info-chip">
+          <span class="ic-label">ESTADO DO AR</span>
+          <span class="ic-val" id="stateVal" style="font-size:0.9rem;color:var(--neon-green)">NORMAL</span>
+        </div>
+        <div class="info-chip">
+          <span class="ic-label">IMPACTO NOS ALVÉOLOS</span>
+          <span class="ic-val" id="alveolImpact" style="font-size:0.7rem;color:var(--text-dim)">ÓPTIMO</span>
+        </div>
+      </div>
+
+      <div class="alveolo-viz">
+        <canvas id="airCanvas" width="800" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- Key difference table -->
+    <table class="sum-table fade-in">
+      <tr>
+        <th>CONCEITO</th>
+        <th>DEFINIÇÃO</th>
+        <th>UNIDADE</th>
+        <th>CLÍNICA</th>
+      </tr>
+      <tr>
+        <td><strong>Humidade Absoluta</strong></td>
+        <td>Massa real de vapor de água por volume de ar</td>
+        <td class="tag-cyan">g/m³ · mg/L</td>
+        <td>Importante para ventiladores mecânicos — humidificam o ar a valores fixos de HA</td>
+      </tr>
+      <tr>
+        <td><strong>Humidade Relativa</strong></td>
+        <td>% do vapor actual em relação ao máximo possível àquela temperatura</td>
+        <td class="tag-green">%</td>
+        <td>HR &lt;40% → irritação das mucosas, tosse seca. HR &gt;80% → proliferação de fungos/bactérias</td>
+      </tr>
+      <tr>
+        <td><strong>Pressão de Vapor</strong></td>
+        <td>Pressão parcial exercida pelo vapor de água na mistura gasosa</td>
+        <td class="tag-gold">mmHg · kPa</td>
+        <td>Nos alvéolos = 47 mmHg a 37°C. Essencial para calcular PAO₂ na equação alveolar</td>
+      </tr>
+    </table>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 3 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch3" class="chapter ch-3">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">03</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-green)">· CAPÍTULO TRÊS ·</div>
+        <div class="ch-title">A JORNADA DO AR<br>ATÉ AO ALVÉOLO</div>
+        <div class="ch-tagline">"Do nariz ao pulmão: uma viagem de transformação total."</div>
+      </div>
+    </div>
+
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-h2o">💧</div>
+        <div class="char-name" style="color:#00aaff">H₂O</div>
+      </div>
+      <div class="speech-bubble blue">
+        <span class="speaker-tag">MOLÉCULA DE ÁGUA · NARRADORA</span>
+        Acompanha-me numa viagem épica! Quando entras numa inspiração,
+        o ar lá de fora — com humidade relativa de talvez <hi>50-60%</hi> —
+        entra pelas narinas. Mas até chegar ao alvéolo, vai ser
+        <strong>completamente transformado</strong>. Eu vou guiar-te!
+      </div>
+    </div>
+
+    <!-- Journey panels -->
+    <div class="panel-grid panel-grid-2 fade-in">
+
+      <div class="panel panel-green stagger-1">
+        <span class="panel-icon">👃</span>
+        <div class="panel-title" style="color:var(--neon-green)">PASSO 1 · NARIZ</div>
+        <div class="panel-body">
+          O ar entra e encontra as <strong>conchas nasais (cornetos)</strong> —
+          estruturas ósseas cobertas de mucosa altamente vascularizada.
+          <br><br>
+          ✦ <strong>Aquecimento:</strong> capilares sanguíneos aquecem o ar até perto dos 34°C.<br>
+          ✦ <strong>Humidificação:</strong> a mucosa evapora água → HR sobe para ~75-80%.<br>
+          ✦ <strong>Filtração:</strong> pelos nasais e muco capturam partículas.
+          <br><br>
+          <span style="color:var(--neon-green)">A HA aumenta significativamente já aqui.</span>
+        </div>
+      </div>
+
+      <div class="panel panel-cyan stagger-2">
+        <span class="panel-icon">🫁</span>
+        <div class="panel-title" style="color:var(--neon-cyan)">PASSO 2 · FARINGE E LARINGE</div>
+        <div class="panel-body">
+          O ar passa pela <strong>faringe</strong> (do grego <em>pharynx</em> = garganta)
+          e laringe. Mais aquecimento, mais humidificação.
+          <br><br>
+          A epiglote protege a via aérea durante a deglutição —
+          um mecanismo elegante que fecha a "porta" da traqueia quando engoles.
+          <br><br>
+          HR ≈ <strong>80-90%</strong> neste ponto. Temperatura ≈ <strong>35-36°C</strong>.
+        </div>
+      </div>
+
+      <div class="panel panel-purple stagger-3">
+        <span class="panel-icon">🌬️</span>
+        <div class="panel-title" style="color:var(--neon-purple)">PASSO 3 · TRAQUEIA E BRÔNQUIOS</div>
+        <div class="panel-body">
+          A <strong>traqueia</strong> (do grego <em>tracheia arteria</em> = artéria rugosa)
+          tem anéis de cartilagem em "C" para manter a via aérea aberta.
+          Revestida de epitélio <strong>pseudoestratificado cilíndrico ciliado</strong>.
+          <br><br>
+          O muco e os cílios formam o <strong>tapete mucociliar</strong> —
+          move partículas para cima, em direcção à faringe (clearance mucociliar).
+          <br><br>
+          HR sobe para ≈ <strong>95-99%</strong>.
+        </div>
+      </div>
+
+      <div class="panel panel-gold stagger-4">
+        <span class="panel-icon">🔵</span>
+        <div class="panel-title" style="color:var(--neon-gold)">PASSO 4 · ALVÉOLO</div>
+        <div class="panel-body">
+          Chegada ao destino final! O <strong>alvéolo</strong> (do latim <em>alveolus</em> =
+          pequena cavidade, cuba) — onde ocorre a troca gasosa real.
+          <br><br>
+          Aqui, o ar está a <strong>37°C</strong> e <strong>HR = 100%</strong>
+          (completamente saturado!). A pressão de vapor de água =
+          <strong>47 mmHg</strong>. Sempre. Invariavelmente.
+          <br><br>
+          <span style="color:var(--neon-gold)">Esta é uma constante fisiológica que vais usar para sempre.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Alveolar equation -->
+    <div class="formula-box fade-in">
+      <span class="formula-label">⚛ EQUAÇÃO ALVEOLAR DO GÁS · FUNDAMENTAL</span>
+      <div class="formula-text">PAO₂ = FiO₂ × (Pb − PH₂O) − PaCO₂ / RQ</div>
+      <div class="formula-explain">
+        <span>PAO₂</span> = Pressão Alveolar de O₂ (Alveolar Oxygen Pressure) <br>
+        <span>FiO₂</span> = Fracção Inspirada de O₂ (Fraction of Inspired Oxygen) · normalmente 0,21 (21%) <br>
+        <span>Pb</span> = Pressão barométrica (Barometric pressure) · ao nível do mar = 760 mmHg <br>
+        <span>PH₂O</span> = Pressão de vapor de água = <strong>47 mmHg a 37°C</strong> <br>
+        <span>PaCO₂</span> = Pressão arterial de CO₂ · normal ≈ 40 mmHg <br>
+        <span>RQ</span> = Quociente respiratório (Respiratory Quotient) ≈ 0,8 <br><br>
+        Exemplo: PAO₂ = 0,21 × (760−47) − 40/0,8 = 0,21 × 713 − 50 = 149,7 − 50 = <strong style="color:var(--neon-gold)">≈ 100 mmHg</strong>
+      </div>
+    </div>
+
+    <div class="callout fade-in">
+      <span class="callout-icon">🏔️</span>
+      <div class="callout-body">
+        <strong>Em altitude:</strong> a pressão barométrica (Pb) cai — em Moçambique, ao nível do mar temos ~760 mmHg, mas no Monte Kilimanjaro (~5895m) temos ~380 mmHg. A PH₂O de 47 mmHg não muda (o corpo está sempre a 37°C), mas representa uma fracção muito maior do total. Isso reduz brutalmente o PAO₂ disponível → hipoxia de altitude → explicação para mal de altitude e necessidade de aclimatação.
+      </div>
+    </div>
+
+    <!-- Alveolus structure -->
+    <div class="story-panel story-panel-green fade-in">
+      <span class="story-panel-tag">🔬 HISTOLOGIA DO ALVÉOLO · NÍVEL CELULAR</span>
+      O alvéolo é revestido por dois tipos de pneumócitos (do grego <em>pneumon</em> = pulmão + <em>kytos</em> = célula):
+      <br><br>
+      ✦ <strong style="color:var(--neon-green)">Pneumócito tipo I</strong> — células escamosas achatadas, cobrem 95% da superfície alveolar.
+      São ultra-finas (0,1–0,5 µm de espessura) — essencial para difusão rápida de gases. Não se regeneram facilmente.<br><br>
+      ✦ <strong style="color:var(--neon-gold)">Pneumócito tipo II</strong> — células cúbicas, cobrem 5% da superfície mas são mais numerosas.
+      Produzem o <strong>surfactante pulmonar</strong> — a substância mais importante para manter os alvéolos abertos.
+      Também regeneram o tipo I após lesão.
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 4 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch4" class="chapter ch-4">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">04</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-orange)">· CAPÍTULO QUATRO ·</div>
+        <div class="ch-title">SURFACTANTE:<br>O GUARDIÃO DOS ALVÉOLOS</div>
+        <div class="ch-tagline">"A molécula mais importante que nunca aprendeste na escola."</div>
+      </div>
+    </div>
+
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-alveo">🫁</div>
+        <div class="char-name" style="color:var(--neon-orange)">ALVÉOLO</div>
+      </div>
+      <div class="speech-bubble orange">
+        <span class="speaker-tag">ALVÉOLO · O GUERREIRO DO PULMÃO</span>
+        Sem humidade adequada, eu <strong>colapso</strong>. Sem surfactante,
+        eu colapso ainda mais rápido. Deixa-me contar a história do meu melhor aliado —
+        o <em>surfactante</em> — e porque a humidade alveolar é absolutamente
+        <or>crítica</or> para a minha sobrevivência.
+      </div>
+    </div>
+
+    <!-- Law of Laplace -->
+    <div class="formula-box fade-in">
+      <span class="formula-label">⚛ LEI DE LAPLACE · FÍSICA DO ALVÉOLO</span>
+      <div class="formula-text">P = 2T / r</div>
+      <div class="formula-explain">
+        Pierre-Simon Laplace (1806) descobriu que numa esfera (como o alvéolo):
+        <br><br>
+        <span>P</span> = Pressão necessária para manter a esfera aberta (em Pa ou mmHg)<br>
+        <span>T</span> = Tensão superficial (Surface Tension) da interface líquido-ar<br>
+        <span>r</span> = Raio da esfera (radius)<br><br>
+        <strong>O paradoxo do alvéolo pequeno:</strong> Se r for pequeno, P é maior.
+        Alvéolos pequenos (com menor raio) tendem a colapsar para dentro dos maiores.
+        O surfactante reduz T → reduz P → <span>impede o colapso!</span>
+      </div>
+    </div>
+
+    <div class="story-panel story-panel-orange fade-in">
+      <span class="story-panel-tag">🧪 O QUE É O SURFACTANTE?</span>
+      <strong>Surfactante</strong> (do inglês <em>surface active agent</em> = agente activo de superfície)
+      é uma mistura de <strong>fosfolípidos</strong> (principalmente DPPC —
+      Dipalmitoylphosphatidylcholine — Dipalmitoilfosfatidilcolina) e proteínas específicas
+      (SP-A, SP-B, SP-C, SP-D).
+      <br><br>
+      As moléculas de surfactante têm uma <strong>cabeça hidrófila</strong> (ama a água)
+      e uma <strong>cauda hidrofóbica</strong> (foge da água). Posicionam-se na interface
+      ar-líquido do alvéolo e reduzem drasticamente a tensão superficial da água.
+      <br><br>
+      Sem surfactante: a tensão superficial da água seria de ≈ 70 mN/m → colapso alveolar.
+      Com surfactante: cai para ≈ 1-5 mN/m → <strong>alvéolos estáveis e abertos.</strong>
+    </div>
+
+    <div class="panel-grid panel-grid-2 fade-in">
+      <div class="panel panel-orange stagger-1">
+        <span class="panel-icon">👶</span>
+        <div class="panel-title" style="color:var(--neon-orange)">SÍNDROME DISTR. RESPIRATÓRIA NEONATAL</div>
+        <div class="panel-body">
+          Bebés prematuros (&lt;35 semanas) produzem pouco surfactante → alvéolos colapsam ao nascer → <strong>dificuldade respiratória grave</strong>.<br><br>
+          Tratamento: surfactante exógeno (bovino ou suíno) administrado directamente na traqueia. Revolucionou a neonatologia.
+        </div>
+      </div>
+      <div class="panel panel-pink stagger-2">
+        <span class="panel-icon">🫁</span>
+        <div class="panel-title" style="color:var(--neon-pink)">SÍNDROME DISTR. RESPIRATÓRIA AGUDA (SDRA)</div>
+        <div class="panel-body">
+          Em adultos, inflamação grave (sepse, pneumonia, trauma) destrói pneumócitos tipo II → surfactante inadequado → <strong>colapso alveolar difuso</strong>.
+          <br><br>
+          Ventilação mecânica com PEEP (Positive End-Expiratory Pressure — Pressão Positiva no Final da Expiração) mantém alvéolos abertos artificialmente.
+        </div>
+      </div>
+    </div>
+
+    <!-- Hydration panel -->
+    <div class="story-panel story-panel-orange fade-in">
+      <span class="story-panel-tag">💧 HIDRATAÇÃO E OS ALVÉOLOS</span>
+      A camada líquida que reveste o interior dos alvéolos
+      (onde o surfactante actua) depende de <strong>hidratação sistémica adequada</strong>.
+      Quando o doente está desidratado:
+      <br><br>
+      ✦ A camada de líquido alveolar fica mais espessa e viscosa → <strong>difusão gasosa prejudicada.</strong><br>
+      ✦ O muco das vias aéreas fica mais espesso → <strong>clearance mucociliar reduzida → acúmulo de secreções → infecção.</strong><br>
+      ✦ A produção de surfactante pelos pneumócitos tipo II pode ser comprometida.<br>
+      ✦ O transporte de O₂ no sangue fica comprometido (plasma mais espesso, eritrócitos menos fluidos).
+      <br><br>
+      <strong style="color:var(--neon-gold)">Por isso hidratação adequada = melhor função respiratória.</strong>
+      Nos doentes internados com pneumonia, a hidratação IV ou oral correcta faz diferença mensurável.
+    </div>
+
+    <div class="callout fade-in">
+      <span class="callout-icon">💊</span>
+      <div class="callout-body">
+        <strong>Mucolíticos e hidratação:</strong> Fármacos como a N-acetilcisteína (NAC)
+        reduzem as pontes dissulfureto do muco, tornando-o menos viscoso.
+        Mas o efeito é muito potenciado por <strong>hidratação oral adequada</strong>.
+        A recomendação de "beber muita água" quando tens tosse produtiva tem base fisiológica real.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 5 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch5" class="chapter ch-5">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">05</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-pink)">· CAPÍTULO CINCO ·</div>
+        <div class="ch-title">FEBRE E A<br>BATALHA HÍDRICA</div>
+        <div class="ch-tagline">"Quando a temperatura sobe, a água foge — e o corpo paga o preço."</div>
+      </div>
+    </div>
+
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-febre">🔥</div>
+        <div class="char-name" style="color:var(--neon-pink)">FEBRE</div>
+      </div>
+      <div class="speech-bubble pink">
+        <span class="speaker-tag">FEBRE · A VILÃ NECESSÁRIA</span>
+        Olá. Sou a febre. Odeiam-me, mas sou uma arma do sistema imunitário.
+        Quando apareço, <hi>aumento a temperatura corporal</hi> para matar micróbios.
+        Mas tenho um preço: <strong>consumo água em enormes quantidades.</strong>
+        Por cada grau que o corpo sobe, o custo hídrico aumenta dramaticamente.
+        Deixa-me mostrar como funciono por dentro.
+      </div>
+    </div>
+
+    <!-- Fever definition -->
+    <div class="story-panel story-panel-pink fade-in">
+      <span class="story-panel-tag">🌡️ O QUE É FEBRE? DEFINIÇÃO FISIOPATOLÓGICA</span>
+      <strong>Febre</strong> (do latim <em>febris</em>) é definida como temperatura corporal central
+      &gt; <strong>38,3°C</strong> (ou &gt;38°C em algumas definições).
+      Distingue-se de <em>hipertermia</em>: febre é uma elevação <strong>regulada</strong>
+      do set-point hipotalâmico; hipertermia é uma elevação <strong>não regulada</strong>
+      (como golpe de calor).
+      <br><br>
+      Mecanismo: agentes patogénicos ou tecidos lesados libertam <strong>pirogéneos exógenos</strong>
+      (LPS bacteriano, toxinas) → macrófagos e monócitos produzem <strong>pirogéneos endógenos</strong>
+      (IL-1, IL-6, TNF-α, IFN-γ) → hipotálamo produz <strong>prostaglandina E₂ (PGE₂)</strong>
+      → set-point hipotalâmico sobe → vasoconstrição periférica + tremores → temperatura sobe.
+    </div>
+
+    <!-- Fever timeline -->
+    <div class="explosion explosion-gold fade-in">CRONOLOGIA DA FEBRE ↓</div>
+
+    <div class="fever-timeline fade-in">
+      <div class="fever-line"></div>
+
+      <div class="fever-event" data-delay="0">
+        <div class="fever-dot fever-dot-orange"></div>
+        <div class="fever-content">
+          <div class="fever-temp" style="color:var(--neon-orange)">37.0°C</div>
+          <div class="fever-title">TEMPERATURA NORMAL · SET-POINT HIPOTALÂMICO</div>
+          <div class="fever-desc">Estado basal. O hipotálamo (do grego <em>hypo</em> = abaixo + <em>thalamos</em> = câmara) age como termóstato corporal. <strong>PH₂O nos alvéolos = 47 mmHg.</strong> Perda de água por respiração ≈ 250-350 mL/dia em adulto. Tudo estável.</div>
+        </div>
+      </div>
+
+      <div class="fever-event" data-delay="200">
+        <div class="fever-dot fever-dot-orange"></div>
+        <div class="fever-content">
+          <div class="fever-temp" style="color:var(--neon-orange)">37–38°C</div>
+          <div class="fever-title">FASE DE ARREPIO · O SET-POINT SOBE</div>
+          <div class="fever-desc">O set-point hipotalâmico elevou-se mas a temperatura corporal ainda não chegou lá. O corpo sente "frio" → vasoconstrição → tremores musculares → pele pálida. <strong>Começa a desidratação por sudorese ainda mínima</strong>, mas metabolismo já acelerado.</div>
+        </div>
+      </div>
+
+      <div class="fever-event" data-delay="400">
+        <div class="fever-dot fever-dot-pink"></div>
+        <div class="fever-content">
+          <div class="fever-temp" style="color:var(--neon-pink)">38–39°C</div>
+          <div class="fever-title">FEBRE LEVE · ACELERAÇÃO METABÓLICA</div>
+          <div class="fever-desc">Por cada 1°C acima do normal, o metabolismo basal aumenta ≈ <strong>10-12%</strong> (regra de Van't Hoff). Mais O₂ consumido, mais CO₂ produzido → frequência respiratória aumenta → <strong>perda de água por via respiratória aumenta substancialmente.</strong> Sudorese começa.</div>
+        </div>
+      </div>
+
+      <div class="fever-event" data-delay="600">
+        <div class="fever-dot fever-dot-pink"></div>
+        <div class="fever-content">
+          <div class="fever-temp" style="color:var(--neon-pink)">39–40°C</div>
+          <div class="fever-title">FEBRE MODERADA · PERDA HÍDRICA CRÍTICA</div>
+          <div class="fever-desc">
+            ✦ Sudorese intensa: pode chegar a <strong>1-2 L/hora</strong> em casos extremos.<br>
+            ✦ Taquipneia (frequência respiratória elevada): cada respiração perde mais vapor.<br>
+            ✦ <strong>Pressão de vapor de saturação sobe com a temperatura</strong> → o ar expirado carrega mais H₂O.<br>
+            ✦ Risco de desidratação grave, hipernatremia (sódio sanguíneo elevado), confusão mental.
+          </div>
+        </div>
+      </div>
+
+      <div class="fever-event" data-delay="800">
+        <div class="fever-dot fever-dot-cyan"></div>
+        <div class="fever-content">
+          <div class="fever-temp" style="color:var(--neon-gold)">&gt; 40°C</div>
+          <div class="fever-title">FEBRE ALTA · ZONA DE PERIGO</div>
+          <div class="fever-desc">
+            ✦ &gt;40°C: risco de convulsões febris (especialmente em crianças).<br>
+            ✦ &gt;41°C: <strong>desnaturação proteica</strong> começa — enzimas perdem função.<br>
+            ✦ &gt;42°C: dano cerebral irreversível possível — EMERGÊNCIA MÉDICA.<br>
+            ✦ Perda hídrica acumulada pode ser de <strong>3-5 litros em 24h</strong> em febre alta.<br>
+            <strong>Intervenção urgente: antipiréticos + arrefecimento físico + hidratação IV.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Humidity and fever connection -->
+    <div class="story-panel story-panel-pink fade-in">
+      <span class="story-panel-tag">🔗 FEBRE + HUMIDADE: A CONEXÃO DIRECTA</span>
+      Lembra a lei física: a <strong>pressão de vapor de saturação aumenta com a temperatura</strong>.
+      A 37°C = 47 mmHg. A 38°C ≈ 50 mmHg. A 39°C ≈ 54 mmHg. A 40°C ≈ 55 mmHg.
+      <br><br>
+      Isto significa que o doente com febre expira ar com <strong>maior pressão de vapor de água</strong>.
+      Cada respiração perde mais H₂O. A taquipneia (respiração rápida) multiplica este efeito.
+      <br><br>
+      <strong style="color:var(--neon-pink)">Cálculo clínico:</strong> Um adulto saudável perde ≈ 300 mL de água por dia pela respiração.
+      Com febre de 39°C + taquipneia (FR = 30 ciclos/min em vez de 15), essa perda pode
+      dobrar ou triplicar → <strong>600-900 mL/dia apenas pela via respiratória</strong>,
+      além da sudorese. Daí a importância crítica de hidratar agressivamente o doente febril.
+    </div>
+
+    <!-- Thermometer visualization -->
+    <div class="interactive-demo fade-in">
+      <h3>🌡️ TERMÓMETRO INTERACTIVO · IMPACTO DA FEBRE</h3>
+      <p>Compara as perdas hídricas em diferentes temperaturas corporais.</p>
+      <div class="thermo-wrap" id="thermoWrap">
+        <!-- Thermometers generated by JS -->
+      </div>
+      <div class="alveolo-info" id="thermoInfo" style="margin-top:20px">
+        <!-- Info chips generated by JS -->
+      </div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="quiz-box fade-in">
+      <h3>⚔️ TESTE DE COMBATE · CAP. 5</h3>
+      <div class="quiz-q">
+        Um doente de 30 anos tem febre de 39,5°C há 24 horas, frequência respiratória de 28/min,
+        e sudorese intensa. Qual das seguintes afirmações sobre o seu estado hídrico é CORRECTA?
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1')">
+          A) A perda de água pela respiração é igual à de uma pessoa afebril porque os alvéolos estão sempre a 37°C
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, true, 'q1')">
+          B) A perda hídrica respiratória está aumentada porque a febre eleva a pressão de vapor de saturação e a taquipneia aumenta o volume de ar ventilado
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1')">
+          C) A febre não afecta a pressão de vapor nos alvéolos
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q1')">
+          D) Apenas a sudorese causa desidratação na febre; a via respiratória é irrelevante
+        </button>
+      </div>
+      <div class="quiz-feedback" id="q1">
+        <strong>✅ CORRECTO!</strong> A febre eleva a temperatura corporal → a pressão de vapor de saturação nos alvéolos aumenta com a temperatura → cada litro de ar expirado carrega mais vapor de água → multiplicado pela taquipneia (FR alta) → perda hídrica respiratória significativa. Adicionar sudorese e a desidratação pode ser grave e rápida.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CAPÍTULO 6 -->
+<!-- ══════════════════════════════════════════ -->
+<section id="ch6" class="chapter ch-6">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number">06</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-gold)">· CAPÍTULO SEIS ·</div>
+        <div class="ch-title">CLÍNICA, PRÁTICA<br>& APLICAÇÕES FINAIS</div>
+        <div class="ch-tagline">"Do laborátório ao leito — o que muda na prática?"</div>
+      </div>
+    </div>
+
+    <div class="speech-wrap fade-in">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="char-icon icon-sensei">🧑‍🔬</div>
+        <div class="char-name" style="color:var(--neon-cyan)">SENSEI</div>
+      </div>
+      <div class="speech-bubble cyan">
+        <span class="speaker-tag">PROF. VAPOR · CAPÍTULO FINAL</span>
+        Chegaste ao último capítulo, guerreiro! Agora vamos integrar tudo.
+        A humidade não é apenas uma curiosidade académica — é
+        <strong>central para decisões clínicas diárias</strong>.
+        Vou mostrar-te onde vai aparecer na tua carreira médica.
+      </div>
+    </div>
+
+    <!-- Clinical scenarios -->
+    <div class="panel-grid panel-grid-2 fade-in">
+
+      <div class="panel panel-cyan stagger-1">
+        <span class="panel-icon">🏥</span>
+        <div class="panel-title" style="color:var(--neon-cyan)">VENTILAÇÃO MECÂNICA</div>
+        <div class="panel-body">
+          Quando se ventila mecanicamente, o ar <strong>bypassa</strong> o nariz e as vias aéreas superiores → não é aquecido nem humidificado naturalmente.
+          <br><br>
+          Se o ar chegar seco e frio aos alvéolos: <strong>dessecação do epitélio brônquico, espessamento de secreções, lesão ciliar, atelectasias</strong>.
+          <br><br>
+          Solução: <strong>Humidificadores activos</strong> aquecem e humidificam o ar até 37°C, HR 100%, antes de entrar no doente. Ou <strong>HME (Heat and Moisture Exchangers — Trocadores de Calor e Humidade)</strong> — filtros passivos que capturam o calor e vapor do ar expirado para humidificar o inspirado.
+        </div>
+      </div>
+
+      <div class="panel panel-green stagger-2">
+        <span class="panel-icon">🌍</span>
+        <div class="panel-title" style="color:var(--neon-green)">CONTEXTO MOÇAMBICANO</div>
+        <div class="panel-body">
+          Moçambique tem clima tropical — humidade relativa ambiente pode ser muito elevada (70-90% na época das chuvas).
+          <br><br>
+          ✦ Alta HR ambiente → menor perda de água por evaporação nas vias aéreas → conforto respiratório.<br>
+          ✦ Mas alta HR + temperatura → proliferação de fungos, ácaros, bactérias → risco aumentado de infecções respiratórias.<br>
+          ✦ Épocas secas: HR baixa → mucosas mais secas → rinite seca, epitáxe (sangramento nasal), maior susceptibilidade a infecções.
+        </div>
+      </div>
+
+      <div class="panel panel-gold stagger-3">
+        <span class="panel-icon">📊</span>
+        <div class="panel-title" style="color:var(--neon-gold)">GASOMETRIA ARTERIAL</div>
+        <div class="panel-body">
+          A <strong>gasometria arterial</strong> (ABG — Arterial Blood Gas) analisa o sangue arterial e mede PaO₂, PaCO₂, pH, HCO₃⁻.
+          <br><br>
+          Para calcular o <strong>gradiente A-a</strong> (diferença entre PAO₂ calculada e PaO₂ medida):
+          usa-se a equação alveolar onde <strong>PH₂O = 47 mmHg é subtraída</strong>.
+          <br><br>
+          Gradiente A-a normal &lt;15 mmHg em jovens. Se elevado → problema de difusão alveolar, shunt, ou V/Q mismatch.
+        </div>
+      </div>
+
+      <div class="panel panel-orange stagger-4">
+        <span class="panel-icon">💉</span>
+        <div class="panel-title" style="color:var(--neon-orange)">FLUIDOTERAPIA NA FEBRE</div>
+        <div class="panel-body">
+          Cálculo de fluidos para doente febril considera:
+          <br><br>
+          ✦ Necessidades basais: ≈ 30-35 mL/kg/dia<br>
+          ✦ Perdas por febre: +10-12% por cada °C acima de 37°C<br>
+          ✦ Perdas respiratórias aumentadas (taquipneia)<br>
+          ✦ Sudorese<br>
+          ✦ Perdas gastrointestinais (vómitos, diarreia se presentes)
+          <br><br>
+          Total pode chegar a <strong>3-5 L/dia</strong> em adulto com febre alta.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Environment and health -->
+    <div class="story-panel story-panel-gold fade-in">
+      <span class="story-panel-tag">🌡️ HUMIDADE AMBIENTAL E SAÚDE RESPIRATÓRIA</span>
+      A faixa de HR ambiental ideal para saúde respiratória humana é <strong>40-60%</strong>
+      (OMS e American Society of Heating, Refrigerating and Air-Conditioning Engineers — ASHRAE).
+      <br><br>
+      ✦ <strong style="color:var(--neon-pink)">HR &lt; 30%:</strong> Ar muito seco → dessecação de mucosas → fissuras → porta de entrada para vírus (ex: influenza sobrevive melhor em ar seco → epidemias no inverno em climas frios e secos) → tosse, rinite seca, epistáxe.
+      <br><br>
+      ✦ <strong style="color:var(--neon-cyan)">HR 40-60%:</strong> Zona óptima. Muco nasal fluido. Cílios funcionam bem. Vírus respiratórios têm sobrevivência menor.
+      <br><br>
+      ✦ <strong style="color:var(--neon-orange)">HR &gt; 70%:</strong> Proliferação de ácaros do pó, bolores, fungos (Aspergillus, Cladosporium) → asma alérgica, pneumonite de hipersensibilidade, infecções fúngicas em imunodeprimidos.
+    </div>
+
+    <!-- Final quiz -->
+    <div class="quiz-box fade-in">
+      <h3>⚔️ QUIZ FINAL · O GRANDE DESAFIO</h3>
+      <div class="quiz-q">
+        Num doente a ser ventilado mecanicamente via traqueostomia (tubo directo na traqueia), sem humidificação do ar inspirado, o que esperarias observar progressivamente nas vias aéreas?
+      </div>
+      <div class="quiz-options">
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2')">
+          A) Melhoria da troca gasosa porque o ar seco tem menos resistência ao fluxo
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2')">
+          B) Nenhum efeito, pois os alvéolos sempre garantem HR = 100% independentemente
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, true, 'q2')">
+          C) Espessamento de secreções, lesão do epitélio ciliar, formação de rolhões mucosos, atelectasias e risco aumentado de infecção pulmonar
+        </button>
+        <button class="quiz-opt" onclick="checkQuiz(this, false, 'q2')">
+          D) Diminuição da frequência respiratória devido a menor esforço muscular
+        </button>
+      </div>
+      <div class="quiz-feedback" id="q2">
+        <strong>✅ PERFEITO!</strong> A via aérea superior (nariz, faringe) é responsável por 75-80% da humidificação do ar inspirado. Ao colocar tubo de traqueostomia, bypassa-se todo este sistema. O ar seco que chega aos brônquios resseca o muco → mais viscoso → cílios param → rolhões mucosos → atelectasias (colapso parcial) → infecções. Por isso humidificação activa é mandatória em ventilação mecânica prolongada.
+      </div>
+    </div>
+
+    <!-- Summary table -->
+    <div class="explosion explosion-cyan fade-in">TABELA DE DOMÍNIO FINAL</div>
+
+    <table class="sum-table fade-in">
+      <tr>
+        <th>CONCEITO</th>
+        <th>DEFINIÇÃO SIMPLES</th>
+        <th>VALOR CHAVE</th>
+        <th>APLICAÇÃO CLÍNICA</th>
+      </tr>
+      <tr>
+        <td><strong class="tag-cyan">Humidade Absoluta</strong></td>
+        <td>Gramas de vapor de água por m³ de ar</td>
+        <td>Expirado ≈ 43-44 g/m³</td>
+        <td>Configuração de humidificadores em UTI</td>
+      </tr>
+      <tr>
+        <td><strong class="tag-green">Humidade Relativa</strong></td>
+        <td>% do vapor actual vs. máximo possível</td>
+        <td>Alvéolo = 100%. Ideal ambiental: 40-60%</td>
+        <td>Controlo de infecções, saúde respiratória</td>
+      </tr>
+      <tr>
+        <td><strong class="tag-gold">Pressão de Vapor</strong></td>
+        <td>Pressão parcial do vapor H₂O na mistura</td>
+        <td>47 mmHg a 37°C (constante fisiológica)</td>
+        <td>Equação alveolar, gasometria, cálculo PAO₂</td>
+      </tr>
+      <tr>
+        <td><strong class="tag-pink">Febre + Água</strong></td>
+        <td>Cada 1°C extra = +10-12% metabolismo = mais perda hídrica</td>
+        <td>Até 3-5 L perdidos em 24h com febre alta</td>
+        <td>Cálculo de fluidoterapia, hidratação agressiva</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--neon-orange)">Surfactante</strong></td>
+        <td>Reduz tensão superficial alveolar (Lei de Laplace)</td>
+        <td>T cai de 70 para 1-5 mN/m</td>
+        <td>SDRA, prematuridade, PEEP em ventilação mecânica</td>
+      </tr>
+    </table>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- GLOSSÁRIO -->
+<!-- ══════════════════════════════════════════ -->
+<section id="glossary" class="chapter" style="background: linear-gradient(180deg, #050810 0%, #020510 100%); min-height:auto; padding-bottom:60px;">
+  <div class="ch-inner">
+
+    <div class="manga-header fade-in">
+      <div>
+        <div class="ch-number" style="color:var(--neon-gold);text-shadow:0 0 30px var(--neon-gold)">G</div>
+      </div>
+      <div class="ch-title-block">
+        <div class="ch-label" style="color:var(--neon-gold)">· GLOSSÁRIO ETIMOLÓGICO ·</div>
+        <div class="ch-title" style="color:var(--neon-gold)">DICIONÁRIO DO GUERREIRO</div>
+        <div class="ch-tagline">"Conhecer a origem das palavras é conhecer a essência dos conceitos."</div>
+      </div>
+    </div>
+
+    <div class="glossary-grid fade-in">
+
+      <div class="glos-term stagger-1">
+        <div class="glos-word">ALVÉOLO</div>
+        <div class="glos-etym">Latim: alveolus = "pequena banheira/cuba"</div>
+        <div class="glos-def">Saco aéreo terminal do pulmão onde ocorre troca gasosa. Diâmetro ≈ 200-300 µm. Num adulto existem ≈ 480 milhões de alvéolos, com área total de ≈ 70 m² — tamanho de um campo de ténis!</div>
+      </div>
+
+      <div class="glos-term stagger-2">
+        <div class="glos-word">HUMIDADE</div>
+        <div class="glos-etym">Latim: humor = "fluido, líquido"</div>
+        <div class="glos-def">Quantidade de vapor de água no ar. Humidade absoluta = massa real. Humidade relativa = percentagem do máximo possível a dada temperatura.</div>
+      </div>
+
+      <div class="glos-term stagger-3">
+        <div class="glos-word">SURFACTANTE</div>
+        <div class="glos-etym">Inglês: SURFace ACTive AgeNT</div>
+        <div class="glos-def">Mistura de fosfolípidos (principalmente DPPC) e proteínas produzida pelos pneumócitos tipo II. Reduz a tensão superficial alveolar, prevenindo o colapso. Descoberto nos anos 1950 por John Clements.</div>
+      </div>
+
+      <div class="glos-term stagger-4">
+        <div class="glos-word">PNEUMÓCITO</div>
+        <div class="glos-etym">Grego: pneumon (πνεύμων) = "pulmão" + kytos (κύτος) = "célula, recipiente"</div>
+        <div class="glos-def">Célula do epitélio alveolar. Tipo I: cobertura (95% da área, difusão gasosa). Tipo II: produção de surfactante e regeneração.</div>
+      </div>
+
+      <div class="glos-term stagger-5">
+        <div class="glos-word">FEBRE</div>
+        <div class="glos-etym">Latim: febris = "calor excessivo"</div>
+        <div class="glos-def">Elevação regulada do set-point hipotalâmico &gt;38,3°C, mediada por pirogéneos endógenos (IL-1, IL-6, TNF-α, PGE₂). Mecanismo de defesa imunitária com alto custo hídrico e metabólico.</div>
+      </div>
+
+      <div class="glos-term stagger-1">
+        <div class="glos-word">TAQUIPNEIA</div>
+        <div class="glos-etym">Grego: tachys (ταχύς) = "rápido" + pnoia (πνοή) = "respiração"</div>
+        <div class="glos-def">Frequência respiratória &gt; 20 ciclos/min em adultos. Na febre, causa perda hídrica respiratória aumentada. Sinal vital importante na avaliação respiratória.</div>
+      </div>
+
+      <div class="glos-term stagger-2">
+        <div class="glos-word">ATELECTASIA</div>
+        <div class="glos-etym">Grego: ateles (ἀτελής) = "incompleto" + ektasis (ἔκτασις) = "expansão"</div>
+        <div class="glos-def">Colapso de alvéolos ou de uma porção do pulmão. Pode ser causada por rolhões mucosos, corpo estranho, pressão externa, ou falta de surfactante. Reduz a área de troca gasosa.</div>
+      </div>
+
+      <div class="glos-term stagger-3">
+        <div class="glos-word">HIPERTERMIA</div>
+        <div class="glos-etym">Grego: hyper (ὑπέρ) = "além" + therme (θέρμη) = "calor"</div>
+        <div class="glos-def">Elevação de temperatura corporal NÃO regulada, sem elevação do set-point hipotalâmico (ao contrário da febre). Ex: golpe de calor, hipertermia maligna. Mais perigosa que febre por ausência de mecanismos de controlo.</div>
+      </div>
+
+      <div class="glos-term stagger-4">
+        <div class="glos-word">PRESSÃO PARCIAL</div>
+        <div class="glos-etym">Latim: partialis = "relativo a uma parte"</div>
+        <div class="glos-def">Pressão exercida por um gás individual numa mistura (Lei de Dalton). Cada gás age independentemente. PH₂O = pressão parcial do vapor de água = 47 mmHg nos alvéolos a 37°C.</div>
+      </div>
+
+      <div class="glos-term stagger-5">
+        <div class="glos-word">MUCOCILIAR</div>
+        <div class="glos-etym">Latim: mucus = "muco" + cilium = "pestana/cílio"</div>
+        <div class="glos-def">Sistema de limpeza das vias aéreas. Cílios batem ≈ 1000x/min, movendo a camada de muco com partículas e patogéneos em direcção à faringe para serem deglutidos ou expectorados. Depende de hidratação adequada.</div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-uni">UNIVERSIDADE LICUNGO</div>
+  <div class="footer-sub">FACULDADE DE CIÊNCIAS DE SAÚDE · MEDICINA</div>
+  <div class="footer-divider"></div>
+  <div class="footer-sub">2º Ano de Medicina · Fisiologia Respiratória</div>
+  <div class="footer-sub" style="color:var(--neon-cyan);margin-top:6px">A SAGA DO AR INVISÍVEL</div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">© DemilMed-UL · ANO 2026 · Todos os direitos reservados</div>
+  <div class="footer-copy" style="margin-top:6px;color:rgba(0,245,255,0.3)">
+    Feito com ❤️ para os estudantes de medicina da Universidade Licungo
+  </div>
+</footer>
+
+<script>
+// ── PROGRESS BAR ──
+window.addEventListener('scroll', () => {
+  const scrolled = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  document.getElementById('progress-bar').style.width = scrolled + '%';
+});
+
+// ── SMOOTH SCROLL NAV ──
+function scrollTo(id) {
+  document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── MOLECULE FIELD ──
+const molField = document.getElementById('mol-field');
+function createMolecule() {
+  const mol = document.createElement('div');
+  const types = ['mol-h2o','mol-o2','mol-n2','mol-co2'];
+  mol.className = 'molecule ' + types[Math.floor(Math.random()*types.length)];
+  mol.style.left = Math.random() * 100 + '%';
+  mol.style.animationDuration = (8 + Math.random() * 15) + 's';
+  mol.style.animationDelay = (Math.random() * 5) + 's';
+  molField.appendChild(mol);
+  setTimeout(() => mol.remove(), 25000);
+}
+setInterval(createMolecule, 600);
+for(let i=0;i<20;i++) createMolecule();
+
+// ── WATER MOLECULE CANVAS ──
+const waterCanvas = document.getElementById('waterCanvas');
+const wCtx = waterCanvas.getContext('2d');
+waterCanvas.width = waterCanvas.offsetWidth * window.devicePixelRatio || 800;
+waterCanvas.height = 200;
+
+const particles = [];
+const pTypes = [
+  { color: '#00f5ff', glow: 'rgba(0,245,255,0.6)', r: 5, label: 'H₂O' },
+  { color: '#39ff14', glow: 'rgba(57,255,20,0.6)', r: 4, label: 'O₂' },
+  { color: '#bf00ff', glow: 'rgba(191,0,255,0.6)', r: 3.5, label: 'N₂' },
+  { color: '#ff6b00', glow: 'rgba(255,107,0,0.4)', r: 4.5, label: 'CO₂' }
+];
+
+for(let i=0;i<80;i++) {
+  const t = pTypes[Math.floor(Math.random()*pTypes.length)];
+  particles.push({
+    x: Math.random()*(waterCanvas.width||800),
+    y: Math.random()*200,
+    vx: (Math.random()-0.5)*1.5,
+    vy: (Math.random()-0.5)*1.5,
+    type: t,
+    angle: Math.random()*Math.PI*2
+  });
+}
+
+function animateWater() {
+  wCtx.clearRect(0,0,waterCanvas.width,200);
+  wCtx.fillStyle = '#020810';
+  wCtx.fillRect(0,0,waterCanvas.width,200);
+
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    p.angle += 0.02;
+    if(p.x < 0) p.x = waterCanvas.width;
+    if(p.x > waterCanvas.width) p.x = 0;
+    if(p.y < 0) p.y = 200;
+    if(p.y > 200) p.y = 0;
+
+    wCtx.save();
+    wCtx.shadowBlur = 15;
+    wCtx.shadowColor = p.type.glow;
+    wCtx.beginPath();
+    wCtx.arc(p.x, p.y, p.type.r, 0, Math.PI*2);
+    wCtx.fillStyle = p.type.color;
+    wCtx.fill();
+    wCtx.restore();
+  });
+  requestAnimationFrame(animateWater);
+}
+animateWater();
+
+// ── HUMIDITY INTERACTIVE ──
+const airCanvas = document.getElementById('airCanvas');
+const aCtx = airCanvas.getContext('2d');
+airCanvas.width = 800;
+airCanvas.height = 220;
+
+let airParticles = [];
+for(let i=0;i<150;i++) {
+  airParticles.push({
+    x: Math.random()*800, y: Math.random()*220,
+    vx: (Math.random()-0.5)*1.2, vy: (Math.random()-0.5)*1.2,
+    isH2O: Math.random() < 0.5
+  });
+}
+
+// Saturation pressure approximation (Magnus formula simplified)
+function satPressure(T) { return 6.1078 * Math.exp(17.27 * T / (T + 237.3)) * 7.5006; }
+
+function updateHumidity() {
+  const temp = parseInt(document.getElementById('tempSlider').value);
+  const vapor = parseInt(document.getElementById('vaporSlider').value);
+  document.getElementById('tempVal').textContent = temp + '°C';
+  document.getElementById('vaporVal').textContent = vapor + '%';
+  document.getElementById('hrVal').textContent = vapor + '%';
+
+  const psat = satPressure(temp);
+  const pact = (vapor/100) * psat;
+  document.getElementById('pvapVal').textContent = pact.toFixed(1) + ' mmHg';
+
+  let state, impact, stateColor;
+  if(vapor < 30) { state='MUITO SECO'; impact='MUCOSAS RESSECADAS'; stateColor='var(--neon-pink)'; }
+  else if(vapor < 60) { state='NORMAL'; impact='ÓPTIMO PARA O EPITÉLIO'; stateColor='var(--neon-green)'; }
+  else if(vapor < 85) { state='HÚMIDO'; impact='MUCO MAIS FLUIDO'; stateColor='var(--neon-cyan)'; }
+  else if(vapor < 100) { state='MUITO HÚMIDO'; impact='RISCO DE FUNGOS/BACTÉRIAS'; stateColor='var(--neon-gold)'; }
+  else { state='SATURADO'; impact='CONDENSAÇÃO POSSÍVEL'; stateColor='var(--neon-purple)'; }
+
+  document.getElementById('stateVal').textContent = state;
+  document.getElementById('stateVal').style.color = stateColor;
+  document.getElementById('alveolImpact').textContent = impact;
+}
+
+updateHumidity();
+
+function animateAir() {
+  const vapor = parseInt(document.getElementById('vaporSlider')?.value || 50);
+  const numH2O = Math.floor((vapor/100) * 80);
+
+  aCtx.fillStyle = 'rgba(2,8,16,0.3)';
+  aCtx.fillRect(0,0,800,220);
+
+  airParticles.forEach((p,i) => {
+    p.isH2O = i < numH2O;
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0)p.x=800; if(p.x>800)p.x=0;
+    if(p.y<0)p.y=220; if(p.y>220)p.y=0;
+
+    aCtx.save();
+    if(p.isH2O) {
+      aCtx.shadowBlur = 8; aCtx.shadowColor='rgba(0,245,255,0.8)';
+      aCtx.fillStyle='#00f5ff';
+      aCtx.beginPath(); aCtx.arc(p.x,p.y,3,0,Math.PI*2); aCtx.fill();
+      // H bonds
+      aCtx.strokeStyle='rgba(0,245,255,0.2)'; aCtx.lineWidth=1;
+      aCtx.beginPath(); aCtx.arc(p.x-5,p.y-4,2,0,Math.PI*2); aCtx.stroke();
+      aCtx.beginPath(); aCtx.arc(p.x+5,p.y-4,2,0,Math.PI*2); aCtx.stroke();
+    } else {
+      aCtx.fillStyle='rgba(100,150,100,0.5)';
+      aCtx.beginPath(); aCtx.arc(p.x,p.y,2,0,Math.PI*2); aCtx.fill();
+    }
+    aCtx.restore();
+  });
+
+  // Alvéolo circle
+  aCtx.save();
+  aCtx.strokeStyle='rgba(0,245,255,0.15)';
+  aCtx.lineWidth=1;
+  aCtx.setLineDash([4,4]);
+  aCtx.beginPath();
+  aCtx.arc(400,110,90,0,Math.PI*2);
+  aCtx.stroke();
+  aCtx.restore();
+  aCtx.fillStyle='rgba(0,245,255,0.4)';
+  aCtx.font='10px Orbitron, monospace';
+  aCtx.textAlign='center';
+  aCtx.fillText('ALVÉOLO', 400, 215);
+
+  requestAnimationFrame(animateAir);
+}
+animateAir();
+
+// ── THERMOMETER VISUALIZATION ──
+const thermoData = [
+  { temp:'37°C', label:'Normal', fill:40, color:'var(--neon-cyan)', loss:'300 mL/dia' },
+  { temp:'38°C', label:'Febre Leve', fill:55, color:'var(--neon-gold)', loss:'420 mL/dia' },
+  { temp:'39°C', label:'Febre Mod.', fill:70, color:'var(--neon-orange)', loss:'580 mL/dia' },
+  { temp:'40°C', label:'Febre Alta', fill:85, color:'var(--neon-pink)', loss:'750 mL/dia' },
+  { temp:'41°C', label:'PERIGO!', fill:98, color:'#ff0000', loss:'&gt;900 mL/dia' }
+];
+
+const tw = document.getElementById('thermoWrap');
+const ti = document.getElementById('thermoInfo');
+
+thermoData.forEach(d => {
+  const el = document.createElement('div');
+  el.className = 'thermo';
+  el.innerHTML = `
+    <div class="thermo-label" style="color:${d.color};text-shadow:0 0 10px ${d.color}">${d.temp}</div>
+    <div class="thermo-tube">
+      <div class="thermo-fill" style="height:${d.fill}%;background:linear-gradient(0deg,${d.color},transparent);box-shadow:0 0 10px ${d.color}"></div>
+    </div>
+    <div class="thermo-val" style="color:${d.color}">${d.label}</div>
+  `;
+  tw.appendChild(el);
+});
+
+thermoData.forEach(d => {
+  const chip = document.createElement('div');
+  chip.className = 'info-chip';
+  chip.innerHTML = `
+    <span class="ic-label" style="color:${d.color}">${d.temp}</span>
+    <span class="ic-val" style="font-size:0.75rem;color:${d.color}">${d.loss}</span>
+    <span style="font-size:0.7rem;color:var(--text-dim)">Perda resp. aprox.</span>
+  `;
+  ti.appendChild(chip);
+});
+
+// ── QUIZ ──
+function checkQuiz(btn, isCorrect, qId) {
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+
+  if(isCorrect) {
+    btn.classList.add('correct');
+    const fb = document.getElementById(qId);
+    fb.classList.add('show','correct');
+  } else {
+    btn.classList.add('wrong');
+    const fb = document.getElementById(qId);
+    fb.classList.add('show','wrong');
+    fb.innerHTML = '<strong>❌ Errado!</strong> Pensa de novo: a febre eleva a temperatura corporal → pressão de vapor de saturação sobe com a temperatura → mais vapor perdido por respiração → taquipneia multiplica o efeito. A resposta correcta é a B.';
+    opts.forEach(o => { if(o !== btn && o.textContent.includes('B)')) o.classList.add('correct'); });
+  }
+}
+
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .fever-event').forEach(el => {
+  observer.observe(el);
+});
+
+// Stagger delays
+document.querySelectorAll('.stagger-1').forEach(el => el.style.transitionDelay = '0.1s');
+document.querySelectorAll('.stagger-2').forEach(el => el.style.transitionDelay = '0.2s');
+document.querySelectorAll('.stagger-3').forEach(el => el.style.transitionDelay = '0.3s');
+document.querySelectorAll('.stagger-4').forEach(el => el.style.transitionDelay = '0.4s');
+document.querySelectorAll('.stagger-5').forEach(el => el.style.transitionDelay = '0.5s');
+
+// Fever timeline events
+document.querySelectorAll('.fever-event').forEach((el, i) => {
+  el.style.transitionDelay = (i * 0.15) + 's';
+});
+
+// Resize canvas
+window.addEventListener('resize', () => {
+  if(waterCanvas) {
+    waterCanvas.width = waterCanvas.offsetWidth * (window.devicePixelRatio||1);
+  }
+});
+</script>
+</body>
+</html>

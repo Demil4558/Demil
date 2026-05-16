@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Mundo Secreto dos Pulmões | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --panel: #12121a;
+    --accent1: #ff3cac;
+    --accent2: #00f5d4;
+    --accent3: #ffe94d;
+    --accent4: #7b2fff;
+    --accent5: #ff6b35;
+    --text: #f0f0ff;
+    --text2: #b0b0cc;
+    --glow1: 0 0 20px #ff3cac88;
+    --glow2: 0 0 20px #00f5d488;
+    --glow3: 0 0 20px #ffe94d88;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a0f; }
+  ::-webkit-scrollbar-thumb { background: var(--accent4); border-radius: 3px; }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 60%, #1a0033 0%, #0a0a0f 70%);
+  }
+
+  #hero canvas {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .3em;
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+    padding: .3em 1em;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: pulse 2s infinite;
+    z-index: 2;
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 #00f5d444; }
+    50% { box-shadow: 0 0 0 8px #00f5d400; }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 10vw, 7rem);
+    line-height: 1;
+    text-align: center;
+    z-index: 2;
+    background: linear-gradient(135deg, #ff3cac, #ffe94d, #00f5d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px #ff3cac88);
+    animation: titleFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes titleFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--accent3);
+    text-align: center;
+    margin-top: 1rem;
+    z-index: 2;
+    font-weight: 700;
+    letter-spacing: .05em;
+  }
+
+  .hero-desc {
+    font-size: .95rem;
+    color: var(--text2);
+    text-align: center;
+    max-width: 500px;
+    margin-top: .6rem;
+    z-index: 2;
+    line-height: 1.6;
+  }
+
+  .scroll-cta {
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .5rem;
+    z-index: 2;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    color: var(--accent2);
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+  }
+
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  .scroll-cta svg { width: 28px; height: 28px; fill: var(--accent2); }
+
+  /* ─── CHAPTERS NAV ─── */
+  #chapters-nav {
+    position: fixed;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #333;
+    border: 2px solid #555;
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+  }
+
+  .nav-dot.active, .nav-dot:hover {
+    background: var(--accent2);
+    border-color: var(--accent2);
+    box-shadow: var(--glow2);
+  }
+
+  .nav-dot .tooltip {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1a1a2e;
+    color: var(--accent2);
+    font-size: .7rem;
+    padding: .2em .6em;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .2s;
+    border: 1px solid var(--accent2);
+  }
+
+  .nav-dot:hover .tooltip { opacity: 1; }
+
+  /* ─── SECTION BASE ─── */
+  .chapter {
+    min-height: 100vh;
+    padding: 4rem 1rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chapter-num {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: .3em;
+    margin-bottom: .5rem;
+    opacity: .6;
+  }
+
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    line-height: 1.1;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ─── MANGA PANELS ─── */
+  .manga-grid {
+    display: grid;
+    gap: 1rem;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .manga-grid-2 { grid-template-columns: 1fr 1fr; }
+  .manga-grid-3 { grid-template-columns: 2fr 1fr; }
+
+  @media (max-width: 600px) {
+    .manga-grid-2, .manga-grid-3 { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 2px solid #222;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s, box-shadow .3s;
+  }
+
+  .panel:hover { transform: translateY(-4px); }
+
+  .panel.pink { border-color: var(--accent1); box-shadow: 0 0 15px #ff3cac33; }
+  .panel.cyan { border-color: var(--accent2); box-shadow: 0 0 15px #00f5d433; }
+  .panel.yellow { border-color: var(--accent3); box-shadow: 0 0 15px #ffe94d33; }
+  .panel.purple { border-color: var(--accent4); box-shadow: 0 0 15px #7b2fff33; }
+  .panel.orange { border-color: var(--accent5); box-shadow: 0 0 15px #ff6b3533; }
+
+  .panel-label {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    letter-spacing: .1em;
+    margin-bottom: .5rem;
+  }
+
+  .panel-text {
+    font-size: .95rem;
+    line-height: 1.7;
+    color: var(--text2);
+  }
+
+  .panel-text strong { color: var(--text); }
+
+  /* ─── SPEECH BUBBLE ─── */
+  .speech-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 860px;
+    margin: 1rem auto;
+  }
+
+  .speech-wrap.right { flex-direction: row-reverse; }
+
+  .char-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    border: 3px solid var(--accent2);
+    background: #1a1a2e;
+    box-shadow: var(--glow2);
+    animation: avatarBob 2s ease-in-out infinite;
+  }
+
+  .char-avatar.pink { border-color: var(--accent1); box-shadow: var(--glow1); }
+  .char-avatar.yellow { border-color: var(--accent3); box-shadow: var(--glow3); }
+
+  @keyframes avatarBob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .bubble {
+    background: #1a1a2e;
+    border-radius: 16px;
+    padding: 1rem 1.3rem;
+    position: relative;
+    flex: 1;
+    font-size: .95rem;
+    line-height: 1.7;
+    color: var(--text);
+    border: 2px solid var(--accent2);
+  }
+
+  .bubble.pink { border-color: var(--accent1); }
+  .bubble.yellow { border-color: var(--accent3); }
+  .bubble::before {
+    content: '';
+    position: absolute;
+    left: -12px; top: 20px;
+    border: 8px solid transparent;
+    border-right-color: var(--accent2);
+  }
+
+  .bubble.pink::before { border-right-color: var(--accent1); }
+  .bubble.yellow::before { border-right-color: var(--accent3); }
+  .speech-wrap.right .bubble::before {
+    left: auto; right: -12px;
+    border-right-color: transparent;
+    border-left-color: var(--accent2);
+  }
+
+  .char-name {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: .1em;
+    margin-bottom: .3rem;
+    color: var(--accent2);
+  }
+
+  .char-name.pink { color: var(--accent1); }
+  .char-name.yellow { color: var(--accent3); }
+
+  /* ─── CANVAS SCENES ─── */
+  .scene-canvas {
+    border-radius: 12px;
+    background: #0d0d1a;
+    border: 2px solid #222;
+    display: block;
+    margin: 1.5rem auto;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position: relative;
+    max-width: 780px;
+    margin: 2rem auto;
+    padding-left: 2.5rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: .75rem;
+    top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent1), var(--accent4), var(--accent2));
+    border-radius: 2px;
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all .6s ease;
+  }
+
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+
+  .tl-dot {
+    position: absolute;
+    left: -2.2rem;
+    top: .3rem;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent1);
+    border: 3px solid var(--bg);
+    box-shadow: var(--glow1);
+  }
+
+  .tl-item:nth-child(2) .tl-dot { background: var(--accent3); box-shadow: var(--glow3); }
+  .tl-item:nth-child(3) .tl-dot { background: var(--accent2); box-shadow: var(--glow2); }
+  .tl-item:nth-child(4) .tl-dot { background: var(--accent4); }
+  .tl-item:nth-child(5) .tl-dot { background: var(--accent5); }
+  .tl-item:nth-child(6) .tl-dot { background: var(--accent1); box-shadow: var(--glow1); }
+
+  .tl-date {
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    color: var(--accent3);
+    margin-bottom: .2rem;
+  }
+
+  .tl-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    margin-bottom: .3rem;
+  }
+
+  .tl-body {
+    font-size: .9rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* ─── FACT CARDS ─── */
+  .facts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    max-width: 900px;
+    margin: 1.5rem auto;
+  }
+
+  .fact-card {
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    width: 260px;
+    border-left: 4px solid var(--accent1);
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s;
+  }
+
+  .fact-card:hover { transform: scale(1.04); }
+  .fact-card:nth-child(2) { border-left-color: var(--accent2); }
+  .fact-card:nth-child(3) { border-left-color: var(--accent3); }
+  .fact-card:nth-child(4) { border-left-color: var(--accent4); }
+  .fact-card:nth-child(5) { border-left-color: var(--accent5); }
+  .fact-card:nth-child(6) { border-left-color: var(--accent2); }
+
+  .fact-icon { font-size: 2rem; margin-bottom: .5rem; }
+  .fact-title { font-family: 'Bangers', cursive; font-size: 1.1rem; margin-bottom: .3rem; color: var(--accent1); }
+  .fact-card:nth-child(2) .fact-title { color: var(--accent2); }
+  .fact-card:nth-child(3) .fact-title { color: var(--accent3); }
+  .fact-card:nth-child(4) .fact-title { color: var(--accent4); }
+  .fact-card:nth-child(5) .fact-title { color: var(--accent5); }
+  .fact-card:nth-child(6) .fact-title { color: var(--accent2); }
+  .fact-body { font-size: .85rem; color: var(--text2); line-height: 1.6; }
+
+  /* ─── QUIZ ─── */
+  .quiz-box {
+    background: #0d0d1a;
+    border: 2px solid var(--accent4);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 680px;
+    margin: 1.5rem auto;
+    box-shadow: 0 0 30px #7b2fff22;
+  }
+
+  .quiz-q {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: .6rem; }
+
+  .quiz-opt {
+    background: #1a1a2e;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: .8rem 1.2rem;
+    cursor: pointer;
+    font-size: .95rem;
+    color: var(--text);
+    transition: all .2s;
+    text-align: left;
+  }
+
+  .quiz-opt:hover { border-color: var(--accent4); background: #22223a; }
+  .quiz-opt.correct { border-color: var(--accent2); background: #00f5d422; color: var(--accent2); }
+  .quiz-opt.wrong { border-color: var(--accent1); background: #ff3cac22; color: var(--accent1); }
+
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: .8rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: .95rem;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #00f5d422; color: var(--accent2); border: 1px solid var(--accent2); }
+  .quiz-feedback.bad { background: #ff3cac22; color: var(--accent1); border: 1px solid var(--accent1); }
+
+  .quiz-next {
+    margin-top: 1rem;
+    background: var(--accent4);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: .7rem 1.5rem;
+    cursor: pointer;
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    letter-spacing: .05em;
+    display: none;
+    transition: background .2s;
+  }
+
+  .quiz-next:hover { background: #9b4fff; }
+  .quiz-next.show { display: inline-block; }
+
+  /* ─── MOLECULE CANVAS WRAPPER ─── */
+  .mol-scene {
+    position: relative;
+    width: 100%;
+    max-width: 780px;
+    margin: 1.5rem auto;
+  }
+
+  .mol-label {
+    position: absolute;
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    background: #0a0a0fcc;
+    padding: .2em .5em;
+    border-radius: 4px;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  /* ─── SECTION BACKGROUNDS ─── */
+  #ch1 { background: radial-gradient(ellipse at 30% 40%, #1a002a 0%, #0a0a0f 70%); }
+  #ch2 { background: radial-gradient(ellipse at 70% 30%, #001a1a 0%, #0a0a0f 70%); }
+  #ch3 { background: radial-gradient(ellipse at 50% 70%, #1a1000 0%, #0a0a0f 70%); }
+  #ch4 { background: radial-gradient(ellipse at 20% 60%, #001a10 0%, #0a0a0f 70%); }
+  #ch5 { background: radial-gradient(ellipse at 80% 40%, #1a0010 0%, #0a0a0f 70%); }
+  #ch6 { background: radial-gradient(ellipse at 50% 50%, #0a0a1f 0%, #0a0a0f 70%); }
+  #ch7 { background: radial-gradient(ellipse at 40% 40%, #1a0a00 0%, #0a0a0f 70%); }
+
+  /* ─── SECTION DIVIDER ─── */
+  .divider {
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+  }
+
+  /* ─── HIGHLIGHT TEXT ─── */
+  .hl { font-weight: 900; }
+  .hl.pink { color: var(--accent1); }
+  .hl.cyan { color: var(--accent2); }
+  .hl.yellow { color: var(--accent3); }
+  .hl.purple { color: var(--accent4); }
+  .hl.orange { color: var(--accent5); }
+
+  /* ─── BIG STAT ─── */
+  .big-stat {
+    text-align: center;
+    margin: 1rem 0;
+  }
+
+  .big-num {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1;
+  }
+
+  .big-label {
+    font-size: .85rem;
+    color: var(--text2);
+    margin-top: .3rem;
+  }
+
+  /* ─── CHAPTER INTRO BAND ─── */
+  .ch-intro {
+    width: 100%;
+    padding: .5rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: .7rem;
+    letter-spacing: .2em;
+    text-align: center;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+
+  /* ─── GLOW TEXT ─── */
+  .glow-pink { text-shadow: 0 0 20px var(--accent1); color: var(--accent1); }
+  .glow-cyan { text-shadow: 0 0 20px var(--accent2); color: var(--accent2); }
+  .glow-yellow { text-shadow: 0 0 20px var(--accent3); color: var(--accent3); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #06060e;
+    border-top: 2px solid #1a1a2e;
+    padding: 3rem 1rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: .1em;
+    margin-bottom: .5rem;
+  }
+
+  .footer-sub {
+    font-size: .85rem;
+    color: var(--text2);
+    line-height: 1.8;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .footer-divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent1), var(--accent2));
+    margin: 1rem auto;
+    border-radius: 1px;
+  }
+
+  .footer-copy {
+    font-size: .75rem;
+    color: #444;
+    margin-top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ─── ANIM HELPERS ─── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── INTERACTIVE LUNG ─── */
+  .lung-btn {
+    background: transparent;
+    border: 2px solid var(--accent5);
+    color: var(--accent5);
+    border-radius: 8px;
+    padding: .5rem 1rem;
+    cursor: pointer;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: .05em;
+    transition: all .2s;
+  }
+
+  .lung-btn:hover { background: var(--accent5); color: #0a0a0f; }
+
+  .lung-btn.active { background: var(--accent5); color: #0a0a0f; }
+
+  .btn-row { display: flex; gap: .7rem; flex-wrap: wrap; justify-content: center; margin: 1rem 0; }
+
+  /* ─── GLOSSARY ─── */
+  .glossary {
+    max-width: 860px;
+    margin: 1rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .8rem;
+  }
+
+  .gloss-item {
+    background: #12121a;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    border-top: 3px solid var(--accent4);
+    transition: transform .2s;
+  }
+
+  .gloss-item:hover { transform: translateY(-3px); }
+  .gloss-item:nth-child(2n) { border-top-color: var(--accent2); }
+  .gloss-item:nth-child(3n) { border-top-color: var(--accent1); }
+  .gloss-item:nth-child(4n) { border-top-color: var(--accent3); }
+
+  .gloss-term {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: var(--accent4);
+    margin-bottom: .3rem;
+  }
+
+  .gloss-item:nth-child(2n) .gloss-term { color: var(--accent2); }
+  .gloss-item:nth-child(3n) .gloss-term { color: var(--accent1); }
+  .gloss-item:nth-child(4n) .gloss-term { color: var(--accent3); }
+
+  .gloss-def { font-size: .85rem; color: var(--text2); line-height: 1.6; }
+
+  /* ─── PROGRESS BAR ─── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent1), var(--accent3), var(--accent2));
+    z-index: 9999;
+    transition: width .1s;
+  }
+
+  /* ─── CHAPTER SEPARATOR ─── */
+  .ch-sep {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, transparent, var(--accent4), transparent);
+    margin: 0;
+  }
+
+  /* ─── CENTER UTIL ─── */
+  .c { text-align: center; }
+  .mx { max-width: 780px; margin: 0 auto; }
+  .mb { margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- NAV DOTS -->
+<nav id="chapters-nav">
+  <div class="nav-dot active" data-ch="hero"><span class="tooltip">Início</span></div>
+  <div class="nav-dot" data-ch="ch1"><span class="tooltip">Cap.1 – O Pulmão</span></div>
+  <div class="nav-dot" data-ch="ch2"><span class="tooltip">Cap.2 – Alvéolos</span></div>
+  <div class="nav-dot" data-ch="ch3"><span class="tooltip">Cap.3 – Tensão Superficial</span></div>
+  <div class="nav-dot" data-ch="ch4"><span class="tooltip">Cap.4 – Surfactante</span></div>
+  <div class="nav-dot" data-ch="ch5"><span class="tooltip">Cap.5 – Pneumócitos</span></div>
+  <div class="nav-dot" data-ch="ch6"><span class="tooltip">Cap.6 – Síntese</span></div>
+  <div class="nav-dot" data-ch="ch7"><span class="tooltip">Quiz Final</span></div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-badge">DEMILMED-UL · 2º ANO DE MEDICINA · 2026</div>
+  <h1 class="hero-title">O MUNDO<br>SECRETO<br>DOS PULMÕES</h1>
+  <p class="hero-sub">🫁 Estrutura Alveolar · Surfactante · Tensão Superficial</p>
+  <p class="hero-desc">Uma aventura científica para quem nunca ouviu falar disto — e para quem quer entender de verdade.</p>
+  <div class="scroll-cta" onclick="scrollToChapter('ch1')">
+    COMEÇA A AVENTURA
+    <svg viewBox="0 0 24 24"><path d="M12 16l-6-6 1.4-1.4L12 13.2l4.6-4.6L18 10z"/></svg>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 1 – O PULMÃO POR DENTRO
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch1">
+  <div class="ch-intro" style="background:#1a002a; color:var(--accent1); border:1px solid var(--accent1)33;">
+    ◈ CAPÍTULO 1 ◈
+  </div>
+  <h2 class="chapter-title glow-pink fade-in">Bem-Vindo ao<br>Reino dos Pulmões</h2>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar">🧑‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">Dr. Kenzo · Narrador</div>
+      Imagina que és do tamanho de uma bactéria. Tu entras pela boca de um ser humano, percorres a <strong>traqueia</strong>, depois os <strong>brônquios</strong>, depois os <strong>bronquíolos</strong>... e de repente, chegaste! Estás num lugar que parece uma caverna mágica cheia de bolhas. Bem-vindo ao <span class="hl pink">alvéolo pulmonar.</span>
+    </div>
+  </div>
+
+  <canvas class="scene-canvas fade-in" id="lung-tree" width="760" height="300" style="max-width:100%;"></canvas>
+
+  <div class="manga-grid manga-grid-2 fade-in">
+    <div class="panel pink">
+      <div class="panel-label glow-pink">📐 A Arquitectura</div>
+      <p class="panel-text">
+        O pulmão humano é uma <strong>árvore invertida</strong>. O tronco é a traqueia. Os ramos são os brônquios. As folhas são os alvéolos — e são <span class="hl pink">300 a 500 milhões</span> deles em cada pulmão adulto!
+      </p>
+    </div>
+    <div class="panel cyan">
+      <div class="panel-label glow-cyan">📏 Números Épicos</div>
+      <p class="panel-text">
+        Se esticasses todos os alvéolos de um pulmão adulto, a área total seria de <strong>70–100 m²</strong> — do tamanho de um campo de ténis. Tudo embrulhado no teu peito!
+      </p>
+    </div>
+  </div>
+
+  <div class="speech-wrap right fade-in">
+    <div class="char-avatar pink">🩺</div>
+    <div class="bubble pink">
+      <div class="char-name pink">Luna · Estudante</div>
+      Mas espera... se são 500 milhões de bolhas, porque é que não explodem? Como é que se abrem e fecham sem rebentar?
+    </div>
+  </div>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar">🧑‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">Dr. Kenzo</div>
+      <em>Excelente pergunta, Luna.</em> É exactamente isso que vamos descobrir. A resposta tem um nome: <span class="hl yellow">SURFACTANTE</span>. Mas primeiro, precisamos de entender o inimigo que ele enfrenta...
+    </div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 2 – ANATOMIA DO ALVÉOLO
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch2">
+  <div class="ch-intro" style="background:#001a1a; color:var(--accent2); border:1px solid var(--accent2)33;">
+    ◈ CAPÍTULO 2 ◈
+  </div>
+  <h2 class="chapter-title glow-cyan fade-in">Dentro do<br>Alvéolo</h2>
+
+  <canvas class="scene-canvas fade-in" id="alveolus-canvas" width="760" height="380" style="max-width:100%;"></canvas>
+
+  <div class="btn-row fade-in">
+    <button class="lung-btn" onclick="toggleLayer('wall')">Parede Alveolar</button>
+    <button class="lung-btn" onclick="toggleLayer('cap')">Capilar Pulmonar</button>
+    <button class="lung-btn" onclick="toggleLayer('cells')">Células</button>
+    <button class="lung-btn" onclick="toggleLayer('fluid')">Fluido Superficial</button>
+  </div>
+
+  <div class="manga-grid manga-grid-3 fade-in">
+    <div class="panel cyan" style="padding:1.8rem;">
+      <div class="panel-label glow-cyan">🔬 Camadas do Alvéolo</div>
+      <p class="panel-text" style="margin-bottom:.8rem;">
+        A parede de um alvéolo é <strong>ultra-fina</strong> — apenas 0,2 µm de espessura. Para comparar: um cabelo humano tem ~70 µm. A troca de gases (O₂/CO₂) acontece atravessando estas camadas:
+      </p>
+      <ol style="color:var(--text2); font-size:.9rem; padding-left:1.2rem; line-height:2;">
+        <li><span class="hl cyan">Fluido com surfactante</span></li>
+        <li>Célula epitelial (pneumócito)</li>
+        <li>Membrana basal epitelial</li>
+        <li>Espaço intersticial</li>
+        <li>Membrana basal endotelial</li>
+        <li>Célula endotelial do capilar</li>
+        <li>Plasma sanguíneo</li>
+        <li>Hemácia (glóbulo vermelho)</li>
+      </ol>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:1rem;">
+      <div class="panel yellow">
+        <div class="panel-label glow-yellow">⚡ Troca Gasosa</div>
+        <p class="panel-text">O O₂ entra no sangue. O CO₂ sai. Este processo chama-se <strong>hematose</strong> e ocorre em milissegundos.</p>
+      </div>
+      <div class="panel orange">
+        <div class="panel-label" style="color:var(--accent5);">💧 Ponto Crítico</div>
+        <p class="panel-text">A superfície interna dos alvéolos está sempre <strong>húmida</strong>. Essa humidade cria um problema enorme — a <span class="hl orange">tensão superficial</span>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="facts-row fade-in">
+    <div class="fact-card">
+      <div class="fact-icon">🫁</div>
+      <div class="fact-title">Diâmetro</div>
+      <div class="fact-body">Cada alvéolo tem ~200–300 µm. São microscópicos, mas juntos formam uma superfície gigante.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🩸</div>
+      <div class="fact-title">Rede Capilar</div>
+      <div class="fact-body">Cada alvéolo está rodeado por capilares. A distância entre o ar e o sangue é de apenas 0,5 µm.</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🔄</div>
+      <div class="fact-title">Ritmo</div>
+      <div class="fact-body">Em repouso, respiramos ~15 vezes/min. Os alvéolos expandem e contraem 21.600 vezes por dia.</div>
+    </div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 3 – TENSÃO SUPERFICIAL
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch3">
+  <div class="ch-intro" style="background:#1a1000; color:var(--accent3); border:1px solid var(--accent3)33;">
+    ◈ CAPÍTULO 3 ◈
+  </div>
+  <h2 class="chapter-title glow-yellow fade-in">O Vilão da<br>História:<br>Tensão Superficial</h2>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar yellow">🧪</div>
+    <div class="bubble yellow">
+      <div class="char-name yellow">Prof. Mira · Físico-Química</div>
+      Antes de falarmos de surfactante, precisamos de conhecer o inimigo. <span class="hl yellow">Tensão superficial</span> é a força que faz as gotículas de água ficarem redondas. É a "pele" que se forma na superfície dos líquidos!
+    </div>
+  </div>
+
+  <canvas class="scene-canvas fade-in" id="tension-canvas" width="760" height="300" style="max-width:100%;"></canvas>
+
+  <div class="manga-grid manga-grid-2 fade-in">
+    <div class="panel yellow">
+      <div class="panel-label glow-yellow">💧 Por que existe?</div>
+      <p class="panel-text">
+        As moléculas de água adoram-se umas às outras — fazem <strong>pontes de hidrogénio</strong>. No interior do líquido, cada molécula é puxada em todas as direcções e fica estável. Mas na <span class="hl yellow">superfície</span>, só é puxada para dentro e para os lados. Resultado: a superfície fica "tensa", como uma membrana elástica.
+      </p>
+    </div>
+    <div class="panel pink">
+      <div class="panel-label glow-pink">🫧 O Problema nos Alvéolos</div>
+      <p class="panel-text">
+        O alvéolo é como uma <strong>bolha de sabão</strong>. Segundo a <span class="hl pink">Lei de Laplace</span>:
+        <br><br>
+        <code style="background:#0a0a0f; padding:.3em .6em; border-radius:4px; color:var(--accent3); font-size:1.1rem;">P = 2T / r</code>
+        <br><br>
+        Onde <strong>P</strong> = pressão interna, <strong>T</strong> = tensão superficial, <strong>r</strong> = raio. Alvéolos <span class="hl pink">pequenos têm maior pressão</span> — tentam esvaziar-se para dentro dos grandes!
+      </p>
+    </div>
+  </div>
+
+  <!-- Lei de Laplace interactiva -->
+  <div class="quiz-box fade-in" style="border-color:var(--accent3);">
+    <div class="quiz-q" style="color:var(--accent3);">🧮 Calculadora de Laplace Interactiva</div>
+    <p style="color:var(--text2); font-size:.9rem; margin-bottom:1rem;">Mexe nos sliders para ver como a tensão e o raio afectam a pressão alveolar!</p>
+    <div style="margin-bottom:.8rem;">
+      <label style="color:var(--text2); font-size:.85rem;">Tensão Superficial (T): <span id="t-val" style="color:var(--accent3); font-weight:700;">25</span> mN/m</label><br>
+      <input type="range" id="slider-t" min="1" max="72" value="25" style="width:100%; margin-top:.4rem; accent-color:var(--accent3);" oninput="updateLaplace()">
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label style="color:var(--text2); font-size:.85rem;">Raio do Alvéolo (r): <span id="r-val" style="color:var(--accent2); font-weight:700;">100</span> µm</label><br>
+      <input type="range" id="slider-r" min="50" max="300" value="100" style="width:100%; margin-top:.4rem; accent-color:var(--accent2);" oninput="updateLaplace()">
+    </div>
+    <div style="background:#0a0a0f; padding:1rem; border-radius:8px; text-align:center;">
+      <span style="font-family:'Space Mono',monospace; font-size:.8rem; color:var(--text2);">Pressão = </span>
+      <span id="laplace-result" style="font-family:'Bangers',cursive; font-size:2.5rem; color:var(--accent1);">500</span>
+      <span style="font-family:'Space Mono',monospace; font-size:.8rem; color:var(--text2);"> Pa</span>
+    </div>
+    <p id="laplace-msg" style="font-size:.85rem; margin-top:.7rem; color:var(--text2); text-align:center;"></p>
+  </div>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar pink">🩺</div>
+    <div class="bubble pink">
+      <div class="char-name pink">Luna</div>
+      Então se não houvesse nada a controlar a tensão superficial... os alvéolos mais pequenos iam esvaziar-se para os grandes... e o pulmão ia colapsar??
+    </div>
+  </div>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar">🧑‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">Dr. Kenzo</div>
+      <em>Exactamente.</em> E é precisamente isso que acontece quando falta surfactante — como na <span class="hl pink">Síndrome de Dificuldade Respiratória do Recém-Nascido</span>. O pulmão colapsa. Mas... por sorte, temos o <span class="hl yellow">surfactante</span> para salvar o dia! 🦸
+    </div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 4 – O SURFACTANTE
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch4">
+  <div class="ch-intro" style="background:#001a10; color:var(--accent2); border:1px solid var(--accent2)33;">
+    ◈ CAPÍTULO 4 ◈
+  </div>
+  <h2 class="chapter-title glow-cyan fade-in">O Herói:<br>Surfactante! 🦸</h2>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar">🧑‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">Dr. Kenzo</div>
+      O surfactante é uma mistura especial produzida pelos pulmões. A palavra vem de <em>"SURFace ACTive AgeNT"</em> — agente activo de superfície. É literalmente um <span class="hl cyan">domador da tensão superficial!</span>
+    </div>
+  </div>
+
+  <!-- Molécula animada de surfactante -->
+  <canvas class="scene-canvas fade-in" id="surfactant-canvas" width="760" height="350" style="max-width:100%;"></canvas>
+
+  <div class="manga-grid manga-grid-2 fade-in">
+    <div class="panel cyan">
+      <div class="panel-label glow-cyan">🧬 Composição do Surfactante</div>
+      <p class="panel-text">
+        O surfactante é ~<strong>90% lípidos</strong> e ~<strong>10% proteínas</strong>. O lípido principal é a 
+        <span class="hl cyan">DPPC</span> — Dipalmitoilfosfatidilcolina. É uma molécula com dupla personalidade:
+        <br><br>
+        • <strong>Cabeça hidrófila</strong> 💧 — ama a água<br>
+        • <strong>Cauda hidrofóbica</strong> 🚫💧 — odeia a água
+      </p>
+    </div>
+    <div class="panel yellow">
+      <div class="panel-label glow-yellow">⚡ Como Funciona?</div>
+      <p class="panel-text">
+        As moléculas de DPPC alinham-se na interface <strong>ar-líquido</strong>: cabeças para a água, caudas para o ar. Esta camada <span class="hl yellow">interrompe as pontes de hidrogénio</span> entre as moléculas de água, reduzindo drasticamente a tensão superficial!
+      </p>
+    </div>
+  </div>
+
+  <!-- Molécula DPPC interactiva -->
+  <div class="panel purple fade-in" style="max-width:780px; width:100%;">
+    <div class="panel-label" style="color:var(--accent4);">🧪 A Molécula Estrela: DPPC</div>
+    <p class="panel-text" style="margin-bottom:1rem;">Clica nas partes da molécula para aprender sobre cada componente:</p>
+    <canvas id="dppc-canvas" width="740" height="200" style="max-width:100%; cursor:pointer; display:block; margin:0 auto; border-radius:8px; background:#0a0a0f;"></canvas>
+    <p id="dppc-info" style="margin-top:.8rem; font-size:.9rem; color:var(--accent3); min-height:2em; text-align:center;"></p>
+  </div>
+
+  <div class="facts-row fade-in">
+    <div class="fact-card">
+      <div class="fact-icon">📉</div>
+      <div class="fact-title">Redução Impressionante</div>
+      <div class="fact-body">Sem surfactante: tensão superficial ~70 mN/m (como a água pura). Com surfactante: pode cair para <strong>1–5 mN/m</strong> na expiração!</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🔄</div>
+      <div class="fact-title">Dinâmico</div>
+      <div class="fact-body">Na <strong>inspiração</strong> (alvéolo cresce), o surfactante dispersa e a tensão sobe um pouco. Na <strong>expiração</strong> (alvéolo encolhe), concentra-se e a tensão cai muito — isso previne o colapso!</div>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">⚖️</div>
+      <div class="fact-title">Estabilidade</div>
+      <div class="fact-body">O surfactante <strong>equilibra alvéolos</strong> de tamanhos diferentes: nos pequenos, a tensão cai mais; nos grandes, menos. Resultado: pressão igual em todos!</div>
+    </div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 5 – PNEUMÓCITOS
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch5">
+  <div class="ch-intro" style="background:#1a0010; color:var(--accent1); border:1px solid var(--accent1)33;">
+    ◈ CAPÍTULO 5 ◈
+  </div>
+  <h2 class="chapter-title glow-pink fade-in">Os Fabricantes:<br>Pneumócitos Tipo II</h2>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar pink">🩺</div>
+    <div class="bubble pink">
+      <div class="char-name pink">Luna</div>
+      Ok, o surfactante é incrível! Mas quem o produz? Existe uma fábrica no pulmão?
+    </div>
+  </div>
+
+  <div class="speech-wrap fade-in">
+    <div class="char-avatar">🧑‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">Dr. Kenzo</div>
+      <em>Sim!</em> A fábrica são os <span class="hl pink">Pneumócitos Tipo II</span> — pequenas células arredondadas que vivem na parede alveolar. São apenas <strong>~5% da superfície</strong> do alvéolo, mas têm um trabalho ENORME!
+    </div>
+  </div>
+
+  <canvas class="scene-canvas fade-in" id="pneumocyte-canvas" width="760" height="360" style="max-width:100%;"></canvas>
+
+  <div class="timeline fade-in">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 1 · Síntese</div>
+      <div class="tl-title glow-pink">Retículo Endoplasmático</div>
+      <div class="tl-body">O pneumócito tipo II sintetiza os <strong>fosfolípidos</strong> (especialmente DPPC) no retículo endoplasmático rugoso. As proteínas surfactantes (SP-A, SP-B, SP-C, SP-D) são também produzidas aqui.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 2 · Embalagem</div>
+      <div class="tl-title glow-yellow">Complexo de Golgi</div>
+      <div class="tl-body">O complexo de Golgi <strong>empacota</strong> os componentes do surfactante em vesículas especiais chamadas <span class="hl yellow">corpos lamelares</span> — pequenos "rolos de filme" de fosfolípidos dobrados em camadas.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 3 · Armazenamento</div>
+      <div class="tl-title glow-cyan">Corpos Lamelares</div>
+      <div class="tl-body">Os corpos lamelares são os <strong>armazéns</strong> do surfactante dentro da célula. Ficam prontos para ser libertados quando necessário. O pneumócito tipo II guarda o suficiente para horas de função pulmonar!</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 4 · Secreção</div>
+      <div class="tl-title" style="color:var(--accent4);">Exocitose</div>
+      <div class="tl-body">Quando estimulado (ex: pelo <strong>estiramento mecânico</strong> da respiração, ou por hormonas como o cortisol), o pneumócito liberta os corpos lamelares para o espaço alveolar por <span class="hl purple">exocitose</span>.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 5 · Transformação</div>
+      <div class="tl-title" style="color:var(--accent5);">Mielina Tubular</div>
+      <div class="tl-body">No espaço alveolar, os corpos lamelares reorganizam-se num intermediário chamado <span class="hl orange">mielina tubular</span> — uma grelha cristalina que serve de <strong>reservatório</strong> para o surfactante na superfície.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">PASSO 6 · Reciclagem</div>
+      <div class="tl-title glow-pink">Reciclagem Eficiente</div>
+      <div class="tl-body">O surfactante usado não é descartado! Os pneumócitos tipo II <strong>reciclam ~90%</strong> do surfactante antigo, re-secretando-o. Os macrófagos alveolares degradam o restante.</div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 fade-in">
+    <div class="panel pink">
+      <div class="panel-label glow-pink">🆚 Tipo I vs Tipo II</div>
+      <p class="panel-text">
+        <strong>Pneumócito Tipo I:</strong> Células planas que cobrem 95% da superfície. Função principal: <span class="hl cyan">troca gasosa</span>. São frágeis e não se regeneram.<br><br>
+        <strong>Pneumócito Tipo II:</strong> Células cúbicas, apenas 5% da superfície. Produzem <span class="hl pink">surfactante</span> e podem regenerar as tipo I!
+      </p>
+    </div>
+    <div class="panel orange">
+      <div class="panel-label" style="color:var(--accent5);">🧬 Proteínas Surfactantes</div>
+      <p class="panel-text">
+        <strong>SP-A e SP-D:</strong> Papel na <span class="hl orange">defesa imunológica</span> — reconhecem bactérias e vírus.<br><br>
+        <strong>SP-B e SP-C:</strong> Auxiliam na <span class="hl yellow">organização da camada</span> de surfactante na superfície alveolar. Sem SP-B: o bebé não sobrevive!
+      </p>
+    </div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 6 – CRONOLOGIA E CLÍNICA
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch6">
+  <div class="ch-intro" style="background:#0a0a1f; color:var(--accent4); border:1px solid var(--accent4)33;">
+    ◈ CAPÍTULO 6 ◈
+  </div>
+  <h2 class="chapter-title fade-in" style="color:var(--accent4); text-shadow:0 0 20px var(--accent4)88;">Cronologia &<br>Quando Corre Mal</h2>
+
+  <!-- Cronologia do desenvolvimento -->
+  <h3 class="c fade-in" style="color:var(--accent3); font-family:'Bangers',cursive; font-size:1.8rem; margin-bottom:1.5rem;">📅 Desenvolvimento do Surfactante no Feto</h3>
+
+  <div class="timeline fade-in">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">~20 SEMANAS</div>
+      <div class="tl-title glow-pink">Primeiros Pneumócitos Tipo II</div>
+      <div class="tl-body">Os pneumócitos tipo II começam a diferenciar-se. Mas ainda não produzem surfactante suficiente.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">~24–28 SEMANAS</div>
+      <div class="tl-title glow-yellow">Início da Produção</div>
+      <div class="tl-body">Começa a aparecer surfactante em quantidades detectáveis no líquido amniótico. A medição da relação <strong>lecitina/esfingomielina</strong> (L/E) pode estimar a maturidade pulmonar.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">~32–34 SEMANAS</div>
+      <div class="tl-title glow-cyan">Zona de Transição Crítica</div>
+      <div class="tl-body">Grandes aumentos na síntese de surfactante. Neonatos prematuros nascidos antes desta fase têm alto risco de <span class="hl cyan">SDR neonatal</span>.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">~35–36 SEMANAS</div>
+      <div class="tl-title" style="color:var(--accent4);">Maturidade Pulmonar</div>
+      <div class="tl-body">Nível de surfactante suficiente para respiração autónoma estável. Relação L/E ≥ 2 indica maturidade pulmonar.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-date">TERMO (38–40 SEM)</div>
+      <div class="tl-title" style="color:var(--accent5);">Pulmão Maduro!</div>
+      <div class="tl-body">Sistema surfactante completamente funcional. O bebé nasce e o primeiro choro <strong>abre</strong> os alvéolos com força — e o surfactante garante que eles ficam abertos!</div>
+    </div>
+  </div>
+
+  <!-- Patologias -->
+  <h3 class="c fade-in" style="color:var(--accent1); font-family:'Bangers',cursive; font-size:1.8rem; margin:2rem 0 1.5rem;">⚠️ Quando o Sistema Falha</h3>
+
+  <div class="manga-grid manga-grid-2 fade-in">
+    <div class="panel pink">
+      <div class="panel-label glow-pink">🍼 SDR Neonatal (IRDS)</div>
+      <p class="panel-text">
+        <strong>Causa:</strong> Prematuridade — falta de surfactante maduro.<br>
+        <strong>O que acontece:</strong> Os alvéolos colapsam a cada expiração (atelectasia). O bebé faz um esforço enorme para respirar.<br>
+        <strong>Sinal clínico:</strong> Gemido expiratório (tenta criar PEEP com a glote), retracção costal, cianose.<br>
+        <strong>Tratamento:</strong> <span class="hl pink">Surfactante exógeno</span> administrado por tubo endotraqueal!
+      </p>
+    </div>
+    <div class="panel orange">
+      <div class="panel-label" style="color:var(--accent5);">🏥 SDRA (Adulto)</div>
+      <p class="panel-text">
+        <strong>Síndrome de Dificuldade Respiratória Aguda</strong> pode destruir o surfactante.<br>
+        <strong>Causas:</strong> Pneumonia grave, sepsis, aspiração, COVID-19 grave.<br>
+        <strong>Mecanismo:</strong> Inflamação destrói pneumócitos tipo II → sem surfactante → atelectasia maciça.<br>
+        <strong>Consequência:</strong> Shunt intrapulmonar, hipoxemia severa.
+      </p>
+    </div>
+    <div class="panel cyan">
+      <div class="panel-label glow-cyan">💊 Corticosteróides Pré-Natais</div>
+      <p class="panel-text">
+        Administrados à mãe entre 24–34 semanas quando há risco de parto prematuro. A <span class="hl cyan">betametasona</span> acelera a maturação dos pneumócitos tipo II e a produção de surfactante. Um dos tratamentos mais eficazes em Medicina Perinatal!
+      </p>
+    </div>
+    <div class="panel yellow">
+      <div class="panel-label glow-yellow">🌊 Proteinose Alveolar</div>
+      <p class="panel-text">
+        Doença rara onde o surfactante <strong>acumula-se</strong> nos alvéolos em vez de ser reciclado. O macrófago alveolar falha. Causa dispneia progressiva e <span class="hl yellow">aspecto de "vidro despolido"</span> na tomografia.
+      </p>
+    </div>
+  </div>
+
+  <!-- Glossário -->
+  <h3 class="c fade-in" style="color:var(--accent2); font-family:'Bangers',cursive; font-size:1.8rem; margin:2rem 0 1rem;">📖 Glossário Rápido</h3>
+  <div class="glossary fade-in">
+    <div class="gloss-item"><div class="gloss-term">Alvéolo</div><div class="gloss-def">Pequeno saco aéreo onde acontece a troca de gases no pulmão.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Surfactante</div><div class="gloss-def">Mistura de lípidos e proteínas que reduz a tensão superficial nos alvéolos.</div></div>
+    <div class="gloss-item"><div class="gloss-term">DPPC</div><div class="gloss-def">Dipalmitoilfosfatidilcolina — o principal fosfolípido do surfactante (≈40%).</div></div>
+    <div class="gloss-item"><div class="gloss-term">Tensão Superficial</div><div class="gloss-def">Força que tende a minimizar a área de uma superfície líquida, podendo colapsar alvéolos.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Lei de Laplace</div><div class="gloss-def">P = 2T/r — relaciona pressão, tensão superficial e raio numa esfera.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Pneumócito Tipo I</div><div class="gloss-def">Célula epitelial plana, cobre 95% do alvéolo. Especializada em troca gasosa.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Pneumócito Tipo II</div><div class="gloss-def">Célula epitelial cúbica, produz surfactante. Pode regenerar células Tipo I.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Corpo Lamelar</div><div class="gloss-def">Organelo dos pneumócitos tipo II — "embalagem" do surfactante antes da secreção.</div></div>
+    <div class="gloss-item"><div class="gloss-term">SP-B / SP-C</div><div class="gloss-def">Proteínas hidrofóbicas do surfactante. Essenciais para a organização da camada activa.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Atelectasia</div><div class="gloss-def">Colapso alveolar — quando o surfactante é insuficiente e os alvéolos não conseguem manter-se abertos.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Mielina Tubular</div><div class="gloss-def">Estrutura intermediária formada após secreção dos corpos lamelares, reservatório de surfactante.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Hematose</div><div class="gloss-def">Troca gasosa entre o ar alveolar e o sangue nos capilares pulmonares.</div></div>
+  </div>
+</section>
+<div class="ch-sep"></div>
+
+<!-- ══════════════════════════════════════════
+     CAPÍTULO 7 – QUIZ FINAL
+══════════════════════════════════════════ -->
+<section class="chapter" id="ch7">
+  <div class="ch-intro" style="background:#1a0a00; color:var(--accent5); border:1px solid var(--accent5)33;">
+    ◈ CAPÍTULO FINAL ◈
+  </div>
+  <h2 class="chapter-title fade-in" style="color:var(--accent5); text-shadow:0 0 20px var(--accent5)88;">🎯 Quiz do<br>Mestre Pulmonar</h2>
+
+  <p class="c fade-in" style="color:var(--text2); margin-bottom:1.5rem; max-width:500px; margin-left:auto; margin-right:auto;">
+    Chegaste ao fim da aventura! Agora vamos testar o que aprendeste. Quantas consegues acertar?
+  </p>
+
+  <div id="quiz-container" class="fade-in">
+    <!-- Quiz gerado por JS -->
+  </div>
+
+  <div id="quiz-score" style="display:none; text-align:center; margin-top:2rem;">
+    <div class="big-num" id="score-num" style="color:var(--accent3);"></div>
+    <div class="big-label" id="score-msg"></div>
+    <div style="margin-top:1.5rem;">
+      <button onclick="restartQuiz()" class="lung-btn" style="border-color:var(--accent3); color:var(--accent3); font-size:1.1rem; padding:.7rem 2rem;">
+        🔄 Recomeçar Quiz
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-divider"></div>
+  <div class="footer-sub">
+    UNIVERSIDADE LICUNGO<br>
+    2º Ano de Medicina · Fisiologia Respiratória<br>
+    Estrutura Alveolar · Surfactante · Tensão Superficial
+  </div>
+  <div class="footer-copy">© 2026 DemilMed-UL · Universidade Licungo · Todos os direitos reservados</div>
+</footer>
+
+<script>
+/* ══════════════════════════════════════════
+   HERO CANVAS — Partículas / moléculas
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('hero-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+
+  function resize(){
+    W = c.width = window.innerWidth;
+    H = c.height = window.innerHeight;
+    particles = [];
+    for(let i=0;i<80;i++){
+      particles.push({
+        x: Math.random()*W,
+        y: Math.random()*H,
+        r: Math.random()*3+1,
+        vx: (Math.random()-.5)*.6,
+        vy: (Math.random()-.5)*.6,
+        col: ['#ff3cac','#00f5d4','#ffe94d','#7b2fff'][Math.floor(Math.random()*4)],
+        alpha: Math.random()*.6+.2
+      });
+    }
+  }
+
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(let p of particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>W) p.vx*=-1;
+      if(p.y<0||p.y>H) p.vy*=-1;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = p.col + Math.floor(p.alpha*255).toString(16).padStart(2,'0');
+      ctx.fill();
+    }
+    // Lines between close particles
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<120){
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x,particles[i].y);
+          ctx.lineTo(particles[j].x,particles[j].y);
+          ctx.strokeStyle = `rgba(0,245,212,${.15*(1-d/120)})`;
+          ctx.lineWidth=.5;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize',resize);
+  resize(); frame();
+})();
+
+/* ══════════════════════════════════════════
+   LUNG TREE CANVAS
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('lung-tree');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+
+  function branch(x,y,angle,len,depth){
+    if(depth===0||len<3) return;
+    const x2=x+Math.cos(angle)*len;
+    const y2=y-Math.sin(angle)*len;
+    const hue=depth*30;
+    ctx.beginPath();
+    ctx.moveTo(x,y); ctx.lineTo(x2,y2);
+    ctx.strokeStyle=`hsl(${hue+t*20},80%,60%)`;
+    ctx.lineWidth=depth*.8;
+    ctx.stroke();
+    branch(x2,y2,angle+.45,len*.7,depth-1);
+    branch(x2,y2,angle-.45,len*.7,depth-1);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d1a';
+    ctx.fillRect(0,0,W,H);
+    t+=.003;
+    // Left lung
+    branch(W/4, H, Math.PI/2, 60, 7);
+    // Right lung
+    branch(3*W/4, H, Math.PI/2, 60, 7);
+    // Label
+    ctx.fillStyle='#b0b0cc';
+    ctx.font='12px "Space Mono"';
+    ctx.textAlign='center';
+    ctx.fillText('ÁRVORE BRÔNQUICA (representação esquemática)', W/2, H-8);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   ALVEOLUS CANVAS
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('alveolus-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+  let layers = { wall:true, cap:true, cells:true, fluid:true };
+  window.toggleLayer = function(l){ layers[l]=!layers[l]; };
+
+  function drawAlveolus(cx,cy,r,phase){
+    // Fluid layer
+    if(layers.fluid){
+      ctx.beginPath();
+      ctx.arc(cx,cy,r+6,0,Math.PI*2);
+      ctx.fillStyle='rgba(0,245,212,0.12)';
+      ctx.fill();
+    }
+    // Wall
+    if(layers.wall){
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle='#ff3cac';
+      ctx.lineWidth=3;
+      ctx.stroke();
+    }
+    // Cells
+    if(layers.cells){
+      for(let i=0;i<6;i++){
+        const a=(i/6)*Math.PI*2+phase;
+        const px=cx+Math.cos(a)*r;
+        const py=cy+Math.sin(a)*r;
+        ctx.beginPath();
+        ctx.arc(px,py,6,0,Math.PI*2);
+        i%3===0 ? ctx.fillStyle='#ffe94d' : ctx.fillStyle='#7b2fff';
+        ctx.fill();
+      }
+    }
+    // Capillar
+    if(layers.cap){
+      ctx.beginPath();
+      ctx.arc(cx,cy,r+18,0,Math.PI*2);
+      ctx.strokeStyle='rgba(255,107,53,0.5)';
+      ctx.lineWidth=8;
+      ctx.stroke();
+      // Blood cells
+      for(let i=0;i<4;i++){
+        const a=(i/4)*Math.PI*2+t*1.5+phase;
+        const px=cx+Math.cos(a)*(r+18);
+        const py=cy+Math.sin(a)*(r+18);
+        ctx.beginPath();
+        ctx.ellipse(px,py,6,4,a+Math.PI/2,0,Math.PI*2);
+        ctx.fillStyle='#ff6b35';
+        ctx.fill();
+      }
+    }
+    // O2/CO2 arrows
+    const a0=t*.8+phase;
+    // O2 in
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a0)*15,cy+Math.sin(a0)*15);
+    ctx.lineTo(cx+Math.cos(a0)*(r+16),cy+Math.sin(a0)*(r+16));
+    ctx.strokeStyle='#00f5d4';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+    // CO2 out
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a0+Math.PI)*(r+16),cy+Math.sin(a0+Math.PI)*(r+16));
+    ctx.lineTo(cx+Math.cos(a0+Math.PI)*15,cy+Math.sin(a0+Math.PI)*15);
+    ctx.strokeStyle='#ff3cac';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d1a';
+    ctx.fillRect(0,0,W,H);
+    t+=.02;
+    const breathScale = 1+.08*Math.sin(t*.7);
+    // 3 alvéolos
+    ctx.save();
+    ctx.translate(W/2,H/2);
+    ctx.scale(breathScale,breathScale);
+    drawAlveolus(-180,0,65,0);
+    drawAlveolus(180,0,65,Math.PI/3);
+    drawAlveolus(0,-30,75,Math.PI/6);
+    ctx.restore();
+    // Labels
+    ctx.fillStyle='#b0b0cc'; ctx.font='11px "Space Mono"'; ctx.textAlign='center';
+    ctx.fillStyle='#00f5d4'; ctx.fillText('O₂',W/2-5,H/2+20);
+    ctx.fillStyle='#ff3cac'; ctx.fillText('CO₂',W/2+40,H/2+20);
+    ctx.fillStyle='#b0b0cc';
+    ctx.fillText('← Expandindo e contraindo com a respiração →',W/2,H-12);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   TENSION CANVAS — Moléculas de água
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('tension-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+  const SURF_Y = H*0.55;
+  const mols=[];
+  for(let i=0;i<50;i++){
+    mols.push({
+      x:Math.random()*W,
+      y:Math.random()*(SURF_Y-30)+SURF_Y+5,
+      vx:(Math.random()-.5)*.4,
+      vy:(Math.random()-.5)*.4,
+      r:7
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d1a'; ctx.fillRect(0,0,W,H);
+    t+=.015;
+
+    // Air region
+    ctx.fillStyle='rgba(0,245,212,0.04)';
+    ctx.fillRect(0,0,W,SURF_Y);
+    ctx.fillStyle='rgba(0,100,200,0.10)';
+    ctx.fillRect(0,SURF_Y,W,H-SURF_Y);
+
+    // Surface line with wave
+    ctx.beginPath();
+    ctx.moveTo(0,SURF_Y);
+    for(let x=0;x<=W;x+=4){
+      ctx.lineTo(x, SURF_Y+Math.sin(x*.04+t)*3);
+    }
+    ctx.strokeStyle='#00f5d4';
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    // Hydrogen bonds between close molecules
+    for(let i=0;i<mols.length;i++){
+      for(let j=i+1;j<mols.length;j++){
+        const dx=mols[i].x-mols[j].x, dy=mols[i].y-mols[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<45){
+          ctx.beginPath();
+          ctx.moveTo(mols[i].x,mols[i].y);
+          ctx.lineTo(mols[j].x,mols[j].y);
+          ctx.strokeStyle=`rgba(100,180,255,${.5*(1-d/45)})`;
+          ctx.setLineDash([3,3]); ctx.lineWidth=1;
+          ctx.stroke(); ctx.setLineDash([]);
+        }
+      }
+    }
+
+    // Molecules
+    for(let m of mols){
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<m.r||m.x>W-m.r) m.vx*=-1;
+      if(m.y<SURF_Y+m.r) { m.y=SURF_Y+m.r; m.vy=Math.abs(m.vy); }
+      if(m.y>H-m.r) m.vy*=-1;
+
+      // Check surface proximity — pull down
+      if(m.y<SURF_Y+20) m.vy+=.03;
+
+      // Draw water molecule (H2O)
+      ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+      const surfaceDist=m.y-SURF_Y;
+      const col=surfaceDist<25?'#00f5d4':'#4aa8ff';
+      ctx.fillStyle=col;
+      ctx.fill();
+      // H atoms
+      for(let hh=0;hh<2;hh++){
+        const ha=Math.PI/3*(hh===0?1:-1)+t*.1;
+        ctx.beginPath();
+        ctx.arc(m.x+Math.cos(ha)*(m.r+3),m.y+Math.sin(ha)*(m.r+3),3,0,Math.PI*2);
+        ctx.fillStyle='#aaddff';
+        ctx.fill();
+      }
+    }
+
+    // Force arrows on surface molecules
+    const surfMols=mols.filter(m=>m.y<SURF_Y+25);
+    for(let m of surfMols.slice(0,8)){
+      // Down arrow (net force)
+      ctx.beginPath();
+      ctx.moveTo(m.x,m.y+m.r+2);
+      ctx.lineTo(m.x,m.y+m.r+14);
+      ctx.strokeStyle='#ff3cac';
+      ctx.lineWidth=2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(m.x-4,m.y+m.r+10);
+      ctx.lineTo(m.x,m.y+m.r+14);
+      ctx.lineTo(m.x+4,m.y+m.r+10);
+      ctx.stroke();
+    }
+
+    ctx.fillStyle='#b0b0cc'; ctx.font='11px "Space Mono"'; ctx.textAlign='left';
+    ctx.fillStyle='#00f5d4'; ctx.fillText('AR', 8, 20);
+    ctx.fillStyle='#4aa8ff'; ctx.fillText('ÁGUA (H₂O)', 8, SURF_Y+25);
+    ctx.fillStyle='#ff3cac'; ctx.fillText('↓ Força resultante (tensão superficial)', W/2-100, SURF_Y-10);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   SURFACTANT CANVAS — Moléculas de DPPC
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('surfactant-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+  const SURF_Y = H*0.45;
+  const N_SURF = 20;
+  const surfMols = [];
+  for(let i=0;i<N_SURF;i++){
+    surfMols.push({
+      x: (i+.5)*(W/N_SURF),
+      phase: Math.random()*Math.PI*2
+    });
+  }
+  const waterMols=[];
+  for(let i=0;i<30;i++){
+    waterMols.push({
+      x:Math.random()*W,
+      y:Math.random()*(H-SURF_Y-20)+SURF_Y+20,
+      vx:(Math.random()-.5)*.3,
+      vy:(Math.random()-.5)*.3,
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d1a'; ctx.fillRect(0,0,W,H);
+    t+=.02;
+
+    // Air
+    ctx.fillStyle='rgba(0,245,212,0.04)'; ctx.fillRect(0,0,W,SURF_Y);
+    // Water
+    ctx.fillStyle='rgba(0,70,150,0.15)'; ctx.fillRect(0,SURF_Y,W,H-SURF_Y);
+
+    // Surface
+    ctx.beginPath(); ctx.moveTo(0,SURF_Y);
+    for(let x=0;x<=W;x+=4) ctx.lineTo(x, SURF_Y+Math.sin(x*.03+t)*2);
+    ctx.strokeStyle='rgba(0,245,212,0.3)'; ctx.lineWidth=1; ctx.stroke();
+
+    // Water molecules
+    for(let m of waterMols){
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<5||m.x>W-5) m.vx*=-1;
+      if(m.y<SURF_Y+15||m.y>H-5) m.vy*=-1;
+      ctx.beginPath(); ctx.arc(m.x,m.y,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(68,168,255,0.6)'; ctx.fill();
+    }
+
+    // Surfactant molecules (DPPC)
+    for(let m of surfMols){
+      const sy = SURF_Y + Math.sin(m.phase+t)*.8;
+      const tailLen = 28;
+      const wiggle = Math.sin(t+m.phase)*3;
+
+      // Hydrophilic head (in water, below surface)
+      ctx.beginPath();
+      ctx.arc(m.x, sy+8, 9, 0, Math.PI*2);
+      ctx.fillStyle='#00f5d4';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(m.x, sy+8, 9, 0, Math.PI*2);
+      ctx.strokeStyle='#00f5d488';
+      ctx.lineWidth=2; ctx.stroke();
+
+      // Tail 1 (hydrophobic, pointing up into air)
+      ctx.beginPath();
+      ctx.moveTo(m.x,sy-2);
+      ctx.quadraticCurveTo(m.x-4+wiggle, sy-tailLen/2, m.x-6+wiggle, sy-tailLen);
+      ctx.strokeStyle='#ffe94d'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.stroke();
+
+      // Tail 2
+      ctx.beginPath();
+      ctx.moveTo(m.x,sy-2);
+      ctx.quadraticCurveTo(m.x+4-wiggle, sy-tailLen/2, m.x+6-wiggle, sy-tailLen);
+      ctx.strokeStyle='#ff6b35'; ctx.lineWidth=3; ctx.stroke();
+
+      // Head label
+      ctx.fillStyle='#0a0a0f';
+      ctx.font='bold 7px Nunito';
+      ctx.textAlign='center';
+      ctx.fillText('P',m.x,sy+11);
+    }
+
+    // Labels
+    ctx.font='11px "Space Mono"'; ctx.textAlign='left';
+    ctx.fillStyle='#ffe94d'; ctx.fillText('Cauda hidrofóbica (no ar)', 10, SURF_Y-35);
+    ctx.fillStyle='#00f5d4'; ctx.fillText('Cabeça hidrófila (na água)', 10, SURF_Y+30);
+    ctx.fillStyle='rgba(255,107,53,0.8)'; ctx.fillText('Interface ar-água', W-160, SURF_Y-8);
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   DPPC INTERACTIVE CANVAS
+══════════════════════════════════════════ */
+(function(){
+  const c = document.getElementById('dppc-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+  const info = document.getElementById('dppc-info');
+
+  const parts=[
+    {label:'Colina (carga +)', x:W*.15, y:H*.45, r:22, col:'#00f5d4', msg:'🔵 Colina: grupo com carga positiva. Faz parte da "cabeça" hidrófila que interage com a água.'},
+    {label:'Fosfato (carga −)', x:W*.28, y:H*.45, r:18, col:'#7b2fff', msg:'🟣 Fosfato: grupo com carga negativa. Juntamente com a colina, forma o zwitterião — a cabeça carregada da molécula.'},
+    {label:'Glicerol', x:W*.42, y:H*.45, r:15, col:'#ffe94d', msg:'🟡 Glicerol: a "espinha dorsal" que liga a cabeça às duas caudas de ácido palmítico.'},
+    {label:'Ácido Palmítico 1', x:W*.62, y:H*.3, r:12, col:'#ff6b35', msg:'🟠 Ácido Palmítico (C16:0): cadeia saturada de 16 carbonos. É uma das duas caudas hidrofóbicas da DPPC.'},
+    {label:'Ácido Palmítico 2', x:W*.62, y:H*.7, r:12, col:'#ff3cac', msg:'🔴 Segundo Ácido Palmítico: idêntico ao primeiro. A presença de DOIS grupos palmitoil dá o "di" no nome DPPC!'},
+  ];
+
+  c.addEventListener('click', function(e){
+    const rect=c.getBoundingClientRect();
+    const mx=(e.clientX-rect.left)*(W/rect.width);
+    const my=(e.clientY-rect.top)*(H/rect.height);
+    for(let p of parts){
+      const dx=mx-p.x, dy=my-p.y;
+      if(dx*dx+dy*dy<(p.r+8)*(p.r+8)){
+        info.textContent=p.msg;
+        info.style.color=p.col;
+        break;
+      }
+    }
+  });
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    t+=.02;
+
+    // Molecule backbone
+    // Colina → Fosfato → Glicerol
+    ctx.beginPath();
+    ctx.moveTo(parts[0].x,parts[0].y);
+    ctx.lineTo(parts[1].x,parts[1].y);
+    ctx.lineTo(parts[2].x,parts[2].y);
+    ctx.strokeStyle='#444'; ctx.lineWidth=3; ctx.stroke();
+
+    // Glicerol → two palmitics
+    ctx.beginPath();
+    ctx.moveTo(parts[2].x,parts[2].y);
+    ctx.lineTo(parts[3].x,parts[3].y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(parts[2].x,parts[2].y);
+    ctx.lineTo(parts[4].x,parts[4].y);
+    ctx.stroke();
+
+    // Extended chains
+    for(let i=0;i<2;i++){
+      const p=parts[3+i];
+      ctx.beginPath();
+      ctx.moveTo(p.x,p.y);
+      const ey=i===0?H*.05:H*.95;
+      ctx.lineTo(p.x+Math.sin(t+i)*5, ey);
+      ctx.strokeStyle=p.col+'88'; ctx.lineWidth=2; ctx.stroke();
+      // Chain segments
+      for(let s=0;s<8;s++){
+        const sy=p.y+(ey-p.y)*s/8;
+        const sx=p.x+Math.sin(t*1.5+i+s)*(3+s*.3);
+        ctx.beginPath();
+        ctx.arc(sx,sy,3,0,Math.PI*2);
+        ctx.fillStyle=p.col;
+        ctx.fill();
+      }
+    }
+
+    // Circles
+    for(let p of parts){
+      ctx.beginPath();
+      ctx.arc(p.x, p.y+Math.sin(t+p.x*.01)*.5, p.r, 0, Math.PI*2);
+      ctx.fillStyle=p.col;
+      ctx.fill();
+      ctx.fillStyle='#0a0a0f';
+      ctx.font='bold 9px Nunito';
+      ctx.textAlign='center';
+      ctx.fillText(p.label.split(' ')[0],p.x,p.y+Math.sin(t+p.x*.01)*.5+3);
+    }
+
+    // "DPPC" title
+    ctx.fillStyle='rgba(255,255,255,0.3)';
+    ctx.font='bold 14px "Space Mono"';
+    ctx.textAlign='right';
+    ctx.fillText('DPPC — clica nas partes!', W-10, H-10);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   PNEUMOCYTE CANVAS
+══════════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('pneumocyte-canvas');
+  if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  let t=0;
+
+  // Lamellar bodies to be secreted
+  const bodies=[];
+  for(let i=0;i<6;i++){
+    bodies.push({
+      x:W*.65+Math.random()*60-30,
+      y:H*.55+Math.random()*40-20,
+      r:10+Math.random()*6,
+      phase:Math.random()*Math.PI*2,
+      secreted:false,
+      sx:0,sy:0
+    });
+  }
+
+  // Surfactant particles on surface
+  const surfParts=[];
+  for(let i=0;i<30;i++){
+    surfParts.push({x:Math.random()*W, speed:1+Math.random()*.5, phase:Math.random()*Math.PI*2});
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#0d0d1a'; ctx.fillRect(0,0,W,H);
+    t+=.018;
+
+    const alvR=120;
+    const alvX=W*.35, alvY=H*.5;
+    const breathR=alvR+alvR*.08*Math.sin(t*.6);
+
+    // Alveolus
+    ctx.beginPath(); ctx.arc(alvX,alvY,breathR,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,20,40,0.8)'; ctx.fill();
+    ctx.strokeStyle='rgba(0,245,212,0.3)'; ctx.lineWidth=2; ctx.stroke();
+
+    // Air inside
+    ctx.fillStyle='rgba(0,245,212,0.04)';
+    ctx.beginPath(); ctx.arc(alvX,alvY,breathR-5,0,Math.PI*2);
+    ctx.fill();
+
+    // Surfactant layer on surface
+    const numS=28;
+    for(let i=0;i<numS;i++){
+      const a=(i/numS)*Math.PI*2+t*.05;
+      const sx=alvX+Math.cos(a)*(breathR-3);
+      const sy=alvY+Math.sin(a)*(breathR-3);
+      // head
+      ctx.beginPath(); ctx.arc(sx,sy,4,0,Math.PI*2);
+      ctx.fillStyle='#00f5d4'; ctx.fill();
+      // tail (inward)
+      const ix=alvX+Math.cos(a)*(breathR-16);
+      const iy=alvY+Math.sin(a)*(breathR-16);
+      ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ix,iy);
+      ctx.strokeStyle='#ffe94d88'; ctx.lineWidth=2; ctx.stroke();
+    }
+
+    // Pneumócito Tipo II — cell body
+    const cellX=W*.68, cellY=H*.52;
+    ctx.beginPath();
+    ctx.ellipse(cellX,cellY,55,40,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(123,47,255,0.25)'; ctx.fill();
+    ctx.strokeStyle='#7b2fff'; ctx.lineWidth=2; ctx.stroke();
+
+    // Nucleus
+    ctx.beginPath(); ctx.ellipse(cellX-5,cellY,18,15,0,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,62,172,0.4)'; ctx.fill();
+    ctx.strokeStyle='#ff3cac'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#ff3cac'; ctx.font='9px Space Mono'; ctx.textAlign='center';
+    ctx.fillText('N', cellX-5, cellY+3);
+
+    // Lamellar bodies
+    for(let b of bodies){
+      if(!b.secreted){
+        const bx=b.x+Math.sin(t+b.phase)*2;
+        const by=b.y+Math.cos(t+b.phase)*2;
+        // Lamellar body (concentric rings)
+        for(let ring=b.r;ring>2;ring-=4){
+          ctx.beginPath(); ctx.arc(bx,by,ring,0,Math.PI*2);
+          ctx.strokeStyle=`hsl(${ring*15},80%,60%)`; ctx.lineWidth=1; ctx.stroke();
+        }
+        // Trigger secretion periodically
+        if(Math.random()<.003){
+          b.secreted=true;
+          b.sx=bx; b.sy=by;
+          b.tx=alvX+Math.cos(Math.atan2(by-alvY,bx-alvX))*(breathR-5);
+          b.ty=alvY+Math.sin(Math.atan2(by-alvY,bx-alvX))*(breathR-5);
+          b.progress=0;
+        }
+      } else {
+        b.progress+=.02;
+        if(b.progress>1){ b.secreted=false; b.x=cellX+Math.random()*40-20; b.y=cellY+Math.random()*30-15; return; }
+        const px=b.sx+(b.tx-b.sx)*b.progress;
+        const py=b.sy+(b.ty-b.sy)*b.progress;
+        ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2);
+        ctx.fillStyle='rgba(255,233,77,0.8)'; ctx.fill();
+      }
+    }
+
+    // Labels
+    ctx.font='11px "Space Mono"'; ctx.fillStyle='#7b2fff'; ctx.textAlign='center';
+    ctx.fillText('Pneumócito Tipo II', cellX, cellY+55);
+    ctx.fillStyle='#00f5d4';
+    ctx.fillText('Alvéolo', alvX, alvY-breathR-10);
+    ctx.fillStyle='#ffe94d';
+    ctx.fillText('Corpos Lamelares →', cellX-10, cellY-50);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════
+   LAPLACE CALCULATOR
+══════════════════════════════════════════ */
+function updateLaplace(){
+  const T=parseInt(document.getElementById('slider-t').value);
+  const r=parseInt(document.getElementById('slider-r').value);
+  document.getElementById('t-val').textContent=T;
+  document.getElementById('r-val').textContent=r;
+  const P=Math.round(2*T/(r*1e-6)*1e-3)/1000; // convert µm → m, mN/m → N/m
+  const Pdisplay=Math.round(2*T*1e-3/(r*1e-6));
+  document.getElementById('laplace-result').textContent=Pdisplay;
+  let msg='';
+  if(T<10) msg='✅ Com surfactante activo — tensão muito baixa, alvéolo estável!';
+  else if(T<30) msg='⚡ Tensão moderada — situação normal com surfactante.';
+  else msg='⚠️ Tensão alta (sem surfactante) — risco de colapso alveolar!';
+  document.getElementById('laplace-msg').textContent=msg;
+}
+updateLaplace();
+
+/* ══════════════════════════════════════════
+   QUIZ
+══════════════════════════════════════════ */
+const QUESTIONS=[
+  {
+    q:'Qual é o principal fosfolípido do surfactante pulmonar?',
+    opts:['DPPC (Dipalmitoilfosfatidilcolina)','DPPC (Dipalmitoilfosfatidiletanolamina)','Colesterol','Esfingomielina'],
+    ans:0,
+    exp:'DPPC (Dipalmitoilfosfatidilcolina) corresponde a ~40% do surfactante. É o componente que mais reduz a tensão superficial na expiração.'
+  },
+  {
+    q:'A Lei de Laplace diz que P = 2T/r. O que acontece à pressão se o raio do alvéolo diminuir para metade?',
+    opts:['Diminui para metade','Dobra','Fica igual','Quadruplica'],
+    ans:1,
+    exp:'Se r ↓ 2x, e T mantém-se, então P = 2T/(r/2) = 4T/r, ou seja, dobra! Alvéolos pequenos têm maior pressão interna — tendem a colapsar para os grandes sem surfactante.'
+  },
+  {
+    q:'Que tipo celular produz surfactante nos alvéolos?',
+    opts:['Macrófago alveolar','Pneumócito Tipo I','Pneumócito Tipo II','Célula endotelial'],
+    ans:2,
+    exp:'Os Pneumócitos Tipo II são as células produtoras de surfactante. Embora cubram apenas ~5% da superfície alveolar, têm essa função vital.'
+  },
+  {
+    q:'O surfactante é mais eficaz em reduzir a tensão superficial:',
+    opts:['Na inspiração (alvéolo expandido)','Na expiração (alvéolo comprimido)','Igualmente em ambas as fases','Apenas em repouso'],
+    ans:1,
+    exp:'Na expiração, o surfactante concentra-se (menos área para mais moléculas), reduzindo drasticamente a tensão — isso impede o colapso alveolar no final da expiração.'
+  },
+  {
+    q:'A Síndrome de Dificuldade Respiratória do Recém-Nascido (SDR) ocorre principalmente porque:',
+    opts:['O bebé tem demasiado surfactante','Falta maturidade pulmonar com défice de surfactante','Os alvéolos são grandes demais','Os pulmões têm demasiado líquido'],
+    ans:1,
+    exp:'Prematuridade → pulmão imaturo → pneumócitos tipo II insuficientes → pouco surfactante → alvéolos colapsam a cada expiração (atelectasia progressiva).'
+  },
+  {
+    q:'Qual hormona pode ser administrada à mãe para acelerar a maturação pulmonar fetal?',
+    opts:['Adrenalina','Insulina','Betametasona (corticosteroide)','Progesterona'],
+    ans:2,
+    exp:'Betametasona (ou dexametasona) são corticosteroides que aceleram a diferenciação dos pneumócitos tipo II e aumentam a síntese de surfactante, reduzindo o risco de SDR em prematuros.'
+  },
+  {
+    q:'O que são os "corpos lamelares" dos pneumócitos tipo II?',
+    opts:['Mitocôndrias especializadas','Organelos de armazenamento do surfactante','Receptores de O₂','Vesículas de endocitose'],
+    ans:1,
+    exp:'Corpos lamelares são organelos especializados dos pneumócitos tipo II — são os "contentores de armazenamento" onde o surfactante fica guardado antes de ser secretado por exocitose.'
+  },
+  {
+    q:'Que proteína do surfactante é absolutamente essencial para a sobrevivência — a sua ausência congénita é incompatível com a vida?',
+    opts:['SP-A','SP-B','SP-C','SP-D'],
+    ans:1,
+    exp:'A ausência congénita de SP-B causa insuficiência respiratória fatal no período neonatal. SP-B é essencial para a organização e função da camada de surfactante na interface ar-líquido.'
+  }
+];
+
+let qIdx=0, score=0, answered=false;
+
+function renderQuiz(){
+  const container=document.getElementById('quiz-container');
+  if(qIdx>=QUESTIONS.length){
+    container.style.display='none';
+    const sc=document.getElementById('quiz-score');
+    sc.style.display='block';
+    document.getElementById('score-num').textContent=score+'/'+QUESTIONS.length;
+    const pct=Math.round(score/QUESTIONS.length*100);
+    let msg='';
+    if(pct===100) msg='🏆 Perfeito! És um mestre da fisiologia respiratória!';
+    else if(pct>=75) msg='🎉 Excelente! Já conheces muito bem o mundo do surfactante!';
+    else if(pct>=50) msg='👍 Bom! Revê os capítulos e tenta de novo!';
+    else msg='📚 Não desistas! Volta atrás e relê a história!';
+    document.getElementById('score-msg').textContent=msg;
+    return;
+  }
+
+  const q=QUESTIONS[qIdx];
+  container.innerHTML=`
+    <div class="quiz-box">
+      <div style="font-family:'Space Mono',monospace;font-size:.7rem;color:var(--text2);margin-bottom:.5rem;">QUESTÃO ${qIdx+1} DE ${QUESTIONS.length}</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="selectOpt(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qfb"></div>
+      <button class="quiz-next" id="qnext" onclick="nextQ()">Próxima →</button>
+    </div>
+  `;
+  answered=false;
+}
+
+window.selectOpt=function(i){
+  if(answered) return;
+  answered=true;
+  const q=QUESTIONS[qIdx];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts[i].classList.add(i===q.ans?'correct':'wrong');
+  if(i===q.ans) opts[q.ans].classList.add('correct');
+  else opts[q.ans].classList.add('correct');
+  const fb=document.getElementById('qfb');
+  fb.classList.add('show', i===q.ans?'ok':'bad');
+  fb.innerHTML=(i===q.ans?'✅ Correcto! ':'❌ Errado. ')+q.exp;
+  if(i===q.ans) score++;
+  document.getElementById('qnext').classList.add('show');
+};
+
+window.nextQ=function(){
+  qIdx++;
+  renderQuiz();
+};
+
+window.restartQuiz=function(){
+  qIdx=0; score=0; answered=false;
+  document.getElementById('quiz-score').style.display='none';
+  document.getElementById('quiz-container').style.display='block';
+  renderQuiz();
+};
+
+renderQuiz();
+
+/* ══════════════════════════════════════════
+   SCROLL ANIMATIONS
+══════════════════════════════════════════ */
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+  });
+},{threshold:.15});
+
+document.querySelectorAll('.fade-in, .tl-item').forEach(el=>observer.observe(el));
+
+/* ══════════════════════════════════════════
+   NAVIGATION DOTS
+══════════════════════════════════════════ */
+const sections=['hero','ch1','ch2','ch3','ch4','ch5','ch6','ch7'];
+const dots=document.querySelectorAll('.nav-dot');
+
+function updateNav(){
+  const scrollY=window.scrollY;
+  let active=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top<=window.innerHeight/2) active=i;
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===active));
+  // Progress bar
+  const total=document.body.scrollHeight-window.innerHeight;
+  document.getElementById('progress-bar').style.width=(scrollY/total*100)+'%';
+}
+
+dots.forEach((d,i)=>{
+  d.addEventListener('click',()=>{
+    const id=sections[i];
+    document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  });
+});
+
+window.addEventListener('scroll',updateNav);
+updateNav();
+
+function scrollToChapter(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>

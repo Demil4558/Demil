@@ -1,0 +1,2468 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANATOMIA: A Grande Jornada — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Sans+JP:wght@300;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --neon-cyan: #00fff5;
+    --neon-pink: #ff006e;
+    --neon-gold: #ffd700;
+    --neon-green: #39ff14;
+    --neon-purple: #bf5fff;
+    --neon-orange: #ff6b00;
+    --bg-dark: #020408;
+    --bg-panel: #070d14;
+    --bg-card: #0d1a26;
+    --text-white: #e8f4ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-white);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ──────── CANVAS MOLECULE BG ──────── */
+  #molecule-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ──────── PROGRESS BAR ──────── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-gold));
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s;
+    box-shadow: 0 0 12px var(--neon-cyan);
+  }
+
+  /* ──────── NAV ──────── */
+  nav {
+    position: fixed;
+    top: 4px; left: 0; right: 0;
+    background: rgba(2,4,8,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,255,245,0.2);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 10px var(--neon-cyan);
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .nav-links a {
+    color: rgba(232,244,255,0.7);
+    text-decoration: none;
+    font-size: 11px;
+    font-family: 'Orbitron', monospace;
+    padding: 4px 10px;
+    border: 1px solid rgba(0,255,245,0.2);
+    border-radius: 3px;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+  }
+
+  .nav-links a:hover {
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 8px var(--neon-cyan);
+  }
+
+  /* ──────── MAIN WRAPPER ──────── */
+  main { position: relative; z-index: 1; }
+
+  /* ──────── SECTION BASE ──────── */
+  section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 100px 40px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ──────── CHAPTER LABEL ──────── */
+  .chapter-tag {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--neon-pink);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-shadow: 0 0 8px var(--neon-pink);
+  }
+
+  /* ──────── HERO ──────── */
+  #hero {
+    background: radial-gradient(ellipse at 20% 50%, rgba(0,255,245,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(255,0,110,0.07) 0%, transparent 50%),
+                var(--bg-dark);
+    text-align: center;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    color: var(--neon-gold);
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(36px, 7vw, 90px);
+    font-weight: 900;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, #fff 40%, var(--neon-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(12px, 2vw, 18px);
+    color: var(--neon-purple);
+    letter-spacing: 4px;
+    margin-bottom: 30px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-desc {
+    max-width: 640px;
+    font-size: 17px;
+    color: rgba(232,244,255,0.8);
+    margin: 0 auto 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 14px 32px;
+    text-decoration: none;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(0,255,245,0.2), inset 0 0 20px rgba(0,255,245,0.05);
+    opacity: 0;
+    animation: fadeUp 0.8s 1.1s forwards;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-cta::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,255,245,0.15), transparent);
+    transition: left 0.5s;
+  }
+
+  .hero-cta:hover::before { left: 100%; }
+  .hero-cta:hover {
+    background: rgba(0,255,245,0.1);
+    box-shadow: 0 0 40px rgba(0,255,245,0.4);
+    transform: translateY(-2px);
+  }
+
+  .hero-badge {
+    margin-top: 50px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s 1.3s forwards;
+  }
+
+  .badge {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+  }
+
+  .badge-cyan { border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+  .badge-pink { border: 1px solid var(--neon-pink); color: var(--neon-pink); }
+  .badge-gold { border: 1px solid var(--neon-gold); color: var(--neon-gold); }
+
+  /* ──────── STORY NARRATOR BOX ──────── */
+  .narrator-panel {
+    background: var(--bg-panel);
+    border-left: 4px solid var(--neon-gold);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 20px 0 32px;
+    position: relative;
+    box-shadow: -4px 0 20px rgba(255,215,0,0.15);
+  }
+
+  .narrator-panel::before {
+    content: '📖 NARRADOR';
+    position: absolute;
+    top: -12px; left: 16px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 7px;
+    color: var(--neon-gold);
+    background: var(--bg-panel);
+    padding: 2px 8px;
+  }
+
+  .narrator-panel p {
+    font-size: 17px;
+    color: rgba(232,244,255,0.85);
+    font-style: italic;
+  }
+
+  /* ──────── DIALOGUE BUBBLES ──────── */
+  .dialogue {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin: 24px 0;
+  }
+
+  .dialogue.right { flex-direction: row-reverse; }
+
+  .char-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .char-avatar.cyan { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0,255,245,0.4); }
+  .char-avatar.pink { border-color: var(--neon-pink); box-shadow: 0 0 15px rgba(255,0,110,0.4); }
+  .char-avatar.gold { border-color: var(--neon-gold); box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+  .char-avatar.green { border-color: var(--neon-green); box-shadow: 0 0 15px rgba(57,255,20,0.4); }
+  .char-avatar.purple { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(191,95,255,0.4); }
+
+  .bubble {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 14px 18px;
+    max-width: 75%;
+    position: relative;
+    border: 1px solid;
+  }
+
+  .bubble.cyan { border-color: rgba(0,255,245,0.3); }
+  .bubble.pink { border-color: rgba(255,0,110,0.3); }
+  .bubble.gold { border-color: rgba(255,215,0,0.3); }
+  .bubble.green { border-color: rgba(57,255,20,0.3); }
+  .bubble.purple { border-color: rgba(191,95,255,0.3); }
+
+  .bubble .char-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+  }
+
+  .bubble.cyan .char-name { color: var(--neon-cyan); }
+  .bubble.pink .char-name { color: var(--neon-pink); }
+  .bubble.gold .char-name { color: var(--neon-gold); }
+  .bubble.green .char-name { color: var(--neon-green); }
+  .bubble.purple .char-name { color: var(--neon-purple); }
+
+  /* ──────── SECTION TITLE ──────── */
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(22px, 4vw, 42px);
+    font-weight: 900;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .section-subtitle {
+    font-size: 15px;
+    color: rgba(232,244,255,0.5);
+    letter-spacing: 2px;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 40px;
+  }
+
+  /* ──────── TIMELINE ──────── */
+  #historia {
+    background: radial-gradient(ellipse at 70% 30%, rgba(255,0,110,0.05) 0%, transparent 60%), var(--bg-dark);
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin-top: 20px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 14px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink), var(--neon-gold), var(--neon-green));
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s;
+  }
+
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+
+  .tl-dot {
+    position: absolute;
+    left: -33px;
+    top: 6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-dark);
+  }
+
+  .tl-dot.cyan { border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+  .tl-dot.pink { border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+  .tl-dot.gold { border-color: var(--neon-gold); box-shadow: 0 0 10px var(--neon-gold); }
+  .tl-dot.green { border-color: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+  .tl-dot.purple { border-color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+  .tl-dot.orange { border-color: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+
+  .tl-year {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+
+  .tl-year.cyan { color: var(--neon-cyan); }
+  .tl-year.pink { color: var(--neon-pink); }
+  .tl-year.gold { color: var(--neon-gold); }
+  .tl-year.green { color: var(--neon-green); }
+  .tl-year.purple { color: var(--neon-purple); }
+  .tl-year.orange { color: var(--neon-orange); }
+
+  .tl-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 6px;
+  }
+
+  .tl-desc { font-size: 15px; color: rgba(232,244,255,0.75); }
+
+  /* ──────── DEFINITION SECTION ──────── */
+  #definicao {
+    background: radial-gradient(ellipse at 30% 70%, rgba(0,255,245,0.06) 0%, transparent 55%), var(--bg-dark);
+  }
+
+  .def-card {
+    background: linear-gradient(135deg, rgba(0,255,245,0.05), rgba(255,0,110,0.05));
+    border: 1px solid rgba(0,255,245,0.25);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .def-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+  }
+
+  .def-grego {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 36px;
+    color: var(--neon-gold);
+    text-align: center;
+    margin: 10px 0 4px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .def-breakdown {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .def-part {
+    text-align: center;
+    padding: 14px 20px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    min-width: 120px;
+  }
+
+  .def-part .greek { font-size: 26px; color: var(--neon-cyan); font-family: 'Noto Sans JP', sans-serif; }
+  .def-part .meaning { font-size: 13px; color: rgba(232,244,255,0.6); margin-top: 4px; }
+
+  /* ──────── GRID CARDS ──────── */
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 20px 0; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 20px 0; }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card:hover { transform: translateY(-4px); }
+
+  .card-cyan { border-color: rgba(0,255,245,0.3); }
+  .card-cyan:hover { box-shadow: 0 8px 30px rgba(0,255,245,0.2); border-color: var(--neon-cyan); }
+
+  .card-pink { border-color: rgba(255,0,110,0.3); }
+  .card-pink:hover { box-shadow: 0 8px 30px rgba(255,0,110,0.2); border-color: var(--neon-pink); }
+
+  .card-gold { border-color: rgba(255,215,0,0.3); }
+  .card-gold:hover { box-shadow: 0 8px 30px rgba(255,215,0,0.2); border-color: var(--neon-gold); }
+
+  .card-green { border-color: rgba(57,255,20,0.3); }
+  .card-green:hover { box-shadow: 0 8px 30px rgba(57,255,20,0.2); border-color: var(--neon-green); }
+
+  .card-purple { border-color: rgba(191,95,255,0.3); }
+  .card-purple:hover { box-shadow: 0 8px 30px rgba(191,95,255,0.2); border-color: var(--neon-purple); }
+
+  .card-orange { border-color: rgba(255,107,0,0.3); }
+  .card-orange:hover { box-shadow: 0 8px 30px rgba(255,107,0,0.2); border-color: var(--neon-orange); }
+
+  .card-icon { font-size: 36px; margin-bottom: 12px; }
+  .card-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .card-cyan .card-title { color: var(--neon-cyan); }
+  .card-pink .card-title { color: var(--neon-pink); }
+  .card-gold .card-title { color: var(--neon-gold); }
+  .card-green .card-title { color: var(--neon-green); }
+  .card-purple .card-title { color: var(--neon-purple); }
+  .card-orange .card-title { color: var(--neon-orange); }
+
+  .card p { font-size: 14px; color: rgba(232,244,255,0.7); line-height: 1.5; }
+
+  /* ──────── CLASSIFICATION SECTION ──────── */
+  #classificacao {
+    background: radial-gradient(ellipse at 60% 40%, rgba(191,95,255,0.06) 0%, transparent 55%), var(--bg-dark);
+  }
+
+  .tree-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 30px 0;
+  }
+
+  .tree-root {
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 14px 30px;
+    border-radius: 6px;
+    letter-spacing: 2px;
+  }
+
+  .tree-connector {
+    width: 2px;
+    height: 30px;
+    background: var(--neon-cyan);
+    margin: 0 auto;
+  }
+
+  .tree-branches {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tree-branch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .tree-node {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    min-width: 130px;
+  }
+
+  .tree-node:hover { transform: scale(1.05); }
+
+  .node-cyan { background: rgba(0,255,245,0.15); border: 2px solid var(--neon-cyan); color: var(--neon-cyan); }
+  .node-pink { background: rgba(255,0,110,0.15); border: 2px solid var(--neon-pink); color: var(--neon-pink); }
+  .node-gold { background: rgba(255,215,0,0.15); border: 2px solid var(--neon-gold); color: var(--neon-gold); }
+  .node-green { background: rgba(57,255,20,0.15); border: 2px solid var(--neon-green); color: var(--neon-green); }
+  .node-purple { background: rgba(191,95,255,0.15); border: 2px solid var(--neon-purple); color: var(--neon-purple); }
+  .node-orange { background: rgba(255,107,0,0.15); border: 2px solid var(--neon-orange); color: var(--neon-orange); }
+
+  .node-tooltip {
+    display: none;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 11px;
+    color: rgba(232,244,255,0.8);
+    max-width: 180px;
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  .tree-node:hover + .node-tooltip { display: block; }
+
+  /* ──────── TECHNIQUES SECTION ──────── */
+  #tecnicas {
+    background: radial-gradient(ellipse at 20% 30%, rgba(57,255,20,0.05) 0%, transparent 55%), var(--bg-dark);
+  }
+
+  .technique-tab {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    padding: 8px 16px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    background: transparent;
+    color: rgba(232,244,255,0.6);
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+
+  .tab-btn.active, .tab-btn:hover {
+    background: rgba(0,255,245,0.1);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(0,255,245,0.2);
+  }
+
+  .tab-panel { display: none; animation: fadeIn 0.4s; }
+  .tab-panel.active { display: block; }
+
+  .technique-card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 28px;
+    border-left: 4px solid var(--neon-green);
+    margin-bottom: 16px;
+  }
+
+  .technique-card h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    color: var(--neon-green);
+    margin-bottom: 10px;
+  }
+
+  .technique-card .tc-meta {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tc-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  .tc-tag.classic { background: rgba(255,215,0,0.15); color: var(--neon-gold); border: 1px solid var(--neon-gold); }
+  .tc-tag.modern { background: rgba(0,255,245,0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+  .tc-tag.micro { background: rgba(191,95,255,0.15); color: var(--neon-purple); border: 1px solid var(--neon-purple); }
+  .tc-tag.imaging { background: rgba(255,0,110,0.15); color: var(--neon-pink); border: 1px solid var(--neon-pink); }
+
+  /* ──────── CLINICAL APPLICATIONS ──────── */
+  #clinica {
+    background: radial-gradient(ellipse at 80% 60%, rgba(255,107,0,0.06) 0%, transparent 55%), var(--bg-dark);
+  }
+
+  .clinical-alert {
+    background: rgba(255,0,110,0.08);
+    border: 1px solid rgba(255,0,110,0.4);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    transition: all 0.3s;
+  }
+
+  .clinical-alert:hover { background: rgba(255,0,110,0.12); transform: translateX(6px); }
+  .clinical-alert .ca-icon { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+
+  .clinical-alert h4 {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--neon-pink);
+    margin-bottom: 6px;
+  }
+
+  .clinical-alert p { font-size: 14px; color: rgba(232,244,255,0.75); }
+
+  /* ──────── QUIZ SECTION ──────── */
+  #quiz {
+    background: radial-gradient(ellipse at 50% 50%, rgba(255,215,0,0.05) 0%, transparent 60%), var(--bg-dark);
+  }
+
+  .quiz-box {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 14px;
+    padding: 32px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .quiz-q {
+    font-family: 'Orbitron', monospace;
+    font-size: 15px;
+    color: var(--neon-gold);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-opt {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 15px;
+    color: rgba(232,244,255,0.8);
+    transition: all 0.3s;
+    text-align: left;
+  }
+
+  .quiz-opt:hover { border-color: var(--neon-gold); color: var(--neon-gold); background: rgba(255,215,0,0.07); }
+  .quiz-opt.correct { border-color: var(--neon-green); color: var(--neon-green); background: rgba(57,255,20,0.1); }
+  .quiz-opt.wrong { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,0,110,0.1); }
+
+  .quiz-feedback {
+    display: none;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+
+  .quiz-feedback.show { display: block; animation: fadeIn 0.4s; }
+  .quiz-feedback.ok { background: rgba(57,255,20,0.1); border: 1px solid var(--neon-green); color: var(--neon-green); }
+  .quiz-feedback.fail { background: rgba(255,0,110,0.1); border: 1px solid var(--neon-pink); color: var(--neon-pink); }
+
+  .quiz-nav {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 10px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+  }
+
+  .btn-cyan { background: var(--neon-cyan); color: #000; }
+  .btn-cyan:hover { box-shadow: 0 0 20px rgba(0,255,245,0.5); transform: translateY(-2px); }
+  .btn-pink { background: var(--neon-pink); color: #fff; }
+  .btn-pink:hover { box-shadow: 0 0 20px rgba(255,0,110,0.5); transform: translateY(-2px); }
+  .btn-ghost { background: transparent; color: rgba(232,244,255,0.6); border: 1px solid rgba(255,255,255,0.2); }
+  .btn-ghost:hover { color: white; border-color: white; }
+
+  .quiz-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: rgba(232,244,255,0.5);
+    letter-spacing: 2px;
+  }
+
+  /* ──────── GLOSSARY ──────── */
+  #glossario {
+    background: radial-gradient(ellipse at 40% 20%, rgba(191,95,255,0.05) 0%, transparent 55%), var(--bg-dark);
+  }
+
+  .glossary-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .glossary-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid rgba(0,255,245,0.3);
+    border-radius: 6px;
+    padding: 12px 18px;
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .glossary-input:focus { border-color: var(--neon-cyan); box-shadow: 0 0 12px rgba(0,255,245,0.2); }
+
+  .glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .glossary-item {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s;
+  }
+
+  .glossary-item:hover { border-color: rgba(191,95,255,0.4); transform: translateY(-2px); }
+
+  .glossary-term {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--neon-purple);
+    margin-bottom: 6px;
+  }
+
+  .glossary-def { font-size: 13px; color: rgba(232,244,255,0.7); }
+
+  /* ──────── INFO BOX ──────── */
+  .info-box {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    border-left: 4px solid;
+  }
+
+  .info-box.cyan { background: rgba(0,255,245,0.05); border-color: var(--neon-cyan); }
+  .info-box.gold { background: rgba(255,215,0,0.05); border-color: var(--neon-gold); }
+  .info-box.green { background: rgba(57,255,20,0.05); border-color: var(--neon-green); }
+  .info-box.pink { background: rgba(255,0,110,0.05); border-color: var(--neon-pink); }
+  .info-box.purple { background: rgba(191,95,255,0.05); border-color: var(--neon-purple); }
+
+  .info-box .ib-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+  }
+
+  .info-box.cyan .ib-label { color: var(--neon-cyan); }
+  .info-box.gold .ib-label { color: var(--neon-gold); }
+  .info-box.green .ib-label { color: var(--neon-green); }
+  .info-box.pink .ib-label { color: var(--neon-pink); }
+  .info-box.purple .ib-label { color: var(--neon-purple); }
+
+  /* ──────── BODY PLANES ──────── */
+  .planes-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 700px) { .planes-container { grid-template-columns: 1fr; } }
+
+  .body-svg-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ──────── HUMAN FIGURE SVG ──────── */
+  .human-figure {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  /* ──────── DIVIDER ──────── */
+  .neon-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    margin: 0;
+    opacity: 0.4;
+  }
+
+  /* ──────── FOOTER ──────── */
+  footer {
+    background: var(--bg-panel);
+    border-top: 1px solid rgba(0,255,245,0.2);
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(20px, 4vw, 36px);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .footer-uni {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    color: var(--neon-gold);
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+
+  .footer-year {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    color: rgba(232,244,255,0.4);
+    letter-spacing: 3px;
+  }
+
+  .footer-deco {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 20px 0 10px;
+    font-size: 22px;
+  }
+
+  /* ──────── ANIMATIONS ──────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  @keyframes scanline {
+    from { top: -20px; }
+    to { top: 100%; }
+  }
+
+  .pulse { animation: pulse 2s infinite; }
+
+  /* ──────── SCROLL REVEAL ──────── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ──────── NEON TEXT ──────── */
+  .neon-text-cyan { color: var(--neon-cyan); text-shadow: 0 0 10px rgba(0,255,245,0.6); }
+  .neon-text-pink { color: var(--neon-pink); text-shadow: 0 0 10px rgba(255,0,110,0.6); }
+  .neon-text-gold { color: var(--neon-gold); text-shadow: 0 0 10px rgba(255,215,0,0.6); }
+  .neon-text-green { color: var(--neon-green); text-shadow: 0 0 10px rgba(57,255,20,0.6); }
+  .neon-text-purple { color: var(--neon-purple); text-shadow: 0 0 10px rgba(191,95,255,0.6); }
+
+  /* ──────── HIGHLIGHT ──────── */
+  mark {
+    background: rgba(255,215,0,0.25);
+    color: var(--neon-gold);
+    padding: 0 4px;
+    border-radius: 3px;
+  }
+
+  strong { color: white; }
+
+  /* ──────── RESPONSIVE ──────── */
+  @media (max-width: 768px) {
+    section { padding: 90px 20px 50px; }
+    .nav-links { display: none; }
+    .dialogue { flex-direction: column; }
+    .dialogue.right { flex-direction: column; }
+    .planes-container { grid-template-columns: 1fr; }
+  }
+
+  /* ──────── PARTICLE EFFECT ──────── */
+  .sparks {
+    position: absolute;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: spark 1.5s ease-out forwards;
+  }
+
+  @keyframes spark {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0) translateY(-40px); opacity: 0; }
+  }
+
+  /* ──────── SECTION BG DECORATIONS ──────── */
+  .section-deco {
+    position: absolute;
+    font-family: 'Orbitron', monospace;
+    font-size: 200px;
+    font-weight: 900;
+    opacity: 0.02;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .sd-top-right { top: -30px; right: -20px; }
+  .sd-bot-left { bottom: -30px; left: -20px; }
+
+  /* Molecule animated dots */
+  .mol-dot {
+    position: absolute;
+    border-radius: 50%;
+    animation: molFloat linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes molFloat {
+    0% { transform: translate(0,0) rotate(0deg); }
+    33% { transform: translate(20px,-30px) rotate(120deg); }
+    66% { transform: translate(-15px,-20px) rotate(240deg); }
+    100% { transform: translate(0,0) rotate(360deg); }
+  }
+
+  /* ──────── BODY CANVAS ANIMATION SVG MOLECULES ──────── */
+  .floating-atom {
+    position: absolute;
+    opacity: 0.08;
+    animation: floatAtom linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes floatAtom {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.08; }
+    90% { opacity: 0.08; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ──────── CHAPTER NUMBER ──────── */
+  .ch-num {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 80px;
+    font-weight: 900;
+    opacity: 0.06;
+    position: absolute;
+    right: 40px;
+    top: 100px;
+    pointer-events: none;
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Background Canvas (molecules) -->
+<canvas id="molecule-canvas"></canvas>
+
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">⚕ ANATOMIA</div>
+  <div class="nav-links">
+    <a href="#hero">INÍCIO</a>
+    <a href="#historia">HISTÓRIA</a>
+    <a href="#definicao">DEFINIÇÃO</a>
+    <a href="#classificacao">CLASSIFICAÇÃO</a>
+    <a href="#tecnicas">TÉCNICAS</a>
+    <a href="#clinica">CLÍNICA</a>
+    <a href="#quiz">QUIZ</a>
+    <a href="#glossario">GLOSSÁRIO</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HERO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="hero">
+    <div class="container" style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+
+      <p class="hero-eyebrow">✦ 1º ANO DE MEDICINA ✦</p>
+
+      <h1 class="hero-title">ANATOMIA</h1>
+      <p class="hero-sub">A CIÊNCIA QUE DESVENDA O CORPO HUMANO</p>
+
+      <p class="hero-desc">
+        Imagina que o corpo humano é uma cidade futurista que ninguém nunca visitou.<br>
+        <strong>Tu</strong> és o explorador. A <mark>Anatomia</mark> é o teu mapa.
+        Esta é a tua aventura.
+      </p>
+
+      <a href="#historia" class="hero-cta">
+        ▶ COMEÇAR A JORNADA
+      </a>
+
+      <div class="hero-badge">
+        <span class="badge badge-cyan">HISTÓRIA</span>
+        <span class="badge badge-pink">DEFINIÇÃO</span>
+        <span class="badge badge-gold">CLASSIFICAÇÃO</span>
+        <span class="badge badge-cyan">TÉCNICAS DE ESTUDO</span>
+        <span class="badge badge-pink">APLICAÇÕES CLÍNICAS</span>
+      </div>
+
+      <!-- Floating Atoms Decoration -->
+      <div style="position:absolute; top:15%; left:5%; font-size:50px; opacity:0.1; animation: float 6s ease-in-out infinite;">⚛</div>
+      <div style="position:absolute; top:30%; right:8%; font-size:40px; opacity:0.08; animation: float 8s ease-in-out infinite reverse;">🧬</div>
+      <div style="position:absolute; bottom:20%; left:10%; font-size:35px; opacity:0.08; animation: float 7s ease-in-out 2s infinite;">💀</div>
+      <div style="position:absolute; bottom:15%; right:5%; font-size:45px; opacity:0.1; animation: float 5s ease-in-out 1s infinite reverse;">🫀</div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PROLOGUE / STORY INTRO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="prologo" style="min-height:auto; padding: 60px 40px; background: linear-gradient(180deg, var(--bg-dark), #050b12);">
+    <div class="container">
+
+      <div class="chapter-tag">✦ PRÓLOGO ✦</div>
+
+      <div class="narrator-panel reveal">
+        <p>
+          Era uma vez um estudante de medicina chamado <strong>ALEX</strong> que entrou pela primeira vez na faculdade.
+          No corredor, havia um esqueleto humano, um microscópio e uma velha enciclopédia com o título:
+          <em>"ANATOMIA: Os Segredos do Corpo Humano"</em>. Ao abrir o livro, três personagens ganham vida...
+        </p>
+      </div>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar cyan">🧑‍🔬</div>
+        <div class="bubble cyan">
+          <div class="char-name">ALEX — O ESTUDANTE</div>
+          <p>Anatomia? Nem sei bem o que é isso. Parece complicado demais...</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar gold">👁️</div>
+        <div class="bubble gold">
+          <div class="char-name">VESALIUS — O MESTRE SÁBIO</div>
+          <p>Complicado? Não, jovem! Anatomia é a mais bela das ciências. É o estudo do próprio ser humano. Eu dediquei a minha vida a isso no século XVI. Deixa-me guiar-te!</p>
+        </div>
+      </div>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar pink">🤖</div>
+        <div class="bubble pink">
+          <div class="char-name">ZENA — A IA MÉDICA</div>
+          <p>Olá, Alex! Sou a ZENA, a tua inteligência artificial de anatomia. Vou traduzir tudo o que o velho Vesalius disser para linguagem simples. Prontos? 🚀</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar green">💀</div>
+        <div class="bubble green">
+          <div class="char-name">OSSO — O ESQUELETO ANIMADO</div>
+          <p>Ei! Não se esqueçam de mim! Sou o OSSO, o esqueleto desta escola. Vou ser o vosso modelo de estudo. Podem tocar... com cuidado! 😄</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HISTÓRIA -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="historia">
+    <div class="section-deco sd-top-right neon-text-pink">01</div>
+    <div class="ch-num" style="color:var(--neon-pink)">01</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 01 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-pink);">
+        HISTÓRIA DA ANATOMIA
+      </h2>
+      <p class="section-subtitle">DOS HIERÓGLIFOS AO BISTURI MODERNO</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar gold">👁️</div>
+        <div class="bubble gold">
+          <div class="char-name">VESALIUS</div>
+          <p>Alex, para entenderes a anatomia de hoje, precisas conhecer os gigantes que vieram antes de nós. A história da anatomia é também a história da humanidade!</p>
+        </div>
+      </div>
+
+      <div class="info-box gold reveal">
+        <div class="ib-label">💡 CONTEXTO</div>
+        <p>A anatomia não surgiu de repente — foram <strong>milénios</strong> de curiosidade, proibições religiosas, descobertas acidentais e genialidade humana. Cada era deixou a sua marca.</p>
+      </div>
+
+      <div class="timeline reveal">
+
+        <div class="tl-item">
+          <div class="tl-dot cyan"></div>
+          <div class="tl-year cyan">✦ 3000 A.C. — EGIPTO ANTIGO</div>
+          <div class="tl-title">O Berço da Anatomia: Os Embalsamadores</div>
+          <div class="tl-desc">
+            Os egípcios praticavam <mark>mumificação</mark> — processo que envolvia remover órgãos internos como fígado, pulmões, estômago e intestinos. Sem saber, tornaram-se os primeiros anatomistas da história. O <strong>Papiro de Ebers (1550 a.C.)</strong> descreve o coração como centro do sistema circulatório. Rudimentar, mas revolucionário para a época!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-year pink">✦ 460–370 A.C. — GRÉCIA CLÁSSICA</div>
+          <div class="tl-title">Hipócrates — O Pai da Medicina</div>
+          <div class="tl-desc">
+            <strong>Hipócrates de Cós</strong> propôs que as doenças tinham causas naturais, não sobrenaturais. Desenvolveu o conceito dos <mark>quatro humores</mark> (sangue, fleuma, bile amarela e bile negra) — errado, mas foi um grande passo para o pensamento científico. Estabeleceu a ética médica que usamos até hoje!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot gold"></div>
+          <div class="tl-year gold">✦ 384–322 A.C. — MACEDÓNIA</div>
+          <div class="tl-title">Aristóteles — O Filósofo do Corpo</div>
+          <div class="tl-desc">
+            <strong>Aristóteles</strong> realizou dissecções em animais (humanos eram proibidos!) e fez comparações entre espécies — a base da anatomia comparada. Acreditava que o <mark>coração era o órgão do pensamento</mark>... O cérebro servia apenas para arrefecer o sangue. Errou feio, mas a metodologia era excelente!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">✦ 310–250 A.C. — ALEXANDREA, EGIPTO</div>
+          <div class="tl-title">Herófilo & Erasístrato — Os Primeiros Dissectores Humanos</div>
+          <div class="tl-desc">
+            <strong>Herófilo de Calcedónia</strong> foi o primeiro a realizar <mark>dissecções sistemáticas em cadáveres humanos</mark> com apoio do rei Ptolomeu I. Descreveu o cérebro, os nervos, as meninges e o duodeno (que recebeu o nome dado por ele). <strong>Erasístrato</strong> distinguiu nervos motores de sensoriais. Revolução total!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot purple"></div>
+          <div class="tl-year purple">✦ 129–216 D.C. — ROMA IMPERIAL</div>
+          <div class="tl-title">Galeno — O Gigante de 1300 Anos</div>
+          <div class="tl-desc">
+            <strong>Cláudio Galeno</strong> foi o médico mais influente da história — por mais de <mark>1300 anos</mark> os seus textos foram a bíblia da medicina! Médico de gladiadores em Pérgamo (aprendeu anatomia tratando ferimentos), depois médico do imperador Marco Aurélio. Como dissecções humanas eram proibidas em Roma, usava macacos e porcos — o que gerou muitos erros que só foram corrigidos no século XVI.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-year orange">✦ 500–1400 D.C. — IDADE MÉDIA</div>
+          <div class="tl-title">A Era das Trevas Anatómicas</div>
+          <div class="tl-desc">
+            A Igreja proibia dissecções humanas por acreditar que o corpo era sagrado e devia ressuscitar intacto. O conhecimento anatómico <mark>estagnou por quase 900 anos</mark>. No mundo islâmico, porém, <strong>Avicena (Ibn Sina)</strong> preservou e expandiu o conhecimento grego com o "Cânone da Medicina" (1025 d.C.) — um dos livros médicos mais influentes de sempre.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot cyan"></div>
+          <div class="tl-year cyan">✦ 1452–1519 — RENASCIMENTO ITALIANO</div>
+          <div class="tl-title">Leonardo da Vinci — O Artista-Anatomista</div>
+          <div class="tl-desc">
+            <strong>Leonardo da Vinci</strong> realizou mais de <mark>30 dissecções humanas</mark> secretamente e produziu ilustrações anatómicas de uma precisão incrível para a época. Os seus cadernos continham desenhos do coração, feto no útero, músculos e ossos com detalhe que não foi superado por séculos. Era um génio que vivia 200 anos à frente do seu tempo!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-year pink">✦ 1514–1564 — PÁDUA, ITÁLIA</div>
+          <div class="tl-title">Andreas Vesalius — A Grande Revolução</div>
+          <div class="tl-desc">
+            <strong>Andreas Vesalius</strong> é considerado o <mark>pai da anatomia moderna</mark>. Com apenas 29 anos, publicou "De Humani Corporis Fabrica" (1543), com mais de 300 ilustrações detalhadas baseadas em dissecções reais. Desafiou Galeno em mais de 200 pontos! A sua coragem científica mudou a medicina para sempre. Curiosidade: roubava cadáveres de enforcados para estudar!
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot gold"></div>
+          <div class="tl-year gold">✦ 1578–1657 — INGLATERRA</div>
+          <div class="tl-title">William Harvey — A Circulação do Sangue</div>
+          <div class="tl-desc">
+            <strong>William Harvey</strong> provou em 1628 que o sangue circula num ciclo fechado, bombeado pelo coração — derrubando 1400 anos de teoria galénica! Com experiências quantitativas (mediu a quantidade de sangue por batimento), demonstrou que Galeno estava completamente errado sobre como o sangue se movia. Marco decisivo da <mark>anatomia funcional</mark>.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-year green">✦ SÉC. XIX — REVOLUÇÃO INDUSTRIAL</div>
+          <div class="tl-title">Microscopio, Células & Histologia</div>
+          <div class="tl-desc">
+            O aperfeiçoamento do <mark>microscópio</mark> abriu um mundo invisível. <strong>Rudolf Virchow</strong> proclamou "Omnis cellula e cellula" — toda célula vem de outra célula. Nasce a histologia. A <strong>Teoria Celular</strong> transforma completamente a compreensão do corpo humano. O corpo já não é só órgãos — é uma comunidade de trilhões de células.
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot purple"></div>
+          <div class="tl-year purple">✦ SÉC. XX–XXI — ERA TECNOLÓGICA</div>
+          <div class="tl-title">Radiologia, TAC, RM & Anatomia Digital</div>
+          <div class="tl-desc">
+            <strong>Wilhelm Röntgen</strong> descobriu os raios X em 1895 — uma revolução! Em seguida: ultrassom, TAC (Tomografia Computadorizada), RM (Ressonância Magnética), PET scan. Hoje temos <mark>anatomia digital 3D</mark>, realidade virtual para estudar o corpo e até impressão 3D de estruturas anatómicas. A anatomia entrou na era digital!
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar pink">🤖</div>
+        <div class="bubble pink">
+          <div class="char-name">ZENA</div>
+          <p>Vês, Alex? Cada época contribuiu com algo. Nenhum conhecimento chegou do nada — foi construído passo a passo, às vezes com erros, mas sempre com curiosidade. É isso que fazemos hoje quando estudamos anatomia!</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- DEFINIÇÃO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="definicao">
+    <div class="ch-num" style="color:var(--neon-cyan)">02</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 02 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-cyan);">O QUE É ANATOMIA?</h2>
+      <p class="section-subtitle">DEFINIÇÃO, ETIMOLOGIA & ÂMBITO</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar cyan">🧑‍🔬</div>
+        <div class="bubble cyan">
+          <div class="char-name">ALEX</div>
+          <p>Bem, anatomia é... estudar o corpo? Dissecação de cadáveres?</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar gold">👁️</div>
+        <div class="bubble gold">
+          <div class="char-name">VESALIUS</div>
+          <p>Muito mais do que isso! A palavra em si já nos conta a história. Vem do grego antigo...</p>
+        </div>
+      </div>
+
+      <div class="def-card reveal">
+        <div class="def-grego">ἀνατομή</div>
+        <p style="text-align:center; color: rgba(232,244,255,0.6); font-size:13px; margin-bottom:20px; letter-spacing:3px;">ANATOMĒ — GREGO ANTIGO</p>
+        <div class="def-breakdown">
+          <div class="def-part">
+            <div class="greek">ἀνά</div>
+            <div class="meaning">ANA = "para cima"<br>ou "através de"</div>
+          </div>
+          <div style="display:flex; align-items:center; font-size:30px; color:rgba(232,244,255,0.3);">+</div>
+          <div class="def-part">
+            <div class="greek">τομή</div>
+            <div class="meaning">TOMĒ = "corte"<br>"divisão"</div>
+          </div>
+          <div style="display:flex; align-items:center; font-size:30px; color:rgba(232,244,255,0.3);">=</div>
+          <div class="def-part" style="background: rgba(0,255,245,0.1); border: 1px solid rgba(0,255,245,0.3);">
+            <div class="greek" style="color:var(--neon-gold)">Dissecar</div>
+            <div class="meaning">"Cortar através"<br>"Separar partes"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box cyan reveal">
+        <div class="ib-label">📖 DEFINIÇÃO OFICIAL</div>
+        <p style="font-size:17px;">
+          <strong>Anatomia</strong> é a ciência que estuda a <mark>estrutura</mark> (forma, organização e relações) dos organismos vivos.
+          No contexto médico, refere-se ao estudo sistemático da estrutura do corpo humano e das suas partes constituintes,
+          incluindo células, tecidos, órgãos e sistemas.
+        </p>
+      </div>
+
+      <div class="info-box gold reveal">
+        <div class="ib-label">⚡ ANATOMIA vs FISIOLOGIA</div>
+        <p>
+          <strong>Anatomia:</strong> estuda a <mark>ESTRUTURA</mark> — o que existe, onde está, como é formado.<br>
+          <strong>Fisiologia:</strong> estuda a <mark>FUNÇÃO</mark> — como funciona, o que faz.<br><br>
+          Exemplo: Anatomia descreve que o coração tem 4 câmaras. Fisiologia explica como essas câmaras bombeiam o sangue.
+          São ciências irmãs — inseparáveis na prática clínica!
+        </p>
+      </div>
+
+      <div class="grid-2 reveal">
+        <div class="card card-cyan">
+          <div class="card-icon">🔬</div>
+          <div class="card-title">ANATOMIA MACROSCÓPICA</div>
+          <p>Estuda estruturas visíveis a olho nu: órgãos, músculos, ossos, vasos. É o que se vê numa dissecção ou cirurgia.</p>
+        </div>
+        <div class="card card-pink">
+          <div class="card-icon">🧫</div>
+          <div class="card-title">ANATOMIA MICROSCÓPICA</div>
+          <p>Estuda estruturas só visíveis ao microscópio: células (citologia) e tecidos (histologia). O mundo invisível do corpo.</p>
+        </div>
+      </div>
+
+      <!-- Body Planes Interactive -->
+      <div class="chapter-tag" style="margin-top:40px;">↗ POSIÇÃO ANATÓMICA & PLANOS DO CORPO</div>
+
+      <div class="narrator-panel reveal">
+        <p>Para descrever o corpo humano, os anatomistas criaram uma <strong>"linguagem universal"</strong>: a <mark>Posição Anatómica Padrão</mark> e os <strong>Planos de Secção</strong>. Sem isso, seria como descrever direcções sem Norte, Sul, Este e Oeste!</p>
+      </div>
+
+      <div class="planes-container reveal">
+        <div class="body-svg-wrap">
+          <!-- SVG Human Figure with Planes -->
+          <svg class="human-figure" width="240" height="380" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg">
+            <!-- Body -->
+            <ellipse cx="120" cy="55" rx="28" ry="32" fill="none" stroke="#00fff5" stroke-width="2" opacity="0.8"/>
+            <!-- Neck -->
+            <rect x="113" y="86" width="14" height="20" fill="none" stroke="#00fff5" stroke-width="2" opacity="0.6"/>
+            <!-- Torso -->
+            <path d="M80 106 L60 200 L80 210 L100 300 L120 300 L140 300 L160 210 L180 200 L160 106 Z" fill="none" stroke="#00fff5" stroke-width="2" opacity="0.7"/>
+            <!-- Arms -->
+            <path d="M80 110 L45 180 L40 230" fill="none" stroke="#ff006e" stroke-width="2" opacity="0.8"/>
+            <path d="M160 110 L195 180 L200 230" fill="none" stroke="#ff006e" stroke-width="2" opacity="0.8"/>
+            <!-- Hands -->
+            <ellipse cx="40" cy="238" rx="8" ry="12" fill="none" stroke="#ff006e" stroke-width="2" opacity="0.7"/>
+            <ellipse cx="200" cy="238" rx="8" ry="12" fill="none" stroke="#ff006e" stroke-width="2" opacity="0.7"/>
+            <!-- Legs -->
+            <path d="M100 300 L90 360 L105 365 L120 330 L135 365 L150 360 L140 300" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.8"/>
+
+            <!-- SAGITTAL PLANE (vertical middle) -->
+            <line x1="120" y1="10" x2="120" y2="370" stroke="#39ff14" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+            <text x="126" y="25" fill="#39ff14" font-size="9" font-family="Orbitron" opacity="0.9">SAG.</text>
+
+            <!-- FRONTAL PLANE (vertical front-back) -->
+            <line x1="55" y1="150" x2="185" y2="150" stroke="#bf5fff" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+            <text x="188" y="154" fill="#bf5fff" font-size="9" font-family="Orbitron" opacity="0.9">FRONT.</text>
+
+            <!-- TRANSVERSE PLANE (horizontal) -->
+            <ellipse cx="120" cy="180" rx="65" ry="16" fill="none" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+            <text x="60" y="198" fill="#ff6b00" font-size="9" font-family="Orbitron" opacity="0.9">TRANSV.</text>
+
+            <!-- Body directions labels -->
+            <text x="100" y="8" fill="#00fff5" font-size="9" font-family="Orbitron" opacity="0.8">SUPERIOR</text>
+            <text x="100" y="378" fill="#00fff5" font-size="9" font-family="Orbitron" opacity="0.8">INFERIOR</text>
+            <text x="2" y="155" fill="#ff006e" font-size="9" font-family="Orbitron" opacity="0.8">LAT.</text>
+            <text x="195" y="155" fill="#ff006e" font-size="9" font-family="Orbitron" opacity="0.8">LAT.</text>
+            <text x="104" y="160" fill="white" font-size="8" font-family="Orbitron" opacity="0.5">MED.</text>
+          </svg>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:14px; justify-content:center;">
+          <div class="card card-green" style="padding:16px;">
+            <div class="card-title">🟢 PLANO SAGITAL</div>
+            <p>Divide o corpo em metade <strong>esquerda e direita</strong>. O plano sagital mediano passa exactamente pelo centro do corpo.</p>
+          </div>
+          <div class="card card-purple" style="padding:16px;">
+            <div class="card-title">🟣 PLANO FRONTAL (CORONAL)</div>
+            <p>Divide o corpo em porção <strong>anterior (frente) e posterior (atrás)</strong>. Também chamado de coronal.</p>
+          </div>
+          <div class="card card-orange" style="padding:16px;">
+            <div class="card-title">🟠 PLANO TRANSVERSAL (HORIZONTAL)</div>
+            <p>Divide o corpo em parte <strong>superior (cabeça) e inferior (pés)</strong>. Corte horizontal.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms of Direction -->
+      <div class="chapter-tag" style="margin-top:30px;">↗ TERMOS DE POSIÇÃO E DIRECÇÃO</div>
+
+      <div class="grid-4 reveal">
+        <div class="card card-cyan" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">ANTERIOR / POSTERIOR</div>
+          <p style="font-size:12px;">Frente / Atrás do corpo</p>
+        </div>
+        <div class="card card-pink" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">SUPERIOR / INFERIOR</div>
+          <p style="font-size:12px;">Mais perto da cabeça / dos pés</p>
+        </div>
+        <div class="card card-gold" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">MEDIAL / LATERAL</div>
+          <p style="font-size:12px;">Mais perto / afastado da linha média</p>
+        </div>
+        <div class="card card-green" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">PROXIMAL / DISTAL</div>
+          <p style="font-size:12px;">Mais perto / afastado da origem do membro</p>
+        </div>
+        <div class="card card-purple" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">SUPERFICIAL / PROFUNDO</div>
+          <p style="font-size:12px;">Perto / longe da superfície da pele</p>
+        </div>
+        <div class="card card-orange" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">IPSILATERAL / CONTRALATERAL</div>
+          <p style="font-size:12px;">Mesmo lado / lado oposto do corpo</p>
+        </div>
+        <div class="card card-cyan" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">VENTRAL / DORSAL</div>
+          <p style="font-size:12px;">Barriga / Costas (comum em embriologia)</p>
+        </div>
+        <div class="card card-pink" style="padding:14px;">
+          <div class="card-title" style="font-size:11px;">CRANIAL / CAUDAL</div>
+          <p style="font-size:12px;">Em direção à cabeça / à cauda</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CLASSIFICAÇÃO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="classificacao">
+    <div class="ch-num" style="color:var(--neon-purple)">03</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 03 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-purple);">CLASSIFICAÇÃO DA ANATOMIA</h2>
+      <p class="section-subtitle">OS RAMOS DA CIÊNCIA DO CORPO</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar green">💀</div>
+        <div class="bubble green">
+          <div class="char-name">OSSO</div>
+          <p>Alex, anatomia não é uma coisa só! É como uma árvore enorme com muitos ramos. Dependendo do ângulo que usas para estudar o corpo, tens um ramo diferente!</p>
+        </div>
+      </div>
+
+      <!-- Tree -->
+      <div class="tree-container reveal">
+        <div class="tree-root">⚕ ANATOMIA</div>
+        <div class="tree-connector"></div>
+
+        <!-- By approach -->
+        <div style="text-align:center; font-family:'Orbitron',monospace; font-size:10px; color:rgba(232,244,255,0.4); letter-spacing:2px; margin-bottom:12px;">CLASSIFICAÇÃO POR ABORDAGEM</div>
+        <div class="tree-branches">
+          <div class="tree-branch">
+            <div class="tree-node node-cyan">MACROSCÓPICA<br><span style="font-size:8px; opacity:0.7">Olho nu</span></div>
+            <div class="node-tooltip">Estuda estruturas visíveis sem microscópio: órgãos, ossos, músculos, vasos</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-pink">MICROSCÓPICA<br><span style="font-size:8px; opacity:0.7">Microscópio</span></div>
+            <div class="node-tooltip">Citologia (células) e Histologia (tecidos)</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-gold">ULTRAMICROSCÓPICA<br><span style="font-size:8px; opacity:0.7">Microscópio electrónico</span></div>
+            <div class="node-tooltip">Organelas, membranas, estruturas subcelulares</div>
+          </div>
+        </div>
+
+        <div style="height:20px; width:2px; background:rgba(255,255,255,0.2); margin:16px auto;"></div>
+
+        <div style="text-align:center; font-family:'Orbitron',monospace; font-size:10px; color:rgba(232,244,255,0.4); letter-spacing:2px; margin-bottom:12px;">CLASSIFICAÇÃO POR MÉTODO</div>
+        <div class="tree-branches">
+          <div class="tree-branch">
+            <div class="tree-node node-green">SISTEMÁTICA<br><span style="font-size:8px; opacity:0.7">Por sistemas</span></div>
+            <div class="node-tooltip">Estuda sistema a sistema: ósseo, muscular, nervoso, circulatório...</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-purple">TOPOGRÁFICA<br><span style="font-size:8px; opacity:0.7">Por regiões</span></div>
+            <div class="node-tooltip">Estuda região a região: cabeça, pescoço, tórax, abdómen, membro superior...</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-orange">COMPARADA<br><span style="font-size:8px; opacity:0.7">Entre espécies</span></div>
+            <div class="node-tooltip">Compara estruturas entre diferentes espécies animais</div>
+          </div>
+        </div>
+
+        <div style="height:20px; width:2px; background:rgba(255,255,255,0.2); margin:16px auto;"></div>
+
+        <div style="text-align:center; font-family:'Orbitron',monospace; font-size:10px; color:rgba(232,244,255,0.4); letter-spacing:2px; margin-bottom:12px;">CLASSIFICAÇÃO POR APLICAÇÃO</div>
+        <div class="tree-branches">
+          <div class="tree-branch">
+            <div class="tree-node node-cyan">CLÍNICA<br><span style="font-size:8px; opacity:0.7">Diagnóstico/Trat.</span></div>
+            <div class="node-tooltip">Aplicada ao diagnóstico e tratamento de doenças</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-pink">CIRÚRGICA<br><span style="font-size:8px; opacity:0.7">Operações</span></div>
+            <div class="node-tooltip">Guia os cirurgiões nas intervenções, evitando estruturas vitais</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-gold">RADIOLÓGICA<br><span style="font-size:8px; opacity:0.7">Imagem</span></div>
+            <div class="node-tooltip">Interpretação de radiografias, TAC, RM, ecografias</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-green">PATOLÓGICA<br><span style="font-size:8px; opacity:0.7">Doenças</span></div>
+            <div class="node-tooltip">Estuda as alterações estruturais causadas por doenças</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-purple">FORENSE<br><span style="font-size:8px; opacity:0.7">Medicina legal</span></div>
+            <div class="node-tooltip">Aplicada na identificação de pessoas e causas de morte</div>
+          </div>
+          <div class="tree-branch">
+            <div class="tree-node node-orange">DESENVOLV.<br><span style="font-size:8px; opacity:0.7">Embriologia</span></div>
+            <div class="node-tooltip">Estuda o desenvolvimento desde a fertilização ao nascimento</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Systems Overview -->
+      <div class="chapter-tag" style="margin-top:40px;">↗ OS 11 SISTEMAS DO CORPO HUMANO</div>
+
+      <div class="narrator-panel reveal">
+        <p>Quando estudamos anatomia <strong>sistémica</strong>, dividimos o corpo em <mark>11 sistemas</mark> principais — cada um com a sua função específica, mas todos interligados como instrumentos numa orquestra.</p>
+      </div>
+
+      <div class="grid-3 reveal">
+        <div class="card card-cyan">
+          <div class="card-icon">🦴</div>
+          <div class="card-title">SISTEMA ÓSSEO</div>
+          <p>206 ossos no adulto. Suporte, protecção de órgãos, produção de células sanguíneas (medula óssea) e reservatório de cálcio.</p>
+        </div>
+        <div class="card card-pink">
+          <div class="card-icon">💪</div>
+          <div class="card-title">SISTEMA MUSCULAR</div>
+          <p>Mais de 600 músculos. Movimentos voluntários (esqueléticos), involuntários (lisos) e batimento cardíaco (cardíaco).</p>
+        </div>
+        <div class="card card-gold">
+          <div class="card-icon">🧠</div>
+          <div class="card-title">SISTEMA NERVOSO</div>
+          <p>Cérebro, medula espinal e nervos. Controla e coordena todas as funções corporais. Central e Periférico.</p>
+        </div>
+        <div class="card card-green">
+          <div class="card-icon">🫀</div>
+          <div class="card-title">SISTEMA CARDIOVASCULAR</div>
+          <p>Coração (bomba) + ~100.000 km de vasos sanguíneos. Transporta oxigénio, nutrientes, hormonas e resíduos.</p>
+        </div>
+        <div class="card card-purple">
+          <div class="card-icon">🩸</div>
+          <div class="card-title">SISTEMA LINFÁTICO</div>
+          <p>Vasos linfáticos, linfonodos, baço, timo. Imunidade, transporte de gorduras e drenagem de fluídos.</p>
+        </div>
+        <div class="card card-orange">
+          <div class="card-icon">🫁</div>
+          <div class="card-title">SISTEMA RESPIRATÓRIO</div>
+          <p>Pulmões, vias aéreas. Trocas gasosas: oxigénio entra, dióxido de carbono sai. ~20.000 respirações/dia.</p>
+        </div>
+        <div class="card card-cyan">
+          <div class="card-icon">🍽️</div>
+          <div class="card-title">SISTEMA DIGESTIVO</div>
+          <p>Tubo de +9m. Boca, esófago, estômago, intestinos. Processa alimentos, absorve nutrientes, elimina resíduos.</p>
+        </div>
+        <div class="card card-pink">
+          <div class="card-icon">🔱</div>
+          <div class="card-title">SISTEMA URINÁRIO</div>
+          <p>Rins, ureteres, bexiga, uretra. Filtra 180L de sangue/dia, produz ~1.5L de urina. Equilíbrio hidroelectrolítico.</p>
+        </div>
+        <div class="card card-gold">
+          <div class="card-icon">⚗️</div>
+          <div class="card-title">SISTEMA ENDÓCRINO</div>
+          <p>Glândulas que produzem hormonas (insulina, tiróxina, adrenalina...). Regulam metabolismo, crescimento, reprodução.</p>
+        </div>
+        <div class="card card-green">
+          <div class="card-icon">🧬</div>
+          <div class="card-title">SISTEMA REPRODUTOR</div>
+          <p>Órgãos específicos por sexo. Perpetuação da espécie e produção de hormonas sexuais (testosterona, estrogénio).</p>
+        </div>
+        <div class="card card-purple">
+          <div class="card-icon">🛡️</div>
+          <div class="card-title">SISTEMA TEGUMENTAR</div>
+          <p>Pele, cabelo, unhas, glândulas. Maior órgão do corpo (2m²). Protecção, termorregulação, sensação, síntese vit. D.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TÉCNICAS DE ESTUDO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="tecnicas">
+    <div class="ch-num" style="color:var(--neon-green)">04</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 04 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-green);">TÉCNICAS DE ESTUDO</h2>
+      <p class="section-subtitle">COMO EXPLORAMOS O CORPO HUMANO</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar cyan">🧑‍🔬</div>
+        <div class="bubble cyan">
+          <div class="char-name">ALEX</div>
+          <p>Como é que os anatomistas estudam o corpo? Só com cadáveres?</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar pink">🤖</div>
+        <div class="bubble pink">
+          <div class="char-name">ZENA</div>
+          <p>De forma alguma! Hoje temos técnicas incríveis. Vou categorizar por tipo — cada uma tem vantagens únicas. Clica nas abas para explorar!</p>
+        </div>
+      </div>
+
+      <div class="technique-tab reveal">
+        <button class="tab-btn active" onclick="switchTab('dissecao')">🔪 DISSECAÇÃO</button>
+        <button class="tab-btn" onclick="switchTab('injecao')">💉 INJECÇÃO</button>
+        <button class="tab-btn" onclick="switchTab('microscopio')">🔬 MICROSCOPIA</button>
+        <button class="tab-btn" onclick="switchTab('imagem')">📡 IMAGEM MÉDICA</button>
+        <button class="tab-btn" onclick="switchTab('digital')">💻 DIGITAL & 3D</button>
+        <button class="tab-btn" onclick="switchTab('superficie')">👁️ SUPERFÍCIE</button>
+      </div>
+
+      <div id="tab-dissecao" class="tab-panel active reveal">
+        <div class="technique-card">
+          <h3>DISSECAÇÃO CADAVÉRICA</h3>
+          <div class="tc-meta">
+            <span class="tc-tag classic">CLÁSSICA</span>
+            <span class="tc-tag" style="background:rgba(255,215,0,0.1); color:var(--neon-gold); border:1px solid var(--neon-gold);">GOLD STANDARD</span>
+          </div>
+          <p>A <strong>dissecação</strong> é o método mais antigo e ainda considerado o mais completo. Consiste em cortar e separar sistematicamente as estruturas anatómicas de um cadáver preservado.</p>
+          <br>
+          <p><strong style="color:var(--neon-green)">Processo de preservação:</strong> Os cadáveres são tratados com <mark>formaldeído</mark> (formol), que fixa as proteínas e previne a decomposição. Actualmente usam-se também técnicas de <mark>plastinação</mark> (substituição da água por silicone — usada na exposição "Body Worlds").</p>
+          <br>
+          <p><strong style="color:var(--neon-green)">O que permite ver:</strong> Relações reais entre estruturas, variações anatómicas individuais, tridimensionalidade, textura e consistência dos tecidos. Nenhuma imagem digital substitui completamente esta experiência!</p>
+          <br>
+          <div class="info-box green">
+            <div class="ib-label">⚠️ ÉTICA & LEGISLAÇÃO</div>
+            <p>O uso de cadáveres é regulamentado por lei. Requer consentimento prévio (doação voluntária) ou autorização judicial. É um acto de profundo respeito — o doador oferece o seu corpo para ensinar a medicina que vai salvar vidas futuras.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-injecao" class="tab-panel reveal">
+        <div class="technique-card" style="border-left-color: var(--neon-pink);">
+          <h3 style="color:var(--neon-pink);">TÉCNICAS DE INJECÇÃO E CORROSÃO</h3>
+          <div class="tc-meta">
+            <span class="tc-tag classic">CLÁSSICA</span>
+          </div>
+          <p>Técnicas que tornam visíveis estruturas ocos (vasos, ductos) que de outra forma colapsar iam ou seriam difíceis de seguir.</p>
+          <br>
+          <div class="grid-2" style="margin:12px 0;">
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,0,110,0.2);">
+              <div style="color:var(--neon-pink); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">💉 INJECÇÃO VASCULAR</div>
+              <p style="font-size:13px;">Injecta-se látex ou resina colorida nas artérias (vermelho) e veias (azul) para visualizar o sistema vascular. Permite mapear toda a vascularização de um órgão.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,107,0,0.2);">
+              <div style="color:var(--neon-orange); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">⚗️ CORROSÃO</div>
+              <p style="font-size:13px;">Após injecção de resina, o tecido é dissolvido com ácido, deixando apenas o molde vascular ou ductal — um modelo tridimensional impressionante. Usado para estudar rins, pulmões, fígado.</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(57,255,20,0.2); margin-top:12px;">
+            <div style="color:var(--neon-green); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🖌️ DIAFANIZAÇÃO (TRANSPARENTIZAÇÃO)</div>
+            <p style="font-size:13px;">Torna o tecido transparente e cora ossos/cartilagens com cores diferentes. Essencial para estudar o desenvolvimento ósseo em embriologia e pediatria.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-microscopio" class="tab-panel reveal">
+        <div class="technique-card" style="border-left-color: var(--neon-purple);">
+          <h3 style="color:var(--neon-purple);">MICROSCOPIA</h3>
+          <div class="tc-meta">
+            <span class="tc-tag micro">MICROSCOPIA</span>
+          </div>
+          <div class="grid-2" style="margin:12px 0;">
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(191,95,255,0.2);">
+              <div style="color:var(--neon-purple); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🔬 MICROSCÓPIO ÓPTICO (LIGHT)</div>
+              <p style="font-size:13px;">Amplia até ~1000x. Usa luz visível. Permite ver células, núcleos, tecidos. Requer cortes finos (micrótomo) e colorações histológicas (H&E: hematoxilina-eosina é a mais comum).</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(0,255,245,0.2);">
+              <div style="color:var(--neon-cyan); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">⚡ MICROSCÓPIO ELECTRÓNICO</div>
+              <p style="font-size:13px;">Usa feixes de electrões. Amplia até 500.000x. Revela organelas: mitocôndrias, retículo endoplasmático, ribossomas. TEM (transmissão) e SEM (varrimento/scanning).</p>
+            </div>
+          </div>
+          <div class="info-box purple">
+            <div class="ib-label">🎨 COLORAÇÕES HISTOLÓGICAS</div>
+            <p style="font-size:13px;"><strong>H&E:</strong> Núcleos azul/roxo, citoplasma rosa — a mais usada. &nbsp;|&nbsp; <strong>PAS:</strong> glicogénio e mucinas. &nbsp;|&nbsp; <strong>Tricrômico:</strong> colágeno azul/verde, músculo vermelho. &nbsp;|&nbsp; <strong>Imuno-histoquímica:</strong> usa anticorpos marcados para identificar proteínas específicas.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-imagem" class="tab-panel reveal">
+        <div class="technique-card" style="border-left-color: var(--neon-pink);">
+          <h3 style="color:var(--neon-pink);">IMAGIOLOGIA / IMAGEM MÉDICA</h3>
+          <div class="tc-meta">
+            <span class="tc-tag imaging">IMAGEM</span>
+            <span class="tc-tag modern">MODERNA</span>
+          </div>
+          <div class="grid-2" style="margin:12px 0;">
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,0,110,0.2);">
+              <div style="color:var(--neon-pink); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">⚡ RADIOGRAFIA (RX)</div>
+              <p style="font-size:13px;">Raios X atravessam tecidos moles, são absorvidos pelos ossos → imagem 2D. Rápida, barata. Ideal para fracturas, patologia pulmonar, diagnóstico de urgência. Descoberta em 1895 por Röntgen.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,215,0,0.2);">
+              <div style="color:var(--neon-gold); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">💻 TAC (CT)</div>
+              <p style="font-size:13px;">Tomografia Axial Computorizada. Múltiplos raios X em rotação → reconstrução 3D. Excelente para ossos, pulmões, vasos (com contraste). Rápida. Alta dose de radiação.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(191,95,255,0.2);">
+              <div style="color:var(--neon-purple); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🧲 RM (MRI)</div>
+              <p style="font-size:13px;">Ressonância Magnética. Usa campo magnético e ondas rádio — SEM radiação! Excelente para tecidos moles: cérebro, músculos, ligamentos, medula espinal, tumores. Imagem 3D superior.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(57,255,20,0.2);">
+              <div style="color:var(--neon-green); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🔊 ECOGRAFIA (US)</div>
+              <p style="font-size:13px;">Ultrassom — ondas sonoras de alta frequência. Sem radiação. Ideal para grávidas (feto), coração (ecocardiograma), abdómen, vasos (Doppler). Portátil e em tempo real!</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,107,0,0.2);">
+              <div style="color:var(--neon-orange); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">☢️ MEDICINA NUCLEAR (PET/SPECT)</div>
+              <p style="font-size:13px;">Injecta-se substância radioactiva (traçador) que se acumula em certas células (ex: cancro). PET-scan mostra metabolismo em tempo real. Fundamental em oncologia.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(0,255,245,0.2);">
+              <div style="color:var(--neon-cyan); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🔭 ANGIOGRAFIA</div>
+              <p style="font-size:13px;">Injecta-se contraste nos vasos e faz-se raio X ou TAC. Mapeia artérias coronárias (coronariografia), cerebrais. Permite diagnóstico E tratamento (stent, embolização).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-digital" class="tab-panel reveal">
+        <div class="technique-card" style="border-left-color: var(--neon-cyan);">
+          <h3>ANATOMIA DIGITAL & 3D</h3>
+          <div class="tc-meta">
+            <span class="tc-tag modern">MODERNA</span>
+          </div>
+          <p>A revolução digital transformou completamente o ensino da anatomia. Hoje tens o corpo humano no telemóvel!</p>
+          <br>
+          <div class="grid-2" style="margin:12px 0;">
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(0,255,245,0.2);">
+              <div style="color:var(--neon-cyan); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🖥️ ATLASES DIGITAIS 3D</div>
+              <p style="font-size:13px;">Plataformas como Complete Anatomy, Visible Body, Anatomy.tv. Modelos 3D interactivos onde podes rodar, remover camadas, ver cada estrutura com nome e função.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(191,95,255,0.2);">
+              <div style="color:var(--neon-purple); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🥽 REALIDADE VIRTUAL (VR)</div>
+              <p style="font-size:13px;">Dissecção virtual com óculos VR. O estudante pode "entrar" no corpo humano, explorar o interior de um coração ou percorrer o sistema vascular. Imersivo e sem limitações éticas.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(57,255,20,0.2);">
+              <div style="color:var(--neon-green); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">🖨️ IMPRESSÃO 3D</div>
+              <p style="font-size:13px;">Modelos físicos impressos com base em TAC/RM reais. Cirurgiões planeiam operações complexas com o modelo 3D do próprio paciente antes de entrar no bloco operatório!</p>
+            </div>
+            <div style="background:var(--bg-card); padding:16px; border-radius:8px; border:1px solid rgba(255,215,0,0.2);">
+              <div style="color:var(--neon-gold); font-family:Orbitron,monospace; font-size:12px; margin-bottom:8px;">📸 PLASTINAÇÃO</div>
+              <p style="font-size:13px;">Técnica do Dr. Gunther von Hagens (1977): substitui fluídos corporais por silicone. Resultado: espécimes anatómicas duradouras, sem odor, manipuláveis. Base da exposição "Body Worlds".</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-superficie" class="tab-panel reveal">
+        <div class="technique-card" style="border-left-color: var(--neon-gold);">
+          <h3 style="color:var(--neon-gold);">ANATOMIA DE SUPERFÍCIE</h3>
+          <div class="tc-meta">
+            <span class="tc-tag classic">CLÁSSICA</span>
+            <span class="tc-tag" style="background:rgba(255,215,0,0.1);color:var(--neon-gold);border:1px solid var(--neon-gold);">CLÍNICA ESSENCIAL</span>
+          </div>
+          <p>A anatomia de superfície estuda o que podemos <strong>ver e palpar</strong> num corpo vivo — essencial para o exame físico, palpação, auscultação e procedimentos clínicos.</p>
+          <br>
+          <div class="info-box gold">
+            <div class="ib-label">🏥 NA PRÁTICA CLÍNICA</div>
+            <p style="font-size:14px;">
+              <strong>Palpação:</strong> Palpar o pulso radial, a veia jugular, o fígado, o baço, o rim. &nbsp;|&nbsp;
+              <strong>Percussão:</strong> Bater no tórax para avaliar se há ar, líquido ou consolidação. &nbsp;|&nbsp;
+              <strong>Auscultação:</strong> Saber exactamente onde colocar o estetoscópio para ouvir o coração ou cada lóbulo pulmonar. &nbsp;|&nbsp;
+              <strong>Pontos de injecção:</strong> Venopunção, punção lombar, toracocentese — todos exigem conhecimento anatómico preciso.
+            </p>
+          </div>
+          <br>
+          <div class="grid-2" style="margin:8px 0;">
+            <div style="background:var(--bg-card); padding:14px; border-radius:8px; border:1px solid rgba(255,215,0,0.2);">
+              <div style="color:var(--neon-gold); font-family:Orbitron,monospace; font-size:11px; margin-bottom:8px;">🔍 PONTOS DE REFERÊNCIA ÓSSEOS</div>
+              <p style="font-size:13px;">Processos espinhosos das vértebras, clavícula, acrómio, espinha ilíaca anterior superior (EIAS), maléolos... São os "marcos GPS" do corpo que guiam o médico.</p>
+            </div>
+            <div style="background:var(--bg-card); padding:14px; border-radius:8px; border:1px solid rgba(255,107,0,0.2);">
+              <div style="color:var(--neon-orange); font-family:Orbitron,monospace; font-size:11px; margin-bottom:8px;">💓 PONTOS DE PALPAÇÃO VASCULAR</div>
+              <p style="font-size:13px;">Artéria radial (pulso no pulso), carótida (pescoço), femoral (virilha), braquial (cotovelo), poplítea (joelho). Avaliação do estado circulatório.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- APLICAÇÕES CLÍNICAS -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="clinica">
+    <div class="ch-num" style="color:var(--neon-orange)">05</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 05 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-orange);">APLICAÇÕES CLÍNICAS</h2>
+      <p class="section-subtitle">ANATOMIA NA PRÁTICA MÉDICA REAL</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar cyan">🧑‍🔬</div>
+        <div class="bubble cyan">
+          <div class="char-name">ALEX</div>
+          <p>Mas afinal, para que serve estudar anatomia? Tenho uma APP com tudo isso no telemóvel...</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar gold">👁️</div>
+        <div class="bubble gold">
+          <div class="char-name">VESALIUS</div>
+          <p>Ah, jovem! Num bloco operatório, às 3h da manhã, com um paciente a sangrar, não vais consultar o telemóvel. O teu cérebro precisa de saber exactamente onde está a artéria. Anatomia salva vidas — literalmente.</p>
+        </div>
+      </div>
+
+      <div class="narrator-panel reveal">
+        <p>Cada estrutura que aprendes em anatomia tem uma aplicação clínica directa. Veja os exemplos abaixo e perceba como o conhecimento anatómico se traduz em diagnóstico, cirurgia e tratamento.</p>
+      </div>
+
+      <div class="clinical-alert reveal">
+        <div class="ca-icon">🩺</div>
+        <div>
+          <h4>EXAME FÍSICO — O MÉDICO COMO DETECTOR</h4>
+          <p>Quando o médico palpa o abdómen, está a localizar anatomicamente fígado (hipocôndrio direito), baço (hipocôndrio esquerdo), bexiga, apêndice (fossa ilíaca direita). Saber anatomia exactamente é o que diferencia "dor abdominal" de "apendicite aguda" ou "colecistite".</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color: rgba(57,255,20,0.4); background: rgba(57,255,20,0.05);">
+        <div class="ca-icon">💉</div>
+        <div>
+          <h4 style="color: var(--neon-green);">VENOPUNÇÃO & CATETERISMO — PRECISÃO ANATÓMICA</h4>
+          <p>A veia cubital mediana (fossa antecubital) é a preferida para colheita de sangue. A veia jugular interna é usada para cateter venoso central. Errar a anatomia = puncionar a artéria carótida. As consequências? Graves.</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color: rgba(191,95,255,0.4); background: rgba(191,95,255,0.05);">
+        <div class="ca-icon">🧠</div>
+        <div>
+          <h4 style="color: var(--neon-purple);">NEUROLOGIA — LOCALIZANDO LESÕES</h4>
+          <p>Um AVC (Acidente Vascular Cerebral) na artéria cerebral média esquerda causa hemiplégia direita + afasia. Um médico que sabe neuroanatomia pode localizar exactamente a lesão pelos sintomas, antes de fazer qualquer exame! É como ler o mapa do cérebro.</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.05);">
+        <div class="ca-icon">🔪</div>
+        <div>
+          <h4 style="color: var(--neon-gold);">CIRURGIA — ONDE CORTAR E ONDE NÃO CORTAR</h4>
+          <p>Numa colecistectomia (retirar vesícula biliar), o cirurgião precisa de identificar o triângulo de Calot (ducto cístico, artéria cística, ducto hepático comum). Lesionar a via biliar principal por não conhecer a anatomia? Complicação catastrófica, potencialmente fatal.</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color: rgba(0,255,245,0.4); background: rgba(0,255,245,0.05);">
+        <div class="ca-icon">📡</div>
+        <div>
+          <h4 style="color: var(--neon-cyan);">RADIOLOGIA — INTERPRETAR IMAGENS</h4>
+          <p>Uma radiografia do tórax mostra hilos, silhueta cardíaca, seios costofrénicos, traqueia. Para identificar pneumonia, derrame pleural, cardiomegalia ou pneumotórax, o médico precisa conhecer perfeitamente a anatomia normal para reconhecer o anormal.</p>
+        </div>
+      </div>
+
+      <div class="clinical-alert reveal" style="border-color: rgba(255,107,0,0.4); background: rgba(255,107,0,0.05);">
+        <div class="ca-icon">⚠️</div>
+        <div>
+          <h4 style="color: var(--neon-orange);">VARIAÇÕES ANATÓMICAS — O QUE NÃO ESTÁ NO ATLAS</h4>
+          <p>Cerca de <mark>20-30% das pessoas</mark> têm variações anatómicas significativas! Artérias com trajecto diferente, músculos extras, anomalias viscerais. O médico precisa de conhecer o padrão normal para reconhecer — e não se surpreender com — o anormal. Ignorar variações anatómicas já causou cirurgias desastrosas.</p>
+        </div>
+      </div>
+
+      <!-- Regions of Abdomen -->
+      <div class="chapter-tag" style="margin-top:40px;">↗ REGIÕES DO ABDÓMEN — ESSENCIAL CLÍNICO</div>
+
+      <div class="narrator-panel reveal">
+        <p>Para descrever sintomas e localizar patologias abdominais, usamos <strong>2 sistemas</strong>: divisão em <mark>4 quadrantes</mark> (mais usada na clínica) ou em <mark>9 regiões</mark> (mais precisa).</p>
+      </div>
+
+      <div class="grid-2 reveal">
+        <div class="card card-cyan">
+          <div class="card-title">4 QUADRANTES (USO CLÍNICO)</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; font-size:13px;">
+            <div style="padding:10px; background:rgba(0,255,245,0.1); border-radius:6px; text-align:center;">
+              <div style="color:var(--neon-cyan); font-size:11px; font-weight:bold;">QSD</div>
+              <div style="font-size:11px; margin-top:4px; color:rgba(232,244,255,0.6);">Fígado, vesícula, duodeno</div>
+            </div>
+            <div style="padding:10px; background:rgba(255,0,110,0.1); border-radius:6px; text-align:center;">
+              <div style="color:var(--neon-pink); font-size:11px; font-weight:bold;">QSE</div>
+              <div style="font-size:11px; margin-top:4px; color:rgba(232,244,255,0.6);">Estômago, baço, pâncreas</div>
+            </div>
+            <div style="padding:10px; background:rgba(57,255,20,0.1); border-radius:6px; text-align:center;">
+              <div style="color:var(--neon-green); font-size:11px; font-weight:bold;">QID</div>
+              <div style="font-size:11px; margin-top:4px; color:rgba(232,244,255,0.6);">Apêndice, cego, ovário D</div>
+            </div>
+            <div style="padding:10px; background:rgba(191,95,255,0.1); border-radius:6px; text-align:center;">
+              <div style="color:var(--neon-purple); font-size:11px; font-weight:bold;">QIE</div>
+              <div style="font-size:11px; margin-top:4px; color:rgba(232,244,255,0.6);">Sigmóide, ovário E, rim E</div>
+            </div>
+          </div>
+          <p style="font-size:12px; color:rgba(232,244,255,0.5); margin-top:10px;">QSD=Quadrante Superior Direito, QSE=Esquerdo, QID=Inferior Direito, QIE=Esquerdo</p>
+        </div>
+
+        <div class="card card-gold">
+          <div class="card-title">9 REGIÕES (MAIS PRECISO)</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:12px; font-size:11px;">
+            <div style="padding:8px; background:rgba(255,215,0,0.1); border-radius:4px; text-align:center; color:var(--neon-gold);">Hipocôndrio Dto</div>
+            <div style="padding:8px; background:rgba(255,215,0,0.15); border-radius:4px; text-align:center; color:var(--neon-gold);">EPIGASTRO</div>
+            <div style="padding:8px; background:rgba(255,215,0,0.1); border-radius:4px; text-align:center; color:var(--neon-gold);">Hipocôndrio Esq</div>
+            <div style="padding:8px; background:rgba(255,107,0,0.1); border-radius:4px; text-align:center; color:var(--neon-orange);">Flanco Dto</div>
+            <div style="padding:8px; background:rgba(255,107,0,0.15); border-radius:4px; text-align:center; color:var(--neon-orange);">MESOGASTRO</div>
+            <div style="padding:8px; background:rgba(255,107,0,0.1); border-radius:4px; text-align:center; color:var(--neon-orange);">Flanco Esq</div>
+            <div style="padding:8px; background:rgba(0,255,245,0.1); border-radius:4px; text-align:center; color:var(--neon-cyan);">Fossa Ilíaca Dto</div>
+            <div style="padding:8px; background:rgba(0,255,245,0.15); border-radius:4px; text-align:center; color:var(--neon-cyan);">HIPOGASTRO</div>
+            <div style="padding:8px; background:rgba(0,255,245,0.1); border-radius:4px; text-align:center; color:var(--neon-cyan);">Fossa Ilíaca Esq</div>
+          </div>
+          <p style="font-size:11px; color:rgba(232,244,255,0.5); margin-top:8px;">Ponto de McBurney (apendicite): 1/3 externo da linha entre o umbigo e a EIAS direita.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- QUIZ -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="quiz">
+    <div class="ch-num" style="color:var(--neon-gold)">06</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 06 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-gold);">TESTE DE CONHECIMENTOS</h2>
+      <p class="section-subtitle">CONFIRMA O QUE APRENDESTE</p>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar pink">🤖</div>
+        <div class="bubble pink">
+          <div class="char-name">ZENA</div>
+          <p>Hora de testar! São 10 perguntas sobre tudo o que estudámos. Não tenhas medo de errar — cada erro é uma oportunidade de aprender mais. Vamos lá, Alex!</p>
+        </div>
+      </div>
+
+      <div class="quiz-box reveal">
+        <div class="quiz-score" id="quiz-score">PERGUNTA 1 / 10</div>
+        <br>
+        <div class="quiz-q" id="quiz-question">A palavra "anatomia" vem do grego e significa...</div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <div class="quiz-nav">
+          <button class="btn btn-ghost" onclick="resetQuiz()">↺ RECOMEÇAR</button>
+          <button class="btn btn-cyan" id="quiz-next-btn" onclick="nextQuestion()" style="display:none;">PRÓXIMA ▶</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- GLOSSÁRIO -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="glossario">
+    <div class="ch-num" style="color:var(--neon-purple)">07</div>
+    <div class="container">
+
+      <div class="chapter-tag">✦ CAPÍTULO 07 ✦</div>
+      <h2 class="section-title" style="color: var(--neon-purple);">GLOSSÁRIO ANATÓMICO</h2>
+      <p class="section-subtitle">OS TERMOS QUE PRECISAS DE CONHECER</p>
+
+      <div class="glossary-search reveal">
+        <input class="glossary-input" type="text" id="glossary-input" placeholder="🔍 Pesquisar termo..." oninput="filterGlossary()">
+      </div>
+
+      <div class="glossary-grid reveal" id="glossary-grid">
+        <!-- Populated by JS -->
+      </div>
+
+    </div>
+  </section>
+
+  <div class="neon-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- EPILOGUE -->
+  <!-- ═══════════════════════════════════════════ -->
+  <section id="epilogo" style="min-height:auto; padding: 60px 40px; background: linear-gradient(180deg, var(--bg-dark), #020406);">
+    <div class="container">
+
+      <div class="chapter-tag">✦ EPÍLOGO ✦</div>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar cyan">🧑‍🔬</div>
+        <div class="bubble cyan">
+          <div class="char-name">ALEX</div>
+          <p>Uau... Não imaginava que a anatomia tivesse tanta história, tantos métodos e tantas aplicações. É quase como aprender a língua do corpo humano!</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar gold">👁️</div>
+        <div class="bubble gold">
+          <div class="char-name">VESALIUS</div>
+          <p>Exactamente, jovem. E agora percedes porque dediquei a minha vida a isto. O corpo humano é a criação mais complexa e bela que existe. Cada vez que o estudas, descobres algo novo. Nunca para de surpreender.</p>
+        </div>
+      </div>
+
+      <div class="dialogue reveal">
+        <div class="char-avatar pink">🤖</div>
+        <div class="bubble pink">
+          <div class="char-name">ZENA</div>
+          <p>E esta é só a introdução, Alex! Nos próximos anos vais aprender cada osso, cada músculo, cada nervo, cada vaso. Tens um longo caminho pela frente — mas agora já tens o mapa. Boa sorte! 💙</p>
+        </div>
+      </div>
+
+      <div class="dialogue right reveal">
+        <div class="char-avatar green">💀</div>
+        <div class="bubble green">
+          <div class="char-name">OSSO</div>
+          <p>E lembra-te: quando dissecares cadáveres, trata o doador com respeito máximo. Eles são os teus primeiros professores de anatomia — os mais generosos de todos. 🙏</p>
+        </div>
+      </div>
+
+      <div class="info-box cyan reveal" style="margin-top:30px; text-align:center;">
+        <div class="ib-label" style="text-align:center;">🎓 MENSAGEM FINAL</div>
+        <p style="font-size:18px; text-align:center;">
+          <strong>Anatomia</strong> é a base de toda a medicina.<br>
+          Sem conhecer a <mark>estrutura normal</mark>, não se pode reconhecer o <mark>patológico</mark>.<br>
+          <strong>Estuda com rigor. Estuda com paixão. O corpo humano merece-o.</strong>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FOOTER -->
+<!-- ═══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-deco">⚕️ 🧬 💀 🫀 🧠 🦴</div>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-uni">UNIVERSIDADE LICUNGO</div>
+  <div class="footer-year">INTRODUÇÃO À ANATOMIA HUMANA — ANO 2026</div>
+  <div style="margin-top:16px; font-size:12px; color:rgba(232,244,255,0.3); font-family:'Orbitron',monospace; letter-spacing:2px;">
+    1º ANO DE MEDICINA ✦ DISCIPLINA DE ANATOMIA
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- JAVASCRIPT -->
+<!-- ═══════════════════════════════════════════ -->
+<script>
+
+// ──── MOLECULE CANVAS BACKGROUND ────
+const canvas = document.getElementById('molecule-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, atoms = [], bonds = [];
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initAtoms() {
+  atoms = [];
+  const N = Math.floor((W * H) / 22000);
+  const colors = ['#00fff5','#ff006e','#ffd700','#39ff14','#bf5fff','#ff6b00'];
+  for (let i = 0; i < N; i++) {
+    atoms.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2.5 + 1,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: Math.random() * 0.4 + 0.1
+    });
+  }
+}
+
+function drawMolecules() {
+  ctx.clearRect(0, 0, W, H);
+  // Draw bonds
+  for (let i = 0; i < atoms.length; i++) {
+    for (let j = i + 1; j < atoms.length; j++) {
+      const dx = atoms[i].x - atoms[j].x;
+      const dy = atoms[i].y - atoms[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 130) {
+        ctx.beginPath();
+        ctx.moveTo(atoms[i].x, atoms[i].y);
+        ctx.lineTo(atoms[j].x, atoms[j].y);
+        ctx.strokeStyle = `rgba(0,255,245,${0.08 * (1 - dist/130)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  // Draw atoms
+  for (const a of atoms) {
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+    ctx.fillStyle = a.color + Math.floor(a.alpha * 255).toString(16).padStart(2,'0');
+    ctx.fill();
+    a.x += a.vx;
+    a.y += a.vy;
+    if (a.x < 0 || a.x > W) a.vx *= -1;
+    if (a.y < 0 || a.y > H) a.vy *= -1;
+  }
+  requestAnimationFrame(drawMolecules);
+}
+
+window.addEventListener('resize', () => { resize(); initAtoms(); });
+resize();
+initAtoms();
+drawMolecules();
+
+// ──── PROGRESS BAR ────
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const docH = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const pct = (scrollTop / docH) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ──── SCROLL REVEAL ────
+const revealEls = document.querySelectorAll('.reveal');
+const tlItems = document.querySelectorAll('.tl-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.12 });
+
+revealEls.forEach(el => observer.observe(el));
+tlItems.forEach(el => observer.observe(el));
+
+// ──── TABS ────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ──── QUIZ ────
+const quizData = [
+  {
+    q: "A palavra 'anatomia' vem do grego e significa...",
+    opts: ["Estudo das doenças", "Cortar através / dissecar", "Ciência do movimento", "Arte de curar"],
+    correct: 1,
+    explanation: "✅ Correcto! 'Ana' (através) + 'tome' (corte) = dissecar, separar estruturas. Daí que a dissecação seja o método anatómico clássico!"
+  },
+  {
+    q: "Quem é considerado o 'Pai da Anatomia Moderna'?",
+    opts: ["Hipócrates", "Galeno", "Andreas Vesalius", "William Harvey"],
+    correct: 2,
+    explanation: "✅ Correcto! Vesalius publicou 'De Humani Corporis Fabrica' em 1543 aos 29 anos, corrigindo mais de 200 erros de Galeno com base em dissecções reais."
+  },
+  {
+    q: "O plano que divide o corpo em metade ESQUERDA e DIREITA chama-se...",
+    opts: ["Plano Frontal (Coronal)", "Plano Transversal", "Plano Sagital Mediano", "Plano Horizontal"],
+    correct: 2,
+    explanation: "✅ Correcto! O plano sagital mediano passa exactamente pelo meio do corpo, dividindo-o em metade esquerda e metade direita iguais."
+  },
+  {
+    q: "A Histologia é o ramo da anatomia microscópica que estuda...",
+    opts: ["As células individualmente", "Os tecidos (conjuntos de células)", "Os órgãos completos", "O DNA e os genes"],
+    correct: 1,
+    explanation: "✅ Correcto! Histologia = estudo dos tecidos (grupos de células com mesma origem e função). A citologia estuda as células individualmente."
+  },
+  {
+    q: "Qual destas técnicas de imagem NÃO usa radiação ionizante?",
+    opts: ["Radiografia (RX)", "TAC (Tomografia)", "Medicina Nuclear (PET)", "Ressonância Magnética (RM)"],
+    correct: 3,
+    explanation: "✅ Correcto! A RM usa campo magnético e ondas de rádio — sem qualquer radiação ionizante. Por isso é segura em gravidez e pode ser repetida sem preocupações."
+  },
+  {
+    q: "Um médico palpa dor no QID (Quadrante Inferior Direito). Qual órgão está em causa primeiro?",
+    opts: ["Estômago", "Baço", "Apêndice / Cego", "Vesícula Biliar"],
+    correct: 2,
+    explanation: "✅ Correcto! O QID contém o cego, apêndice, ovário direito e parte do intestino delgado. Dor no QID + febre + náuseas = suspeita imediata de APENDICITE AGUDA!"
+  },
+  {
+    q: "William Harvey ficou famoso por demonstrar que...",
+    opts: ["O coração tem 4 câmaras", "O sangue circula num sistema fechado bombeado pelo coração", "Os nervos conduzem impulsos eléctricos", "O fígado produz sangue"],
+    correct: 1,
+    explanation: "✅ Correcto! Em 1628, Harvey derrubou 1400 anos de teoria galénica provando que o sangue circula continuamente num sistema fechado. Revolução total na fisiologia!"
+  },
+  {
+    q: "O que estuda a Anatomia TOPOGRÁFICA?",
+    opts: ["Sistema a sistema (ósseo, muscular...)", "Região a região (tórax, abdómen...)", "Célula a célula", "Espécie a espécie"],
+    correct: 1,
+    explanation: "✅ Correcto! A anatomia topográfica (ou regional) estuda o corpo por regiões: cabeça e pescoço, tórax, abdómen, pelve, membros. É a abordagem mais usada em cirurgia."
+  },
+  {
+    q: "Na posição anatómica padrão, os membros superiores estão...",
+    opts: ["Cruzados sobre o peito", "Ao longo do corpo, palmas viradas para a frente", "Levantados acima da cabeça", "Dobrados a 90° nos cotovelos"],
+    correct: 1,
+    explanation: "✅ Correcto! Posição anatómica: corpo erecto, olhos em frente, membros superiores ao lado do corpo com PALMAS VIRADAS PARA A FRENTE (posição de supinação). É a referência universal."
+  },
+  {
+    q: "Galeno foi o médico mais influente por mais de...",
+    opts: ["200 anos", "500 anos", "1300 anos", "50 anos"],
+    correct: 2,
+    explanation: "✅ Correcto! Os textos de Galeno dominaram a medicina durante mais de 1300 anos — desde o século II até o século XVI quando Vesalius os desafiou. Incrível longevidade de um erro!"
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function loadQuestion() {
+  const q = quizData[currentQ];
+  document.getElementById('quiz-score').textContent = `PERGUNTA ${currentQ + 1} / ${quizData.length} | PONTUAÇÃO: ${score}`;
+  document.getElementById('quiz-question').textContent = q.q;
+
+  const opts = document.getElementById('quiz-options');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${String.fromCharCode(65+i)}) ${o}`;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('quiz-feedback').className = 'quiz-feedback';
+  document.getElementById('quiz-feedback').textContent = '';
+  document.getElementById('quiz-next-btn').style.display = 'none';
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+
+  opts[q.correct].classList.add('correct');
+  if (idx !== q.correct) {
+    opts[idx].classList.add('wrong');
+    document.getElementById('quiz-feedback').textContent = `❌ Não exactamente! A resposta correcta é "${q.opts[q.correct]}". ${q.explanation}`;
+    document.getElementById('quiz-feedback').className = 'quiz-feedback fail show';
+  } else {
+    score++;
+    document.getElementById('quiz-feedback').textContent = q.explanation;
+    document.getElementById('quiz-feedback').className = 'quiz-feedback ok show';
+  }
+
+  document.getElementById('quiz-score').textContent = `PERGUNTA ${currentQ + 1} / ${quizData.length} | PONTUAÇÃO: ${score}`;
+  document.getElementById('quiz-next-btn').style.display = currentQ < quizData.length - 1 ? 'inline-block' : 'none';
+
+  if (currentQ === quizData.length - 1) {
+    setTimeout(() => showFinalScore(), 1200);
+  }
+}
+
+function nextQuestion() {
+  currentQ++;
+  if (currentQ < quizData.length) loadQuestion();
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  score = 0;
+  loadQuestion();
+  document.getElementById('quiz-next-btn').style.display = 'none';
+}
+
+function showFinalScore() {
+  const box = document.querySelector('.quiz-box');
+  const pct = Math.round((score / quizData.length) * 100);
+  let msg, color;
+  if (pct >= 90) { msg = "🏆 EXCELENTE! Pronto para ser anatomista!"; color = "var(--neon-gold)"; }
+  else if (pct >= 70) { msg = "✅ BOM! Mais um revisão e dominas isso!"; color = "var(--neon-green)"; }
+  else if (pct >= 50) { msg = "📚 RAZOÁVEL. Revê os capítulos e tenta novamente!"; color = "var(--neon-cyan)"; }
+  else { msg = "💪 CONTINUA! A repetição é a mãe do aprendizado!"; color = "var(--neon-pink)"; }
+
+  box.innerHTML = `
+    <div style="text-align:center; padding:30px;">
+      <div style="font-family:'Orbitron',monospace; font-size:60px; color:${color}; text-shadow:0 0 30px ${color}; margin-bottom:12px;">${pct}%</div>
+      <div style="font-family:'Orbitron',monospace; font-size:14px; color:white; margin-bottom:16px;">${score} / ${quizData.length} respostas correctas</div>
+      <div style="font-size:18px; color:${color}; margin-bottom:28px;">${msg}</div>
+      <button class="btn btn-cyan" onclick="resetQuiz(); document.querySelector('.quiz-box').innerHTML = origQuiz;">↺ TENTAR NOVAMENTE</button>
+    </div>
+  `;
+}
+
+// Store original quiz HTML to reset
+window.origQuiz = '';
+window.addEventListener('load', () => {
+  loadQuestion();
+  window.origQuiz = document.querySelector('.quiz-box').innerHTML;
+});
+
+// ──── GLOSSARY ────
+const glossaryTerms = [
+  { term: "Anatomia", def: "Ciência que estuda a estrutura do corpo humano e as relações entre as suas partes." },
+  { term: "Histologia", def: "Estudo microscópico dos tecidos — grupos de células com mesma estrutura e função." },
+  { term: "Citologia", def: "Estudo das células: estrutura, função e patologia celular." },
+  { term: "Fisiologia", def: "Estudo da função dos órgãos e sistemas (complementa a anatomia)." },
+  { term: "Patologia", def: "Estudo das alterações estruturais e funcionais causadas por doenças." },
+  { term: "Embriologia", def: "Estudo do desenvolvimento desde a fertilização ao nascimento." },
+  { term: "Dissecação", def: "Corte e separação sistemática de estruturas anatómicas para estudo." },
+  { term: "Plano Sagital", def: "Plano vertical que divide o corpo em metade esquerda e direita." },
+  { term: "Plano Frontal", def: "Plano vertical que divide o corpo em porção anterior (frente) e posterior (atrás). Também: coronal." },
+  { term: "Plano Transversal", def: "Plano horizontal que divide o corpo em parte superior e inferior." },
+  { term: "Anterior", def: "Em direcção à frente do corpo (ventral)." },
+  { term: "Posterior", def: "Em direcção às costas do corpo (dorsal)." },
+  { term: "Superior", def: "Mais próximo da cabeça (cranial)." },
+  { term: "Inferior", def: "Mais afastado da cabeça, em direcção aos pés (caudal)." },
+  { term: "Medial", def: "Mais próximo do plano sagital mediano (linha média do corpo)." },
+  { term: "Lateral", def: "Mais afastado da linha média do corpo." },
+  { term: "Proximal", def: "Mais próximo da raiz/origem de um membro ou estrutura." },
+  { term: "Distal", def: "Mais afastado da raiz/origem de um membro ou estrutura." },
+  { term: "Superficial", def: "Próximo da superfície da pele." },
+  { term: "Profundo", def: "Afastado da superfície, em direcção ao centro do corpo." },
+  { term: "Ipsilateral", def: "Do mesmo lado do corpo." },
+  { term: "Contralateral", def: "Do lado oposto do corpo." },
+  { term: "Posição Anatómica", def: "Posição de referência: corpo erecto, olhos em frente, palmas viradas para a frente." },
+  { term: "Plastinação", def: "Técnica que substitui fluídos corporais por silicone, preservando espécimes anatomicamente." },
+  { term: "H&E", def: "Coloração Hematoxilina-Eosina: a mais usada em histologia. Núcleos = azul/roxo; citoplasma = rosa." },
+  { term: "TAC", def: "Tomografia Axial Computorizada. Usa raios X em múltiplas projecções para reconstrução 3D." },
+  { term: "RM", def: "Ressonância Magnética. Usa campo magnético e ondas de rádio. Excelente para tecidos moles, sem radiação." },
+  { term: "Epigastro", def: "Região central superior do abdómen. Contém parte do estômago, fígado e pâncreas." },
+  { term: "Hipocôndrio", def: "Regiões laterais superiores do abdómen (direito e esquerdo), abaixo das costelas." },
+  { term: "Fossa Ilíaca", def: "Regiões inferiores laterais do abdómen. A direita contém o apêndice e o cego." },
+  { term: "Variação Anatómica", def: "Diferença na estrutura anatómica normal presente numa fracção da população, sem causar doença." },
+  { term: "Dissecção de Galeno", def: "Galeno usava principalmente macacos e porcos por ser proibida a dissecção humana em Roma." },
+  { term: "Vesalius", def: "Andreas Vesalius (1514-1564), pai da anatomia moderna. Publicou De Humani Corporis Fabrica aos 29 anos." },
+  { term: "Cavidade Torácica", def: "Espaço interno do tórax delimitado pelas costelas. Contém pulmões e coração (no mediastino)." },
+  { term: "Mediastino", def: "Espaço central do tórax entre os dois pulmões. Contém coração, grandes vasos, esófago, traqueia." },
+  { term: "Peritoneu", def: "Membrana serosa que reveste a cavidade abdominal e a maior parte dos órgãos abdominais." },
+  { term: "Retroperitoneal", def: "Localização atrás do peritoneu. Rins, pâncreas, aorta abdominal são retroperitoneais." }
+];
+
+function renderGlossary(filter = '') {
+  const grid = document.getElementById('glossary-grid');
+  const filtered = glossaryTerms.filter(t =>
+    t.term.toLowerCase().includes(filter.toLowerCase()) ||
+    t.def.toLowerCase().includes(filter.toLowerCase())
+  );
+  grid.innerHTML = filtered.map(t => `
+    <div class="glossary-item">
+      <div class="glossary-term">⚕ ${t.term}</div>
+      <div class="glossary-def">${t.def}</div>
+    </div>
+  `).join('');
+}
+
+function filterGlossary() {
+  renderGlossary(document.getElementById('glossary-input').value);
+}
+
+renderGlossary();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SKIN CHRONICLES — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+JP:wght@300;700&family=Orbitron:wght@400;900&family=Space+Mono&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #050510;
+  --panel: #0a0a1a;
+  --neon-cyan: #00f5ff;
+  --neon-pink: #ff006e;
+  --neon-yellow: #ffee00;
+  --neon-green: #39ff14;
+  --neon-orange: #ff6b00;
+  --neon-purple: #bf00ff;
+  --neon-red: #ff2020;
+  --text: #e0e0f0;
+  --text-dim: #8888aa;
+  --border-glow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan)33;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans JP', sans-serif;
+  overflow-x: hidden;
+  cursor: crosshair;
+}
+
+/* ── PARTICLES ── */
+#particles {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float linear infinite;
+  opacity: 0.4;
+}
+@keyframes float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.4; }
+  90% { opacity: 0.4; }
+  100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+
+/* ── SCANLINES ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 9999;
+  background: repeating-linear-gradient(transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(5,5,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--neon-cyan);
+  padding: 12px 24px;
+  display: flex; align-items: center; gap: 16px;
+  overflow-x: auto;
+  box-shadow: 0 4px 30px rgba(0,245,255,0.2);
+}
+#nav a {
+  color: var(--neon-cyan);
+  text-decoration: none;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border: 1px solid var(--neon-cyan)44;
+  border-radius: 4px;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+#nav a:hover {
+  background: var(--neon-cyan)22;
+  box-shadow: 0 0 12px var(--neon-cyan);
+  transform: translateY(-2px);
+}
+.nav-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  color: var(--neon-pink);
+  text-shadow: 0 0 20px var(--neon-pink);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* ── SECTIONS GENERAL ── */
+section {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 100px 40px 60px;
+}
+
+/* ── HERO ── */
+#hero {
+  background: radial-gradient(ellipse at 30% 50%, #1a003a 0%, #050510 70%),
+              radial-gradient(ellipse at 80% 20%, #003a1a 0%, transparent 50%);
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+.hero-badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--neon-green);
+  text-shadow: 0 0 12px var(--neon-green);
+  margin-bottom: 20px;
+  animation: pulse-text 2s ease-in-out infinite;
+}
+@keyframes pulse-text {
+  0%,100% { opacity: 1; } 50% { opacity: 0.5; }
+}
+.hero-title {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.95;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+  animation: title-glow 3s ease-in-out infinite alternate;
+}
+@keyframes title-glow {
+  from { filter: drop-shadow(0 0 20px rgba(0,245,255,0.3)); }
+  to { filter: drop-shadow(0 0 50px rgba(255,0,110,0.6)); }
+}
+.hero-sub {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(0.9rem, 2.5vw, 1.4rem);
+  color: var(--neon-yellow);
+  text-shadow: 0 0 20px var(--neon-yellow);
+  margin: 16px 0 30px;
+  letter-spacing: 2px;
+}
+.hero-desc {
+  max-width: 700px;
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+.skin-orb {
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%,
+    #ffcba4 0%, #f4956b 25%, #c46b3f 50%, #8b3a1a 75%, #3a0f00 100%);
+  margin: 30px auto;
+  position: relative;
+  animation: orb-rotate 8s ease-in-out infinite;
+  box-shadow: 0 0 60px rgba(244,149,107,0.4), 0 0 120px rgba(196,107,63,0.2),
+              inset 0 0 40px rgba(255,200,150,0.3);
+}
+@keyframes orb-rotate {
+  0%,100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(5deg); }
+}
+.orb-label {
+  position: absolute;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--neon-cyan);
+  white-space: nowrap;
+  animation: label-orbit 6s linear infinite;
+}
+.orb-label:nth-child(1) { top: -30px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+.orb-label:nth-child(2) { top: 50%; right: -80px; transform: translateY(-50%); animation-delay: -2s; }
+.orb-label:nth-child(3) { bottom: -30px; left: 50%; transform: translateX(-50%); animation-delay: -4s; }
+.orb-label:nth-child(4) { top: 50%; left: -80px; transform: translateY(-50%); animation-delay: -1s; }
+@keyframes label-orbit {
+  0%,100% { opacity: 1; text-shadow: 0 0 8px var(--neon-cyan); }
+  50% { opacity: 0.4; text-shadow: none; }
+}
+.scroll-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--neon-purple);
+  animation: bounce 2s ease-in-out infinite;
+  margin-top: 20px;
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); }
+}
+
+/* ── CHAPTER HEADERS ── */
+.chapter-header {
+  display: flex; align-items: center; gap: 20px;
+  margin-bottom: 50px;
+}
+.chapter-num {
+  font-family: 'Bangers', cursive;
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 30px var(--neon-cyan), 4px 4px 0 var(--neon-pink);
+  flex-shrink: 0;
+}
+.chapter-info h2 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: 3px;
+  line-height: 1.1;
+}
+.chapter-info p {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  margin-top: 6px;
+}
+
+/* ── MANGA PANELS ── */
+.manga-grid {
+  display: grid;
+  gap: 16px;
+  margin: 30px 0;
+}
+.manga-grid-3 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.manga-grid-2 { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
+.manga-grid-asym { grid-template-columns: 1fr 2fr; }
+
+.panel {
+  border: 3px solid;
+  border-radius: 4px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.panel:hover {
+  transform: translateY(-4px) scale(1.01);
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: inherit;
+  opacity: 0.05;
+  z-index: 0;
+}
+.panel > * { position: relative; z-index: 1; }
+
+.panel-cyan { border-color: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan)22; background: rgba(0,245,255,0.03); }
+.panel-pink { border-color: var(--neon-pink); box-shadow: 0 0 20px var(--neon-pink)22; background: rgba(255,0,110,0.03); }
+.panel-yellow { border-color: var(--neon-yellow); box-shadow: 0 0 20px var(--neon-yellow)22; background: rgba(255,238,0,0.03); }
+.panel-green { border-color: var(--neon-green); box-shadow: 0 0 20px var(--neon-green)22; background: rgba(57,255,20,0.03); }
+.panel-orange { border-color: var(--neon-orange); box-shadow: 0 0 20px var(--neon-orange)22; background: rgba(255,107,0,0.03); }
+.panel-purple { border-color: var(--neon-purple); box-shadow: 0 0 20px var(--neon-purple)22; background: rgba(191,0,255,0.03); }
+.panel-red { border-color: var(--neon-red); box-shadow: 0 0 20px var(--neon-red)22; background: rgba(255,32,32,0.03); }
+
+.panel-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  display: block;
+}
+.panel h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
+  line-height: 1;
+}
+.panel p, .panel li {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--text);
+}
+.panel ul { padding-left: 18px; }
+.panel li { margin-bottom: 8px; }
+
+/* ── SPEECH BUBBLES ── */
+.speech-bubble {
+  position: relative;
+  background: #111128;
+  border: 3px solid;
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin: 20px 0 30px 60px;
+  max-width: 80%;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  left: -50px; top: 20px;
+  width: 0; height: 0;
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-right: 50px solid;
+}
+.bubble-cyan { border-color: var(--neon-cyan); }
+.bubble-cyan::before { border-right-color: var(--neon-cyan); }
+.bubble-pink { border-color: var(--neon-pink); }
+.bubble-pink::before { border-right-color: var(--neon-pink); }
+.bubble-yellow { border-color: var(--neon-yellow); }
+.bubble-yellow::before { border-right-color: var(--neon-yellow); }
+
+.character {
+  display: flex; align-items: flex-start; gap: 16px;
+  margin: 24px 0;
+}
+.char-icon {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  border: 3px solid;
+  animation: icon-pulse 3s ease-in-out infinite;
+}
+@keyframes icon-pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.char-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+/* ── MOLECULE SVG ANIMATIONS ── */
+.molecule-container {
+  display: flex; justify-content: center;
+  margin: 30px 0;
+  overflow: visible;
+}
+svg.molecule { overflow: visible; }
+.atom { animation: atom-pulse 2s ease-in-out infinite alternate; }
+.atom:nth-child(2n) { animation-delay: -1s; }
+.bond { animation: bond-flash 3s ease-in-out infinite; }
+@keyframes atom-pulse {
+  from { r: 14px; opacity: 0.8; }
+  to { r: 18px; opacity: 1; }
+}
+@keyframes bond-flash {
+  0%,100% { stroke-opacity: 0.6; }
+  50% { stroke-opacity: 1; }
+}
+
+/* ── SKIN CROSS-SECTION DIAGRAM ── */
+#skin-diagram {
+  width: 100%;
+  max-width: 700px;
+  margin: 30px auto;
+  position: relative;
+}
+.layer-block {
+  padding: 18px 24px;
+  border-left: 6px solid;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.layer-block::after {
+  content: attr(data-detail);
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.92);
+  padding: 12px 24px;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  transform: translateY(100%);
+  transition: transform 0.3s;
+  border-top: 2px solid;
+  border-top-color: inherit;
+  color: var(--text);
+}
+.layer-block:hover::after { transform: translateY(0); }
+.layer-block:hover { padding-bottom: 100px; }
+.layer-block h4 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+}
+.layer-block p { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
+
+/* LAYERS */
+.l-ep { border-color: var(--neon-cyan); background: rgba(0,245,255,0.06); }
+.l-ep h4 { color: var(--neon-cyan); }
+.l-me { border-color: var(--neon-pink); background: rgba(255,0,110,0.06); }
+.l-me h4 { color: var(--neon-pink); }
+.l-de { border-color: var(--neon-orange); background: rgba(255,107,0,0.06); }
+.l-de h4 { color: var(--neon-orange); }
+.l-hy { border-color: var(--neon-yellow); background: rgba(255,238,0,0.06); }
+.l-hy h4 { color: var(--neon-yellow); }
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative;
+  padding-left: 50px;
+  margin: 30px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute; left: 20px; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink), var(--neon-purple));
+}
+.t-event {
+  position: relative;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.6s, transform 0.6s;
+}
+.t-event.visible { opacity: 1; transform: translateX(0); }
+.t-dot {
+  position: absolute;
+  left: -38px; top: 6px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 3px solid;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.5rem;
+}
+.t-time {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.t-title {
+  font-family: 'Bangers', cursive;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.t-desc { font-size: 0.9rem; line-height: 1.8; color: var(--text); }
+
+/* ── ACCORDIONS ── */
+.accordion {
+  border: 2px solid;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.acc-header {
+  padding: 16px 24px;
+  cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  transition: background 0.3s;
+  user-select: none;
+}
+.acc-header:hover { background: rgba(255,255,255,0.05); }
+.acc-arrow {
+  transition: transform 0.3s;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.accordion.open .acc-arrow { transform: rotate(180deg); }
+.acc-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.accordion.open .acc-body { max-height: 2000px; }
+.acc-content {
+  padding: 20px 24px;
+  font-size: 0.9rem;
+  line-height: 1.9;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.acc-content ul { padding-left: 20px; margin-top: 10px; }
+.acc-content li { margin-bottom: 10px; }
+.acc-content strong { color: var(--neon-yellow); }
+.acc-content em { color: var(--neon-cyan); font-style: normal; }
+
+/* ── TABS ── */
+.tab-container { margin: 30px 0; }
+.tab-buttons {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 0;
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+  padding-bottom: 8px;
+}
+.tab-btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.3s;
+}
+.tab-btn.active {
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  background: rgba(0,245,255,0.08);
+}
+.tab-btn:hover:not(.active) { color: var(--text); border-color: rgba(255,255,255,0.2); }
+.tab-pane { display: none; padding: 28px 0 16px; }
+.tab-pane.active { display: block; animation: fade-in 0.4s ease; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── CELLS ── */
+.cell-gallery {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  justify-content: center;
+  margin: 30px 0;
+}
+.cell-card {
+  width: 200px;
+  background: rgba(255,255,255,0.03);
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.3s;
+  cursor: default;
+}
+.cell-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  background: rgba(255,255,255,0.07);
+}
+.cell-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 10px;
+  animation: icon-float 3s ease-in-out infinite;
+}
+@keyframes icon-float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.cell-card:nth-child(2n) .cell-icon { animation-delay: -1.5s; }
+.cell-card:nth-child(3n) .cell-icon { animation-delay: -0.7s; }
+.cell-name {
+  font-family: 'Bangers', cursive;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.cell-desc { font-size: 0.78rem; color: var(--text-dim); line-height: 1.6; }
+
+/* ── HIGHLIGHT BOXES ── */
+.highlight {
+  padding: 20px 24px;
+  border-radius: 8px;
+  margin: 24px 0;
+  border-left: 5px solid;
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+.h-alert { background: rgba(255,32,32,0.08); border-color: var(--neon-red); }
+.h-clinical { background: rgba(57,255,20,0.08); border-color: var(--neon-green); }
+.h-etymology { background: rgba(191,0,255,0.08); border-color: var(--neon-purple); }
+.h-fun { background: rgba(255,238,0,0.08); border-color: var(--neon-yellow); }
+.h-molecular { background: rgba(0,245,255,0.08); border-color: var(--neon-cyan); }
+.highlight-icon { font-size: 1.4rem; margin-right: 8px; }
+.highlight strong {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* ── SECTION BACKGROUNDS ── */
+#ch1 { background: radial-gradient(ellipse at 20% 80%, #001a33 0%, transparent 50%); }
+#ch2 { background: radial-gradient(ellipse at 80% 20%, #1a0033 0%, transparent 50%); }
+#ch3 { background: radial-gradient(ellipse at 10% 50%, #001a0a 0%, transparent 50%); }
+#ch4 { background: radial-gradient(ellipse at 90% 60%, #1a1100 0%, transparent 50%); }
+#ch5 { background: radial-gradient(ellipse at 40% 30%, #1a000a 0%, transparent 50%); }
+#ch6 { background: radial-gradient(ellipse at 60% 70%, #0d001a 0%, transparent 50%); }
+
+/* ── QUIZ ── */
+#quiz-section {
+  background: radial-gradient(ellipse at 50% 50%, #0a001a 0%, var(--bg) 70%);
+}
+.quiz-box {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.quiz-q {
+  font-family: 'Bangers', cursive;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  color: var(--neon-cyan);
+  min-height: 60px;
+}
+.quiz-options {
+  display: flex; flex-direction: column; gap: 12px;
+  margin-bottom: 20px;
+}
+.quiz-opt {
+  padding: 14px 20px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  cursor: pointer;
+  font-size: 0.92rem;
+  transition: all 0.3s;
+  text-align: left;
+}
+.quiz-opt:hover { border-color: var(--neon-purple); background: rgba(191,0,255,0.08); transform: translateX(4px); }
+.quiz-opt.correct { border-color: var(--neon-green); background: rgba(57,255,20,0.12); color: var(--neon-green); }
+.quiz-opt.wrong { border-color: var(--neon-red); background: rgba(255,32,32,0.12); color: var(--neon-red); }
+.quiz-feedback {
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  min-height: 60px;
+}
+.quiz-score {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.2rem;
+  color: var(--neon-yellow);
+  margin-bottom: 20px;
+  text-shadow: 0 0 12px var(--neon-yellow);
+}
+.btn {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  padding: 14px 28px;
+  border: 2px solid;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.btn-cyan { color: var(--neon-cyan); border-color: var(--neon-cyan); }
+.btn-cyan:hover { background: var(--neon-cyan); color: var(--bg); box-shadow: 0 0 20px var(--neon-cyan); }
+.btn-pink { color: var(--neon-pink); border-color: var(--neon-pink); }
+.btn-pink:hover { background: var(--neon-pink); color: var(--bg); box-shadow: 0 0 20px var(--neon-pink); }
+
+/* ── GLOSSARY ── */
+.gloss-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin: 30px 0;
+}
+.gloss-term {
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.02);
+  transition: all 0.3s;
+}
+.gloss-term:hover { border-color: var(--neon-purple); background: rgba(191,0,255,0.05); }
+.gloss-word {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--neon-purple);
+  margin-bottom: 4px;
+}
+.gloss-etym {
+  font-size: 0.72rem;
+  color: var(--neon-yellow);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+.gloss-def { font-size: 0.85rem; line-height: 1.7; color: var(--text-dim); }
+
+/* ── STAT BARS ── */
+.stat-bar-container { margin: 24px 0; }
+.stat-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 14px;
+}
+.stat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  width: 180px;
+  flex-shrink: 0;
+  color: var(--text-dim);
+}
+.stat-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.stat-fill {
+  height: 100%;
+  border-radius: 4px;
+  width: 0;
+  transition: width 1.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+}
+.stat-fill::after {
+  content: '';
+  position: absolute; right: 0; top: 50%;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: inherit;
+  transform: translateY(-50%);
+  box-shadow: 0 0 8px currentColor;
+}
+.stat-val {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.72rem;
+  width: 40px;
+  text-align: right;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative; z-index: 1;
+  background: #020208;
+  border-top: 2px solid var(--neon-cyan);
+  padding: 50px 40px 30px;
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 3rem;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+.footer-info {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  line-height: 2.2;
+}
+.footer-info strong { color: var(--neon-cyan); }
+.footer-line {
+  width: 200px; height: 1px;
+  background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+  margin: 20px auto;
+}
+
+/* ── UTILITY ── */
+.neon-text-cyan { color: var(--neon-cyan); text-shadow: 0 0 12px var(--neon-cyan); }
+.neon-text-pink { color: var(--neon-pink); text-shadow: 0 0 12px var(--neon-pink); }
+.neon-text-yellow { color: var(--neon-yellow); text-shadow: 0 0 12px var(--neon-yellow); }
+.neon-text-green { color: var(--neon-green); text-shadow: 0 0 12px var(--neon-green); }
+.neon-text-orange { color: var(--neon-orange); text-shadow: 0 0 12px var(--neon-orange); }
+.neon-text-purple { color: var(--neon-purple); text-shadow: 0 0 12px var(--neon-purple); }
+.section-divider {
+  width: 100%; height: 2px;
+  background: linear-gradient(to right, transparent, var(--neon-cyan)44, transparent);
+  margin: 20px 0;
+}
+.big-text {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  letter-spacing: 2px;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.caption {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 1.1rem;
+  transform: rotate(-2deg);
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin: 8px 0;
+}
+.tag {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  margin: 2px;
+  letter-spacing: 1px;
+}
+
+/* progress bar top */
+#progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: linear-gradient(to right, var(--neon-cyan), var(--neon-pink));
+  z-index: 10000; width: 0%;
+  transition: width 0.2s;
+  box-shadow: 0 0 8px var(--neon-cyan);
+}
+
+@media (max-width: 768px) {
+  section { padding: 90px 20px 50px; }
+  .manga-grid-asym { grid-template-columns: 1fr; }
+  .speech-bubble { margin-left: 20px; }
+  footer { padding: 40px 20px 24px; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- PARTICLES -->
+<div id="particles"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <span class="nav-logo">SK∅N</span>
+  <a href="#hero">⬆ INÍCIO</a>
+  <a href="#ch1">CAP. 1 · VISÃO GERAL</a>
+  <a href="#ch2">CAP. 2 · EPIDERME</a>
+  <a href="#ch3">CAP. 3 · DERME</a>
+  <a href="#ch4">CAP. 4 · HIPODERME</a>
+  <a href="#ch5">CAP. 5 · ANEXOS</a>
+  <a href="#ch6">CAP. 6 · EMBRIOLOGIA</a>
+  <a href="#quiz-section">⚡ QUIZ</a>
+  <a href="#glossary">📖 GLOSSÁRIO</a>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section id="hero">
+  <div class="hero-badge">▶ DemilMed-UL · ANATOMIA & HISTOLOGIA · 2026</div>
+  <h1 class="hero-title">SKIN<br>CHRONICLES</h1>
+  <p class="hero-sub">O MAIOR ÓRGÃO DO CORPO HUMANO — REVELADO</p>
+  <p class="hero-desc">
+    Bem-vindo à aventura mais épica do seu 2º ano de medicina. A pele não é só uma casca — é um universo de bilhões de células, moléculas em batalha constante, e uma arquitetura que deixaria qualquer engenheiro de joelhos. Prepare-se para entender tudo isso como nunca antes.
+  </p>
+
+  <div class="skin-orb" style="position:relative;">
+    <span class="orb-label">EPIDERME</span>
+    <span class="orb-label">DERME</span>
+    <span class="orb-label">HIPODERME</span>
+    <span class="orb-label">ANEXOS</span>
+  </div>
+
+  <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
+    <span class="tag" style="color:var(--neon-cyan);border-color:var(--neon-cyan)">ANATOMIA</span>
+    <span class="tag" style="color:var(--neon-pink);border-color:var(--neon-pink)">HISTOLOGIA</span>
+    <span class="tag" style="color:var(--neon-green);border-color:var(--neon-green)">EMBRIOLOGIA</span>
+    <span class="tag" style="color:var(--neon-yellow);border-color:var(--neon-yellow)">FISIOLOGIA</span>
+    <span class="tag" style="color:var(--neon-purple);border-color:var(--neon-purple)">CLASSIFICAÇÕES</span>
+  </div>
+
+  <div class="scroll-hint" style="margin-top:40px">▼ ROLAR PARA COMEÇAR A JORNADA ▼</div>
+</section>
+
+<!-- ═══════════ CAP 1 · VISÃO GERAL ═══════════ -->
+<section id="ch1">
+  <div class="chapter-header">
+    <div class="chapter-num">01</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-cyan">O MAIOR ÓRGÃO<br>DO CORPO HUMANO</h2>
+      <p class="neon-text-cyan">SISTEMA TEGUMENTAR · VISÃO GERAL</p>
+    </div>
+  </div>
+
+  <div class="character">
+    <div class="char-icon" style="border-color:var(--neon-cyan);background:rgba(0,245,255,0.1)">🧬</div>
+    <div>
+      <div class="char-name neon-text-cyan">DR. DERMO · Narrador</div>
+      <div class="speech-bubble bubble-cyan">
+        "Imagina um escudo de 1,5 a 2 m² que pesa entre 4 e 5 kg. Que muda completamente de cor, textura e estrutura dependendo de onde está no corpo. Que cura a si mesmo. Que detecta calor, frio, dor, pressão e toque ao mesmo tempo. Que regula sua temperatura, produz vitamina D, te diz quando algo é perigoso... Isso é a PELE. E hoje, vamos destrinchá-la até à última molécula."
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-3">
+    <div class="panel panel-cyan">
+      <span class="panel-label neon-text-cyan">DADO #001</span>
+      <h3 class="neon-text-cyan">ÁREA TOTAL</h3>
+      <p>A pele de um adulto cobre <strong class="neon-text-yellow">1,5 a 2,0 m²</strong> de superfície. Para ter noção: é quase do tamanho de uma mesa de jantar!</p>
+      <br>
+      <div class="stat-bar-container">
+        <div class="stat-row">
+          <div class="stat-label">Área (% do peso)</div>
+          <div class="stat-track"><div class="stat-fill" data-width="16" style="background:var(--neon-cyan)"></div></div>
+          <div class="stat-val neon-text-cyan">16%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Espessura (máx.)</div>
+          <div class="stat-track"><div class="stat-fill" data-width="40" style="background:var(--neon-pink)"></div></div>
+          <div class="stat-val neon-text-pink">4mm</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-label">Espessura (mín.)</div>
+          <div class="stat-track"><div class="stat-fill" data-width="5" style="background:var(--neon-green)"></div></div>
+          <div class="stat-val neon-text-green">0.5mm</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-pink">
+      <span class="panel-label neon-text-pink">MISSÕES #002</span>
+      <h3 class="neon-text-pink">FUNÇÕES DA PELE</h3>
+      <ul>
+        <li>🛡️ <strong>Proteção</strong> — barreiras física, química e imunológica</li>
+        <li>🌡️ <strong>Termorregulação</strong> — suor e vasomotricidade</li>
+        <li>☀️ <strong>Síntese de Vitamina D</strong> — luz UV → calciferol</li>
+        <li>🖐️ <strong>Sensação</strong> — tato, dor, temperatura, pressão</li>
+        <li>💧 <strong>Impermeabilidade</strong> — evita perda de água</li>
+        <li>🦠 <strong>Imunidade</strong> — células de Langerhans</li>
+        <li>💉 <strong>Excreção</strong> — suor elimina resíduos</li>
+        <li>🩸 <strong>Reservatório</strong> — 1/3 do sangue corporal!</li>
+      </ul>
+    </div>
+
+    <div class="panel panel-yellow">
+      <span class="panel-label neon-text-yellow">ESTRUTURA #003</span>
+      <h3 class="neon-text-yellow">3 CAMADAS FUNDAMENTAIS</h3>
+      <p style="margin-bottom:16px;">A pele é organizada em 3 camadas principais, cada uma com origens embriológicas e funções distintas:</p>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="padding:10px 14px;background:rgba(0,245,255,0.08);border-left:4px solid var(--neon-cyan);border-radius:4px">
+          <strong class="neon-text-cyan">EPIDERME</strong> — camada mais externa, epitélio estratificado
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,107,0,0.08);border-left:4px solid var(--neon-orange);border-radius:4px">
+          <strong class="neon-text-orange">DERME</strong> — tecido conjuntivo, vasos, nervos, glândulas
+        </div>
+        <div style="padding:10px 14px;background:rgba(255,238,0,0.08);border-left:4px solid var(--neon-yellow);border-radius:4px">
+          <strong class="neon-text-yellow">HIPODERME</strong> — tecido adiposo subcutâneo
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPOS DE PELE -->
+  <div class="section-divider"></div>
+
+  <h3 class="big-text neon-text-green" style="margin-top:30px">⚡ TIPOS DE PELE: ESPESSA vs FINA</h3>
+
+  <div class="manga-grid manga-grid-2">
+    <div class="panel panel-green">
+      <span class="panel-label neon-text-green">TIPO A</span>
+      <h3 class="neon-text-green">PELE ESPESSA (GLABRA)</h3>
+      <p>Sem pelos. Palmas das mãos e plantas dos pés. Espessura: <strong class="neon-text-yellow">1,5 a 4 mm</strong>.</p>
+      <br>
+      <ul>
+        <li>✅ 5 camadas da epiderme (inclui <em>estrato lúcido</em>)</li>
+        <li>✅ Camada córnea muito espessa</li>
+        <li>✅ Sem folículos pilosos nem glândulas sebáceas</li>
+        <li>✅ Muitas glândulas écrinas (suor)</li>
+        <li>✅ Cristas dérmicas e sulcos — formam impressões digitais!</li>
+        <li>✅ Mais corpúsculos de Meissner (tato fino)</li>
+      </ul>
+    </div>
+    <div class="panel panel-purple">
+      <span class="panel-label neon-text-purple">TIPO B</span>
+      <h3 class="neon-text-purple">PELE FINA (PILOSA)</h3>
+      <p>Com pelos. Cobre <strong class="neon-text-yellow">95%</strong> do corpo. Espessura: <strong class="neon-text-yellow">0,1 a 1,5 mm</strong>.</p>
+      <br>
+      <ul>
+        <li>✅ 4 camadas na epiderme (sem lúcido)</li>
+        <li>✅ Camada córnea fina</li>
+        <li>✅ Folículos pilosos presentes</li>
+        <li>✅ Glândulas sebáceas e écrinas</li>
+        <li>✅ Músculo eretor do pelo</li>
+        <li>✅ Mais corpúsculos de Pacini (pressão)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight h-etymology">
+    <strong>💬 ETIMOLOGIA · TEGUMENTAR</strong>
+    <span class="highlight-icon">🏛️</span> Do latim <em>tegumentum</em> = "cobertura, invólucro", de <em>tegere</em> = "cobrir, proteger". Daí também vêm "teto", "detectar" (des-cobrir) e "protect" (pro = à frente + tegere). Então o sistema tegumentar é literalmente o "sistema que cobre" o corpo!
+  </div>
+</section>
+
+<!-- ═══════════ CAP 2 · EPIDERME ═══════════ -->
+<section id="ch2">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-pink);text-shadow:0 0 30px var(--neon-pink), 4px 4px 0 var(--neon-yellow)">02</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-pink">A EPIDERME:<br>MURALHA VIVA</h2>
+      <p class="neon-text-pink">HISTOLOGIA · ESTRATOS · CÉLULAS</p>
+    </div>
+  </div>
+
+  <div class="character">
+    <div class="char-icon" style="border-color:var(--neon-pink);background:rgba(255,0,110,0.1)">⚔️</div>
+    <div>
+      <div class="char-name neon-text-pink">KERA · A Queratinócita Guerreira</div>
+      <div class="speech-bubble bubble-pink">
+        "Sou eu quem mantém tudo unido! Nasço lá embaixo, na camada basal, e passo minha vida inteira subindo — diferenciando, amadurecendo, achatando — até virar uma escama morta cheia de queratina que protege você de todo o mundo lá fora. Minha vida é curta mas épica. Demoro uns 28 a 45 dias do nascimento à descamação."
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMADAS INTERATIVAS -->
+  <h3 class="big-text neon-text-pink" style="margin-bottom:20px;">🔬 AS 5 CAMADAS DA EPIDERME</h3>
+  <p style="color:var(--text-dim);margin-bottom:24px;font-size:0.9rem;">Passe o mouse sobre cada camada para revelar os detalhes histológicos ↓</p>
+
+  <div id="skin-diagram">
+    <div class="layer-block l-ep"
+      data-detail="Queratinócitos achatados e mortos. RICO em queratina (proteína fibrosa). Função: barreira impenetrável à água e microrganismos. Descama continuamente (descamação = exfoliação). Na pele espessa pode ter até 50 subcamadas! Células = cornócitos ou escamas córneas.">
+      <h4>ESTRATO CÓRNEO</h4>
+      <p>↑ Mais superficial · Células mortas · Repleto de Queratina</p>
+    </div>
+    <div class="layer-block" style="border-left:6px solid #aaaaff;background:rgba(170,170,255,0.06);"
+      data-detail="Presente APENAS na PELE ESPESSA (palmas e plantas). Células anucleadas, achatadas, com aspecto transparente (daí o nome). Contém eleidina — precursor da queratina. Fica entre o granuloso e o córneo. Se não encontrar esta camada, é pele fina!">
+      <h4 style="color:#aaaaff;">ESTRATO LÚCIDO</h4>
+      <p style="color:var(--text-dim)">↑ Só na pele espessa · Translúcido · Eleidina</p>
+    </div>
+    <div class="layer-block l-me"
+      data-detail="Grânulos de queratohialina (precursor da queratina) — aparecem como pontos escuros no MO. Produção de corpos lamelares (corpos de Odland) → liberam lipídios que impermeabilizam a pele. Queratinócitos ainda com núcleo, mas começando a 'morrer programadamente'. 3-5 camadas de células.">
+      <h4>ESTRATO GRANULOSO</h4>
+      <p>↑ Grânulos de queratohialina · Corpos lamelares · 3-5 camadas</p>
+    </div>
+    <div class="layer-block" style="border-left:6px solid var(--neon-green);background:rgba(57,255,20,0.06);"
+      data-detail="Camada de 8-10 células de espessura. Queratinócitos poliédricos unidos por DESMOSSOMOS — aparecem como 'espinhos' ou 'pontes' entre células ao MO (daí o nome espinhoso!). Contém tonofilamentos de queratina. Células de Langerhans aparecem aqui — sentinelas imunológicas dendríticas que fagocitam antígenos.">
+      <h4 style="color:var(--neon-green);">ESTRATO ESPINHOSO</h4>
+      <p style="color:var(--text-dim)">↑ Desmossomos visíveis · Células de Langerhans · 8-10 células</p>
+    </div>
+    <div class="layer-block" style="border-left:6px solid var(--neon-cyan);background:rgba(0,245,255,0.06);"
+      data-detail="CAMADA GERMINATIVA! Única camada em contato com a membrana basal. Células cuboides ou cilíndricas em mitose constante. Melanócitos aqui produzem melanina → transferem para queratinócitos. Células de Merkel (mecanorreceptores) também aqui. Uma célula basal gera toda a cadeia de diferenciação acima!">
+      <h4 style="color:var(--neon-cyan);">ESTRATO BASAL (GERMINATIVO)</h4>
+      <p style="color:var(--text-dim)">↓ Mais profundo · Mitose ativa · Melanócitos · Células de Merkel</p>
+    </div>
+  </div>
+
+  <div class="highlight h-fun">
+    <strong>🎮 CURIOSIDADE ÉPICA</strong>
+    Você descama cerca de <strong>30.000 a 40.000 células da epiderme POR HORA</strong>! Em um ano, você literalmente "troca de pele" várias vezes. A poeira doméstica é em grande parte composta por essas células descamadas. Sim — você literalmente vai desaparecendo aos poucos ao longo da vida. 😱
+  </div>
+
+  <!-- CÉLULAS DA EPIDERME -->
+  <div class="section-divider"></div>
+  <h3 class="big-text neon-text-yellow" style="margin:30px 0 10px">👾 AS CÉLULAS DA EPIDERME</h3>
+
+  <div class="cell-gallery">
+    <div class="cell-card" style="border-color:var(--neon-cyan)">
+      <span class="cell-icon">🧱</span>
+      <div class="cell-name" style="color:var(--neon-cyan)">QUERATINÓCITO</div>
+      <div class="cell-desc">80-90% das células epidérmicas. Produz queratina. Nasce no basal e sobe até morrer no córneo. Herói principal da barreira!</div>
+    </div>
+    <div class="cell-card" style="border-color:var(--neon-pink)">
+      <span class="cell-icon">🎨</span>
+      <div class="cell-name" style="color:var(--neon-pink)">MELANÓCITO</div>
+      <div class="cell-desc">5-10% da epiderme. Origem na crista neural. Produz melanina em melanossomos. Doa pigmento para 36 queratinócitos vizinhos!</div>
+    </div>
+    <div class="cell-card" style="border-color:var(--neon-green)">
+      <span class="cell-icon">🛡️</span>
+      <div class="cell-name" style="color:var(--neon-green)">C. DE LANGERHANS</div>
+      <div class="cell-desc">2-5% da epiderme. Célula dendrítica. Apresenta antígenos a linfócitos T. Sentinela imunológica. Origem: medula óssea!</div>
+    </div>
+    <div class="cell-card" style="border-color:var(--neon-yellow)">
+      <span class="cell-icon">⚡</span>
+      <div class="cell-name" style="color:var(--neon-yellow)">C. DE MERKEL</div>
+      <div class="cell-desc">Mecanorreceptor de adaptação lenta. Detecta tato discriminativo. Associada a disco de Merkel. Origem: crista neural!</div>
+    </div>
+  </div>
+
+  <!-- QUERATINIZAÇÃO -->
+  <div class="section-divider"></div>
+  <h3 class="big-text neon-text-orange" style="margin:30px 0 16px">⚡ PROCESSO DE QUERATINIZAÇÃO</h3>
+
+  <div class="character">
+    <div class="char-icon" style="border-color:var(--neon-orange);background:rgba(255,107,0,0.1)">🔬</div>
+    <div>
+      <div class="char-name neon-text-orange">DR. DERMO · Explicando o Processo</div>
+      <div class="speech-bubble bubble-yellow">
+        "A queratinização é como uma linha de montagem épica. Uma célula nasce, trabalha, muda de forma, perde o núcleo e vira uma escama de proteção. Isso leva 28 dias na pele normal, mas só 3-4 dias em doenças como a psoríase — daí as escamas!'"
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-cyan)">🔵</div>
+      <div class="t-time neon-text-cyan">DIA 0 · NASCIMENTO</div>
+      <div class="t-title neon-text-cyan">Mitose no Estrato Basal</div>
+      <div class="t-desc">Células-tronco epidérmicas se dividem. Uma filha fica no basal (renovação do pool). A outra inicia a jornada de diferenciação. Proteína: <strong class="neon-text-yellow">Integrina α6β4</strong> ancora ao hemidesmossomo da membrana basal.</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-green)">🟢</div>
+      <div class="t-time neon-text-green">DIAS 7-14 · MIGRAÇÃO</div>
+      <div class="t-title neon-text-green">Estrato Espinhoso — Desmossomos em Ação</div>
+      <div class="t-desc">Célula se achata ligeiramente. Forma desmossomos com vizinhas (desmogleia-1 e -3, desmoplakin). Tonofilamentos de <strong class="neon-text-yellow">queratina K1/K10</strong> começam a aparecer. Corpos lamelares (Odland) se formam no Golgi.</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-yellow)">🟡</div>
+      <div class="t-time neon-text-yellow">DIAS 14-21 · TRANSIÇÃO</div>
+      <div class="t-title neon-text-yellow">Estrato Granuloso — A Fábrica de Queratohialina</div>
+      <div class="t-desc">Grânulos de <strong class="neon-text-yellow">queratohialina</strong> são sintetizados (contêm filagrina e loricrina). Corpos lamelares liberam lipídios (ceramidas, colesterol, ácidos graxos) no espaço extracelular → cria a barreira lipídica impermeável.</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-pink)">🔴</div>
+      <div class="t-time neon-text-pink">DIAS 21-28 · MORTE PROGRAMADA</div>
+      <div class="t-title neon-text-pink">Estrato Córneo — A Escama Protetora Perfeita</div>
+      <div class="t-desc">Núcleo e organelas são destruídos (cornificação ≠ apoptose!). Célula vira um <strong class="neon-text-yellow">cornócito</strong> cheio de queratina entrelaçada. Involucrina e loricrina formam o envelope córneo rígido. Proteção máxima. Depois: descamação natural.</div>
+    </div>
+  </div>
+
+  <!-- MELANINA -->
+  <div class="section-divider"></div>
+  <h3 class="big-text neon-text-pink" style="margin:30px 0 10px">🎨 MELANINA: A TINTA DA PELE</h3>
+
+  <div class="manga-grid manga-grid-2">
+    <div class="panel panel-pink">
+      <span class="panel-label neon-text-pink">BIOSSÍNTESE</span>
+      <h3 class="neon-text-pink">DE TIROSINA À MELANINA</h3>
+      <p style="margin-bottom:14px;">O processo acontece nos <strong class="neon-text-yellow">melanossomos</strong> dentro dos melanócitos:</p>
+
+      <!-- Simplified pathway SVG -->
+      <div style="display:flex;flex-direction:column;gap:8px;font-family:'Space Mono',monospace;font-size:0.72rem;">
+        <div style="padding:8px 12px;background:rgba(255,0,110,0.12);border:1px solid var(--neon-pink);border-radius:4px;text-align:center">
+          🧪 L-TIROSINA (aminoácido)
+        </div>
+        <div style="text-align:center;color:var(--neon-yellow)">↓ Tirosinase (Cu²⁺ dependente)</div>
+        <div style="padding:8px 12px;background:rgba(255,107,0,0.12);border:1px solid var(--neon-orange);border-radius:4px;text-align:center">
+          ⚗️ L-DOPA → DOPAQUINONA
+        </div>
+        <div style="text-align:center;color:var(--neon-yellow)">↓ Via não enzimática</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="padding:8px;background:rgba(100,50,0,0.3);border:1px solid #8b4513;border-radius:4px;text-align:center;font-size:0.65rem">
+            🟤 EUMELANINA (marrom/preta) — mais fotoprotetora
+          </div>
+          <div style="padding:8px;background:rgba(255,200,100,0.15);border:1px solid #ffaa00;border-radius:4px;text-align:center;font-size:0.65rem">
+            🟡 FEOMELANINA (amarela/vermelha) — menos fotoprotetora
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-orange">
+      <span class="panel-label neon-text-orange">FOTOPROTEÇÃO</span>
+      <h3 class="neon-text-orange">MELANINA vs. UV</h3>
+      <p>A melanina funciona como um <strong class="neon-text-yellow">guarda-sol molecular</strong>:</p>
+      <br>
+      <ul>
+        <li>☀️ UV-B estimula a tirosinase → mais melanina</li>
+        <li>🛡️ Melanossomos se posicionam <em>acima do núcleo</em> do queratinócito (proteção do DNA)</li>
+        <li>🔬 FPS natural da melanina: equivale a FPS 4-5</li>
+        <li>⚠️ Dano ao DNA → p53 ativado → mais MSH → mais melanina</li>
+        <li>🎯 Raios UV-A: melanina existente é oxidada rapidamente (bronzeado imediato)</li>
+        <li>🎯 Raios UV-B: induz síntese nova de melanina (bronzeado tardio, 72h)</li>
+      </ul>
+      <br>
+      <div class="highlight h-alert" style="margin:0">
+        <strong>⚠️ CLÍNICA</strong>
+        Albinismo: defeito na tirosinase ou no transporte de tirosina. Melanócitos presentes, mas melanina ausente. Risco extremo de câncer de pele!
+      </div>
+    </div>
+  </div>
+
+  <!-- FOTOTIPOS -->
+  <div class="accordion" style="border-color:var(--neon-purple)">
+    <div class="acc-header" style="color:var(--neon-purple)" onclick="toggleAcc(this)">
+      <span>🌈 CLASSIFICAÇÃO DE FITZPATRICK — FOTOTIPOS I a VI</span>
+      <span class="acc-arrow">▼</span>
+    </div>
+    <div class="acc-body">
+      <div class="acc-content">
+        <p>O dermatologista Thomas Fitzpatrick (1975) criou a escala de fototipos, fundamental na prática clínica para estimar risco de câncer e guiar proteção solar:</p>
+        <br>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px;">
+          <div style="padding:12px;border-radius:6px;background:#fff5f0;border:2px solid #ffccaa">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#333;margin-bottom:4px">TIPO I</div>
+            <div style="font-size:0.82rem;color:#555">Muito clara. Sempre queima, nunca bronzeia. Ruivos, olhos claros.</div>
+          </div>
+          <div style="padding:12px;border-radius:6px;background:#fff0e0;border:2px solid #ffbbaa">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#333;margin-bottom:4px">TIPO II</div>
+            <div style="font-size:0.82rem;color:#555">Clara. Sempre queima, às vezes bronzeia levemente.</div>
+          </div>
+          <div style="padding:12px;border-radius:6px;background:#ffe8cc;border:2px solid #ddaa77">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#333;margin-bottom:4px">TIPO III</div>
+            <div style="font-size:0.82rem;color:#555">Média-clara. Às vezes queima, sempre bronzeia.</div>
+          </div>
+          <div style="padding:12px;border-radius:6px;background:#e0c090;border:2px solid #bb8844">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#333;margin-bottom:4px">TIPO IV</div>
+            <div style="font-size:0.82rem;color:#333">Morena clara. Raramente queima, sempre bronzeia.</div>
+          </div>
+          <div style="padding:12px;border-radius:6px;background:#a07040;border:2px solid #885522">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#eee;margin-bottom:4px">TIPO V</div>
+            <div style="font-size:0.82rem;color:#eee">Morena escura. Muito raramente queima.</div>
+          </div>
+          <div style="padding:12px;border-radius:6px;background:#4a2810;border:2px solid #221100">
+            <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:#fff;margin-bottom:4px">TIPO VI</div>
+            <div style="font-size:0.82rem;color:#ddd">Negra. Nunca queima. Altamente pigmentada.</div>
+          </div>
+        </div>
+        <br>
+        <div class="highlight h-clinical" style="margin:0">
+          <strong>🏥 RELEVÂNCIA CLÍNICA</strong>
+          Fototipos I-II: risco elevado de melanoma e carcinoma. Tipo VI: muito menos câncer UV-induzido, mas pode ter hiperpigmentação pós-inflamatória. <strong>Proteger TODOS os fototipos</strong> — o risco varia, não some!
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 3 · DERME ═══════════ -->
+<section id="ch3">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-orange);text-shadow:0 0 30px var(--neon-orange), 4px 4px 0 var(--neon-green)">03</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-orange">A DERME:<br>O SUPORTE DE AÇO</h2>
+      <p class="neon-text-orange">COLÁGENO · ELASTINA · VASOS · NERVOS</p>
+    </div>
+  </div>
+
+  <div class="character">
+    <div class="char-icon" style="border-color:var(--neon-orange);background:rgba(255,107,0,0.1)">💪</div>
+    <div>
+      <div class="char-name neon-text-orange">COLLA · O Fibroblasto</div>
+      <div class="speech-bubble" style="border-color:var(--neon-orange)">
+        <span class="speech-bubble::before" style="border-right-color:var(--neon-orange)"></span>
+        "Sou o arquiteto da derme! Produzo colágeno (a estrutura), elastina (a elasticidade) e proteoglicanos (o gel que preenche tudo). Sem mim, a pele rasgaria com qualquer movimento. Com o tempo, deixo de funcionar tão bem — daí as rugas. Mas não culpem só a idade — o sol é meu maior inimigo!"
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(this,'t-papilar')">CAMADA PAPILAR</button>
+      <button class="tab-btn" onclick="openTab(this,'t-reticular')">CAMADA RETICULAR</button>
+      <button class="tab-btn" onclick="openTab(this,'t-colageno')">COLÁGENO</button>
+      <button class="tab-btn" onclick="openTab(this,'t-elastina')">ELASTINA</button>
+      <button class="tab-btn" onclick="openTab(this,'t-celulas')">CÉLULAS</button>
+    </div>
+
+    <div id="t-papilar" class="tab-pane active">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-orange">
+          <span class="panel-label neon-text-orange">CAMADA SUPERFICIAL</span>
+          <h3 class="neon-text-orange">DERME PAPILAR</h3>
+          <p>Fica logo abaixo da epiderme. Forma as <strong class="neon-text-yellow">papilas dérmicas</strong> — projeções que encaixam nas reentrâncias da epiderme, aumentando superfície de contato e nutrição.</p>
+          <br>
+          <ul>
+            <li>🌀 Colágeno tipo III (finas fibras reticulares)</li>
+            <li>💧 Rico em capilares → nutre a epiderme avascular</li>
+            <li>⚡ Corpúsculos de Meissner nas papilas (tato fino)</li>
+            <li>🌊 Fibras de ancoragem (colágeno VII) na membrana basal</li>
+            <li>🔬 Fibroblastos, mastócitos, linfócitos</li>
+          </ul>
+        </div>
+        <div class="panel panel-cyan">
+          <span class="panel-label neon-text-cyan">MEMBRANA BASAL</span>
+          <h3 class="neon-text-cyan">ZONA DE JUNÇÃO</h3>
+          <p>A interface epiderme-derme é uma obra de engenharia! Estrutura em 4 componentes:</p>
+          <br>
+          <ul>
+            <li><strong class="neon-text-cyan">Lâmina lúcida</strong> — laminina-332 ancora hemidesmossomos</li>
+            <li><strong class="neon-text-pink">Lâmina densa</strong> — colágeno IV em rede 3D</li>
+            <li><strong class="neon-text-yellow">Lâmina fibrorreticular</strong> — colágeno VII ancora tudo na derme</li>
+            <li><strong class="neon-text-green">Proteoglicanos</strong> — perlecam, agrina (preenchem lacunas)</li>
+          </ul>
+          <br>
+          <div class="highlight h-alert" style="margin:0;padding:12px 16px">
+            <strong>⚠️ PENFIGOIDE BOLHOSO</strong>
+            Autoanticorpos anti-BP180/BP230 destroem a lâmina lúcida → bolhas subepidérmicas tensas!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="t-reticular" class="tab-pane">
+      <div class="panel panel-green">
+        <span class="panel-label neon-text-green">CAMADA PROFUNDA</span>
+        <h3 class="neon-text-green">DERME RETICULAR</h3>
+        <p>A camada mais espessa (80% da derme). Fibras grossas e densas em redes entrelaçadas.</p>
+        <br>
+        <div class="manga-grid manga-grid-3">
+          <div style="padding:16px;background:rgba(57,255,20,0.05);border:1px solid var(--neon-green);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.2rem;color:var(--neon-green)">COLÁGENO I</div>
+            <p style="font-size:0.82rem;margin-top:8px">Fibras grossas. 80-90% do colágeno dérmico. Resistência à tração. Orientação oblíqua (linhas de Langer).</p>
+          </div>
+          <div style="padding:16px;background:rgba(57,255,20,0.05);border:1px solid var(--neon-green);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.2rem;color:var(--neon-yellow)">ELASTINA</div>
+            <p style="font-size:0.82rem;margin-top:8px">2-4% da derme. Fibras elásticas. Permite deformação e retorno ao estado original. Diminui com a idade.</p>
+          </div>
+          <div style="padding:16px;background:rgba(57,255,20,0.05);border:1px solid var(--neon-green);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.2rem;color:var(--neon-cyan)">GLICOSAMINOGLICANOS</div>
+            <p style="font-size:0.82rem;margin-top:8px">Ácido hialurônico, dermatam sulfato. Retém água → turgência e volume da pele.</p>
+          </div>
+        </div>
+        <br>
+        <div class="highlight h-fun">
+          <strong>🎯 LINHAS DE LANGER</strong>
+          São as direções preferenciais das fibras de colágeno. Cirurgiões cortam <em>paralelamente</em> às linhas de Langer → menos tensão → cicatriz mais fina e estética. Cirurgião que ignora isso → cicatriz hipertrófica!
+        </div>
+      </div>
+    </div>
+
+    <div id="t-colageno" class="tab-pane">
+      <h3 class="big-text neon-text-yellow" style="margin-bottom:20px">🧵 OS TIPOS DE COLÁGENO NA PELE</h3>
+
+      <!-- COLLAGEN MOLECULE SVG -->
+      <div class="molecule-container">
+        <svg width="500" height="120" class="molecule" viewBox="0 0 500 120">
+          <defs>
+            <linearGradient id="cg1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#ff006e"/>
+              <stop offset="50%" style="stop-color:#ffee00"/>
+              <stop offset="100%" style="stop-color:#00f5ff"/>
+            </linearGradient>
+          </defs>
+          <!-- Triple helix representation -->
+          <path d="M20,60 C60,30 100,90 140,60 C180,30 220,90 260,60 C300,30 340,90 380,60 C420,30 460,90 480,60" 
+                stroke="url(#cg1)" stroke-width="4" fill="none" stroke-dasharray="8,4">
+            <animate attributeName="stroke-dashoffset" from="0" to="-24" dur="1s" repeatCount="indefinite"/>
+          </path>
+          <path d="M20,50 C60,20 100,80 140,50 C180,20 220,80 260,50 C300,20 340,80 380,50 C420,20 460,80 480,50" 
+                stroke="#ff006e" stroke-width="3" fill="none" stroke-dasharray="6,6" opacity="0.7">
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="1.3s" repeatCount="indefinite"/>
+          </path>
+          <path d="M20,70 C60,40 100,100 140,70 C180,40 220,100 260,70 C300,40 340,100 380,70 C420,40 460,100 480,70" 
+                stroke="#00f5ff" stroke-width="3" fill="none" stroke-dasharray="6,6" opacity="0.7">
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="0.9s" repeatCount="indefinite"/>
+          </path>
+          <text x="250" y="110" fill="#ffee00" font-family="Space Mono" font-size="11" text-anchor="middle">TRIPLA HÉLICE DE COLÁGENO — Gly-X-Y repetido</text>
+        </svg>
+      </div>
+
+      <div class="manga-grid manga-grid-3">
+        <div class="panel panel-cyan">
+          <h3 class="neon-text-cyan" style="font-size:1.3rem">COLÁGENO TIPO I</h3>
+          <p>80-85% do colágeno dérmico. Fibras espessas. Derme reticular. <strong class="neon-text-yellow">Resistência máxima à tração</strong>. Gene: COL1A1/A2. Mutação → Osteogênese imperfeita + pele frágil.</p>
+        </div>
+        <div class="panel panel-pink">
+          <h3 class="neon-text-pink" style="font-size:1.3rem">COLÁGENO TIPO III</h3>
+          <p>10-15% do colágeno. Fibras finas (reticulina). Derme papilar. Predomina em pele fetal e em cicatrizes jovens. Gene: COL3A1. Mutação → Síndrome de Ehlers-Danlos tipo IV!</p>
+        </div>
+        <div class="panel panel-yellow">
+          <h3 class="neon-text-yellow" style="font-size:1.3rem">COLÁGENO TIPO IV</h3>
+          <p>Forma redes 2D. <strong class="neon-text-yellow">Lâmina densa</strong> da membrana basal. Não forma fibrilas. Âncora a epiderme. Autoanticorpos anti-colágeno IV → Síndrome de Goodpasture!</p>
+        </div>
+        <div class="panel panel-green">
+          <h3 class="neon-text-green" style="font-size:1.3rem">COLÁGENO TIPO VII</h3>
+          <p>Fibrilas de ancoragem. Liga a lâmina densa à derme reticular. Mutação → Epidermólise bolhosa distrófica (pele extremamente frágil, "borboletas"!).</p>
+        </div>
+        <div class="panel panel-purple">
+          <h3 class="neon-text-purple" style="font-size:1.3rem">SÍNTESE DO COLÁGENO</h3>
+          <p>Fibroblasto → Pré-pró-colágeno → Pró-colágeno (hidroxilação Pro/Lys com Vit C!) → Procolágeno → Extracelular → Fibrilas → Fibras. <strong class="neon-text-yellow">Escorbuto = falta de Vit C = colágeno defeituoso!</strong></p>
+        </div>
+        <div class="panel panel-red">
+          <h3 class="neon-text-red" style="font-size:1.3rem">DEGRADAÇÃO</h3>
+          <p>Metaloproteinases (MMP-1,-2,-3,-9) degradam o colágeno. Inibidas por TIMPs. Equilíbrio síntese/degradação mantém a homeostase. No envelhecimento e no dano UV: MMPs sobem, colágeno cai → rugas!</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="t-elastina" class="tab-pane">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-purple">
+          <span class="panel-label neon-text-purple">ELASTICIDADE</span>
+          <h3 class="neon-text-purple">FIBRAS ELÁSTICAS</h3>
+          <p>As fibras elásticas da derme permitem extensão de <strong class="neon-text-yellow">até 150%</strong> do comprimento original e retorno completo!</p>
+          <br>
+          <p><strong class="neon-text-cyan">Composição:</strong></p>
+          <ul style="margin-top:10px">
+            <li><strong>Elastina</strong> — núcleo amorfo. Proteína hidrofóbica, cross-links de desmosina e isodesmosina. Sintetizada por fibroblastos.</li>
+            <li><strong>Fibrilina-1 e -2</strong> — microfibrilas ao redor do núcleo. Mutação na fibrilina-1 → Síndrome de Marfan (pele extensível, articulações hipermóveis, aorta dilatada).</li>
+          </ul>
+          <br>
+          <div class="highlight h-alert" style="margin:0;padding:12px 16px">
+            <strong>⚠️ ELASTOSE SOLAR</strong>
+            UV fragmenta elastina → acúmulo de material elástico degenerado → pele amarelada, enrugada, espessa. Irreversível!
+          </div>
+        </div>
+
+        <div class="panel panel-cyan">
+          <span class="panel-label neon-text-cyan">INERVAÇÃO DÉRMICA</span>
+          <h3 class="neon-text-cyan">MAPA SENSORIAL DA PELE</h3>
+          <p style="margin-bottom:14px;">A derme é um órgão sensorial sofisticado com múltiplos tipos de receptores:</p>
+          <ul>
+            <li>🖐️ <strong class="neon-text-yellow">Meissner</strong> — tato discriminativo. Derme papilar. Pele espessa. Fibras Aβ. Adaptação rápida.</li>
+            <li>🌀 <strong class="neon-text-pink">Pacini</strong> — pressão e vibração. Derme profunda/hipoderme. Grande. Fibras Aβ. Adaptação rápida.</li>
+            <li>⚡ <strong class="neon-text-green">Merkel</strong> — tato fino/forma. Junção dermo-epidérmica. Fibras Aβ. Adaptação lenta tipo I.</li>
+            <li>🌡️ <strong class="neon-text-orange">Ruffini</strong> — tensão, estiramento. Derme profunda. Fibras Aβ. Adaptação lenta tipo II.</li>
+            <li>🔥 <strong class="neon-text-red">Terminações livres</strong> — dor, calor, frio. Toda a pele. Fibras C (dor lenta) e Aδ (dor aguda).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="t-celulas" class="tab-pane">
+      <h3 class="big-text neon-text-green" style="margin-bottom:20px">👾 CÉLULAS RESIDENTES DA DERME</h3>
+      <div class="cell-gallery">
+        <div class="cell-card" style="border-color:var(--neon-orange)">
+          <span class="cell-icon">🏗️</span>
+          <div class="cell-name" style="color:var(--neon-orange)">FIBROBLASTO</div>
+          <div class="cell-desc">Célula principal da derme. Produz colágeno, elastina, fibronectina, GAGs. Na lesão → miofibroblasto → contração da ferida.</div>
+        </div>
+        <div class="cell-card" style="border-color:var(--neon-red)">
+          <span class="cell-icon">💣</span>
+          <div class="cell-name" style="color:var(--neon-red)">MASTÓCITO</div>
+          <div class="cell-desc">Repleto de grânulos com histamina, heparina, triptase. Ativado em alergias → urticária, anafilaxia. Receptor IgE na superfície.</div>
+        </div>
+        <div class="cell-card" style="border-color:var(--neon-purple)">
+          <span class="cell-icon">🔍</span>
+          <div class="cell-name" style="color:var(--neon-purple)">MACRÓFAGO</div>
+          <div class="cell-desc">Fagocita detritos, microrganismos, células mortas. Apresenta antígenos. Origem: monócito do sangue. Produz IL-1, TNF, IL-12.</div>
+        </div>
+        <div class="cell-card" style="border-color:var(--neon-cyan)">
+          <span class="cell-icon">🌀</span>
+          <div class="cell-name" style="color:var(--neon-cyan)">LINFÓCITO</div>
+          <div class="cell-desc">T e B. Vigilância imune. Aumentam em inflamações crônicas e doenças autoimunes da pele (ex: psoríase: predomínio T-helper 17).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 4 · HIPODERME ═══════════ -->
+<section id="ch4">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-yellow);text-shadow:0 0 30px var(--neon-yellow), 4px 4px 0 var(--neon-purple)">04</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-yellow">A HIPODERME:<br>O AMORTECEDOR DE ENERGIA</h2>
+      <p class="neon-text-yellow">TECIDO ADIPOSO · TERMOGÊNESE · ENDOCRINOLOGIA</p>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2">
+    <div class="panel panel-yellow">
+      <span class="panel-label neon-text-yellow">ESTRUTURA</span>
+      <h3 class="neon-text-yellow">O QUE É A HIPODERME?</h3>
+      <p>Também chamada de <strong class="neon-text-cyan">tela subcutânea</strong> ou <strong class="neon-text-cyan">subcutâneo (SCUT)</strong>. Tecnicamente NÃO faz parte da pele em si — mas é inseparável dela funcionalmente.</p>
+      <br>
+      <ul>
+        <li>🧈 Tecido adiposo unilocular (gordura branca) — principal</li>
+        <li>🔥 Gordura marrom (BAT) — em bebês e hibernadores</li>
+        <li>🕸️ Septos fibrosos de colágeno — dividem em lóbulos</li>
+        <li>🩸 Vasos sanguíneos calibrosos — nutrem tudo acima</li>
+        <li>⚡ Nervos — passagem de ramos maiores</li>
+        <li>💉 Plexo venoso subcutâneo — via de medicamentos IM/SC</li>
+      </ul>
+    </div>
+
+    <div class="panel panel-pink">
+      <span class="panel-label neon-text-pink">FUNÇÕES</span>
+      <h3 class="neon-text-pink">MAIS QUE GORDURA!</h3>
+      <ul>
+        <li>⚡ <strong>Reserva energética</strong> — triglicerídeos → AGL + glicerol</li>
+        <li>🌡️ <strong>Isolante térmico</strong> — reduz perda de calor</li>
+        <li>🛡️ <strong>Amortecimento mecânico</strong> — protege estruturas profundas</li>
+        <li>🧪 <strong>Órgão endócrino!</strong> — adipócitos produzem: <em class="neon-text-cyan">Leptina</em> (saciedade), <em class="neon-text-cyan">Adiponectina</em> (sensibilidade à insulina), <em class="neon-text-yellow">Resistina</em>, <em class="neon-text-pink">Estrógenos</em> (aromatase)</li>
+        <li>🩸 <strong>Regulação hormonal</strong> — converte andrógenos em estrógenos</li>
+      </ul>
+      <br>
+      <div class="highlight h-molecular" style="margin:0">
+        <strong>🔬 ADIPÓCITO MADURO</strong>
+        Célula de 90% lipídio! Núcleo achatado na periferia. Único vacúolo grande (unilocular). Citoplasma em fina borda. Sintetiza leptina proporcional à sua massa lipídica.
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight h-clinical">
+    <strong>🏥 CLÍNICA: LIPODISTROFIAS E CELULITE</strong>
+    A distribuição da gordura subcutânea é determinada geneticamente e hormonalmente (estrogênio → quadril/coxas em mulheres; andrógenos → visceral em homens). Celulite (lipodistrofia ginoide) = protrusão de lóbulos de gordura através dos septos fibrosos fragilizados. Não é patológica em si, mas sinal de remodelação do tecido conjuntivo. Lipodistrofia em HIV: redistribuição da gordura por antirretrovirais (inibidores de protease, NRTIs).
+  </div>
+</section>
+
+<!-- ═══════════ CAP 5 · ANEXOS ═══════════ -->
+<section id="ch5">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-green);text-shadow:0 0 30px var(--neon-green), 4px 4px 0 var(--neon-cyan)">05</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-green">OS ANEXOS:<br>OS ESPECIALISTAS</h2>
+      <p class="neon-text-green">PELOS · UNHAS · GLÂNDULAS · FOLÍCULOS</p>
+    </div>
+  </div>
+
+  <div class="tab-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="openTab(this,'a-pelo')">💈 PELOS</button>
+      <button class="tab-btn" onclick="openTab(this,'a-unha')">💅 UNHAS</button>
+      <button class="tab-btn" onclick="openTab(this,'a-sudoripara')">💧 GL. SUDORÍPARAS</button>
+      <button class="tab-btn" onclick="openTab(this,'a-sebaceas')">🫧 GL. SEBÁCEAS</button>
+      <button class="tab-btn" onclick="openTab(this,'a-mamarias')">🍼 GL. MAMÁRIAS</button>
+    </div>
+
+    <div id="a-pelo" class="tab-pane active">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-green">
+          <span class="panel-label neon-text-green">ESTRUTURA DO PELO</span>
+          <h3 class="neon-text-green">ANATOMIA DO FOLÍCULO PILOSO</h3>
+          <ul>
+            <li><strong class="neon-text-yellow">Medula</strong> — núcleo central (ausente em pelos finos)</li>
+            <li><strong class="neon-text-orange">Córtex</strong> — camada principal, queratina dura + melanina</li>
+            <li><strong class="neon-text-cyan">Cutícula</strong> — camada mais externa, escamas sobrepostas</li>
+            <li><strong class="neon-text-pink">Bainha radicular interna</strong> — Henle + Huxley + cutícula interna</li>
+            <li><strong class="neon-text-purple">Bainha radicular externa</strong> — continuação da epiderme</li>
+            <li><strong class="neon-text-red">Papila dérmica</strong> — base do folículo, rich em vasos. Centro de crescimento!</li>
+            <li><strong class="neon-text-green">Bulbo piloso</strong> — céls. matriciais em mitose intensa</li>
+            <li><strong>Músculo eretor</strong> — liso, contrai com frio/emoção → piloereção (arrepio)</li>
+          </ul>
+        </div>
+
+        <div class="panel panel-cyan">
+          <span class="panel-label neon-text-cyan">CICLO DO PELO</span>
+          <h3 class="neon-text-cyan">AS 3 FASES</h3>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="padding:14px;background:rgba(0,245,255,0.08);border-radius:6px;border-left:4px solid var(--neon-cyan)">
+              <div style="font-family:'Bangers',cursive;font-size:1.3rem;color:var(--neon-cyan)">ANÁGENO</div>
+              <p style="font-size:0.85rem;margin-top:4px">Fase de crescimento ativo. Dura 2-7 anos (couro cabeludo). 85-90% dos pelos. Bulbo ativo, melanócitos funcionais. Quimioterapia age aqui → alopecia!</p>
+            </div>
+            <div style="padding:14px;background:rgba(255,238,0,0.08);border-radius:6px;border-left:4px solid var(--neon-yellow)">
+              <div style="font-family:'Bangers',cursive;font-size:1.3rem;color:var(--neon-yellow)">CATÁGENO</div>
+              <p style="font-size:0.85rem;margin-top:4px">Fase de transição. 2-3 semanas. 1-2% dos pelos. Bulbo regride, melanócitos param. Pelo sobe na derme.</p>
+            </div>
+            <div style="padding:14px;background:rgba(255,0,110,0.08);border-radius:6px;border-left:4px solid var(--neon-pink)">
+              <div style="font-family:'Bangers',cursive;font-size:1.3rem;color:var(--neon-pink)">TELÓGENO</div>
+              <p style="font-size:0.85rem;margin-top:4px">Fase de repouso. 2-4 meses. 10-15% dos pelos. Pelo "clube" retido. Queda normal (50-100/dia). Estresse → telogen effluvium!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="manga-grid manga-grid-3" style="margin-top:16px">
+        <div class="panel panel-purple">
+          <h3 class="neon-text-purple" style="font-size:1.3rem">TIPOS DE PELO</h3>
+          <ul>
+            <li><strong class="neon-text-cyan">Lanugo</strong> — pelo fetal. Fino, sem medula, sem pigmento. Presente até a 32ª semana de gestação.</li>
+            <li><strong class="neon-text-pink">Velo</strong> — pelos finos, macios, pouco pigmentados. Cobre a maioria do corpo.</li>
+            <li><strong class="neon-text-yellow">Terminal</strong> — espessos, pigmentados, com medula. Couro cabeludo, axilas, região pubiana, barba.</li>
+          </ul>
+        </div>
+        <div class="panel panel-orange">
+          <h3 class="neon-text-orange" style="font-size:1.3rem">CONTROLE HORMONAL</h3>
+          <ul>
+            <li>🔼 <strong>Andrógenos</strong> → convertem velo em terminal (barba, pelos axilares/púbicos)</li>
+            <li>🔽 <strong>DHT</strong> (dihidrotestosterona) → miniaturiza folículos no couro cabeludo → alopecia androgênica</li>
+            <li>💊 <strong>Finasterida</strong> → inibe 5α-redutase → menos DHT → trata calvície!</li>
+            <li>💊 <strong>Minoxidil</strong> → prolonga anágeno + vasodilatação</li>
+          </ul>
+        </div>
+        <div class="panel panel-red">
+          <h3 class="neon-text-red" style="font-size:1.3rem">MELANINA DO PELO</h3>
+          <ul>
+            <li>Melanócitos do bulbo → melanossomos → transferência para córtex</li>
+            <li>Eumelanina → negro/castanho</li>
+            <li>Feomelanina → loiro/ruivo</li>
+            <li>Envelhecimento: melanócitos esgotam → pelo branco (canitícia)</li>
+            <li>Estresse severo: telogen effluvium seletivo de pelos pigmentados!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="a-unha" class="tab-pane">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-cyan">
+          <span class="panel-label neon-text-cyan">ESTRUTURA</span>
+          <h3 class="neon-text-cyan">ANATOMIA DA UNHA</h3>
+          <p>A unha é uma placa de queratina dura que cobre a face dorsal da falange distal.</p>
+          <br>
+          <ul>
+            <li><strong class="neon-text-yellow">Placa ungueal</strong> — queratina dura, translúcida. Crescimento: 3-4mm/mês (mão) e 1mm/mês (pé)</li>
+            <li><strong class="neon-text-pink">Matriz ungueal</strong> — gera a placa! Fica sob a lúnula. Lesão irreversível → distrofia permanente.</li>
+            <li><strong class="neon-text-green">Lúnula</strong> — meia-lua branca. Parte visível da matriz. Maior no polegar.</li>
+            <li><strong class="neon-text-orange">Leito ungueal</strong> — epiderme sob a placa. Rico em capilares (daí o rosa).</li>
+            <li><strong class="neon-text-purple">Eponíquio</strong> — "cutícula" = dobra cutânea proximal. Sela esterilmente a matriz.</li>
+            <li><strong class="neon-text-red">Hiponíquio</strong> — junção leito + ponta do dedo. Vedação distal.</li>
+          </ul>
+        </div>
+
+        <div class="panel panel-yellow">
+          <span class="panel-label neon-text-yellow">CLÍNICA</span>
+          <h3 class="neon-text-yellow">UNHAS COMO ESPELHO CLÍNICO</h3>
+          <ul>
+            <li>🩵 <strong>Cianose</strong> → lecho azulado → hipóxia (↓ O₂)</li>
+            <li>⬜ <strong>Leuconíquia</strong> → branqueamento → hipoalbuminemia, trauma</li>
+            <li>🟡 <strong>Icterícia</strong> → amarelo → bilirrubina elevada</li>
+            <li>📊 <strong>Linhas de Beau</strong> → sulcos transversais → parada de crescimento (doença grave, quimio)</li>
+            <li>🥄 <strong>Coiloníquia</strong> → em "colher" → anemia ferropriva</li>
+            <li>🎯 <strong>Pitting</strong> → picadas puntiformes → psoríase, alopecia areata</li>
+            <li>💻 <strong>Baqueteamento</strong> → clubbing → DPOC, cardiopatia congênita, cirrose</li>
+            <li>🔴 <strong>Hemorragias em estilhaço</strong> → endocardite infecciosa!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div id="a-sudoripara" class="tab-pane">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-cyan">
+          <span class="panel-label neon-text-cyan">GLÂNDULAS ÉCRINAS</span>
+          <h3 class="neon-text-cyan">A FÁBRICA DO SUOR</h3>
+          <p><strong class="neon-text-yellow">3-4 milhões</strong> no corpo! Principal glândula sudorípara. Distribuição universal (palmas, plantas, axila mais densas).</p>
+          <br>
+          <p><strong class="neon-text-pink">Estrutura:</strong> Porção secretora enovelada na derme profunda → ducto reto → ducto em espiral → poro na superfície epidérmica (acrosiríngeo).</p>
+          <br>
+          <p><strong class="neon-text-green">Células secretoras:</strong></p>
+          <ul style="margin-top:8px">
+            <li>Células claras → secretam componente aquoso + eletrólitos</li>
+            <li>Células escuras → secretam proteínas, glicoproteínas</li>
+            <li>Células mioepiteliais → contraem → ejetam suor</li>
+          </ul>
+          <br>
+          <p><strong class="neon-text-orange">Inervação:</strong> Autonômica <em>simpática</em> mas com acetilcolina (não adrenalina!) → bloqueio com anticolinérgicos.</p>
+        </div>
+
+        <div class="panel panel-orange">
+          <span class="panel-label neon-text-orange">GLÂNDULAS APÓCRINAS</span>
+          <h3 class="neon-text-orange">GLÂNDULAS DO OLFATO</h3>
+          <p>Axila, areola mamária, região perianal, lábios maiores, conduto auditivo externo (glândulas ceruminosas!).</p>
+          <br>
+          <ul>
+            <li>Secretam por decapitação do ápice celular (secreção apócrina)</li>
+            <li>Produto: fluido leitoso + proteínas + lipídios + androsterona</li>
+            <li>Odor: bactérias cutâneas degradam → ácidos graxos aromáticos</li>
+            <li>Ativação: puberdade (andrógenos)</li>
+            <li>Inervação: adrenérgica (estresse → mais secreção)</li>
+          </ul>
+          <br>
+          <div class="highlight h-fun" style="margin:0;padding:12px 16px">
+            <strong>🎯 CURIOSIDADE</strong>
+            Cerúmen (cera do ouvido) = secreção das glândulas ceruminosas (apócrinas modificadas) + sebáceas. Tipo: molhado (alelo dominante, afrodescendentes/europeus) vs. seco (alelo recessivo, asiáticos orientais). Gene: ABCC11!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="a-sebaceas" class="tab-pane">
+      <div class="manga-grid manga-grid-2">
+        <div class="panel panel-yellow">
+          <span class="panel-label neon-text-yellow">GLÂNDULAS SEBÁCEAS</span>
+          <h3 class="neon-text-yellow">A FÁBRICA DO SEBO</h3>
+          <p>Associadas ao folículo piloso (unidade pilo-sebácea). Ausentes nas palmas e plantas.</p>
+          <br>
+          <p><strong>Sebo:</strong> triglicerídeos + ésteres de cera + esqualeno + colesterol livre. Função: lubrificação + antimicrobiana.</p>
+          <br>
+          <p><strong>Secreção:</strong> holócrina — a célula inteira se destroça para liberar o sebo! Sebócito morre para secretar.</p>
+          <br>
+          <p><strong>Controle:</strong></p>
+          <ul style="margin-top:8px">
+            <li>🔼 Andrógenos → mais sebo (puberdade → acne!)</li>
+            <li>🔽 Estrogênio → menos sebo</li>
+            <li>💊 Isotretinoína → inibe sebócitos → trata acne severa!</li>
+          </ul>
+        </div>
+
+        <div class="panel panel-red">
+          <span class="panel-label neon-text-red">FISIOPATOLOGIA</span>
+          <h3 class="neon-text-red">ACNE — O VILÃO DA ADOLESCÊNCIA</h3>
+          <p>Cronologia da acne:</p>
+          <br>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
+            <div style="padding:8px;background:rgba(255,32,32,0.08);border-radius:4px;border-left:3px solid var(--neon-red)">
+              1️⃣ <strong>Hiperseborreia</strong> — andrógenos aumentam sebo
+            </div>
+            <div style="padding:8px;background:rgba(255,32,32,0.08);border-radius:4px;border-left:3px solid var(--neon-red)">
+              2️⃣ <strong>Hiperqueratose folicular</strong> — obstrução do ducto → comedão (cravo)
+            </div>
+            <div style="padding:8px;background:rgba(255,32,32,0.08);border-radius:4px;border-left:3px solid var(--neon-red)">
+              3️⃣ <strong>Colonização</strong> — Cutibacterium acnes prolifera no ambiente anaeróbio
+            </div>
+            <div style="padding:8px;background:rgba(255,32,32,0.08);border-radius:4px;border-left:3px solid var(--neon-red)">
+              4️⃣ <strong>Inflamação</strong> — lipases bacterianas → AGL → inflamação → pápulas, pústulas, nódulos
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="a-mamarias" class="tab-pane">
+      <div class="panel panel-pink">
+        <span class="panel-label neon-text-pink">GLÂNDULAS MAMÁRIAS</span>
+        <h3 class="neon-text-pink">GLÂNDULAS SUDORÍPARAS MODIFICADAS!</h3>
+        <p>Sim! As glândulas mamárias são glândulas sudoríparas apócrinas altamente modificadas pela evolução! São o exemplo mais elaborado de diferenciação de um anexo cutâneo.</p>
+        <br>
+        <div class="manga-grid manga-grid-3" style="margin-top:0">
+          <div style="padding:16px;background:rgba(255,0,110,0.06);border:1px solid var(--neon-pink);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--neon-pink)">ESTRUTURA</div>
+            <p style="font-size:0.82rem;margin-top:8px">15-20 lóbulos. Cada lóbulo: ácinos → ducto lobular → ducto segmentar → ducto galactóforo → seio galactóforo → papila mamária.</p>
+          </div>
+          <div style="padding:16px;background:rgba(255,0,110,0.06);border:1px solid var(--neon-pink);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--neon-yellow)">CONTROLE HORMONAL</div>
+            <p style="font-size:0.82rem;margin-top:8px">Estrogênio → crescimento ductal. Progesterona → desenvolvimento lobular. Prolactina → lactação. Ocitocina → ejeção do leite!</p>
+          </div>
+          <div style="padding:16px;background:rgba(255,0,110,0.06);border:1px solid var(--neon-pink);border-radius:6px">
+            <div style="font-family:'Bangers',cursive;font-size:1.1rem;color:var(--neon-cyan)">EMBRIOLOGIA</div>
+            <p style="font-size:0.82rem;margin-top:8px">Linha do leite (4ª semana): cristas ectodérmicas do axial → mamilo → proliferação ectodermal induz o mesênquima → glândulas. Politelia = mamilo acessório ao longo da linha do leite.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CAP 6 · EMBRIOLOGIA ═══════════ -->
+<section id="ch6">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-purple);text-shadow:0 0 30px var(--neon-purple), 4px 4px 0 var(--neon-cyan)">06</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-purple">EMBRIOLOGIA:<br>A ORIGEM DE TUDO</h2>
+      <p class="neon-text-purple">DO ZIGOTO À PELE · FOLHETOS GERMINATIVOS</p>
+    </div>
+  </div>
+
+  <div class="character">
+    <div class="char-icon" style="border-color:var(--neon-purple);background:rgba(191,0,255,0.1)">🥚</div>
+    <div>
+      <div class="char-name neon-text-purple">EMBY · A Célula Embrionária</div>
+      <div class="speech-bubble bubble-cyan">
+        "Tudo começa com um único óvulo fertilizado. Em 9 meses, aquela única célula se multiplica e se organiza em 3 folhetos embrionários. A pele inteira vem do ECTODERMA — mas atenção: a derme vem do MESODERMA! Origens diferentes, destinos entrelaçados para sempre."
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-purple)">🟣</div>
+      <div class="t-time neon-text-purple">SEMANA 1-3 · GASTRULAÇÃO</div>
+      <div class="t-title neon-text-purple">Os 3 Folhetos Embrionários</div>
+      <div class="t-desc">A gastrulação forma <strong class="neon-text-cyan">ectoderma</strong> (externo → pele, SNC), <strong class="neon-text-yellow">mesoderma</strong> (médio → derme, músculo, osso, vascular) e <strong class="neon-text-pink">endoderma</strong> (interno → vísceras). A pele tem origem <em>dupla</em>: epiderme = ecto; derme = meso (exceto face: crista neural contribui!).</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-cyan)">🔵</div>
+      <div class="t-time neon-text-cyan">SEMANA 4-6 · EPIDERME INICIAL</div>
+      <div class="t-title neon-text-cyan">Ectoderma de 2 Camadas</div>
+      <div class="t-desc">Epiderme primitiva = camada basal (germinativa) + periderma (camada protetora provisória). O periderma cobre o embrião inteiro e é descamado no final da gestação, contribuindo para o <strong class="neon-text-yellow">vérnix caseoso</strong> (substância branca que cobre o recém-nascido!).</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-green)">🟢</div>
+      <div class="t-time neon-text-green">SEMANA 8-16 · ESTRATIFICAÇÃO</div>
+      <div class="t-title neon-text-green">Camadas Epidérmicas se Formam</div>
+      <div class="t-desc">Camada intermediária aparece entre basal e periderma → diferenciação progressiva → estrato espinhoso, granuloso, córneo. Melanócitos migram da <strong class="neon-text-yellow">crista neural</strong> para o estrato basal entre as semanas 8-12. Células de Merkel: origem crista neural (semana 8-12). Langerhans: origem medula óssea (mais tardio).</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-yellow)">🟡</div>
+      <div class="t-time neon-text-yellow">SEMANA 10-16 · DERIVADOS</div>
+      <div class="t-title neon-text-yellow">Anexos se Desenvolvem</div>
+      <div class="t-desc">Folículos pilosos: brotamento da epiderme (ectoderma) induz o mesoderma subjacente → papila dérmica. Primeiro na cabeça/face, depois tronco, extremidades. Glândulas sebáceas: evaginações do folículo piloso (ectoderma). Glândulas sudoríparas: brotamentos sólidos da epiderme → canalis.</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-pink)">🔴</div>
+      <div class="t-time neon-text-pink">SEMANA 20-36 · MATURAÇÃO</div>
+      <div class="t-title neon-text-pink">Queratinização e Barreira</div>
+      <div class="t-desc">Queratinização completa entre 24-28 semanas. Barreira lipídica matura após 34 semanas. Prematuros &lt;34 semanas: pele translúcida, barreira deficiente → risco de infecção + perda de água transepidérmica enorme! Lanugo presente → desaparece 32-36 semanas. Vérnix caseoso = lanugo + sebo + células descamadas (proteção).</div>
+    </div>
+    <div class="t-event">
+      <div class="t-dot" style="border-color:var(--neon-orange)">🟠</div>
+      <div class="t-time neon-text-orange">CRISTA NEURAL — PERSONAGEM ESPECIAL</div>
+      <div class="t-title neon-text-orange">A 4ª Folha Embrionária!</div>
+      <div class="t-desc">Células da crista neural são a origem de: <strong class="neon-text-yellow">Melanócitos</strong>, Células de Merkel, Nervo periférico (células de Schwann), Derme da face, Meninges cranianas, Células cromafins da adrenal. Distúrbio da crista neural → <strong class="neon-text-red">Neurofibromatose</strong> (manchas café-com-leite!), <strong class="neon-text-red">Síndrome de Waardenburg</strong> (surdez + albinismo parcial).</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <h3 class="big-text neon-text-orange" style="margin:30px 0 20px">🚨 ANOMALIAS CONGÊNITAS DA PELE</h3>
+
+  <div class="manga-grid manga-grid-3">
+    <div class="panel panel-red">
+      <h3 class="neon-text-red" style="font-size:1.2rem">ICTIOSE CONGÊNITA</h3>
+      <p style="font-size:0.85rem">Distúrbio na queratinização (mutações TGM1, ABCA12, etc.). Pele escamosa generalizada. Feto arlequim: forma grave (ABCA12), pele em placas rígidas, progn grave. Tto: retinoides orais.</p>
+    </div>
+    <div class="panel panel-orange">
+      <h3 class="neon-text-orange" style="font-size:1.2rem">EPIDERMÓLISE BOLHOSA</h3>
+      <p style="font-size:0.85rem">Mutação em proteínas de ancoragem (queratinas, laminina, colágeno VII). Qualquer fricção → bolhas. "Crianças borboleta". Formas: simples, juncional, distrófica. Sem cura, cuidados intensivos.</p>
+    </div>
+    <div class="panel panel-purple">
+      <h3 class="neon-text-purple" style="font-size:1.2rem">ALBINISMO</h3>
+      <p style="font-size:0.85rem">Tirosinase defeituosa (OCA1) ou outros genes (OCA2-8). Melanócitos presentes mas sem melanina funcional. Hipopigmentação total: pele, cabelos, olhos. Nistagmo + fotofobia + risco de câncer UV.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ QUIZ ═══════════ -->
+<section id="quiz-section">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-yellow);text-shadow:0 0 30px var(--neon-yellow)">⚡</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-yellow">QUIZ FINAL:<br>PROVE SEU PODER!</h2>
+      <p class="neon-text-yellow">15 QUESTÕES · NÍVEL MÉDICO · PONTUAÇÃO REAL</p>
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-score">PONTUAÇÃO: <span id="score">0</span> / <span id="total">0</span></div>
+    <div class="quiz-q" id="quiz-question">Carregando questão...</div>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-feedback panel panel-cyan" id="quiz-feedback" style="display:none"></div>
+    <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap">
+      <button class="btn btn-cyan" id="next-btn" onclick="nextQuestion()" style="display:none">PRÓXIMA →</button>
+      <button class="btn btn-pink" id="restart-btn" onclick="restartQuiz()" style="display:none">REINICIAR</button>
+    </div>
+    <div id="final-message" style="display:none;margin-top:24px"></div>
+  </div>
+</section>
+
+<!-- ═══════════ GLOSSÁRIO ═══════════ -->
+<section id="glossary" style="min-height:auto;padding-bottom:80px">
+  <div class="chapter-header">
+    <div class="chapter-num" style="color:var(--neon-purple);text-shadow:0 0 30px var(--neon-purple)">📖</div>
+    <div class="chapter-info">
+      <h2 class="neon-text-purple">GLOSSÁRIO<br>ETIMOLÓGICO</h2>
+      <p class="neon-text-purple">TERMOS · ORIGENS · SIGNIFICADOS</p>
+    </div>
+  </div>
+
+  <div class="gloss-grid">
+    <div class="gloss-term">
+      <div class="gloss-word">Epiderme</div>
+      <div class="gloss-etym">Grego: epi = sobre + derma = pele</div>
+      <div class="gloss-def">A camada "sobre a pele", o revestimento externo estratificado.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Derme</div>
+      <div class="gloss-etym">Grego: derma = pele, couro</div>
+      <div class="gloss-def">A camada de suporte de tecido conjuntivo. Dermato- = prefixo em doenças de pele.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Queratina</div>
+      <div class="gloss-etym">Grego: keras = chifre, corno</div>
+      <div class="gloss-def">Proteína estrutural dos chifres, unhas, pelos e camada córnea da pele.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Melanócito</div>
+      <div class="gloss-etym">Grego: melas = negro + kytos = célula</div>
+      <div class="gloss-def">A "célula negra" — produtora do pigmento escuro da pele e pelos.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Sebáceo</div>
+      <div class="gloss-etym">Latim: sebum = sebo, gordura</div>
+      <div class="gloss-def">Relativo à gordura — as glândulas que produzem a oleosidade da pele.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Holócrino</div>
+      <div class="gloss-etym">Grego: holos = todo + krinein = separar</div>
+      <div class="gloss-def">Secretar pelo mecanismo de "tudo separado" — a célula inteira se rompe para liberar o produto.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Apócrino</div>
+      <div class="gloss-etym">Grego: apo = separado de + krinein = separar</div>
+      <div class="gloss-def">Secretar pela "separação" do ápice celular — a parte superior da célula se rompe.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Écrino / Merócino</div>
+      <div class="gloss-etym">Grego: ek = fora + krinein = separar</div>
+      <div class="gloss-def">Secretar "para fora" por exocitose — a célula permanece intacta. Glândulas de suor comuns.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Lanugo</div>
+      <div class="gloss-etym">Latim: lana = lã, pelo fino</div>
+      <div class="gloss-def">Pelo fetal fino como "lã" — cobre o feto e desaparece perto do nascimento.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Anágeno</div>
+      <div class="gloss-etym">Grego: ana = acima, renovação + gen = gerar</div>
+      <div class="gloss-def">A fase de "geração para cima" — crescimento ativo do pelo.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Hipoderme</div>
+      <div class="gloss-etym">Grego: hypo = abaixo + derma = pele</div>
+      <div class="gloss-def">A camada "abaixo da pele" — tecido adiposo subcutâneo.</div>
+    </div>
+    <div class="gloss-term">
+      <div class="gloss-word">Filaggrina</div>
+      <div class="gloss-etym">Inglês: filament aggregating protein</div>
+      <div class="gloss-def">Proteína que agrega filamentos de queratina. Mutação no gene FLG → ictiose vulgar + dermatite atópica!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-line"></div>
+  <div class="footer-info">
+    <strong>UNIVERSIDADE LICUNGO (UL)</strong><br>
+    Curso de Medicina · 1º Ano<br>
+    Anatomia & Histologia — Sistema Tegumentar<br>
+    <br>
+    <span style="color:var(--neon-pink)">✦</span> Produzido com dedicação académica <span style="color:var(--neon-pink)">✦</span><br>
+    <br>
+    © DemilMed-UL · ANO 2026<br>
+    <span style="font-size:0.6rem;letter-spacing:2px;color:rgba(255,255,255,0.2)">SKIN CHRONICLES · 1º ANO DE MEDICINA</span>
+  </div>
+</footer>
+
+<script>
+// ── PARTICLES ──
+(function() {
+  const container = document.getElementById('particles');
+  const colors = ['#00f5ff','#ff006e','#ffee00','#39ff14','#bf00ff','#ff6b00'];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 2;
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*20+10}s;
+      animation-delay:-${Math.random()*20}s;
+      box-shadow:0 0 ${size*2}px currentColor;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+// ── PROGRESS BAR ──
+window.addEventListener('scroll', () => {
+  const winH = document.documentElement.scrollHeight - window.innerHeight;
+  const scrolled = (window.scrollY / winH) * 100;
+  document.getElementById('progress-bar').style.width = scrolled + '%';
+});
+
+// ── STAT BARS ──
+function animateStats() {
+  document.querySelectorAll('.stat-fill').forEach(el => {
+    const target = parseInt(el.dataset.width);
+    el.style.width = target + '%';
+  });
+}
+setTimeout(animateStats, 800);
+
+// ── TIMELINE OBSERVER ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.t-event').forEach(el => observer.observe(el));
+
+// ── ACCORDIONS ──
+function toggleAcc(header) {
+  const acc = header.parentElement;
+  const wasOpen = acc.classList.contains('open');
+  document.querySelectorAll('.accordion').forEach(a => a.classList.remove('open'));
+  if (!wasOpen) acc.classList.add('open');
+}
+
+// ── TABS ──
+function openTab(btn, id) {
+  const container = btn.closest('.tab-container');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const pane = document.getElementById(id);
+  if (pane) pane.classList.add('active');
+}
+
+// ── QUIZ ──
+const questions = [
+  {
+    q: "Qual é a camada mais superficial da epiderme?",
+    opts: ["Estrato basal", "Estrato espinhoso", "Estrato córneo", "Estrato granuloso"],
+    correct: 2,
+    explain: "O estrato córneo é a camada mais superficial, composta de cornócitos mortos repletos de queratina. É a barreira protetora principal da pele."
+  },
+  {
+    q: "Qual célula epidérmica é responsável pela produção de melanina?",
+    opts: ["Queratinócito", "Célula de Langerhans", "Célula de Merkel", "Melanócito"],
+    correct: 3,
+    explain: "O melanócito produz melanina em organelas chamadas melanossomos e a transfere para queratinócitos vizinhos, na proporção de 1 melanócito para ~36 queratinócitos."
+  },
+  {
+    q: "A derme papilar contém principalmente qual tipo de colágeno?",
+    opts: ["Colágeno tipo I", "Colágeno tipo II", "Colágeno tipo III", "Colágeno tipo VII"],
+    correct: 2,
+    explain: "A derme papilar é rica em colágeno tipo III (fibras reticulares finas), enquanto a derme reticular tem predominantemente colágeno tipo I (fibras grossas, alta resistência)."
+  },
+  {
+    q: "Qual estrutura da epiderme está presente SOMENTE na pele espessa?",
+    opts: ["Estrato granuloso", "Estrato lúcido", "Estrato espinhoso", "Estrato basal"],
+    correct: 1,
+    explain: "O estrato lúcido está presente apenas na pele espessa (palmas e plantas). Contém eleidina e é reconhecido por ser translúcido ao microscópio óptico."
+  },
+  {
+    q: "As glândulas sebáceas utilizam qual mecanismo de secreção?",
+    opts: ["Merócrina (exocitose)", "Apócrina (decapitação apical)", "Holócrina (célula inteira se rompe)", "Endócrina (para o sangue)"],
+    correct: 2,
+    explain: "As glândulas sebáceas são holócrinas: a célula (sebócito) se carrega de lipídios e então se rompe completamente para liberar o sebo. A célula 'morre' para secretar!"
+  },
+  {
+    q: "A fase ANÁGENO do ciclo do pelo corresponde a:",
+    opts: ["Fase de repouso", "Fase de transição e regressão", "Fase de crescimento ativo", "Fase de queda"],
+    correct: 2,
+    explain: "Anágeno = crescimento ativo (2-7 anos no couro cabeludo). É a fase que é afetada pela quimioterapia, causando alopecia. 85-90% dos pelos estão nesta fase."
+  },
+  {
+    q: "A origem embriológica dos melanócitos é:",
+    opts: ["Ectoderma superficial", "Mesoderma", "Crista neural", "Endoderma"],
+    correct: 2,
+    explain: "Os melanócitos migram da crista neural para o estrato basal da epiderme entre as semanas 8-12 de gestação. Por isso distúrbios da crista neural podem afetar pigmentação."
+  },
+  {
+    q: "Qual receptores sensorial é especializado em tato discriminativo e está localizado nas papilas dérmicas da pele espessa?",
+    opts: ["Corpúsculo de Pacini", "Corpúsculo de Meissner", "Disco de Merkel", "Corpúsculo de Ruffini"],
+    correct: 1,
+    explain: "O corpúsculo de Meissner está nas papilas dérmicas da pele espessa (palmas, plantas, dedos). Detecta tato discriminativo e textura. Adaptação rápida, fibras Aβ."
+  },
+  {
+    q: "A queratinização completa da epiderme fetal ocorre aproximadamente entre:",
+    opts: ["12-16 semanas de gestação", "16-20 semanas de gestação", "24-28 semanas de gestação", "36-40 semanas de gestação"],
+    correct: 2,
+    explain: "A queratinização completa ocorre entre 24-28 semanas. A barreira lipídica matura após 34 semanas. Prematuros antes de 34 semanas têm barreira imatura, com risco de perda de água e infecção."
+  },
+  {
+    q: "O músculo eretor do pelo tem qual tipo de tecido muscular?",
+    opts: ["Músculo esquelético (estriado voluntário)", "Músculo cardíaco (estriado involuntário)", "Músculo liso (involuntário)", "Não há músculo no folículo"],
+    correct: 2,
+    explain: "O músculo eretor do pelo é liso (involuntário), inervado pelo simpático. Contrai em resposta ao frio e emoções → piloereção ('arrepio'). Em animais, serve para parecer maior e reter calor."
+  },
+  {
+    q: "Na classificação de Fitzpatrick, qual fototipo NUNCA bronzeia e SEMPRE queima?",
+    opts: ["Tipo I", "Tipo II", "Tipo III", "Tipo IV"],
+    correct: 0,
+    explain: "Fototipo I: pele muito clara, geralmente ruivos, olhos claros. Sempre queima, nunca bronzeia. Maior risco de carcinomas e melanoma induzidos por UV."
+  },
+  {
+    q: "Qual estrutura anatômica da unha é responsável pela geração da placa ungueal?",
+    opts: ["Leito ungueal", "Lúnula", "Matriz ungueal", "Eponíquio"],
+    correct: 2,
+    explain: "A matriz ungueal (visível como lúnula na parte proximal) é a zona germinativa da unha. Células da matriz se diferenciam e formam a placa ungueal. Lesão da matriz → distrofia permanente."
+  },
+  {
+    q: "As linhas de Langer representam:",
+    opts: ["Vasos linfáticos da derme", "Trajeto dos nervos sensitivos cutâneos", "Direção preferencial das fibras de colágeno na derme", "Limites dos dermátomos"],
+    correct: 2,
+    explain: "As linhas de Langer indicam a orientação das fibras de colágeno na derme reticular. Incisões paralelas a essas linhas resultam em menor tensão e cicatrizes mais estéticas. Fundamental em cirurgia!"
+  },
+  {
+    q: "A leptina, hormônio da saciedade, é produzida principalmente por:",
+    opts: ["Fígado", "Hipotálamo", "Pâncreas", "Adipócitos do tecido subcutâneo"],
+    correct: 3,
+    explain: "A leptina é produzida pelos adipócitos (hipoderme e gordura visceral) em quantidade proporcional à massa lipídica. Informa ao hipotálamo o status dos estoques energéticos → suprime apetite."
+  },
+  {
+    q: "Qual mutação genética causa a Epidermólise Bolhosa Distrófica (pele de borboleta)?",
+    opts: ["Mutação em COL1A1 (colágeno tipo I)", "Mutação em COL7A1 (colágeno tipo VII)", "Mutação em Fibrilina-1", "Mutação em Tirosinase"],
+    correct: 1,
+    explain: "A Epidermólise Bolhosa Distrófica é causada por mutações no gene COL7A1, que codifica o colágeno tipo VII (fibrilas de ancoragem). Sem ancoragem, qualquer trauma separa a epiderme da derme → bolhas."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+
+function renderQuestion() {
+  if (currentQ >= questions.length) {
+    endQuiz();
+    return;
+  }
+  const q = questions[currentQ];
+  answered = false;
+  document.getElementById('quiz-question').textContent = `Q${currentQ+1}. ${q.q}`;
+  document.getElementById('total').textContent = questions.length;
+  document.getElementById('quiz-feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+
+  const optsEl = document.getElementById('quiz-options');
+  optsEl.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${['A','B','C','D'][i]}. ${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  const feedback = document.getElementById('quiz-feedback');
+
+  opts.forEach((btn, i) => {
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === idx && i !== q.correct) btn.classList.add('wrong');
+  });
+
+  if (idx === q.correct) {
+    score++;
+    document.getElementById('score').textContent = score;
+    feedback.className = 'quiz-feedback panel panel-green';
+    feedback.innerHTML = `<strong class="neon-text-green">✅ CORRETO!</strong><br>${q.explain}`;
+  } else {
+    feedback.className = 'quiz-feedback panel panel-red';
+    feedback.innerHTML = `<strong class="neon-text-red">❌ INCORRETO</strong><br>${q.explain}`;
+  }
+  feedback.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'inline-block';
+  currentQ++;
+}
+
+function nextQuestion() {
+  renderQuestion();
+}
+
+function endQuiz() {
+  document.getElementById('quiz-question').textContent = '🎉 QUIZ CONCLUÍDO!';
+  document.getElementById('quiz-options').innerHTML = '';
+  document.getElementById('quiz-feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('restart-btn').style.display = 'inline-block';
+
+  const pct = Math.round((score / questions.length) * 100);
+  let msg, color;
+  if (pct >= 90) { msg = "🔥 LENDA! Você é um verdadeiro especialista em tegumentar!"; color = "var(--neon-green)"; }
+  else if (pct >= 70) { msg = "⚡ MUITO BOM! Continue assim, médico em formação!"; color = "var(--neon-cyan)"; }
+  else if (pct >= 50) { msg = "📚 RAZOÁVEL! Revise os capítulos e tente de novo!"; color = "var(--neon-yellow)"; }
+  else { msg = "💪 Não desista! A medicina exige repetição. Releia e volte mais forte!"; color = "var(--neon-pink)"; }
+
+  document.getElementById('final-message').style.display = 'block';
+  document.getElementById('final-message').innerHTML = `
+    <div style="font-family:'Bangers',cursive;font-size:3rem;color:${color};text-shadow:0 0 20px ${color};margin-bottom:12px">
+      ${score}/${questions.length} = ${pct}%
+    </div>
+    <div style="font-size:1rem;line-height:1.7;color:${color}">${msg}</div>
+  `;
+}
+
+function restartQuiz() {
+  currentQ = 0; score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('final-message').style.display = 'none';
+  document.getElementById('restart-btn').style.display = 'none';
+  renderQuestion();
+}
+
+renderQuestion();
+
+// ── SMOOTH hover glow for stat bars ──
+document.querySelectorAll('.stat-fill').forEach(el => {
+  el.style.background = el.style.background;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2497 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSSUS: A Saga dos Ossos | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-dark: #050510;
+    --bg-panel: #0a0a1a;
+    --bg-card: #0d0d25;
+    --neon-cyan: #00fff5;
+    --neon-yellow: #ffe600;
+    --neon-pink: #ff2d78;
+    --neon-green: #00ff88;
+    --neon-orange: #ff6b00;
+    --neon-purple: #bf00ff;
+    --neon-blue: #0088ff;
+    --bone-color: #f5e6c8;
+    --bone-glow: #ffd580;
+    --text-main: #e8e8ff;
+    --text-dim: #8888aa;
+    --accent: #00fff5;
+    --panel-border: rgba(0,255,245,0.3);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ===== CUSTOM SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
+  /* ===== LOADING SCREEN ===== */
+  #loading {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    background: #000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease;
+  }
+  #loading.hidden { opacity:0; pointer-events:none; }
+  .loading-bone {
+    font-size: 6rem;
+    animation: boneSpin 1s linear infinite;
+    filter: drop-shadow(0 0 20px var(--bone-glow));
+  }
+  @keyframes boneSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  .loading-text {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--neon-cyan);
+    font-size: 1.2rem;
+    letter-spacing: 0.3em;
+    margin-top: 20px;
+    animation: pulse 1s ease-in-out infinite;
+  }
+  .loading-bar-container {
+    width: 300px; height: 4px;
+    background: #111;
+    border-radius: 2px;
+    margin-top: 20px;
+    overflow: hidden;
+  }
+  .loading-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+    border-radius: 2px;
+    animation: loadFill 2s ease forwards;
+  }
+  @keyframes loadFill { from{width:0} to{width:100%} }
+
+  /* ===== HERO / INTRO ===== */
+  #hero {
+    min-height: 100vh;
+    background: radial-gradient(ellipse at center, #0a0020 0%, #050510 70%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px;
+  }
+
+  .stars {
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--dur, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes twinkle {
+    0%,100% { opacity:0.2; transform:scale(1); }
+    50% { opacity:1; transform:scale(1.5); }
+  }
+
+  .manga-title-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+  }
+  .manga-vol {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    color: var(--neon-yellow);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .manga-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(4rem, 12vw, 10rem);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    color: white;
+    text-shadow:
+      0 0 20px var(--neon-cyan),
+      0 0 60px var(--neon-cyan),
+      4px 4px 0 var(--neon-pink),
+      8px 8px 0 rgba(255,45,120,0.4);
+    animation: titlePulse 3s ease-in-out infinite;
+  }
+  @keyframes titlePulse {
+    0%,100% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 60px var(--neon-cyan), 4px 4px 0 var(--neon-pink), 8px 8px 0 rgba(255,45,120,0.4); }
+    50% { text-shadow: 0 0 40px var(--neon-cyan), 0 0 100px var(--neon-cyan), 6px 6px 0 var(--neon-pink), 12px 12px 0 rgba(255,45,120,0.6); }
+  }
+  .manga-subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.7rem, 2vw, 1rem);
+    letter-spacing: 0.4em;
+    color: var(--neon-cyan);
+    margin-top: 15px;
+  }
+
+  .hero-description {
+    max-width: 700px;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+  }
+  .hero-description strong { color: var(--neon-yellow); }
+
+  /* Big molecule animated */
+  .molecule-hero {
+    position: relative;
+    width: 200px; height: 200px;
+    margin: 30px auto;
+  }
+  .mol-nucleus {
+    position: absolute;
+    top:50%; left:50%;
+    transform: translate(-50%,-50%);
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, var(--bone-glow), var(--neon-orange));
+    border-radius: 50%;
+    box-shadow: 0 0 30px var(--bone-glow), 0 0 60px var(--neon-orange);
+    animation: nucleusPulse 2s ease-in-out infinite;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    z-index: 2;
+  }
+  @keyframes nucleusPulse {
+    0%,100% { transform: translate(-50%,-50%) scale(1); }
+    50% { transform: translate(-50%,-50%) scale(1.15); }
+  }
+  .mol-orbit {
+    position: absolute;
+    top:50%; left:50%;
+    border-radius: 50%;
+    border: 1px solid;
+    transform-origin: center;
+  }
+  .mol-orbit-1 {
+    width: 100px; height: 100px;
+    margin: -50px 0 0 -50px;
+    border-color: rgba(0,255,245,0.4);
+    animation: orbit1 3s linear infinite;
+  }
+  .mol-orbit-2 {
+    width: 150px; height: 150px;
+    margin: -75px 0 0 -75px;
+    border-color: rgba(255,45,120,0.3);
+    animation: orbit2 5s linear infinite reverse;
+  }
+  .mol-orbit-3 {
+    width: 200px; height: 200px;
+    margin: -100px 0 0 -100px;
+    border-color: rgba(255,230,0,0.2);
+    animation: orbit3 7s linear infinite;
+  }
+  @keyframes orbit1 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes orbit2 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  @keyframes orbit3 { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .mol-electron {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    top: -6px; left: 50%; margin-left: -6px;
+  }
+  .e1 { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+  .e2 { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+  .e3 { background: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); }
+
+  .btn-start {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--bg-dark);
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+    border: none;
+    padding: 18px 50px;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  .btn-start:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(0,255,245,0.5);
+  }
+  .btn-start::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: rotate(45deg) translateX(-100%);
+    transition: transform 0.6s;
+  }
+  .btn-start:hover::before { transform: rotate(45deg) translateX(100%); }
+
+  /* ===== NAVIGATION ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: rgba(5,5,16,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--panel-border);
+    padding: 12px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+  }
+  nav.visible { transform: translateY(0); }
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 900;
+    color: var(--neon-cyan);
+    letter-spacing: 0.2em;
+  }
+  .nav-links {
+    display: flex; gap: 5px;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 3px;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-link:hover, .nav-link.active {
+    color: var(--neon-cyan);
+    border-color: var(--panel-border);
+    background: rgba(0,255,245,0.05);
+  }
+
+  /* ===== CHAPTER SYSTEM ===== */
+  .chapter {
+    min-height: 100vh;
+    padding: 80px 20px 60px;
+    position: relative;
+  }
+  .chapter-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Chapter header */
+  .chapter-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 60px;
+    position: relative;
+  }
+  .chapter-number {
+    font-family: 'Bangers', cursive;
+    font-size: 8rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 2px;
+    opacity: 0.15;
+    position: absolute;
+    top: -20px; left: -20px;
+    z-index: 0;
+  }
+  .chapter-info { position: relative; z-index: 1; }
+  .chapter-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 15px;
+  }
+  .chapter-title-main {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    margin-bottom: 15px;
+  }
+  .chapter-lead {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    max-width: 700px;
+  }
+
+  /* ===== MANGA PANEL LAYOUTS ===== */
+  .manga-panels {
+    display: grid;
+    gap: 3px;
+    margin: 40px 0;
+  }
+  .manga-panels-2 { grid-template-columns: 1fr 1fr; }
+  .manga-panels-3 { grid-template-columns: 2fr 1fr 1fr; }
+  .manga-panels-big { grid-template-columns: 3fr 2fr; }
+  .panel {
+    background: var(--bg-card);
+    border: 2px solid rgba(255,255,255,0.05);
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .panel:hover {
+    border-color: rgba(0,255,245,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .panel-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 10px;
+  }
+  .panel-body {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+  .panel-body strong { font-weight: 700; }
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+
+  /* Panel themes */
+  .panel-cyan .panel-title { color: var(--neon-cyan); }
+  .panel-cyan::before { background: var(--neon-cyan); }
+  .panel-cyan .panel-label { color: var(--neon-cyan); opacity: 0.6; }
+
+  .panel-yellow .panel-title { color: var(--neon-yellow); }
+  .panel-yellow::before { background: var(--neon-yellow); }
+
+  .panel-pink .panel-title { color: var(--neon-pink); }
+  .panel-pink::before { background: var(--neon-pink); }
+
+  .panel-green .panel-title { color: var(--neon-green); }
+  .panel-green::before { background: var(--neon-green); }
+
+  .panel-orange .panel-title { color: var(--neon-orange); }
+  .panel-orange::before { background: var(--neon-orange); }
+
+  .panel-purple .panel-title { color: var(--neon-purple); }
+  .panel-purple::before { background: var(--neon-purple); }
+
+  /* ===== SPEECH BUBBLES ===== */
+  .speech-scene {
+    display: flex;
+    gap: 30px;
+    margin: 40px 0;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+  .character-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .character-emoji {
+    font-size: 4rem;
+    animation: charFloat 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(0,255,245,0.4));
+  }
+  .character-emoji.villain { filter: drop-shadow(0 0 15px rgba(255,45,120,0.6)); animation-delay: 0.5s; }
+  .character-emoji.sage { filter: drop-shadow(0 0 15px rgba(255,230,0,0.5)); animation-delay: 1s; }
+  @keyframes charFloat {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-8px); }
+  }
+  .character-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-align: center;
+  }
+  .bubble {
+    background: var(--bg-card);
+    border: 2px solid;
+    border-radius: 16px;
+    padding: 20px 25px;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.7;
+    flex: 1;
+    min-width: 250px;
+  }
+  .bubble-cyan { border-color: var(--neon-cyan); }
+  .bubble-pink { border-color: var(--neon-pink); }
+  .bubble-yellow { border-color: var(--neon-yellow); }
+  .bubble-green { border-color: var(--neon-green); }
+  .bubble-speaker {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .bubble-cyan .bubble-speaker { color: var(--neon-cyan); }
+  .bubble-pink .bubble-speaker { color: var(--neon-pink); }
+  .bubble-yellow .bubble-speaker { color: var(--neon-yellow); }
+  .bubble-green .bubble-speaker { color: var(--neon-green); }
+  .bubble em { color: var(--neon-yellow); font-style: normal; font-weight: 700; }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin: 40px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: all 0.6s ease;
+  }
+  .tl-item.visible { opacity:1; transform:translateX(0); }
+  .tl-dot {
+    position: absolute;
+    left: -46px; top: 5px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: var(--bg-dark);
+  }
+  .tl-time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+  .tl-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .tl-body {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+  .tl-body strong { color: var(--text-main); font-weight: 700; }
+
+  /* Color variants for timeline */
+  .tl-cyan .tl-dot { border-color: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+  .tl-cyan .tl-time { color: var(--neon-cyan); }
+  .tl-cyan .tl-title { color: var(--neon-cyan); }
+
+  .tl-pink .tl-dot { border-color: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+  .tl-pink .tl-time { color: var(--neon-pink); }
+  .tl-pink .tl-title { color: var(--neon-pink); }
+
+  .tl-yellow .tl-dot { border-color: var(--neon-yellow); box-shadow: 0 0 10px var(--neon-yellow); }
+  .tl-yellow .tl-time { color: var(--neon-yellow); }
+  .tl-yellow .tl-title { color: var(--neon-yellow); }
+
+  .tl-green .tl-dot { border-color: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+  .tl-green .tl-time { color: var(--neon-green); }
+  .tl-green .tl-title { color: var(--neon-green); }
+
+  .tl-orange .tl-dot { border-color: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+  .tl-orange .tl-time { color: var(--neon-orange); }
+  .tl-orange .tl-title { color: var(--neon-orange); }
+
+  .tl-purple .tl-dot { border-color: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+  .tl-purple .tl-time { color: var(--neon-purple); }
+  .tl-purple .tl-title { color: var(--neon-purple); }
+
+  /* ===== ACCORDION / EXPANDABLE ===== */
+  .accordion-item {
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .accordion-item.open { border-color: rgba(0,255,245,0.3); }
+  .accordion-header {
+    padding: 18px 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    user-select: none;
+    transition: background 0.3s;
+  }
+  .accordion-header:hover { background: rgba(0,255,245,0.05); }
+  .accordion-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .accordion-icon {
+    font-size: 1.5rem;
+  }
+  .accordion-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .accordion-arrow {
+    color: var(--neon-cyan);
+    transition: transform 0.3s;
+    font-size: 1.2rem;
+  }
+  .accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+    background: rgba(0,0,0,0.2);
+  }
+  .accordion-body-inner {
+    padding: 24px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+  }
+  .accordion-body-inner strong { color: var(--text-main); }
+  .accordion-body-inner em { color: var(--neon-yellow); font-style: normal; }
+
+  /* ===== BONE ANATOMY SVG SECTION ===== */
+  .bone-display {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 30px;
+    margin: 30px 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    align-items: center;
+    justify-content: center;
+  }
+  .bone-svg-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* ===== CLASSIFICATION CARDS ===== */
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+  }
+  .class-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .class-card:hover {
+    border-color: var(--card-color, var(--neon-cyan));
+    transform: translateY(-4px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  }
+  .class-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--card-color, var(--neon-cyan));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .class-card:hover::after { transform: scaleX(1); }
+  .class-card-icon { font-size: 2.5rem; margin-bottom: 15px; }
+  .class-card-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--card-color, var(--neon-cyan));
+    margin-bottom: 6px;
+  }
+  .class-card-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .class-card-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .class-card-example {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 3px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+  .class-card-example span {
+    color: var(--card-color, var(--neon-cyan));
+    font-weight: 700;
+  }
+
+  /* ===== CALLOUT / ALERT BOXES ===== */
+  .callout {
+    padding: 20px 25px;
+    border-radius: 4px;
+    margin: 25px 0;
+    border-left: 4px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .callout::before {
+    content: '';
+    position: absolute;
+    top:0; left:0; right:0; bottom:0;
+    opacity: 0.05;
+  }
+  .callout-cyan { border-color: var(--neon-cyan); }
+  .callout-cyan::before { background: var(--neon-cyan); }
+  .callout-yellow { border-color: var(--neon-yellow); }
+  .callout-yellow::before { background: var(--neon-yellow); }
+  .callout-pink { border-color: var(--neon-pink); }
+  .callout-pink::before { background: var(--neon-pink); }
+  .callout-green { border-color: var(--neon-green); }
+  .callout-green::before { background: var(--neon-green); }
+  .callout-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .callout-cyan .callout-tag { color: var(--neon-cyan); }
+  .callout-yellow .callout-tag { color: var(--neon-yellow); }
+  .callout-pink .callout-tag { color: var(--neon-pink); }
+  .callout-green .callout-tag { color: var(--neon-green); }
+  .callout p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+  .callout strong { color: var(--text-main); }
+  .callout em { font-style: italic; }
+
+  /* ===== DIVIDERS ===== */
+  .chapter-divider {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 60px 0;
+    opacity: 0.3;
+  }
+  .divider-line { flex:1; height:1px; background: currentColor; }
+  .divider-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+  }
+
+  /* ===== QUIZ SECTION ===== */
+  .quiz-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,230,0,0.2);
+    border-radius: 8px;
+    padding: 30px;
+    margin: 40px 0;
+  }
+  .quiz-title {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: var(--neon-yellow);
+    letter-spacing: 0.05em;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .quiz-question {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .quiz-q {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--text-main);
+  }
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .quiz-opt {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    text-align: left;
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+  .quiz-opt:hover { border-color: rgba(0,255,245,0.3); color: var(--text-main); }
+  .quiz-opt.correct { border-color: var(--neon-green); color: var(--neon-green); background: rgba(0,255,136,0.08); }
+  .quiz-opt.wrong { border-color: var(--neon-pink); color: var(--neon-pink); background: rgba(255,45,120,0.08); }
+  .quiz-feedback {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    padding: 10px 15px;
+    border-radius: 3px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb { background: rgba(0,255,136,0.1); color: var(--neon-green); border-left: 3px solid var(--neon-green); }
+  .quiz-feedback.wrong-fb { background: rgba(255,45,120,0.1); color: var(--neon-pink); border-left: 3px solid var(--neon-pink); }
+
+  /* ===== FUNCTION BADGE GRID ===== */
+  .badge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 25px 0;
+  }
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 30px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+  .badge:hover {
+    border-color: var(--badge-color, var(--neon-cyan));
+    background: rgba(0,0,0,0.5);
+    box-shadow: 0 0 20px rgba(0,255,245,0.1);
+    color: var(--badge-color, var(--neon-cyan));
+  }
+  .badge-icon { font-size: 1.2rem; }
+  .badge-detail {
+    display: none;
+    background: var(--bg-card);
+    border: 1px solid var(--badge-color, var(--neon-cyan));
+    border-radius: 6px;
+    padding: 20px 25px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    line-height: 1.75;
+    color: var(--text-dim);
+  }
+  .badge-detail.show { display: block; }
+  .badge-detail strong { color: var(--text-main); }
+  .badge-detail-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--badge-color, var(--neon-cyan));
+    margin-bottom: 10px;
+  }
+
+  /* ===== BONE TYPES TABLE ===== */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9rem;
+  }
+  .data-table th {
+    background: rgba(0,0,0,0.4);
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--neon-cyan);
+    border-bottom: 2px solid var(--panel-border);
+  }
+  .data-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-dim);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .data-table tr:hover td { background: rgba(0,255,245,0.03); color: var(--text-main); }
+  .data-table td:first-child { color: var(--text-main); font-weight: 700; }
+  .data-table .highlight { color: var(--neon-yellow) !important; font-weight: 700; }
+
+  /* ===== SECTION BACKGROUNDS ===== */
+  .ch-1 { background: linear-gradient(180deg, #050510, #080818); }
+  .ch-2 { background: linear-gradient(180deg, #080818, #060614); }
+  .ch-3 { background: linear-gradient(180deg, #060614, #07070f); }
+  .ch-4 { background: linear-gradient(180deg, #07070f, #08080d); }
+  .ch-5 { background: linear-gradient(180deg, #08080d, #050510); }
+
+  /* Grid decorations */
+  .grid-bg {
+    position: absolute;
+    top:0; left:0; right:0; bottom:0;
+    background-image:
+      linear-gradient(rgba(0,255,245,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,245,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ===== FLOATING PARTICLES ===== */
+  .particle-container {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat var(--dur) ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+  @keyframes particleFloat {
+    0% { opacity:0; transform: translateY(100vh) scale(0); }
+    10% { opacity: var(--op); }
+    90% { opacity: var(--op); }
+    100% { opacity:0; transform: translateY(-20px) scale(1); }
+  }
+
+  /* ===== ACCIDENT TYPES INTERACTIVE ===== */
+  .accident-showcase {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 30px 0;
+  }
+  .accident-tabs {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    background: rgba(0,0,0,0.3);
+  }
+  .accident-tab {
+    flex-shrink: 0;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .accident-tab:hover { color: var(--text-main); }
+  .accident-tab.active {
+    color: var(--neon-cyan);
+    border-bottom-color: var(--neon-cyan);
+    background: rgba(0,255,245,0.05);
+  }
+  .accident-content { display: none; padding: 30px; }
+  .accident-content.active { display: block; }
+  .accident-content h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    color: var(--neon-cyan);
+  }
+  .accident-content .acc-def {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+  .accident-content .acc-def strong { color: var(--text-main); }
+  .examples-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 15px;
+  }
+  .example-chip {
+    background: rgba(0,255,245,0.06);
+    border: 1px solid rgba(0,255,245,0.2);
+    border-radius: 4px;
+    padding: 12px 15px;
+    font-size: 0.85rem;
+    color: var(--neon-cyan);
+    font-weight: 600;
+  }
+  .example-chip .chip-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===== PROGRESS TRACKER ===== */
+  .progress-bar-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    z-index: 2000;
+    background: rgba(255,255,255,0.05);
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: rgba(0,0,0,0.8);
+    border-top: 1px solid rgba(0,255,245,0.15);
+    padding: 50px 30px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    letter-spacing: 0.1em;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px var(--neon-cyan);
+    margin-bottom: 10px;
+  }
+  .footer-sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+  }
+  .footer-info {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 2;
+  }
+  .footer-info strong { color: var(--neon-yellow); }
+  .footer-divider {
+    width: 100px;
+    height: 1px;
+    background: var(--panel-border);
+    margin: 20px auto;
+  }
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+    letter-spacing: 0.2em;
+  }
+
+  /* ===== ANIMATIONS ON SCROLL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible { opacity:1; transform:translateX(0); }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+  /* ===== MOLECULE ANIMATIONS ===== */
+  .mini-mol {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.8rem;
+    vertical-align: middle;
+  }
+  .mol-atom {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    animation: atomPulse 2s ease-in-out infinite;
+  }
+  .mol-bond { width: 12px; height: 2px; background: rgba(255,255,255,0.3); }
+  @keyframes atomPulse {
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(1.3); opacity:0.8; }
+  }
+
+  /* ===== WORD DEFINITION TOOLTIP ===== */
+  .def-word {
+    color: var(--neon-yellow);
+    font-weight: 700;
+    cursor: help;
+    border-bottom: 1px dashed var(--neon-yellow);
+    position: relative;
+  }
+  .def-word:hover::after {
+    content: attr(data-def);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    border: 1px solid var(--neon-yellow);
+    color: var(--text-main);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    white-space: nowrap;
+    z-index: 100;
+    max-width: 300px;
+    white-space: normal;
+    line-height: 1.5;
+  }
+
+  /* ===== RESPONSIVENESS ===== */
+  @media (max-width: 768px) {
+    .manga-panels-2, .manga-panels-3, .manga-panels-big {
+      grid-template-columns: 1fr;
+    }
+    .chapter-header { flex-direction: column; }
+    nav { padding: 10px 15px; }
+    .nav-links { display: none; }
+    .speech-scene { flex-direction: column; }
+    .accident-tabs { flex-direction: column; }
+  }
+
+  /* ===== NEON TEXT UTILITIES ===== */
+  .text-cyan { color: var(--neon-cyan); }
+  .text-yellow { color: var(--neon-yellow); }
+  .text-pink { color: var(--neon-pink); }
+  .text-green { color: var(--neon-green); }
+  .text-orange { color: var(--neon-orange); }
+  .text-purple { color: var(--neon-purple); }
+
+  /* ===== SPECIAL EFFECT: SCAN LINE ===== */
+  .scanlines {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events: none;
+    z-index: 9000;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+  }
+
+  @keyframes pulse {
+    0%,100%{ opacity:0.6; }
+    50%{ opacity:1; }
+  }
+
+  /* ===== BIG BONE SVG ANIMATIONS ===== */
+  .bone-animated {
+    animation: boneFloat 4s ease-in-out infinite;
+  }
+  @keyframes boneFloat {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-8px) rotate(2deg); }
+    66% { transform: translateY(4px) rotate(-1deg); }
+  }
+
+  /* Interactive highlight */
+  .interactive-hint {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    text-align: center;
+    margin: 15px 0 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Section subtitle */
+  .section-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: 0.05em;
+    margin-bottom: 15px;
+  }
+  .section-body {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-dim);
+    max-width: 800px;
+  }
+  .section-body strong { color: var(--text-main); }
+
+</style>
+</head>
+<body>
+
+<!-- SCAN LINES EFFECT -->
+<div class="scanlines"></div>
+
+<!-- FLOATING PARTICLES -->
+<div class="particle-container" id="particles"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-container">
+  <div class="progress-bar-fill" id="progressBar"></div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div id="loading">
+  <div class="loading-bone">🦴</div>
+  <div class="loading-text">A CARREGAR A SAGA DOS OSSOS...</div>
+  <div class="loading-bar-container">
+    <div class="loading-bar"></div>
+  </div>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <div class="nav-logo">🦴 OSSUS</div>
+  <div class="nav-links">
+    <a href="#chapter1" class="nav-link">Definição</a>
+    <a href="#chapter2" class="nav-link">Funções</a>
+    <a href="#chapter3" class="nav-link">Classificação</a>
+    <a href="#chapter4" class="nav-link">Desenvolvimento</a>
+    <a href="#chapter5" class="nav-link">Acidentes</a>
+    <a href="#quiz" class="nav-link">Quiz</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <div class="stars" id="stars"></div>
+  <div class="grid-bg"></div>
+
+  <div class="manga-vol">DemilMed-UL • Vol. 01 • 2026</div>
+
+  <div class="manga-title-wrapper">
+    <div class="manga-title">OSSUS</div>
+    <div class="manga-subtitle">A Saga do Esqueleto Vivo</div>
+  </div>
+
+  <!-- Animated molecule -->
+  <div class="molecule-hero">
+    <div class="mol-orbit mol-orbit-1"><div class="mol-electron e1"></div></div>
+    <div class="mol-orbit mol-orbit-2"><div class="mol-electron e2"></div></div>
+    <div class="mol-orbit mol-orbit-3"><div class="mol-electron e3"></div></div>
+    <div class="mol-nucleus">🦴</div>
+  </div>
+
+  <p class="hero-description">
+    Bem-vindo, <strong>Guerreiro da Medicina</strong>. Nesta jornada épica, vais descobrir os segredos mais profundos dos ossos — desde os átomos de cálcio que dançam nas suas malhas até ao seu papel nas batalhas do corpo humano. Sem pré-requisitos. Apenas coragem.
+  </p>
+
+  <a href="#chapter1" class="btn-start">⚔️ Iniciar a Saga</a>
+</section>
+
+<!-- ===================== CHAPTER 1: DEFINIÇÃO ===================== -->
+<section id="chapter1" class="chapter ch-1">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+
+    <div class="chapter-header reveal">
+      <div>
+        <div class="chapter-number text-cyan">01</div>
+        <div class="chapter-tag" style="background:rgba(0,255,245,0.1);color:var(--neon-cyan);">Capítulo I</div>
+        <div class="chapter-title-main" style="color:var(--neon-cyan);">O Que É Um Osso?</div>
+        <div class="chapter-lead">
+          Antes de lutar, precisas de conhecer o teu aliado. O osso não é apenas uma peça rígida que encontras no museu — é um órgão <em>vivo</em>, pulsante e cheio de segredos moleculares.
+        </div>
+      </div>
+    </div>
+
+    <!-- Manga speech bubble scene -->
+    <div class="speech-scene reveal">
+      <div class="character-wrap">
+        <div class="character-emoji">🧙‍♂️</div>
+        <div class="character-name text-yellow">MESTRE GALILEUS</div>
+      </div>
+      <div class="bubble bubble-yellow" style="flex:2">
+        <div class="bubble-speaker">Mestre Galileus</div>
+        "Jovem estudante! Diz-me: o que é um osso para ti?"
+      </div>
+    </div>
+
+    <div class="speech-scene reveal">
+      <div class="bubble bubble-cyan" style="flex:2; text-align:right;">
+        <div class="bubble-speaker">Estudante Dexter</div>
+        "É... aquela coisa dura que aparece quando alguém parte o braço, senhor..."
+      </div>
+      <div class="character-wrap">
+        <div class="character-emoji">🧑‍🎓</div>
+        <div class="character-name text-cyan">DEXTER</div>
+      </div>
+    </div>
+
+    <div class="speech-scene reveal">
+      <div class="character-wrap">
+        <div class="character-emoji">🧙‍♂️</div>
+        <div class="character-name text-yellow">MESTRE GALILEUS</div>
+      </div>
+      <div class="bubble bubble-yellow" style="flex:2">
+        <div class="bubble-speaker">Mestre Galileus</div>
+        "ERRADO! — Bem... parcialmente. Um osso é muito mais! É um <em>órgão vivo</em>, classificado como tecido conjuntivo especializado, com células próprias, vasos sanguíneos, nervos, e capacidade de se regenerar. Vê bem!"
+      </div>
+    </div>
+
+    <!-- Definition panel -->
+    <div class="manga-panels manga-panels-big reveal">
+      <div class="panel panel-cyan" style="padding:35px;">
+        <div class="panel-label">Definição Formal</div>
+        <div class="panel-title" style="font-size:1.3rem; margin-bottom:20px;">Osso — Orgão do Tecido Conjuntivo Especializado</div>
+        <div class="panel-body" style="font-size:1rem;">
+          <p>O <strong>osso</strong> (do latim <span class="def-word" data-def="'Os, ossis' em latim = osso. Em grego, 'osteon' (ὀστέον) = osso. Daí vêm termos como OSTEOporose, OSTEOblasto, etc.">os / osteon</span>) é um <strong>órgão</strong> — ou seja, uma unidade funcional composta por vários tipos de tecidos — que forma o <strong>esqueleto</strong> dos vertebrados.</p>
+          <br>
+          <p>É classificado como um <strong>tecido conjuntivo especializado</strong>, o que significa que compartilha a mesma origem do tecido que preenche e conecta estruturas, mas evoluiu para ter propriedades mecânicas únicas: é extremamente duro, mas não frágil como vidro.</p>
+          <br>
+          <p>O segredo está na sua <strong>matriz extracelular mineralizada</strong> — uma mistura genial entre fibras de <span class="def-word" data-def="Proteína fibrosa mais abundante do corpo. Dá resistência à tração. O tendão é quase todo colagénio.">colagénio tipo I</span> (que dão flexibilidade) e cristais de <span class="def-word" data-def="Hidroxiapatite = Ca₁₀(PO₄)₆(OH)₂. O mineral que endurece o osso. Igual ao esmalte dentário!">hidroxiapatite</span> — Ca₁₀(PO₄)₆(OH)₂ — (que dão dureza).</p>
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:3px;">
+        <div class="panel panel-yellow">
+          <div class="panel-label">Etimologia</div>
+          <div class="panel-title">Osteon (ὀστέον)</div>
+          <div class="panel-body">Do grego <strong>"osteon"</strong> = osso. Origina termos como: osteologia, osteoblasto, osteoporose, osteoclasto, osteoartrite.</div>
+        </div>
+        <div class="panel panel-pink">
+          <div class="panel-label">Conceito-chave</div>
+          <div class="panel-title">Osso é Vivo! 🔥</div>
+          <div class="panel-body">Ao contrário do que parece, o osso está em constante <strong>remodelação</strong>. As suas células nunca param de trabalhar — demolindo e reconstruindo como operários incansáveis.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Composition breakdown -->
+    <div class="chapter-divider text-cyan">
+      <div class="divider-line"></div>
+      <div class="divider-text">Composição do Osso</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="section-label">A Receita Secreta</div>
+    <div class="section-title" style="color:var(--neon-yellow);">O Que Há Dentro de Um Osso?</div>
+    <div class="section-body reveal" style="margin-bottom:30px;">
+      Imagina que o osso é como <strong>betão armado</strong>: o ferro (colagénio) dá resistência à tração e o cimento (hidroxiapatite) dá dureza à compressão. Juntos, criam um material que resiste a forças enormes sem quebrar facilmente.
+    </div>
+
+    <div class="manga-panels manga-panels-3 reveal">
+      <div class="panel panel-green" style="grid-column:span 1;">
+        <div class="panel-label">~35% do peso seco</div>
+        <div class="panel-title">Matriz Orgânica</div>
+        <div class="panel-body">
+          <strong>90-95%</strong> é colagénio tipo I — fibras resistentes à tração. Os restantes 5-10% são proteoglicanos, glicoproteínas, e proteínas morfogenéticas (BMP — Bone Morphogenetic Proteins — Proteínas Morfogenéticas Ósseas). Responsável pela <strong>flexibilidade</strong>.
+        </div>
+      </div>
+      <div class="panel panel-orange">
+        <div class="panel-label">~65% do peso seco</div>
+        <div class="panel-title">Matriz Inorgânica</div>
+        <div class="panel-body">
+          Cristais de <strong>hidroxiapatite</strong> Ca₁₀(PO₄)₆(OH)₂ depositam-se entre as fibras de colagénio. Responsável pela <strong>dureza</strong> e resistência à compressão.
+        </div>
+      </div>
+      <div class="panel panel-purple">
+        <div class="panel-label">Componente vivo</div>
+        <div class="panel-title">Células Ósseas</div>
+        <div class="panel-body">
+          <strong>Osteoblastos</strong> (constroem), <strong>Osteócitos</strong> (mantêm e sentem pressão), <strong>Osteoclastos</strong> (destroem para remodelar). Um exército celular em acção constante!
+        </div>
+      </div>
+    </div>
+
+    <!-- Cell war scene -->
+    <div class="callout callout-cyan reveal" style="margin-top:40px;">
+      <div class="callout-tag">⚔️ A Grande Batalha Celular</div>
+      <p>Imagina uma batalha épica no interior do osso: os <strong>Osteoblastos</strong> (construtores) depositam continuamente nova matriz óssea. Os <strong>Osteoclastos</strong> (destruidores) dissolvem o osso antigo com ácido e enzimas. Os <strong>Osteócitos</strong> (sentinelas) sentem as forças mecânicas e coordenam toda a operação. Este equilíbrio constante chama-se <strong>remodelação óssea</strong> — e dura a vida toda!</p>
+    </div>
+
+    <div class="speech-scene reveal" style="margin-top:40px;">
+      <div class="character-wrap">
+        <div class="character-emoji villain">💀</div>
+        <div class="character-name text-pink">OSTEOCLAST-X</div>
+      </div>
+      <div class="bubble bubble-pink">
+        <div class="bubble-speaker">Osteoclast-X (o Destruidor)</div>
+        "MUAHAHAHA! Secreto ácido clorídrico (HCl) e enzimas proteolíticas para dissolver a matriz óssea! Sem mim, os ossos tornam-se velhos e quebradiços! Sou necessário, admite isso!"
+      </div>
+    </div>
+
+    <div class="speech-scene reveal">
+      <div class="bubble bubble-green" style="text-align:right;">
+        <div class="bubble-speaker">Osteoblast-Pro (o Construtor)</div>
+        "E eu reconstruo tudo o que tu destróis, usando colágeno e cálcio do sangue! Juntos somos a remodelação óssea — 10% do esqueleto é renovado A CADA ANO! Estamos em equilíbrio, inimigo."
+      </div>
+      <div class="character-wrap">
+        <div class="character-emoji sage">🏗️</div>
+        <div class="character-name text-green">OSTEOBLAST-PRO</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== CHAPTER 2: FUNÇÕES ===================== -->
+<section id="chapter2" class="chapter ch-2">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+
+    <div class="chapter-header reveal">
+      <div>
+        <div class="chapter-number text-yellow">02</div>
+        <div class="chapter-tag" style="background:rgba(255,230,0,0.1);color:var(--neon-yellow);">Capítulo II</div>
+        <div class="chapter-title-main" style="color:var(--neon-yellow);">Os Superpoderes do Osso</div>
+        <div class="chapter-lead">
+          Um herói tem sempre vários poderes. O osso não é excepção — desempenha seis funções fundamentais que garantem a sobrevivência do organismo.
+        </div>
+      </div>
+    </div>
+
+    <p class="section-body reveal" style="margin-bottom:30px;">
+      Clica em cada superpoder para descobrir os detalhes e a importância clínica de cada função:
+    </p>
+
+    <div class="badge-grid reveal" id="badgeGrid">
+      <button class="badge" style="--badge-color:var(--neon-cyan)" onclick="toggleBadge('b1')">
+        <span class="badge-icon">🛡️</span> Suporte e Sustentação
+      </button>
+      <button class="badge" style="--badge-color:var(--neon-pink)" onclick="toggleBadge('b2')">
+        <span class="badge-icon">⚙️</span> Movimento
+      </button>
+      <button class="badge" style="--badge-color:var(--neon-yellow)" onclick="toggleBadge('b3')">
+        <span class="badge-icon">🔒</span> Protecção
+      </button>
+      <button class="badge" style="--badge-color:var(--neon-green)" onclick="toggleBadge('b4')">
+        <span class="badge-icon">🧪</span> Reservatório Mineral
+      </button>
+      <button class="badge" style="--badge-color:var(--neon-orange)" onclick="toggleBadge('b5')">
+        <span class="badge-icon">🩸</span> Hematopoiese
+      </button>
+      <button class="badge" style="--badge-color:var(--neon-purple)" onclick="toggleBadge('b6')">
+        <span class="badge-icon">🧬</span> Função Endócrina
+      </button>
+    </div>
+
+    <div id="b1" class="badge-detail" style="--badge-color:var(--neon-cyan); border-color:var(--neon-cyan)">
+      <div class="badge-detail-title">🛡️ SUPORTE E SUSTENTAÇÃO — O Esqueleto como Andaime</div>
+      <p>O sistema esquelético actua como o <strong>andaime estrutural</strong> do corpo. Sem ele, seríamos uma massa de tecidos moles sem forma definida — como uma mochila cheia de gelatina. Os <strong>206 ossos do adulto</strong> formam o esqueleto axial (crânio, coluna, caixa torácica) e o esqueleto apendicular (membros e cinturas). <br><br> <strong>Clinicamente importante:</strong> A perda de densidade mineral óssea (<em>osteoporose</em>) compromete directamente esta função, tornando a coluna vertebral vulnerável a fracturas de compressão espontâneas — mesmo sem trauma externo.</p>
+    </div>
+    <div id="b2" class="badge-detail" style="--badge-color:var(--neon-pink); border-color:var(--neon-pink)">
+      <div class="badge-detail-title">⚙️ MOVIMENTO — Alavancas Biológicas</div>
+      <p>Os ossos actuam como <strong>alavancas rígidas</strong> sobre as quais os músculos exercem forças através dos tendões. O sistema músculo-esquelético funciona segundo os princípios da <strong>biomecânica das alavancas</strong> (1ª, 2ª e 3ª classes). A articulação é o ponto de fulcro, o osso é a barra rígida, o músculo é a força motriz e o segmento a mover é a carga. <br><br><strong>Clinicamente importante:</strong> Fracturas deslocadas alteram a geometria das alavancas, comprometendo a função motora. A redução e fixação cirúrgica restauram a mecânica normal.</p>
+    </div>
+    <div id="b3" class="badge-detail" style="--badge-color:var(--neon-yellow); border-color:var(--neon-yellow)">
+      <div class="badge-detail-title">🔒 PROTECÇÃO — Armadura Natural</div>
+      <p>Certas estruturas ósseas funcionam como <strong>caixas protectoras</strong> de órgãos vitais: o <strong>crânio</strong> protege o encéfalo, a <strong>caixa torácica</strong> protege o coração e pulmões, a <strong>coluna vertebral</strong> envolve a medula espinhal, e a <strong>pélvis</strong> abriga os órgãos pélvicos. <br><br><strong>Clinicamente importante:</strong> Fracturas de crânio podem comprimir o encéfalo (hematoma extradural). Fracturas costais múltiplas podem lesar o pulmão (pneumotórax) ou o coração (contusão cardíaca). A protecção óssea tem limites — traumas de alta energia superam-nos.</p>
+    </div>
+    <div id="b4" class="badge-detail" style="--badge-color:var(--neon-green); border-color:var(--neon-green)">
+      <div class="badge-detail-title">🧪 RESERVATÓRIO MINERAL — O Banco de Cálcio</div>
+      <p>O osso armazena <strong>99% do cálcio total do corpo</strong> e <strong>85% do fósforo</strong> sob a forma de hidroxiapatite. Este banco mineral é regulado por três hormonas principais: o <strong>PTH</strong> (Parathyroid Hormone — Hormona Paratiroideia) que aumenta a calcémia mobilizando cálcio do osso; a <strong>calcitonina</strong> que diminui a calcémia inibindo os osteoclastos; e a <strong>vitamina D (calcitriol)</strong> que aumenta a absorção intestinal de cálcio. <br><br><strong>Clinicamente importante:</strong> A hipocalcémia (↓Ca²⁺ no sangue) pode causar tetania e convulsões. A hipercalcémia (↑Ca²⁺) causa fraqueza, poliúria e confusão — "bones, groans, moans and stones" é o mnemónico clássico do hiperparatiroidismo.</p>
+    </div>
+    <div id="b5" class="badge-detail" style="--badge-color:var(--neon-orange); border-color:var(--neon-orange)">
+      <div class="badge-detail-title">🩸 HEMATOPOIESE — A Fábrica de Sangue</div>
+      <p>A <span class="def-word" data-def="Haima (αἷμα) = sangue; poiesis (ποίησις) = criação. Hematopoiese = criação de sangue.">hematopoiese</span> é a produção de células sanguíneas (eritrócitos, leucócitos e plaquetas) que ocorre na <strong>medula óssea vermelha</strong>, localizada principalmente nos ossos chatos e nas epífises dos ossos longos. <br><br>No adulto, os principais locais são: esterno, ilíaco, costelas, vértebras e epífises proximais do fémur e húmero. Nos recém-nascidos, toda a medula é vermelha (activa). Com a idade, a medula amarela (gordurosa) vai substituindo a vermelha nos ossos longos. <br><br><strong>Clinicamente importante:</strong> A biópsia de medula óssea é fundamental no diagnóstico de leucemias, linfomas e anemias aplásticas. O transplante de medula (HSCT — Hematopoietic Stem Cell Transplantation) é tratamento curativo de muitas hemopatias malignas.</p>
+    </div>
+    <div id="b6" class="badge-detail" style="--badge-color:var(--neon-purple); border-color:var(--neon-purple)">
+      <div class="badge-detail-title">🧬 FUNÇÃO ENDÓCRINA — O Osso como Glândula</div>
+      <p>Descoberta relativamente recente e surpreendente: o osso produz <strong>osteocalcina</strong> — uma hormona que regula o metabolismo da glicose, a fertilidade masculina e até funções cognitivas. Os osteoblastos secretam também <strong>FGF-23</strong> (Fibroblast Growth Factor 23 — Factor de Crescimento de Fibroblastos 23), que regula os níveis de fósforo e a vitamina D nos rins. <br><br><strong>Clinicamente importante:</strong> Em doenças renais crónicas, o FGF-23 está elevado, contribuindo para a doença óssea renal (osteodistrofia renal). A osteocalcina é estudada como possível marcador de risco metabólico e de doença de Alzheimer.</p>
+    </div>
+
+    <!-- Summary visual -->
+    <div class="chapter-divider text-yellow" style="margin-top:50px;">
+      <div class="divider-line"></div>
+      <div class="divider-text">Resumo Épico</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="callout callout-yellow reveal">
+      <div class="callout-tag">⚡ Resumo das 6 Funções</div>
+      <p>
+        <strong>1. Sustentação</strong> — andaime estrutural do corpo. 
+        <strong>2. Movimento</strong> — alavancas para os músculos. 
+        <strong>3. Protecção</strong> — armadura de órgãos vitais. 
+        <strong>4. Reservatório mineral</strong> — 99% do Ca²⁺ corporal. 
+        <strong>5. Hematopoiese</strong> — produção de sangue na medula. 
+        <strong>6. Função endócrina</strong> — produz osteocalcina e FGF-23. 
+        <br><br>Sem o osso, não há postura, nem movimento, nem sangue, nem minerais equilibrados. <em>Ele é o herói silencioso do corpo.</em>
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== CHAPTER 3: CLASSIFICAÇÃO ===================== -->
+<section id="chapter3" class="chapter ch-3">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+
+    <div class="chapter-header reveal">
+      <div>
+        <div class="chapter-number text-pink">03</div>
+        <div class="chapter-tag" style="background:rgba(255,45,120,0.1);color:var(--neon-pink);">Capítulo III</div>
+        <div class="chapter-title-main" style="color:var(--neon-pink);">Classificação dos Ossos</div>
+        <div class="chapter-lead">
+          Nem todos os heróis têm a mesma forma. Os ossos classificam-se por forma, localização e estrutura. Conhecer cada tipo é fundamental para identificar o osso certo no local certo!
+        </div>
+      </div>
+    </div>
+
+    <!-- Classification 1: By Shape -->
+    <div class="section-label reveal">Classificação 1 de 3</div>
+    <div class="section-title reveal" style="color:var(--neon-pink);">Classificação Morfológica (por Forma)</div>
+    <p class="section-body reveal" style="margin-bottom:30px;">
+      A classificação mais utilizada em anatomia. Cada forma está relacionada com a <strong>função principal</strong> do osso — forma e função andam sempre juntas na natureza.
+    </p>
+
+    <div class="class-grid reveal">
+      <!-- Ossos Longos -->
+      <div class="class-card" style="--card-color:var(--neon-cyan)">
+        <div class="class-card-icon">📏</div>
+        <div class="class-card-name">Ossos Longos</div>
+        <div class="class-card-subtitle">Ossa longa</div>
+        <div class="class-card-desc">O comprimento supera largura e espessura. Têm uma <strong>diáfise</strong> (corpo cilíndrico — do grego "diaphysis" = crescimento através de) e duas <strong>epífises</strong> (extremidades — do grego "epiphysis" = crescimento sobre). Funcionam como alavancas para o movimento.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Fémur, Tíbia, Fíbula, Húmero, Rádio, Ulna, Falanges</span></div>
+      </div>
+
+      <!-- Ossos Curtos -->
+      <div class="class-card" style="--card-color:var(--neon-yellow)">
+        <div class="class-card-icon">🎲</div>
+        <div class="class-card-name">Ossos Curtos</div>
+        <div class="class-card-subtitle">Ossa brevia</div>
+        <div class="class-card-desc">As três dimensões são aproximadamente iguais (forma cúbica). Proporcionam <strong>absorção de choques e amortecimento</strong> em articulações que suportam carga repetida. Têm uma fina camada de osso compacto em volta de osso esponjoso.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Ossos do carpo (punho) e tarso (tornozelo) — ex: calcâneo, astrágalo</span></div>
+      </div>
+
+      <!-- Ossos Planos -->
+      <div class="class-card" style="--card-color:var(--neon-pink)">
+        <div class="class-card-icon">🛡️</div>
+        <div class="class-card-name">Ossos Planos</div>
+        <div class="class-card-subtitle">Ossa plana</div>
+        <div class="class-card-desc">Largos e achatados, com superfície ampla para <strong>protecção e inserção muscular</strong>. Formados por duas lâminas de osso compacto (tábua externa e interna) com díploe (osso esponjoso) entre elas. A medula vermelha localiza-se na díploe.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Parietal, Frontal, Esterno, Escápula, Ilíaco, Costelas</span></div>
+      </div>
+
+      <!-- Ossos Irregulares -->
+      <div class="class-card" style="--card-color:var(--neon-green)">
+        <div class="class-card-icon">🧩</div>
+        <div class="class-card-name">Ossos Irregulares</div>
+        <div class="class-card-subtitle">Ossa irregularia</div>
+        <div class="class-card-desc">Forma complexa que não se encaixa nas outras categorias. Geralmente têm múltiplos pontos de articulação, inserção muscular e função de protecção de estruturas nobres. Cada um é único na sua forma.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Vértebras, Maxilar, Mandíbula, Etmoide, Esfenóide, Calcâneo</span></div>
+      </div>
+
+      <!-- Ossos Sesamoides -->
+      <div class="class-card" style="--card-color:var(--neon-orange)">
+        <div class="class-card-icon">🌱</div>
+        <div class="class-card-name">Ossos Sesamóides</div>
+        <div class="class-card-subtitle">Ossa sesamoidea</div>
+        <div class="class-card-desc">Desenvolvem-se dentro de tendões, próximo de articulações. O nome vem do grego "sesamon" = sésamo (a semente) — pela sua semelhança com grãos de sésamo. Protegem o tendão e aumentam a eficiência mecânica muscular ao alterar o ângulo de tracção.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Patela (rótula) — o maior sesamóide; sesamóides do hálux</span></div>
+      </div>
+
+      <!-- Ossos Pneumáticos -->
+      <div class="class-card" style="--card-color:var(--neon-purple)">
+        <div class="class-card-icon">💨</div>
+        <div class="class-card-name">Ossos Pneumáticos</div>
+        <div class="class-card-subtitle">Ossa pneumatica</div>
+        <div class="class-card-desc">Contêm cavidades cheias de <strong>ar</strong> — os <em>seios paranasais</em> — revestidas por mucosa. Reduzem o peso do crânio, ressoam a voz e aquecem/humidificam o ar inspirado. Do grego "pneuma" = ar, vento.</div>
+        <div class="class-card-example">📌 Exemplos: <span>Frontal, Maxilar, Etmoide, Esfenóide (os 4 ossos com seios paranasais)</span></div>
+      </div>
+    </div>
+
+    <!-- Classification 2: By Structure -->
+    <div class="chapter-divider text-pink" style="margin-top:60px;">
+      <div class="divider-line"></div>
+      <div class="divider-text">Classificação Estrutural</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="section-label reveal">Classificação 2 de 3</div>
+    <div class="section-title reveal" style="color:var(--neon-orange);">Classificação Estrutural (por Arquitectura Interna)</div>
+
+    <div class="manga-panels manga-panels-2 reveal" style="margin-top:20px;">
+      <div class="panel panel-orange" style="padding:30px;">
+        <div class="panel-label">Tecido Ósseo Compacto</div>
+        <div class="panel-title" style="font-size:1.2rem;">🧱 Osso Cortical / Compacto</div>
+        <div class="panel-body">
+          <p>É a camada <strong>externa e densa</strong> de quase todos os ossos. Organizado em unidades cilíndricas chamadas <strong>Sistemas de Havers</strong> ou <strong>Ósteons</strong> — estruturas concêntricas com um canal central (canal de Havers) por onde passam vasos sanguíneos e nervos.</p>
+          <br>
+          <p>Tem <strong>baixa porosidade (5-10%)</strong>, alta resistência mecânica e forma a "casca" exterior dos ossos. Constitui 80% da massa óssea total do adulto.</p>
+          <br>
+          <p>📌 Localização: diáfise dos ossos longos e camada externa de todos os ossos.</p>
+        </div>
+      </div>
+      <div class="panel panel-purple" style="padding:30px;">
+        <div class="panel-label">Tecido Ósseo Esponjoso</div>
+        <div class="panel-title" style="font-size:1.2rem;">🕸️ Osso Trabecular / Esponjoso</div>
+        <div class="panel-body">
+          <p>É a parte <strong>interna e porosa</strong>, formada por trabéculas — lamelas ósseas entrecruzadas em torno de espaços (lacunas) preenchidos por medula óssea. Do latim "trabecula" = pequena viga.</p>
+          <br>
+          <p>Tem <strong>alta porosidade (50-90%)</strong>, e as trabéculas orientam-se segundo as linhas de força mecânica aplicadas ao osso (linhas de tensão e compressão) — uma obra-prima da engenharia biológica.</p>
+          <br>
+          <p>📌 Localização: epífises dos ossos longos, interior dos ossos curtos e planos. É metabolicamente mais activo que o cortical.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-green reveal">
+      <div class="callout-tag">💡 Porquê isto importa clinicamente?</div>
+      <p>A <strong>osteoporose</strong> afecta preferencialmente o osso trabecular — que é mais activo metabolicamente — antes de atacar o cortical. Por isso, fracturas vertebrais (corpo vertebral = quase todo trabecular) e fracturas do colo do fémur (epífise = trabecular) são as mais comuns e perigosas na osteoporose. A densitometria óssea (DEXA) mede o T-score de ambos os compartimentos, mas as fracturas de baixo impacto ocorrem sobretudo em regiões trabeculares.</p>
+    </div>
+
+    <!-- Classification 3: By Location -->
+    <div class="chapter-divider text-green" style="margin-top:60px;">
+      <div class="divider-line"></div>
+      <div class="divider-text">Classificação Topográfica</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="section-label reveal">Classificação 3 de 3</div>
+    <div class="section-title reveal" style="color:var(--neon-green);">Classificação Topográfica (por Localização)</div>
+
+    <div class="manga-panels manga-panels-2 reveal" style="margin-top:20px;">
+      <div class="panel panel-cyan">
+        <div class="panel-label">Esqueleto Axial</div>
+        <div class="panel-title">🏛️ Axis — O Eixo Central (80 ossos)</div>
+        <div class="panel-body">
+          Do latim "axis" = eixo. Forma o eixo longitudinal do corpo. Inclui: <strong>crânio</strong> (22 ossos), <strong>coluna vertebral</strong> (26 ossos: 7 cervicais + 12 torácicos + 5 lombares + sacro + cóccix), <strong>caixa torácica</strong> (25 ossos: esterno + 12 pares de costelas) e <strong>osso hióide</strong>. Função: protecção e sustentação axial.
+        </div>
+      </div>
+      <div class="panel panel-pink">
+        <div class="panel-label">Esqueleto Apendicular</div>
+        <div class="panel-title">💪 Appendix — Os Membros (126 ossos)</div>
+        <div class="panel-body">
+          Do latim "appendere" = pendurar, anexar. Inclui os <strong>membros superiores</strong> (64 ossos: cíngulo escapular + braço + antebraço + mão), os <strong>membros inferiores</strong> (62 ossos: cíngulo pélvico + coxa + perna + pé). Função: locomoção, manipulação do ambiente e suporte do peso corporal.
+        </div>
+      </div>
+    </div>
+
+    <!-- Anatomy of a long bone with SVG -->
+    <div class="chapter-divider text-cyan" style="margin-top:60px;">
+      <div class="divider-line"></div>
+      <div class="divider-text">Anatomia do Osso Longo</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="section-title reveal" style="color:var(--neon-cyan);">Mapa de Um Osso Longo</div>
+
+    <div class="bone-display reveal">
+      <!-- SVG of a long bone -->
+      <div class="bone-svg-wrap">
+        <svg width="200" height="400" viewBox="0 0 200 400" class="bone-animated">
+          <!-- Epífise proximal -->
+          <ellipse cx="100" cy="55" rx="65" ry="45" fill="#f5e6c8" opacity="0.9"/>
+          <ellipse cx="100" cy="55" rx="55" ry="38" fill="#ffd580" opacity="0.5"/>
+          <!-- Trabéculas na epífise -->
+          <line x1="70" y1="30" x2="90" y2="80" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <line x1="85" y1="20" x2="100" y2="75" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <line x1="110" y1="25" x2="105" y2="78" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <line x1="125" y1="35" x2="112" y2="76" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <!-- Cartilagem epifisária (growth plate) -->
+          <rect x="52" y="93" width="96" height="8" rx="4" fill="#00fff5" opacity="0.6"/>
+          <!-- Metáfise superior -->
+          <path d="M55,101 Q47,120 45,145 L155,145 Q153,120 145,101 Z" fill="#f5e6c8" opacity="0.9"/>
+          <!-- Diáfise -->
+          <rect x="45" y="145" width="110" height="110" fill="#f5e6c8" opacity="0.9"/>
+          <!-- Medula canal -->
+          <rect x="68" y="155" width="64" height="90" rx="8" fill="#ff6b00" opacity="0.4"/>
+          <!-- Metáfise inferior -->
+          <path d="M45,255 Q47,280 55,299 L145,299 Q153,280 155,255 Z" fill="#f5e6c8" opacity="0.9"/>
+          <!-- Growth plate inferior -->
+          <rect x="52" y="299" width="96" height="8" rx="4" fill="#00fff5" opacity="0.6"/>
+          <!-- Epífise distal -->
+          <ellipse cx="100" cy="345" rx="65" ry="45" fill="#f5e6c8" opacity="0.9"/>
+          <ellipse cx="100" cy="345" rx="55" ry="38" fill="#ffd580" opacity="0.5"/>
+          <!-- Trabéculas na epífise distal -->
+          <line x1="75" y1="320" x2="90" y2="365" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <line x1="95" y1="310" x2="100" y2="368" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <line x1="115" y1="320" x2="108" y2="365" stroke="#e0c090" stroke-width="1.5" opacity="0.7"/>
+          <!-- Periósteo outline -->
+          <ellipse cx="100" cy="55" rx="67" ry="47" fill="none" stroke="#ff2d78" stroke-width="2" stroke-dasharray="5,3" opacity="0.8"/>
+          <rect x="43" y="145" width="114" height="110" rx="3" fill="none" stroke="#ff2d78" stroke-width="2" stroke-dasharray="5,3" opacity="0.8"/>
+          <ellipse cx="100" cy="345" rx="67" ry="47" fill="none" stroke="#ff2d78" stroke-width="2" stroke-dasharray="5,3" opacity="0.8"/>
+          <!-- Nutrient foramen arrow -->
+          <circle cx="155" cy="200" r="4" fill="#ffe600"/>
+          <line x1="155" y1="200" x2="175" y2="200" stroke="#ffe600" stroke-width="2"/>
+          <!-- Labels via text (abbreviated, full in key) -->
+          <text x="100" y="57" text-anchor="middle" fill="#050510" font-size="8" font-weight="bold" font-family="Rajdhani">EPÍFISE</text>
+          <text x="100" y="200" text-anchor="middle" fill="#050510" font-size="8" font-weight="bold" font-family="Rajdhani">DIÁFISE</text>
+          <text x="100" y="346" text-anchor="middle" fill="#050510" font-size="8" font-weight="bold" font-family="Rajdhani">EPÍFISE</text>
+          <text x="100" y="97" text-anchor="middle" fill="#00fff5" font-size="7" font-family="Rajdhani">CARTILAGEM</text>
+          <text x="100" y="197" text-anchor="middle" fill="#ff6b00" font-size="7" font-family="Rajdhani">CAVIDADE</text>
+          <text x="100" y="207" text-anchor="middle" fill="#ff6b00" font-size="7" font-family="Rajdhani">MEDULAR</text>
+        </svg>
+        <div class="interactive-hint">▲ O osso flutua! Magia da biologia ▲</div>
+      </div>
+
+      <!-- Anatomy key -->
+      <div style="flex:1; min-width:250px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Estrutura</th>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Epífise <span class="highlight">(proximal / distal)</span></td>
+              <td>Extremidades alargadas. Formadas por osso esponjoso revestido por cartilagem articular. Do grego "epi" = sobre + "physis" = crescimento.</td>
+            </tr>
+            <tr>
+              <td>Diáfise</td>
+              <td>Corpo/eixo cilíndrico. Formado por osso compacto com cavidade medular central. Do grego "dia" = através + "physis".</td>
+            </tr>
+            <tr>
+              <td>Metáfise</td>
+              <td>Região de transição entre diáfise e epífise. Local de crescimento ósseo na criança. Do grego "meta" = depois + "physis".</td>
+            </tr>
+            <tr>
+              <td>Cartilagem Epifisária <span class="highlight">(growth plate)</span></td>
+              <td>Disco de cartilagem hialina que permite o crescimento longitudinal. Funde-se (ossifica) com a maturidade (~18-25 anos).</td>
+            </tr>
+            <tr>
+              <td>Periósteo</td>
+              <td>Membrana fibrosa que reveste externamente o osso. Contém osteoblastos, nervos e vasos. Essencial para reparação de fracturas. Do grego "peri" = em volta + "osteon".</td>
+            </tr>
+            <tr>
+              <td>Endósteo</td>
+              <td>Membrana que reveste internamente a cavidade medular. Também contém osteoblastos e osteoclastos. Do grego "endo" = dentro.</td>
+            </tr>
+            <tr>
+              <td>Cavidade Medular</td>
+              <td>Espaço central da diáfise. Contém medula óssea (vermelha nos jovens, amarela nos adultos).</td>
+            </tr>
+            <tr>
+              <td>Canal Nutrício <span class="highlight">(foramen)</span></td>
+              <td>Abertura na cortical por onde a artéria nutriente penetra. Em regra, orientado para longe da epífise mais activa (mnemónico clínico).</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== CHAPTER 4: DESENVOLVIMENTO ===================== -->
+<section id="chapter4" class="chapter ch-4">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+
+    <div class="chapter-header reveal">
+      <div>
+        <div class="chapter-number text-green">04</div>
+        <div class="chapter-tag" style="background:rgba(0,255,136,0.1);color:var(--neon-green);">Capítulo IV</div>
+        <div class="chapter-title-main" style="color:var(--neon-green);">A Origem dos Ossos — Ossificação</div>
+        <div class="chapter-lead">
+          Como é que um bebé, cheio de cartilagem mole, se torna um adulto com 206 ossos duros? A resposta está em dois processos épicos de ossificação que acontecem desde as primeiras semanas de vida embrionária.
+        </div>
+      </div>
+    </div>
+
+    <div class="speech-scene reveal">
+      <div class="character-wrap">
+        <div class="character-emoji">🧙‍♂️</div>
+        <div class="character-name text-yellow">MESTRE GALILEUS</div>
+      </div>
+      <div class="bubble bubble-yellow">
+        <div class="bubble-speaker">Mestre Galileus</div>
+        "Dexter, imagina que o corpo é uma obra de construção. Existem dois tipos de empreiteiros ósseos: os que constroem directamente sobre o terreno, e os que primeiro fazem um modelo em argila (cartilagem) e depois substituem por pedra (osso). São a ossificação intramembranosa e a endocondral!"
+      </div>
+    </div>
+
+    <!-- Timeline of ossification -->
+    <div class="section-title reveal" style="color:var(--neon-green); margin-top:40px; margin-bottom:10px;">Cronologia da Ossificação — Do Embrião ao Adulto</div>
+
+    <div class="timeline reveal" style="margin-top:30px;">
+
+      <div class="tl-item tl-cyan">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ Semana 3-4 de Gestação</div>
+        <div class="tl-title">Surgem as Células-Mãe: Células Mesenquimatosas</div>
+        <div class="tl-body">Tudo começa com células mesenquimatosas — células-tronco indiferenciadas derivadas do <strong>mesoderma</strong> (a camada média do embrião). Elas vão diferenciar-se em dois caminhos diferentes, consoante o osso que irão formar.</div>
+      </div>
+
+      <div class="tl-item tl-yellow">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ Semana 6-7 de Gestação</div>
+        <div class="tl-title">VIA 1 — Ossificação Intramembranosa (Direta)</div>
+        <div class="tl-body">
+          Do latim "intra" = dentro + "membrana". As células mesenquimatosas <strong>diferenciam-se directamente em osteoblastos</strong>, sem passar pela fase de cartilagem. Formam uma rede (membrana fibrosa) onde depositam a matriz óssea inicial — chamada <strong>osteoide</strong> (proto-osso). A mineralização transforma o osteoide em osso verdadeiro.
+          <br><br>
+          <strong>Ossos formados desta forma:</strong> ossos chatos do crânio (frontal, parietal, occipital, temporal), mandíbula, clavícula (parcialmente).
+          <br><br>
+          <strong>Relevância clínica:</strong> As fontanelas (moles da cabeça do bebé) são áreas ainda não ossificadas deste processo. A fontanela anterior fecha aos ~18 meses. Fontanela abaulada = hipertensão intracraniana; fontanela afundada = desidratação.
+        </div>
+      </div>
+
+      <div class="tl-item tl-pink">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ Semana 8 de Gestação em diante</div>
+        <div class="tl-title">VIA 2 — Ossificação Endocondral (Indireta)</div>
+        <div class="tl-body">
+          Do grego "endo" = dentro + "chondros" = cartilagem. É o processo mais complexo e mais comum. Ocorre em <strong>5 etapas cronológicas</strong> precisas:
+          <br><br>
+          <strong>1.</strong> As células mesenquimatosas diferenciam-se em <em>condroblastos</em>, que formam um <strong>modelo em cartilagem hialina</strong> com a forma do futuro osso.
+          <br><strong>2.</strong> A cartilagem cresce (prolifera) e os condrócitos no centro <em>hipertrofiam</em> (incham e morrem), deixando cavidades.
+          <br><strong>3.</strong> Vasos sanguíneos invadem as cavidades, trazendo osteoblastos. Forma-se o <strong>centro de ossificação primário</strong> (na diáfise).
+          <br><strong>4.</strong> O osso cresce dos centros primários em direcção às epífises, onde, após o nascimento, formam-se os <strong>centros de ossificação secundários</strong>.
+          <br><strong>5.</strong> Persiste cartilagem articular nas extremidades e a <strong>placa de crescimento (fise)</strong> entre epífise e metáfise — que permite o crescimento longitudinal até à maturidade esquelética.
+          <br><br>
+          <strong>Ossos formados assim:</strong> todos os ossos longos, curtos, irregulares — a grande maioria do esqueleto.
+        </div>
+      </div>
+
+      <div class="tl-item tl-orange">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ Nascimento até ~25 anos</div>
+        <div class="tl-title">Crescimento Longitudinal — A Magia da Placa Epifisária</div>
+        <div class="tl-body">
+          A <strong>fise</strong> (placa de crescimento) é uma zona de cartilagem hialina organizada em colunas. Do lado epifisário, os condrócitos proliferam (dividem-se). Do lado diafisário, são destruídos e substituídos por osso. Este processo coordenado — regido pela <strong>GH</strong> (Growth Hormone — Hormona do Crescimento), <strong>IGF-1</strong> (Insulin-like Growth Factor 1 — Factor de Crescimento semelhante à Insulina tipo 1), estrogénios e androgénios — faz a criança crescer.
+          <br><br>
+          <strong>Relevância clínica:</strong> A fractura que atravessa a placa de crescimento (classificação de Salter-Harris) é uma emergência pediátrica — pode comprometer o crescimento futuro do membro. Estrogénios em excesso (puberdade precoce) fecham prematuramente a fise, resultando em baixa estatura.
+        </div>
+      </div>
+
+      <div class="tl-item tl-purple">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ ~18-25 anos</div>
+        <div class="tl-title">Fusão Epifisária — O Fim do Crescimento</div>
+        <div class="tl-body">
+          Os estrogénios (tanto em mulheres como em homens — via aromatização de androgénios) sinalizam o <strong>encerramento das fisias</strong>. A cartilagem de crescimento é completamente substituída por osso. O crescimento longitudinal cessa. A ordem de fusão é previsível e tem valor forense (determinação da idade óssea por radiografia). Exemplo: fise distal do rádio fecha ~17-19 anos na mulher e ~19-21 no homem.
+        </div>
+      </div>
+
+      <div class="tl-item tl-green">
+        <div class="tl-dot"></div>
+        <div class="tl-time">⏱️ Vida toda</div>
+        <div class="tl-title">Remodelação Óssea — O Ciclo Sem Fim</div>
+        <div class="tl-body">
+          Mesmo após o crescimento, o osso é continuamente remodelado. O ciclo de remodelação dura ~3-4 meses e envolve: <strong>Reabsorção</strong> (osteoclastos dissolvem osso velho em ~2-3 semanas) → <strong>Fase de inversão</strong> (células de transição) → <strong>Formação</strong> (osteoblastos constroem osso novo em ~3 meses). Este ciclo renova ~10% do esqueleto por ano. Com a idade, a formação fica atrás da reabsorção → perda de massa óssea → osteoporose.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Comparison table -->
+    <div class="callout callout-cyan reveal">
+      <div class="callout-tag">📊 Comparação: Intramembranosa vs Endocondral</div>
+      <p>
+        <strong>Intramembranosa:</strong> Directo (mesênquima → osso), sem modelo cartilaginoso, forma ossos chatos do crânio e mandíbula, mais rápida.
+        <br><br>
+        <strong>Endocondral:</strong> Indirecto (mesênquima → cartilagem → osso), forma a maioria dos ossos do corpo, envolve placa de crescimento e permite crescimento longitudinal, regida por GH, IGF-1 e hormonas sexuais.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== CHAPTER 5: ACIDENTES ÓSSEOS ===================== -->
+<section id="chapter5" class="chapter ch-5">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+
+    <div class="chapter-header reveal">
+      <div>
+        <div class="chapter-number text-orange">05</div>
+        <div class="chapter-tag" style="background:rgba(255,107,0,0.1);color:var(--neon-orange);">Capítulo V</div>
+        <div class="chapter-title-main" style="color:var(--neon-orange);">Acidentes Ósseos</div>
+        <div class="chapter-lead">
+          Em anatomia, "acidente" não significa desastre — significa uma <em>irregularidade da superfície óssea</em>. São as saliências, depressões, orifícios e canais que existem nos ossos e que têm sempre uma função específica. Conhecer os acidentes é ler a linguagem do osso!
+        </div>
+      </div>
+    </div>
+
+    <!-- Definition speech bubble -->
+    <div class="speech-scene reveal">
+      <div class="character-wrap">
+        <div class="character-emoji sage">🧙‍♂️</div>
+        <div class="character-name text-yellow">MESTRE GALILEUS</div>
+      </div>
+      <div class="bubble bubble-yellow">
+        <div class="bubble-speaker">Mestre Galileus — Definição de Acidente Ósseo</div>
+        "Dexter, imagina um osso como uma paisagem geográfica. Tem montanhas (saliências), vales (depressões), grutas (cavidades), rios subterrâneos (canais) e buracos (orifícios). Cada uma dessas 'irregularidades topográficas' tem um nome anatómico e uma função — inserção de músculo, passagem de nervo, articulação com outro osso. Isso é um acidente ósseo!"
+      </div>
+    </div>
+
+    <div class="callout callout-pink reveal">
+      <div class="callout-tag">📖 Definição Formal de Acidente Ósseo</div>
+      <p>
+        <strong>Acidente ósseo</strong> é qualquer <strong>irregularidade da superfície de um osso</strong> — seja uma saliência (eminência), uma depressão (fossa), um orifício (foramen) ou um canal — que serve para: (1) inserção de tendões ou ligamentos, (2) passagem de vasos e nervos, (3) articulação com outros ossos, ou (4) marcação de limites anatómicos. Em inglês: <em>bone markings</em> ou <em>bony landmarks</em>.
+      </p>
+    </div>
+
+    <!-- Accidents interactive tabs -->
+    <div class="section-title reveal" style="color:var(--neon-orange); margin-top:40px; margin-bottom:20px;">Classificação dos Acidentes Ósseos</div>
+
+    <div class="accident-showcase reveal">
+      <div class="accident-tabs">
+        <div class="accident-tab active" onclick="showAccident('a1', this)">🏔️ Eminências</div>
+        <div class="accident-tab" onclick="showAccident('a2', this)">🕳️ Depressões</div>
+        <div class="accident-tab" onclick="showAccident('a3', this)">🌀 Orifícios e Canais</div>
+        <div class="accident-tab" onclick="showAccident('a4', this)">📐 Bordos e Ângulos</div>
+        <div class="accident-tab" onclick="showAccident('a5', this)">🦴 Extremidades</div>
+      </div>
+
+      <!-- EMINÊNCIAS -->
+      <div id="a1" class="accident-content active">
+        <h3>🏔️ Eminências — As Montanhas do Osso</h3>
+        <div class="acc-def">
+          As <strong>eminências</strong> (do latim "eminere" = sobressair) são <strong>saliências ou projecções</strong> da superfície óssea. Cada tipo tem características e funções específicas. São o local de <strong>inserção de músculos, tendões e ligamentos</strong> ou servem para articulações.
+        </div>
+
+        <table class="data-table" style="margin-bottom:20px;">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplos Anatómicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Processo / Apófise</td>
+              <td>Qualquer projecção óssea bem delimitada. "Apophysis" (grego) = crescimento lateral. Termo genérico.</td>
+              <td>Processo mastóide (temporal), apófise estilóide (rádio), processo coracóide (escápula)</td>
+            </tr>
+            <tr>
+              <td>Espinha / Espícula</td>
+              <td>Projecção <strong>pontiaguda</strong> e estreita. Do latim "spina" = espinho. Geralmente local de inserção ligamentar.</td>
+              <td>Espinha ilíaca ântero-superior (EIAS), espinha da escápula, espinhas nasais, espinha isquiática</td>
+            </tr>
+            <tr>
+              <td>Tuberosidade</td>
+              <td>Saliência <strong>larga e rugosa</strong>. Do latim "tuberosus" = cheio de protuberâncias. Inserção de tendões potentes.</td>
+              <td>Tuberosidade tibial (inserção do tendão patelar), tuberosidade radial (inserção do bicípite), tuberosidade isquiática</td>
+            </tr>
+            <tr>
+              <td>Tubérculo</td>
+              <td>Saliência <strong>pequena e arredondada</strong>. Diminutivo de "tuber" (grego/latim) = caroço.</td>
+              <td>Tubérculo maior e menor do húmero, tubérculo do escafóide, tubérculos costais</td>
+            </tr>
+            <tr>
+              <td>Trocânter</td>
+              <td>Saliência <strong>muito grande</strong>. Exclusiva dos ossos da coxa. Do grego "trochos" = roda, corredor. Inserção de músculos rotatórios da coxa.</td>
+              <td>Trocânter maior e menor do fémur</td>
+            </tr>
+            <tr>
+              <td>Crista</td>
+              <td>Saliência <strong>alongada com bordo rugoso</strong>, como uma crista de montanha. Inserção de músculos planos extensos.</td>
+              <td>Crista ilíaca, crista tibial (canela), crista occipital, crista do sacro</td>
+            </tr>
+            <tr>
+              <td>Côndilo</td>
+              <td>Superfície articular <strong>arredondada</strong>. Do grego "kondylos" = nó, articulação. Para articulação com outro osso.</td>
+              <td>Côndilos do fémur, do húmero, do occipital (articulação crânio-C1)</td>
+            </tr>
+            <tr>
+              <td>Epicôndilo</td>
+              <td>Saliência <strong>acima</strong> ("epi-") do côndilo. Inserção de músculos e ligamentos. Não é superfície articular.</td>
+              <td>Epicôndilo medial e lateral do húmero — cotovelo de tenista/golfista</td>
+            </tr>
+            <tr>
+              <td>Cabeça (Caput)</td>
+              <td>Extremidade arredondada que <strong>articula</strong> com outra superfície côncava. Do latim "caput" = cabeça.</td>
+              <td>Cabeça do fémur (articula com acetábulo), cabeça do húmero, cabeça do rádio</td>
+            </tr>
+            <tr>
+              <td>Maléolo</td>
+              <td>Projecção arredondada do tornozelo. Do latim "malleolus" = pequeno martelo.</td>
+              <td>Maléolo medial (tíbia) e lateral (fíbula/peróneo) — as "bolas do tornozelo"</td>
+            </tr>
+            <tr>
+              <td>Linha</td>
+              <td>Crista baixa e pouco saliente. Inserção de músculos. Menos pronunciada que a crista.</td>
+              <td>Linhas nucais (occipital), linha áspera do fémur (linea aspera), linhas glúteas do ilíaco</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-pink" style="margin-top:10px;">
+          <div class="callout-tag">⚡ Relevância Clínica das Eminências</div>
+          <p>As eminências são marcos anatómicos (landmarks) essenciais na clínica: a <strong>EIAS</strong> (Espinha Ilíaca Ântero-Superior) é ponto de referência para medir comprimento de membros; a <strong>tuberosidade tibial</strong> é onde insere o tendão patelar (sua inflamação = doença de Osgood-Schlatter em adolescentes); o <strong>epicôndilo lateral do húmero</strong> é o ponto doloroso na epicondilite lateral ("cotovelo de tenista"); o <strong>trocânter maior</strong> é palpável no trauma do quadril e referência para injecções intramusculares.</p>
+        </div>
+      </div>
+
+      <!-- DEPRESSÕES -->
+      <div id="a2" class="accident-content">
+        <h3>🕳️ Depressões — Os Vales do Osso</h3>
+        <div class="acc-def">
+          As <strong>depressões</strong> são <strong>reentrâncias ou escavações</strong> na superfície óssea. Podem ser superficiais ou profundas, lisas ou rugosas. Servem para: acolher estruturas vizinhas (músculos, nervos, vasos), formar superfícies articulares côncavas, ou marcar sulcos de passagem de estruturas.
+        </div>
+
+        <table class="data-table" style="margin-bottom:20px;">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplos Anatómicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Fossa</td>
+              <td>Depressão <strong>ampla e rasa</strong>. Do latim "fossa" = buraco, cova. Pode acolher outro osso (superfície articular) ou um músculo (de origem).</td>
+              <td>Fossa glenoidal (escápula, articula com cabeça do húmero), fossa ilíaca, fossa infra-espinhosa da escápula, fossa craniana anterior/média/posterior</td>
+            </tr>
+            <tr>
+              <td>Incisura / Chanfradura</td>
+              <td>Entalhe ou <strong>escavação no bordo</strong> do osso. Do latim "incidere" = cortar dentro. Pode ser ponto de passagem de nervos e vasos.</td>
+              <td>Incisura troclear do cúbito (articula com tróclea do húmero), incisura ciática maior e menor, incisura isquiática</td>
+            </tr>
+            <tr>
+              <td>Sulco / Goteira</td>
+              <td>Depressão <strong>estreita e alongada</strong> (como um canal superficial aberto). Do latim "sulcus" = sulco, sillon. Passagem de tendões, vasos ou nervos.</td>
+              <td>Sulco intertubercular do húmero (goteira bicipital — passagem do tendão da cabeça longa do bicípite), sulco do nervo radial, sulco costal</td>
+            </tr>
+            <tr>
+              <td>Cavidade Glenóide / Acetábulo</td>
+              <td>Depressão articular especial: <strong>côncava</strong> que recebe uma cabeça óssea. "Glenóide" do grego "glene" = pupila/cavidade. "Acetábulo" do latim = pequena taça de vinagre.</td>
+              <td>Cavidade glenóide da escápula (recebe cabeça do húmero), Acetábulo do ilíaco (recebe cabeça do fémur)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="examples-list">
+          <div class="example-chip">
+            <div class="chip-label">CLÍNICA</div>
+            Fossa coronóide do húmero — impressão visível nas radiografias; fractura implica desvio do fragmento
+          </div>
+          <div class="example-chip">
+            <div class="chip-label">CLÍNICA</div>
+            Sulco intertubercular — tendinite bicipital dói à palpação deste sulco com o braço rodado
+          </div>
+          <div class="example-chip">
+            <div class="chip-label">CLÍNICA</div>
+            Acetábulo — displasia acetabular na criança leva a luxação do quadril (triagem com manobras de Ortolani/Barlow)
+          </div>
+        </div>
+      </div>
+
+      <!-- ORIFÍCIOS E CANAIS -->
+      <div id="a3" class="accident-content">
+        <h3>🌀 Orifícios e Canais — As Passagens Secretas</h3>
+        <div class="acc-def">
+          Os <strong>orifícios</strong> (foramina — plural de foramen) e os <strong>canais</strong> são aberturas e túneis no osso que servem de passagem para vasos sanguíneos (artérias, veias) e nervos. A sua localização é constante e clinicamente muito importante — a compressão de um nervo num canal é uma causa frequente de dor e paralisia.
+        </div>
+
+        <table class="data-table" style="margin-bottom:20px;">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplos Anatómicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Foramen (Orifício)</td>
+              <td>Abertura <strong>circular ou oval</strong> que atravessa o osso. Do latim "foramen" = buraco, de "forare" = furar. Passagem de nervos e vasos.</td>
+              <td>Foramen magno (occipital — passa medula oblonga + artérias vertebrais), foramen óptico (esfenóide — nervo II), foramina de conjugação (vértebras — raízes nervosas), foramen obturado (ilíaco)</td>
+            </tr>
+            <tr>
+              <td>Canal</td>
+              <td>Túnel <strong>alongado</strong> dentro do osso ou formado entre ossos. Mais comprido que um foramen. Passagem de nervos e/ou vasos.</td>
+              <td>Canal do carpo (túnel do carpo — passa nervo mediano + tendões flexores), canal do nervo facial (rochedo do temporal), canal carotídeo (temporal — passa carótida interna), canal vertebral</td>
+            </tr>
+            <tr>
+              <td>Canal Nutrício</td>
+              <td>Canal específico que atravessa a cortical para nutrir o osso com a <strong>artéria nutriente</strong>. Presente em todos os ossos longos.</td>
+              <td>Canal nutrício do fémur (orientado para cima — para longe do joelho), canal nutrício da tíbia, do úmero</td>
+            </tr>
+            <tr>
+              <td>Meato</td>
+              <td>Passagem ou orifício de entrada num canal. Do latim "meatus" = caminho, passagem.</td>
+              <td>Meato acústico externo e interno (temporal — nervo auditivo + facial pelo interno), meatos nasais (nas fossas nasais)</td>
+            </tr>
+            <tr>
+              <td>Seio</td>
+              <td>Cavidade <strong>oca</strong> dentro de um osso pneumático, revestida por mucosa. Do latim "sinus" = curva, recesso.</td>
+              <td>Seio frontal, maxilar (maior — sinusite mais comum), esfenoidal, etmoidal</td>
+            </tr>
+            <tr>
+              <td>Cela</td>
+              <td>Cavidade óssea especial em forma de sela. Do latim "sella" = sela de montar.</td>
+              <td>Sela túrcica (esfenóide) — aloja a hipófise (glândula pituitária). Adenomas hipofisários alargam esta cavidade (visível em RM).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-cyan" style="margin-top:10px;">
+          <div class="callout-tag">⚡ Relevância Clínica dos Forâmina e Canais</div>
+          <p>
+            <strong>Síndrome do túnel do carpo:</strong> compressão do nervo mediano no canal do carpo → dor, formigueiro e fraqueza na mão (tratamento: libertação cirúrgica do ligamento transverso do carpo). <br><br>
+            <strong>Hérnias discais</strong> comprimem raízes nervosas nos foramina de conjugação → radiculopatia (ciática é a mais comum — L4/L5/S1).<br><br>
+            <strong>Sinusite maxilar</strong> é a inflamação mais comum dos seios paranasais — dor facial, congestão, cefaleia. O osso com o maior seio paranasal é o <em>maxilar</em>.
+          </p>
+        </div>
+      </div>
+
+      <!-- BORDOS E ÂNGULOS -->
+      <div id="a4" class="accident-content">
+        <h3>📐 Bordos e Ângulos — As Arestas do Osso</h3>
+        <div class="acc-def">
+          Os <strong>bordos</strong> são as <strong>margens ou arestas</strong> de um osso, e os <strong>ângulos</strong> são os pontos onde dois bordos se encontram. São importantes para descrever a morfologia do osso, identificar linhas de sutura, inserções de músculos e como marcos para cirurgia e exame físico.
+        </div>
+
+        <table class="data-table" style="margin-bottom:20px;">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplos Anatómicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bordo / Margem</td>
+              <td>Limite lateral de um osso plano ou irregular. Pode ser rugoso (inserção muscular) ou liso (articulação).</td>
+              <td>Bordo medial e lateral da escápula, bordos da mandíbula, bordos da tíbia (bordo anterior = crista da tíbia)</td>
+            </tr>
+            <tr>
+              <td>Ângulo</td>
+              <td>Canto ou junção entre dois bordos. Serve como landmark para medir ângulos radiológicos.</td>
+              <td>Ângulo inferior da escápula (palpável — rotação escapular), ângulo mandibular (ângulo da mandíbula — palpável externamente), ângulo de Louís (esterno — ao nível da 2ª costela)</td>
+            </tr>
+            <tr>
+              <td>Lábio</td>
+              <td>Bordo em forma de <strong>lábio ou lâmina</strong> de uma crista que serve de inserção muscular.</td>
+              <td>Lábio externo e interno da crista ilíaca, lábios da linha áspera do fémur</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-yellow">
+          <div class="callout-tag">💡 Ângulo de Louis — Landmark Essencial</div>
+          <p>O <strong>ângulo do esterno</strong> (ângulo de Louis ou ângulo esternal) é a junção entre o manúbrio e o corpo do esterno. É palpável e corresponde ao nível da <strong>2ª costela</strong> — ponto de referência para contar costelas na auscultação cardíaca. É também o nível da carina (bifurcação da traqueia), do arco aórtico e da veia ázigos. Memorizar este landmark é obrigatório!</p>
+        </div>
+      </div>
+
+      <!-- EXTREMIDADES -->
+      <div id="a5" class="accident-content">
+        <h3>🦴 Extremidades — As Pontas do Osso</h3>
+        <div class="acc-def">
+          As <strong>extremidades</strong> são as <strong>porções terminais</strong> dos ossos — sobretudo dos ossos longos. Podem ser arredondadas (cabeças), triangulares, com processos especiais, ou côncavas/convexas para articulação.
+        </div>
+
+        <table class="data-table" style="margin-bottom:20px;">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Exemplos Anatómicos</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Colo / Pescoço (Collum)</td>
+              <td>Porção estreitada entre a cabeça e o corpo do osso. Do latim "collum" = pescoço.</td>
+              <td>Colo do fémur (fractura clássica em idosos — osteoporose), colo cirúrgico e anatómico do húmero, colo da fíbula (risco de lesão do nervo peroneal)</td>
+            </tr>
+            <tr>
+              <td>Cabeça (Caput)</td>
+              <td>Extremidade arredondada que articula com outra estrutura. Já descrito em eminências — repete-se aqui como extremidade especial dos ossos longos.</td>
+              <td>Cabeça do fémur, húmero, rádio, cúbito (cabeça da ulna), metatarsos</td>
+            </tr>
+            <tr>
+              <td>Plataforma / Platô</td>
+              <td>Superfície <strong>plana</strong> de extremidade para articulação com osso adjacente. Do francês "plateau" = planalto.</td>
+              <td>Plataforma tibial (articula com côndilos do fémur). Fractura da plataforma tibial = urgência ortopédica.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-pink">
+          <div class="callout-tag">💀 O Caso do Colo do Fémur</div>
+          <p>A <strong>fractura do colo do fémur</strong> é uma das fracturas mais importantes da medicina! Afecta sobretudo idosas com osteoporose após uma queda trivial. A artéria retinacular — que passa ao longo do colo — pode ser lesada, causando <strong>necrose avascular da cabeça do fémur</strong>. O tratamento é cirúrgico urgente (artroplastia ou osteossíntese). Mortalidade em 1 ano: 20-30% em idosos. A prevenção começa no manejo da osteoporose décadas antes!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final classification summary -->
+    <div class="chapter-divider text-orange" style="margin-top:60px;">
+      <div class="divider-line"></div>
+      <div class="divider-text">Mapa Completo</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="section-title reveal" style="color:var(--neon-yellow);">Mapa Mental dos Acidentes Ósseos</div>
+
+    <div class="manga-panels" style="grid-template-columns:1fr 1fr 1fr; margin-top:20px;" class="reveal">
+      <div class="panel panel-cyan reveal">
+        <div class="panel-label">Tipo 1</div>
+        <div class="panel-title">🏔️ Eminências</div>
+        <div class="panel-body"><strong>Saliências:</strong> Processo, Espinha, Tuberosidade, Tubérculo, Trocânter, Crista, Côndilo, Epicôndilo, Cabeça, Maléolo, Linha</div>
+      </div>
+      <div class="panel panel-pink reveal">
+        <div class="panel-label">Tipo 2</div>
+        <div class="panel-title">🕳️ Depressões</div>
+        <div class="panel-body"><strong>Reentrâncias:</strong> Fossa, Incisura/Chanfradura, Sulco/Goteira, Cavidade Glenóide, Acetábulo</div>
+      </div>
+      <div class="panel panel-yellow reveal">
+        <div class="panel-label">Tipo 3</div>
+        <div class="panel-title">🌀 Orifícios/Canais</div>
+        <div class="panel-body"><strong>Passagens:</strong> Foramen, Canal, Canal Nutrício, Meato, Seio Paranasal, Sela Túrcica</div>
+      </div>
+      <div class="panel panel-green reveal">
+        <div class="panel-label">Tipo 4</div>
+        <div class="panel-title">📐 Bordos/Ângulos</div>
+        <div class="panel-body"><strong>Arestas e Cantos:</strong> Bordo, Margem, Ângulo, Lábio</div>
+      </div>
+      <div class="panel panel-orange reveal">
+        <div class="panel-label">Tipo 5</div>
+        <div class="panel-title">🦴 Extremidades</div>
+        <div class="panel-body"><strong>Porções Terminais:</strong> Colo, Cabeça (Caput), Plataforma (Platô)</div>
+      </div>
+      <div class="panel" style="border-left:3px solid var(--neon-purple);" class="reveal">
+        <div class="panel-label">Dica de Ouro</div>
+        <div class="panel-title" style="color:var(--neon-purple);">🎯 Como Memorizar</div>
+        <div class="panel-body">Num exame ou na clínica: <strong>identifica primeiro se é saliência, depressão ou abertura</strong>. Depois refina: é grande? pequena? rugosa? lisa? articular? Essa lógica permite deduzir o nome mesmo sem o memorizar!</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== QUIZ ===================== -->
+<section id="quiz" class="chapter" style="background:linear-gradient(180deg,#050510,#000);">
+  <div class="grid-bg"></div>
+  <div class="chapter-inner">
+    <div class="quiz-box reveal">
+      <div class="quiz-title">⚡ QUIZ FINAL — Prova a tua Sabedoria Óssea</div>
+
+      <!-- Q1 -->
+      <div class="quiz-question" id="q1">
+        <div class="quiz-q">1. Um osso é classificado como tecido conjuntivo. Por que razão é considerado um ÓRGÃO?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answerQuiz('q1',this,false,'Um órgão tem múltiplos tipos de tecidos — o osso tem tecido ósseo, cartilagem, nervos, vasos. Além disso, o osso produz hormonas (osteocalcina).')">A. Porque é muito duro e resistente</button>
+          <button class="quiz-opt" onclick="answerQuiz('q1',this,true,'Um órgão tem múltiplos tipos de tecidos — o osso tem tecido ósseo, cartilagem, nervos, vasos. Além disso, o osso produz hormonas (osteocalcina).')">B. Porque é composto por vários tipos de tecidos, tem vasos, nervos e funções específicas</button>
+          <button class="quiz-opt" onclick="answerQuiz('q1',this,false,'Um órgão tem múltiplos tipos de tecidos — o osso tem tecido ósseo, cartilagem, nervos, vasos. Além disso, o osso produz hormonas (osteocalcina).')">C. Porque tem células próprias (osteoblastos)</button>
+          <button class="quiz-opt" onclick="answerQuiz('q1',this,false,'Um órgão tem múltiplos tipos de tecidos — o osso tem tecido ósseo, cartilagem, nervos, vasos. Além disso, o osso produz hormonas (osteocalcina).')">D. Porque está presente em todos os vertebrados</button>
+        </div>
+        <div class="quiz-feedback" id="q1-fb"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question" id="q2">
+        <div class="quiz-q">2. A patela (rótula) é classificada morfologicamente como que tipo de osso?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answerQuiz('q2',this,false,'A patela é um osso sesamóide — desenvolve-se dentro do tendão do quadricípite e melhora a eficiência mecânica do músculo.')">A. Osso longo</button>
+          <button class="quiz-opt" onclick="answerQuiz('q2',this,false,'A patela é um osso sesamóide — desenvolve-se dentro do tendão do quadricípite e melhora a eficiência mecânica do músculo.')">B. Osso plano</button>
+          <button class="quiz-opt" onclick="answerQuiz('q2',this,true,'A patela é um osso sesamóide — desenvolve-se dentro do tendão do quadricípite e melhora a eficiência mecânica do músculo.')">C. Osso sesamóide</button>
+          <button class="quiz-opt" onclick="answerQuiz('q2',this,false,'A patela é um osso sesamóide — desenvolve-se dentro do tendão do quadricípite e melhora a eficiência mecânica do músculo.')">D. Osso irregular</button>
+        </div>
+        <div class="quiz-feedback" id="q2-fb"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question" id="q3">
+        <div class="quiz-q">3. Qual a diferença entre ossificação intramembranosa e endocondral?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answerQuiz('q3',this,false,'Na intramembranosa, o osso forma-se directamente de células mesenquimatosas (sem cartilagem). Na endocondral, o osso forma-se sobre um molde de cartilagem hialina.')">A. A intramembranosa ocorre nos ossos longos, a endocondral nos ossos chatos</button>
+          <button class="quiz-opt" onclick="answerQuiz('q3',this,true,'Na intramembranosa, o osso forma-se directamente de células mesenquimatosas (sem cartilagem). Na endocondral, o osso forma-se sobre um molde de cartilagem hialina.')">B. Na intramembranosa não há modelo cartilaginoso; na endocondral o osso substitui a cartilagem</button>
+          <button class="quiz-opt" onclick="answerQuiz('q3',this,false,'Na intramembranosa, o osso forma-se directamente de células mesenquimatosas (sem cartilagem). Na endocondral, o osso forma-se sobre um molde de cartilagem hialina.')">C. Apenas a endocondral envolve osteoblastos</button>
+          <button class="quiz-opt" onclick="answerQuiz('q3',this,false,'Na intramembranosa, o osso forma-se directamente de células mesenquimatosas (sem cartilagem). Na endocondral, o osso forma-se sobre um molde de cartilagem hialina.')">D. A intramembranosa é mais lenta e complexa</button>
+        </div>
+        <div class="quiz-feedback" id="q3-fb"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question" id="q4">
+        <div class="quiz-q">4. A "tuberosidade tibial" é um exemplo de que tipo de acidente ósseo?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answerQuiz('q4',this,false,'A tuberosidade é uma saliência larga e rugosa — uma eminência. É o local de inserção do tendão patelar. Não é uma depressão nem um orifício.')">A. Depressão (Fossa)</button>
+          <button class="quiz-opt" onclick="answerQuiz('q4',this,false,'A tuberosidade é uma saliência larga e rugosa — uma eminência. É o local de inserção do tendão patelar. Não é uma depressão nem um orifício.')">B. Orifício (Foramen)</button>
+          <button class="quiz-opt" onclick="answerQuiz('q4',this,true,'A tuberosidade é uma saliência larga e rugosa — uma eminência. É o local de inserção do tendão patelar. Não é uma depressão nem um orifício.')">C. Eminência (Saliência)</button>
+          <button class="quiz-opt" onclick="answerQuiz('q4',this,false,'A tuberosidade é uma saliência larga e rugosa — uma eminência. É o local de inserção do tendão patelar. Não é uma depressão nem um orifício.')">D. Canal</button>
+        </div>
+        <div class="quiz-feedback" id="q4-fb"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-question" id="q5" style="border-bottom:none; margin-bottom:0; padding-bottom:0;">
+        <div class="quiz-q">5. Por que razão a osteoporose afecta PRIMEIRO o osso trabecular e não o cortical?</div>
+        <div class="quiz-options">
+          <button class="quiz-opt" onclick="answerQuiz('q5',this,false,'O osso trabecular tem muito maior superfície de contacto e é metabolicamente mais activo. Por isso, sofre mais rapidamente os efeitos do desequilíbrio entre formação e reabsorção.')">A. Porque o cortical é mais rico em colagénio</button>
+          <button class="quiz-opt" onclick="answerQuiz('q5',this,false,'O osso trabecular tem muito maior superfície de contacto e é metabolicamente mais activo. Por isso, sofre mais rapidamente os efeitos do desequilíbrio entre formação e reabsorção.')">B. Porque o trabecular não tem osteoblastos</button>
+          <button class="quiz-opt" onclick="answerQuiz('q5',this,true,'O osso trabecular tem muito maior superfície de contacto e é metabolicamente mais activo. Por isso, sofre mais rapidamente os efeitos do desequilíbrio entre formação e reabsorção.')">C. Porque é mais poroso e metabolicamente mais activo, com maior superfície sujeita à remodelação</button>
+          <button class="quiz-opt" onclick="answerQuiz('q5',this,false,'O osso trabecular tem muito maior superfície de contacto e é metabolicamente mais activo. Por isso, sofre mais rapidamente os efeitos do desequilíbrio entre formação e reabsorção.')">D. Porque o cortical tem mais cálcio</button>
+        </div>
+        <div class="quiz-feedback" id="q5-fb"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">A Saga dos Ossos • Edição 2026</div>
+  <div class="footer-divider"></div>
+  <div class="footer-info">
+    <strong>Universidade Licungo (UL)</strong><br>
+    Curso de Medicina — 2º Ano<br>
+    Anatomia Humana • Unidade: Sistema Esquelético<br>
+    Ano Lectivo <strong>2026</strong>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-copy">© 2026 DemilMed-UL • Todos os direitos reservados • Made with 🦴 and ⚡</div>
+</footer>
+
+<script>
+// ===== LOADING SCREEN =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loading').classList.add('hidden');
+    setTimeout(() => {
+      document.getElementById('loading').style.display = 'none';
+    }, 800);
+  }, 2200);
+});
+
+// ===== STARS =====
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 120; i++) {
+  const star = document.createElement('div');
+  star.classList.add('star');
+  star.style.cssText = `
+    left: ${Math.random()*100}%;
+    top: ${Math.random()*100}%;
+    --dur: ${2+Math.random()*4}s;
+    --delay: ${Math.random()*4}s;
+    width: ${Math.random()>0.8?3:2}px;
+    height: ${Math.random()>0.8?3:2}px;
+  `;
+  starsContainer.appendChild(star);
+}
+
+// ===== FLOATING PARTICLES =====
+const colors = ['#00fff5','#ff2d78','#ffe600','#00ff88','#ff6b00','#bf00ff'];
+const pc = document.getElementById('particles');
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  const size = 2 + Math.random()*4;
+  p.style.cssText = `
+    left: ${Math.random()*100}%;
+    width: ${size}px; height: ${size}px;
+    background: ${c};
+    box-shadow: 0 0 ${size*3}px ${c};
+    --dur: ${8+Math.random()*12}s;
+    --delay: ${Math.random()*10}s;
+    --op: ${0.3+Math.random()*0.5};
+  `;
+  pc.appendChild(p);
+}
+
+// ===== NAV SHOW ON SCROLL =====
+const nav = document.getElementById('mainNav');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  if (y > 100) {
+    nav.classList.add('visible');
+  } else {
+    nav.classList.remove('visible');
+  }
+
+  // Progress bar
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = (y/docH)*100;
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  // Reveal on scroll
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .tl-item').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+
+  // Active nav link
+  const sections = ['chapter1','chapter2','chapter3','chapter4','chapter5','quiz'];
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const link = document.querySelector(`.nav-link[href="#${id}"]`);
+    if (link) {
+      if (rect.top <= 100 && rect.bottom > 100) {
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+      }
+    }
+  });
+
+  lastY = y;
+});
+
+// ===== BADGE TOGGLE =====
+function toggleBadge(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isShown = el.classList.contains('show');
+  document.querySelectorAll('.badge-detail').forEach(d => d.classList.remove('show'));
+  if (!isShown) el.classList.add('show');
+}
+
+// ===== ACCIDENT TABS =====
+function showAccident(id, tab) {
+  document.querySelectorAll('.accident-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.accident-tab').forEach(t => t.classList.remove('active'));
+  const content = document.getElementById(id);
+  if (content) content.classList.add('active');
+  tab.classList.add('active');
+}
+
+// ===== ACCORDION =====
+document.querySelectorAll('.accordion-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const item = header.parentElement;
+    const body = item.querySelector('.accordion-body');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.accordion-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.accordion-body').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  });
+});
+
+// ===== QUIZ =====
+function answerQuiz(qId, btn, correct, explanation) {
+  const question = document.getElementById(qId);
+  if (question.dataset.answered) return;
+  question.dataset.answered = '1';
+
+  const opts = question.querySelectorAll('.quiz-opt');
+  opts.forEach(opt => {
+    opt.disabled = true;
+    opt.style.cursor = 'default';
+  });
+
+  if (correct) {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    // Find correct one
+    const allOpts = question.querySelectorAll('.quiz-opt');
+    // Can't auto-mark correct since we'd need to know which one it is
+  }
+
+  const fb = document.getElementById(qId + '-fb');
+  fb.textContent = (correct ? '✅ Correcto! ' : '❌ Errado! ') + explanation;
+  fb.classList.add('show');
+  fb.classList.add(correct ? 'correct-fb' : 'wrong-fb');
+}
+
+// Trigger initial reveal
+setTimeout(() => {
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+}, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glândulas da Pele — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Nunito:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --bg2: #080d1a;
+    --panel: #0d1425;
+    --border: #1a2540;
+    --cyan: #00f5ff;
+    --pink: #ff2d78;
+    --yellow: #ffe600;
+    --green: #00ff9d;
+    --purple: #bf00ff;
+    --orange: #ff6b00;
+    --white: #e8f4ff;
+    --dim: #6a7fa8;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ─── CUSTOM SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius:3px; }
+
+  /* ─── PROGRESS BAR ─── */
+  #progress-bar {
+    position:fixed; top:0; left:0; height:3px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink), var(--yellow));
+    width:0%; z-index:9999;
+    transition: width 0.2s;
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position:fixed; top:3px; left:0; right:0;
+    background: rgba(5,8,16,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display:flex; align-items:center; gap:16px;
+    z-index:999; flex-wrap:wrap;
+  }
+  nav .logo {
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:0.8rem;
+    color:var(--cyan); letter-spacing:2px;
+    text-shadow: 0 0 12px var(--cyan);
+    white-space:nowrap;
+  }
+  nav .chapters {
+    display:flex; gap:8px; flex-wrap:wrap; margin-left:auto;
+  }
+  nav .chapters a {
+    font-family:'Orbitron',sans-serif; font-size:0.55rem;
+    color:var(--dim); text-decoration:none;
+    padding:4px 10px; border:1px solid var(--border);
+    border-radius:20px; transition: all 0.3s;
+    letter-spacing:1px;
+  }
+  nav .chapters a:hover {
+    color:var(--cyan); border-color:var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    justify-content:center; align-items:center;
+    position:relative; overflow:hidden;
+    padding: 80px 20px 40px;
+  }
+
+  .hero-bg {
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(0,245,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 30%, rgba(255,45,120,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 80%, rgba(191,0,255,0.06) 0%, transparent 50%);
+  }
+
+  /* Floating particles */
+  .particle {
+    position:absolute; border-radius:50%;
+    animation: floatUp linear infinite;
+    opacity:0.6;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(100vh) rotate(0deg); opacity:0; }
+    10%  { opacity:0.6; }
+    90%  { opacity:0.4; }
+    100% { transform: translateY(-20px) rotate(720deg); opacity:0; }
+  }
+
+  .hero-badge {
+    font-family:'Press Start 2P',monospace; font-size:0.5rem;
+    color:var(--yellow); background: rgba(255,230,0,0.1);
+    border:1px solid var(--yellow); padding:6px 14px; border-radius:4px;
+    letter-spacing:2px; margin-bottom:20px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 6px var(--yellow); }
+    50%      { box-shadow: 0 0 20px var(--yellow); }
+  }
+
+  .hero-title {
+    font-family:'Bangers',cursive; font-size:clamp(3.5rem,10vw,8rem);
+    line-height:0.9; text-align:center;
+    background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 50%, var(--yellow) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.4));
+    animation: titleGlow 3s ease-in-out infinite alternate;
+  }
+  @keyframes titleGlow {
+    from { filter: drop-shadow(0 0 20px rgba(0,245,255,0.3)); }
+    to   { filter: drop-shadow(0 0 40px rgba(255,45,120,0.5)); }
+  }
+
+  .hero-subtitle {
+    font-family:'Orbitron',sans-serif; font-size:clamp(0.7rem,2vw,1rem);
+    color:var(--dim); letter-spacing:4px; text-transform:uppercase;
+    margin-top:12px; text-align:center;
+  }
+
+  .hero-desc {
+    max-width:600px; text-align:center; margin-top:24px;
+    color: #8a9fc0; font-size:1rem; line-height:1.7;
+  }
+
+  .start-btn {
+    margin-top:36px;
+    font-family:'Orbitron',sans-serif; font-size:0.8rem;
+    font-weight:700; letter-spacing:3px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    border:none; color:#000; padding:14px 40px;
+    border-radius:4px; cursor:pointer;
+    position:relative; overflow:hidden;
+    transition: transform 0.2s;
+  }
+  .start-btn::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.3) 50%, transparent 60%);
+    transform: translateX(-100%); transition: transform 0.4s;
+  }
+  .start-btn:hover::before { transform: translateX(100%); }
+  .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--cyan); }
+
+  /* ─── SKIN HERO ILLUSTRATION ─── */
+  .skin-hero-art {
+    width: min(500px, 90vw); height: 200px;
+    position:relative; margin-top:40px;
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 80px 20px; position:relative; }
+  .section-inner { max-width:1100px; margin:0 auto; }
+
+  /* ─── CHAPTER LABEL ─── */
+  .chapter-tag {
+    display:inline-block;
+    font-family:'Press Start 2P',monospace; font-size:0.45rem;
+    padding:5px 12px; border-radius:3px; margin-bottom:16px;
+    letter-spacing:2px;
+  }
+  .tag-cyan  { background:rgba(0,245,255,0.1); color:var(--cyan);   border:1px solid var(--cyan); }
+  .tag-pink  { background:rgba(255,45,120,0.1); color:var(--pink);  border:1px solid var(--pink); }
+  .tag-yellow{ background:rgba(255,230,0,0.1);  color:var(--yellow);border:1px solid var(--yellow);}
+  .tag-green { background:rgba(0,255,157,0.1);  color:var(--green); border:1px solid var(--green);}
+  .tag-purple{ background:rgba(191,0,255,0.1);  color:var(--purple);border:1px solid var(--purple);}
+  .tag-orange{ background:rgba(255,107,0,0.1);  color:var(--orange);border:1px solid var(--orange);}
+
+  .section-title {
+    font-family:'Bangers',cursive; font-size:clamp(2.5rem,6vw,5rem);
+    line-height:1; margin-bottom:8px;
+  }
+  .section-body {
+    font-size:1.05rem; line-height:1.9; color:#a0b4cc;
+    max-width:760px;
+  }
+  .section-body strong { color:var(--white); }
+  .section-body em { color:var(--cyan); font-style:normal; font-weight:700; }
+
+  /* ─── SPEECH BUBBLE ─── */
+  .bubble-wrap {
+    display:flex; gap:20px; align-items:flex-start;
+    margin: 32px 0;
+  }
+  .bubble-wrap.right { flex-direction:row-reverse; }
+
+  .char-avatar {
+    width:70px; height:70px; flex-shrink:0;
+    border-radius:50%; border:3px solid;
+    display:flex; align-items:center; justify-content:center;
+    font-size:2rem; position:relative;
+    animation: avatarFloat 3s ease-in-out infinite;
+  }
+  @keyframes avatarFloat {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+
+  .bubble {
+    background: var(--panel);
+    border:2px solid; border-radius:12px;
+    padding:16px 20px; max-width:500px;
+    position:relative; font-size:1rem; line-height:1.7;
+  }
+  .bubble::before {
+    content:''; position:absolute; top:20px;
+    width:0; height:0;
+  }
+  .bubble-wrap:not(.right) .bubble::before {
+    left:-12px;
+    border-top:8px solid transparent;
+    border-bottom:8px solid transparent;
+    border-right:12px solid;
+  }
+  .bubble-wrap.right .bubble::before {
+    right:-12px;
+    border-top:8px solid transparent;
+    border-bottom:8px solid transparent;
+    border-left:12px solid;
+  }
+  .bubble .speaker {
+    font-family:'Orbitron',sans-serif; font-size:0.6rem;
+    font-weight:700; letter-spacing:2px;
+    margin-bottom:6px; display:block;
+  }
+
+  /* Color variants */
+  .av-cyan  { border-color:var(--cyan);   background:rgba(0,245,255,0.1); }
+  .av-pink  { border-color:var(--pink);   background:rgba(255,45,120,0.1); }
+  .av-yellow{ border-color:var(--yellow); background:rgba(255,230,0,0.1); }
+  .av-green { border-color:var(--green);  background:rgba(0,255,157,0.1); }
+  .b-cyan   { border-color:var(--cyan);   }
+  .b-pink   { border-color:var(--pink);   }
+  .b-yellow { border-color:var(--yellow); }
+  .b-green  { border-color:var(--green);  }
+  .b-cyan::before   { border-right-color:var(--cyan);  }
+  .b-pink::before   { border-right-color:var(--pink);  }
+  .b-yellow::before { border-right-color:var(--yellow);}
+  .b-green::before  { border-right-color:var(--green); }
+  .bubble-wrap.right .b-cyan::before   { border-left-color:var(--cyan);  border-right:none; }
+  .bubble-wrap.right .b-pink::before   { border-left-color:var(--pink);  border-right:none; }
+  .s-cyan   { color:var(--cyan);   }
+  .s-pink   { color:var(--pink);   }
+  .s-yellow { color:var(--yellow); }
+  .s-green  { color:var(--green);  }
+
+  /* ─── CARDS GRID ─── */
+  .cards-grid {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+    gap:24px; margin-top:40px;
+  }
+
+  .card {
+    background: var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px; padding:28px;
+    position:relative; overflow:hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor:pointer;
+  }
+  .card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, var(--card-color, var(--cyan)) 0%, transparent 50%);
+    opacity:0.05; transition: opacity 0.3s;
+  }
+  .card:hover { transform: translateY(-6px); }
+  .card:hover::before { opacity:0.12; }
+  .card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px var(--card-color, var(--cyan)); }
+
+  .card-icon {
+    font-size:3rem; margin-bottom:16px;
+    display:block; animation: iconBounce 2s ease-in-out infinite;
+  }
+  @keyframes iconBounce {
+    0%,100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-3deg); }
+    75% { transform: scale(0.95) rotate(3deg); }
+  }
+
+  .card-title {
+    font-family:'Bangers',cursive; font-size:1.8rem;
+    color:var(--card-color, var(--cyan));
+    text-shadow: 0 0 12px var(--card-color, var(--cyan));
+    margin-bottom:8px;
+  }
+  .card-body { font-size:0.9rem; line-height:1.7; color:#8a9fc0; }
+
+  /* ─── SVG MOLECULE ─── */
+  .molecule-wrap {
+    display:flex; justify-content:center;
+    margin: 40px 0; position:relative;
+  }
+
+  /* ─── SKIN LAYERS DIAGRAM ─── */
+  .skin-diagram {
+    width:100%; max-width:700px; margin:40px auto;
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:16px; overflow:hidden; position:relative;
+  }
+  .skin-layer {
+    padding:18px 24px; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; gap:16px;
+    cursor:pointer; transition: background 0.3s;
+    position:relative; overflow:hidden;
+  }
+  .skin-layer::before {
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:4px; background:var(--layer-color, var(--cyan));
+  }
+  .skin-layer:hover { background:rgba(255,255,255,0.04); }
+  .skin-layer-num {
+    font-family:'Orbitron',sans-serif; font-weight:900;
+    font-size:1.4rem; color:var(--layer-color, var(--cyan));
+    min-width:32px;
+  }
+  .skin-layer-name {
+    font-family:'Bangers',cursive; font-size:1.4rem;
+    color:var(--white); flex:1;
+  }
+  .skin-layer-info { font-size:0.85rem; color:var(--dim); }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position:relative; padding-left:40px; margin-top:40px;
+  }
+  .timeline::before {
+    content:''; position:absolute; left:14px; top:0; bottom:0;
+    width:2px; background: linear-gradient(to bottom, var(--cyan), var(--pink), var(--yellow));
+  }
+  .tl-item {
+    position:relative; margin-bottom:40px;
+    opacity:0; transform: translateX(-20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .tl-item.visible { opacity:1; transform: translateX(0); }
+  .tl-dot {
+    position:absolute; left:-33px; top:4px;
+    width:18px; height:18px; border-radius:50%;
+    background:var(--tl-color, var(--cyan));
+    box-shadow: 0 0 12px var(--tl-color, var(--cyan));
+    animation: dotPulse 2s infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+  }
+  .tl-label {
+    font-family:'Orbitron',sans-serif; font-size:0.6rem;
+    color:var(--tl-color, var(--cyan)); letter-spacing:2px;
+    margin-bottom:6px;
+  }
+  .tl-title {
+    font-family:'Bangers',cursive; font-size:1.8rem;
+    color:var(--white); margin-bottom:6px;
+  }
+  .tl-body { font-size:0.9rem; color:#8a9fc0; line-height:1.7; }
+  .tl-body strong { color:var(--white); }
+
+  /* ─── COMPARISON TABLE ─── */
+  .compare-table {
+    width:100%; border-collapse:separate; border-spacing:0;
+    margin-top:36px; border-radius:12px; overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .compare-table th {
+    background: var(--panel); padding:14px 18px;
+    font-family:'Orbitron',sans-serif; font-size:0.7rem;
+    letter-spacing:2px; text-align:left;
+  }
+  .compare-table td {
+    padding:12px 18px; font-size:0.9rem; line-height:1.6;
+    border-top:1px solid var(--border);
+  }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .th-cyan  { color:var(--cyan);   border-bottom:2px solid var(--cyan); }
+  .th-pink  { color:var(--pink);   border-bottom:2px solid var(--pink); }
+  .th-green { color:var(--green);  border-bottom:2px solid var(--green);}
+  .th-yellow{ color:var(--yellow); border-bottom:2px solid var(--yellow);}
+
+  /* ─── FACT BOX ─── */
+  .fact-box {
+    background: var(--panel);
+    border-left:4px solid var(--fact-color, var(--cyan));
+    padding:20px 24px; border-radius:0 12px 12px 0;
+    margin:24px 0; position:relative;
+  }
+  .fact-box::before {
+    content:'💡'; position:absolute; top:-14px; left:14px;
+    font-size:1.4rem;
+  }
+  .fact-title {
+    font-family:'Orbitron',sans-serif; font-size:0.65rem;
+    color:var(--fact-color, var(--cyan)); letter-spacing:2px;
+    margin-bottom:8px;
+  }
+  .fact-body { font-size:0.95rem; color:#a0b4cc; line-height:1.7; }
+
+  /* ─── QUIZ ─── */
+  .quiz-box {
+    background: var(--panel); border:1px solid var(--border);
+    border-radius:16px; padding:32px; margin-top:40px;
+  }
+  .quiz-q {
+    font-family:'Bangers',cursive; font-size:1.6rem;
+    color:var(--yellow); margin-bottom:20px;
+  }
+  .quiz-opts { display:flex; flex-direction:column; gap:10px; }
+  .quiz-opt {
+    background: rgba(255,255,255,0.04);
+    border:1px solid var(--border); border-radius:8px;
+    padding:12px 18px; cursor:pointer; font-size:0.95rem;
+    transition: all 0.3s; text-align:left;
+    color:var(--white);
+  }
+  .quiz-opt:hover { border-color:var(--yellow); background:rgba(255,230,0,0.08); }
+  .quiz-opt.correct { border-color:var(--green)!important; background:rgba(0,255,157,0.12)!important; color:var(--green); }
+  .quiz-opt.wrong   { border-color:var(--pink)!important;  background:rgba(255,45,120,0.12)!important; color:var(--pink); }
+  .quiz-result { margin-top:16px; font-size:1rem; min-height:24px; font-weight:700; }
+
+  /* ─── MOLECULE SVG ANIMATIONS ─── */
+  .mol-atom { animation: atomRotate 4s linear infinite; transform-origin:center; }
+  .mol-electron { animation: electronOrbit 2s linear infinite; }
+  .mol-glow { animation: glowPulse 2s ease-in-out infinite; }
+  @keyframes atomRotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes electronOrbit {
+    from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+  }
+  @keyframes glowPulse {
+    0%,100% { opacity:0.6; r:6px; }
+    50% { opacity:1; r:9px; }
+  }
+
+  /* ─── SECTION DIVIDER ─── */
+  .divider {
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), var(--pink), var(--yellow), transparent);
+    margin:0 auto; max-width:800px;
+    opacity:0.4;
+  }
+
+  /* ─── BIG NUMBER STATS ─── */
+  .stats-row {
+    display:flex; flex-wrap:wrap; gap:20px;
+    justify-content:center; margin:40px 0;
+  }
+  .stat-item {
+    text-align:center; padding:24px 32px;
+    background:var(--panel); border:1px solid var(--border);
+    border-radius:12px; min-width:140px;
+    transition: transform 0.3s;
+  }
+  .stat-item:hover { transform: scale(1.05); }
+  .stat-num {
+    font-family:'Bangers',cursive; font-size:3rem;
+    color:var(--stat-color, var(--cyan));
+    text-shadow: 0 0 20px var(--stat-color, var(--cyan));
+    display:block;
+  }
+  .stat-label { font-size:0.8rem; color:var(--dim); margin-top:6px; }
+
+  /* ─── HIGHLIGHT GRID ─── */
+  .hl-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:16px; margin-top:32px;
+  }
+  .hl-item {
+    padding:20px; border-radius:12px;
+    border:1px solid; text-align:center;
+  }
+  .hl-icon { font-size:2.5rem; margin-bottom:10px; }
+  .hl-title { font-family:'Bangers',cursive; font-size:1.4rem; margin-bottom:6px; }
+  .hl-body  { font-size:0.82rem; color:#8a9fc0; line-height:1.6; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg2);
+    border-top:1px solid var(--border);
+    padding:40px 20px;
+    text-align:center;
+  }
+  .footer-logo {
+    font-family:'Orbitron',sans-serif; font-weight:900;
+    font-size:1.4rem; color:var(--cyan);
+    text-shadow: 0 0 20px var(--cyan);
+    letter-spacing:4px;
+  }
+  .footer-sub {
+    font-size:0.8rem; color:var(--dim); margin-top:8px;
+    letter-spacing:2px;
+  }
+  .footer-line {
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin:20px auto; max-width:400px;
+  }
+  .footer-copy {
+    font-size:0.75rem; color:#3a4a60;
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity:0; transform: translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible { opacity:1; transform: translateY(0); }
+
+  /* ─── GLITCH TEXT ─── */
+  .glitch {
+    position:relative;
+    animation: glitch 3s infinite;
+  }
+  @keyframes glitch {
+    0%,90%,100% { text-shadow: none; }
+    91% { text-shadow: -2px 0 var(--pink), 2px 0 var(--cyan); }
+    93% { text-shadow: 2px 0 var(--pink), -2px 0 var(--cyan); }
+    95% { text-shadow: none; }
+    97% { text-shadow: -1px 0 var(--yellow), 1px 0 var(--purple); }
+  }
+
+  /* ─── ALT SECTION BACKGROUNDS ─── */
+  .bg-alt1 { background: linear-gradient(180deg, var(--bg) 0%, #060b14 50%, var(--bg) 100%); }
+  .bg-alt2 { background: linear-gradient(180deg, var(--bg) 0%, #08060e 50%, var(--bg) 100%); }
+  .bg-alt3 { background: linear-gradient(180deg, var(--bg) 0%, #05100a 50%, var(--bg) 100%); }
+
+  /* ─── RESPONSIVE ─── */
+  @media(max-width:600px){
+    nav .chapters { display:none; }
+    .bubble-wrap { flex-direction:column; }
+    .bubble::before { display:none; }
+  }
+
+  /* ─── SCANLINE OVERLAY ─── */
+  body::after {
+    content:''; position:fixed; inset:0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events:none; z-index:10000;
+  }
+
+  /* Sweat drop anim for fun */
+  @keyframes sweatDrop {
+    0%   { transform: translateY(0) scaleY(1); opacity:1; }
+    80%  { transform: translateY(60px) scaleY(1.3); opacity:0.8; }
+    100% { transform: translateY(80px) scaleY(0.6); opacity:0; }
+  }
+  .sweat { animation: sweatDrop 1.5s ease-in infinite; }
+
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">⬡ DEMILMED-UL</div>
+  <div class="chapters">
+    <a href="#intro">INTRO</a>
+    <a href="#pele">A PELE</a>
+    <a href="#sebaceas">SEBÁCEAS</a>
+    <a href="#sudoriparas">SUDORÍPARAS</a>
+    <a href="#outras">OUTRAS</a>
+    <a href="#comparacao">COMPARAÇÃO</a>
+    <a href="#clinica">CLÍNICA</a>
+    <a href="#quiz">QUIZ</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <!-- particles generated by JS -->
+  <div class="hero-badge">📖 CAPÍTULO ESPECIAL</div>
+  <h1 class="hero-title glitch">GLÂNDULAS<br>DA PELE</h1>
+  <p class="hero-subtitle">Histologia & Fisiologia — Nível: Iniciante → Avançado</p>
+  <p class="hero-desc">
+    Bem-vindo, guerreiro do conhecimento! Hoje vais desvendar os <strong>segredos microscópicos</strong> 
+    da tua pele. Das glândulas que te fazem suar até às que te protegem — uma aventura científica 
+    em forma de mangá!
+  </p>
+  <button class="start-btn" onclick="document.getElementById('intro').scrollIntoView({behavior:'smooth'})">
+    ▶ COMEÇAR A JORNADA
+  </button>
+
+  <!-- HERO SVG ART — animated skin cross-section teaser -->
+  <svg class="skin-hero-art" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background glow -->
+    <defs>
+      <radialGradient id="hg1" cx="50%" cy="50%"><stop offset="0%" stop-color="#00f5ff" stop-opacity="0.15"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      <radialGradient id="hg2" cx="50%" cy="50%"><stop offset="0%" stop-color="#ff2d78" stop-opacity="0.15"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+    </defs>
+    <ellipse cx="150" cy="100" rx="120" ry="80" fill="url(#hg1)"/>
+    <ellipse cx="350" cy="100" rx="120" ry="80" fill="url(#hg2)"/>
+    
+    <!-- Skin layers -->
+    <rect x="0" y="140" width="500" height="30" rx="0" fill="rgba(255,107,0,0.15)" stroke="#ff6b00" stroke-width="1"/>
+    <rect x="0" y="110" width="500" height="30" rx="0" fill="rgba(255,45,120,0.1)"  stroke="#ff2d78" stroke-width="0.5"/>
+    <rect x="0" y="80"  width="500" height="30" rx="0" fill="rgba(0,245,255,0.08)"  stroke="#00f5ff" stroke-width="0.5"/>
+    
+    <!-- Labels -->
+    <text x="10" y="158" font-family="Orbitron,sans-serif" font-size="8" fill="#ff6b00" opacity="0.8">HIPODERME</text>
+    <text x="10" y="128" font-family="Orbitron,sans-serif" font-size="8" fill="#ff2d78" opacity="0.8">DERME</text>
+    <text x="10" y="97"  font-family="Orbitron,sans-serif" font-size="8" fill="#00f5ff" opacity="0.8">EPIDERME</text>
+
+    <!-- Gland 1 — sebácea -->
+    <g transform="translate(180,90)">
+      <ellipse cx="0" cy="20" rx="18" ry="28" fill="rgba(255,230,0,0.15)" stroke="#ffe600" stroke-width="1.5"/>
+      <line x1="0" y1="-8" x2="0" y2="-25" stroke="#ffe600" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="-24" y="-30" font-family="Orbitron,sans-serif" font-size="7" fill="#ffe600">SEBÁCEA</text>
+      <animateTransform attributeName="transform" type="translate" values="180,90;180,87;180,90" dur="2s" repeatCount="indefinite"/>
+    </g>
+    <!-- Gland 2 — sudorípara -->
+    <g transform="translate(320,75)">
+      <ellipse cx="0" cy="40" rx="10" ry="40" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1.5"/>
+      <path d="M0,0 Q8,-10 0,-25" fill="none" stroke="#00f5ff" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="-18" y="-28" font-family="Orbitron,sans-serif" font-size="7" fill="#00f5ff">SUDORÍPARA</text>
+      <animateTransform attributeName="transform" type="translate" values="320,75;320,72;320,75" dur="2.5s" repeatCount="indefinite"/>
+    </g>
+
+    <!-- Floating drops -->
+    <circle cx="325" cy="30" r="4" fill="#00f5ff" opacity="0.8">
+      <animate attributeName="cy" from="30" to="70" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+      <animate attributeName="opacity" from="0.8" to="0" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle cx="333" cy="20" r="3" fill="#00f5ff" opacity="0.7">
+      <animate attributeName="cy" from="20" to="65" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+      <animate attributeName="opacity" from="0.7" to="0" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+  </svg>
+</section>
+
+<!-- ═══════════════ INTRO ═══════════════ -->
+<div class="divider"></div>
+<section id="intro" class="bg-alt1">
+  <div class="section-inner">
+    <span class="chapter-tag tag-cyan reveal">PRÓLOGO · CAPÍTULO 0</span>
+    <h2 class="section-title reveal" style="color:var(--cyan)">O QUE SÃO GLÂNDULAS?</h2>
+
+    <!-- Dialogue -->
+    <div class="bubble-wrap reveal">
+      <div class="char-avatar av-cyan">🧑‍🎓</div>
+      <div class="bubble b-cyan">
+        <span class="speaker s-cyan">SENSEI DERMO</span>
+        Antes de entrarmos no mundo das glândulas da pele, precisamos de saber: <strong>o que é uma glândula?</strong>
+      </div>
+    </div>
+
+    <div class="bubble-wrap right reveal">
+      <div class="char-avatar av-pink">🙋</div>
+      <div class="bubble b-pink" style="border-color:var(--pink)">
+        <span class="speaker s-pink">ESTUDANTE KAI</span>
+        Hm… é uma coisa que produz… líquidos?
+      </div>
+    </div>
+
+    <div class="bubble-wrap reveal">
+      <div class="char-avatar av-cyan">🧑‍🎓</div>
+      <div class="bubble b-cyan">
+        <span class="speaker s-cyan">SENSEI DERMO</span>
+        Quase! Uma glândula é um <em>grupo de células especializadas</em> que <strong>produz e secreta substâncias</strong> — como suor, óleo, leite ou hormonas. Pensa nelas como <strong>mini-fábricas biológicas</strong> espalhadas pelo teu corpo!
+      </div>
+    </div>
+
+    <p class="section-body reveal" style="margin-top:24px">
+      As glândulas podem ser <strong>exócrinas</strong> (secretam para o exterior ou para cavidades do corpo através de um ducto) 
+      ou <strong>endócrinas</strong> (secretam directamente para o sangue). 
+      As glândulas da pele são <em>maioritariamente exócrinas</em>.
+    </p>
+
+    <div class="stats-row reveal">
+      <div class="stat-item" style="--stat-color:var(--cyan)">
+        <span class="stat-num">2–4<br><span style="font-size:1.5rem">M</span></span>
+        <div class="stat-label">glândulas sudoríparas no corpo humano</div>
+      </div>
+      <div class="stat-item" style="--stat-color:var(--yellow)">
+        <span class="stat-num">~100</span>
+        <div class="stat-label">glândulas sebáceas por cm² (face)</div>
+      </div>
+      <div class="stat-item" style="--stat-color:var(--pink)">
+        <span class="stat-num">1.5–2<br><span style="font-size:1.5rem">m²</span></span>
+        <div class="stat-label">área total da pele adulta</div>
+      </div>
+      <div class="stat-item" style="--stat-color:var(--green)">
+        <span class="stat-num">0.5–1<br><span style="font-size:1.2rem">L/dia</span></span>
+        <div class="stat-label">suor produzido em repouso</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ A PELE ═══════════════ -->
+<div class="divider"></div>
+<section id="pele">
+  <div class="section-inner">
+    <span class="chapter-tag tag-orange reveal">CAPÍTULO 1 · A FORTALEZA</span>
+    <h2 class="section-title reveal" style="color:var(--orange)">A PELE — O CAMPO DE BATALHA</h2>
+
+    <p class="section-body reveal">
+      Antes de estudar as glândulas, precisamos de conhecer o <strong>território</strong> onde vivem. 
+      A pele é o <em>maior órgão do corpo humano</em> e tem 3 camadas principais.
+    </p>
+
+    <!-- Skin layers diagram -->
+    <div class="skin-diagram reveal">
+      <div class="skin-layer" style="--layer-color:var(--cyan)">
+        <div class="skin-layer-num">1</div>
+        <div>
+          <div class="skin-layer-name">⚡ EPIDERME</div>
+          <div class="skin-layer-info">Camada mais externa · Barreira protectora · Sem vasos sanguíneos · 0.05–1.5mm</div>
+        </div>
+      </div>
+      <div class="skin-layer" style="--layer-color:var(--pink)">
+        <div class="skin-layer-num">2</div>
+        <div>
+          <div class="skin-layer-name">🔥 DERME</div>
+          <div class="skin-layer-info">Camada intermédia · Rica em colagénio, vasos, nervos · Aqui vivem a maioria das glândulas! · 1–4mm</div>
+        </div>
+      </div>
+      <div class="skin-layer" style="--layer-color:var(--orange)">
+        <div class="skin-layer-num">3</div>
+        <div>
+          <div class="skin-layer-name">💛 HIPODERME (Tela subcutânea)</div>
+          <div class="skin-layer-info">Camada mais profunda · Tecido adiposo · Isolamento térmico · Algumas glândulas chegam aqui</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cross section SVG -->
+    <div class="molecule-wrap reveal">
+      <svg width="min(680px,95vw)" height="360" viewBox="0 0 680 360" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="ep" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00f5ff" stop-opacity="0.25"/><stop offset="100%" stop-color="#00f5ff" stop-opacity="0.05"/></linearGradient>
+          <linearGradient id="de" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff2d78" stop-opacity="0.2"/><stop offset="100%" stop-color="#ff2d78" stop-opacity="0.05"/></linearGradient>
+          <linearGradient id="hi" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff6b00" stop-opacity="0.2"/><stop offset="100%" stop-color="#ff6b00" stop-opacity="0.05"/></linearGradient>
+        </defs>
+
+        <!-- Layers -->
+        <rect x="0" y="0"   width="680" height="80"  fill="url(#ep)" rx="0"/>
+        <rect x="0" y="80"  width="680" height="160" fill="url(#de)"/>
+        <rect x="0" y="240" width="680" height="120" fill="url(#hi)"/>
+        
+        <!-- Layer labels -->
+        <text x="14" y="44" font-family="Orbitron,sans-serif" font-size="13" fill="#00f5ff" font-weight="700">EPIDERME</text>
+        <text x="14" y="165" font-family="Orbitron,sans-serif" font-size="13" fill="#ff2d78" font-weight="700">DERME</text>
+        <text x="14" y="290" font-family="Orbitron,sans-serif" font-size="13" fill="#ff6b00" font-weight="700">HIPODERME</text>
+
+        <!-- ── GLÂNDULA SEBÁCEA ── -->
+        <!-- Ducto -->
+        <path d="M 200 0 L 200 50 Q 200 60 210 65 L 230 75" stroke="#ffe600" stroke-width="3" fill="none"/>
+        <!-- Corpo multilobular -->
+        <ellipse cx="250" cy="90"  rx="22" ry="18" fill="rgba(255,230,0,0.2)" stroke="#ffe600" stroke-width="1.5"/>
+        <ellipse cx="275" cy="100" rx="20" ry="16" fill="rgba(255,230,0,0.2)" stroke="#ffe600" stroke-width="1.5"/>
+        <ellipse cx="250" cy="118" rx="18" ry="14" fill="rgba(255,230,0,0.15)" stroke="#ffe600" stroke-width="1.5"/>
+        <!-- Sebo drops animados -->
+        <circle cx="200" cy="10" r="4" fill="#ffe600" opacity="0.9">
+          <animate attributeName="cy" from="5" to="40" dur="1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.9" to="0.1" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="190" y="-8" font-family="Orbitron,sans-serif" font-size="9" fill="#ffe600">SEBO ↑</text>
+        <text x="242" y="145" font-family="Orbitron,sans-serif" font-size="9" fill="#ffe600">SEBÁCEA</text>
+
+        <!-- ── GLÂNDULA ÉCRINA ── -->
+        <!-- Ducto espiral -->
+        <path d="M 420 0 Q 430 15 420 30 Q 410 45 420 60 L 420 80" stroke="#00f5ff" stroke-width="2.5" fill="none" stroke-dasharray="4,2"/>
+        <!-- Glomérulo (espiral) -->
+        <circle cx="420" cy="180" r="28" fill="none" stroke="rgba(0,245,255,0.2)" stroke-width="10"/>
+        <circle cx="420" cy="180" r="22" fill="none" stroke="rgba(0,245,255,0.15)" stroke-width="8"/>
+        <circle cx="420" cy="180" r="15" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1.5"/>
+        <!-- Sweat drops animados -->
+        <circle cx="420" cy="15" r="4" fill="#00f5ff" opacity="0.9">
+          <animate attributeName="cy" from="5" to="50" dur="1s" repeatCount="indefinite" begin="0s"/>
+          <animate attributeName="opacity" from="0.9" to="0" dur="1s" repeatCount="indefinite" begin="0s"/>
+        </circle>
+        <circle cx="428" cy="8"  r="3" fill="#00f5ff" opacity="0.7">
+          <animate attributeName="cy" from="-2" to="40" dur="1s" repeatCount="indefinite" begin="0.3s"/>
+          <animate attributeName="opacity" from="0.7" to="0" dur="1s" repeatCount="indefinite" begin="0.3s"/>
+        </circle>
+        <text x="395" y="-8"  font-family="Orbitron,sans-serif" font-size="9" fill="#00f5ff">SUOR ↑</text>
+        <text x="394" y="220" font-family="Orbitron,sans-serif" font-size="9" fill="#00f5ff">ÉCRINA</text>
+
+        <!-- ── FOLÍCULO PILOSO ── -->
+        <path d="M 550 0 L 550 240" stroke="#bf00ff" stroke-width="4" fill="none"/>
+        <ellipse cx="550" cy="265" rx="20" ry="25" fill="rgba(191,0,255,0.15)" stroke="#bf00ff" stroke-width="1.5"/>
+        <text x="525" y="-8" font-family="Orbitron,sans-serif" font-size="9" fill="#bf00ff">PÊLO ↑</text>
+        <text x="525" y="305" font-family="Orbitron,sans-serif" font-size="9" fill="#bf00ff">FOLÍCULO</text>
+        <!-- Sebácea anex ao folículo -->
+        <ellipse cx="520" cy="110" rx="20" ry="14" fill="rgba(255,230,0,0.15)" stroke="#ffe600" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="538" y1="110" x2="550" y2="100" stroke="#ffe600" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+        <!-- Layer borders -->
+        <line x1="0" y1="80"  x2="680" y2="80"  stroke="rgba(255,255,255,0.1)" stroke-width="1.5"/>
+        <line x1="0" y1="240" x2="680" y2="240" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+
+        <!-- Key dots -->
+        <circle cx="250" cy="6" r="5" fill="#ffe600">
+          <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="420" cy="6" r="5" fill="#00f5ff">
+          <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite" begin="0.3s"/>
+        </circle>
+        <circle cx="550" cy="6" r="5" fill="#bf00ff">
+          <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite" begin="0.6s"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SEBÁCEAS ═══════════════ -->
+<div class="divider"></div>
+<section id="sebaceas" class="bg-alt2">
+  <div class="section-inner">
+    <span class="chapter-tag tag-yellow reveal">CAPÍTULO 2 · O OLEEIRO</span>
+    <h2 class="section-title reveal" style="color:var(--yellow)">GLÂNDULAS SEBÁCEAS<br>🧴 A FÁBRICA DO ÓLEO</h2>
+
+    <div class="bubble-wrap reveal">
+      <div class="char-avatar av-yellow" style="--c:var(--yellow)">🫧</div>
+      <div class="bubble b-yellow">
+        <span class="speaker s-yellow">BACTÉRIA SEBO-KUN</span>
+        Olá! Eu sou o residente favorito das glândulas sebáceas! Mas calma — elas não são más! 
+        Na verdade, o <em>sebo</em> que produzem é <strong>essencial para a tua pele!</strong>
+      </div>
+    </div>
+
+    <p class="section-body reveal" style="margin-top:20px">
+      As glândulas sebáceas são glândulas <em>holocrinas</em> — isto significa que as células 
+      se <strong>destroem a si próprias</strong> para libertar o sebo. É como se a célula se 
+      sacrificasse em prol do óleo. Dramático, não é?
+    </p>
+
+    <!-- Timeline sebáceas -->
+    <div class="timeline reveal">
+      <div class="tl-item" style="--tl-color:var(--yellow)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">LOCALIZAÇÃO</div>
+        <div class="tl-title">Onde estão?</div>
+        <div class="tl-body">
+          Distribuídas por <strong>quase toda a superfície corporal</strong>, excepto palmas das mãos e plantas dos pés. 
+          Maior concentração: <strong>face (fronte, nariz), couro cabeludo e tórax</strong>. 
+          Estão quase sempre associadas a <strong>folículos pilosos</strong> (unidade pilo-sebácea), 
+          mas algumas existem sem pêlo (lábios, glande, lábios menores — chamadas <strong>glândulas de Fordyce</strong>).
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--orange)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">ESTRUTURA</div>
+        <div class="tl-title">Como são feitas?</div>
+        <div class="tl-body">
+          São glândulas <strong>acinosas simples ou ramificadas</strong>. 
+          Têm <strong>ácinos</strong> (sacos secretores) cheios de células chamadas <em>sebócitos</em> — 
+          grandes, poliedricas, repletas de gotículas de lípidos. 
+          O ducto sebáceo abre-se no <strong>infundíbulo do folículo piloso</strong>.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--yellow)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">PRODUTO</div>
+        <div class="tl-title">O que produzem?</div>
+        <div class="tl-body">
+          Produzem <strong>SEBO</strong> — uma mistura de <em>triglicéridos, ácidos gordos livres, 
+          esqualeno, cera, ésteres de colesterol e colesterol</em>. 
+          O sebo lubrifica o pêlo e a pele, forma uma barreira anti-microbiana e 
+          ajuda a manter o pH ácido da pele (~4,5–5,5).
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--pink)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">REGULAÇÃO</div>
+        <div class="tl-title">Quem as controla?</div>
+        <div class="tl-body">
+          Principalmente os <strong>androgéneos</strong> (testosterona → DHT). 
+          Por isso na <em>puberdade</em> a produção aumenta enormemente → <strong>acne!</strong> 
+          Os estrogéneos inibem a produção. Os corticosteróides também estimulam.
+          É controlada pelo eixo <strong>hipotálamo-hipófise-gónada</strong>.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--green)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">MECANISMO</div>
+        <div class="tl-title">Tipo de secreção: HOLOCRINA</div>
+        <div class="tl-body">
+          As células periféricas (<em>células basais/germinativas</em>) multiplicam-se → 
+          migram para o centro → acumulam lípidos → tornam-se sebócitos maduros → 
+          <strong>toda a célula desintegra-se</strong> e o conteúdo (sebo) é libertado. 
+          É a única glândula holocrina do corpo humano!
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated sebaceous gland SVG -->
+    <div class="molecule-wrap reveal">
+      <svg width="min(400px,90vw)" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="sg"><stop offset="0%" stop-color="#ffe600" stop-opacity="0.4"/><stop offset="100%" stop-color="#ffe600" stop-opacity="0"/></radialGradient>
+        </defs>
+        <!-- Glow -->
+        <ellipse cx="200" cy="180" rx="130" ry="90" fill="url(#sg)"/>
+        <!-- Ácinos -->
+        <ellipse cx="180" cy="140" rx="45" ry="55" fill="rgba(255,230,0,0.12)" stroke="#ffe600" stroke-width="2"/>
+        <ellipse cx="225" cy="155" rx="40" ry="50" fill="rgba(255,230,0,0.12)" stroke="#ffe600" stroke-width="2"/>
+        <ellipse cx="160" cy="185" rx="38" ry="48" fill="rgba(255,230,0,0.10)" stroke="#ffe600" stroke-width="1.5"/>
+        <ellipse cx="210" cy="200" rx="42" ry="46" fill="rgba(255,230,0,0.10)" stroke="#ffe600" stroke-width="1.5"/>
+        <!-- Sebócitos (cells inside) -->
+        <circle cx="175" cy="135" r="10" fill="rgba(255,230,0,0.3)" stroke="#ffe600" stroke-width="1"/>
+        <circle cx="188" cy="155" r="12" fill="rgba(255,200,0,0.35)" stroke="#ffb800" stroke-width="1"/>
+        <circle cx="165" cy="165" r="9"  fill="rgba(255,230,0,0.25)" stroke="#ffe600" stroke-width="1"/>
+        <circle cx="225" cy="150" r="11" fill="rgba(255,230,0,0.3)" stroke="#ffe600" stroke-width="1"/>
+        <circle cx="240" cy="170" r="13" fill="rgba(255,200,0,0.35)" stroke="#ffb800" stroke-width="1"/>
+        <circle cx="215" cy="195" r="10" fill="rgba(255,230,0,0.3)" stroke="#ffe600" stroke-width="1"/>
+        <!-- Nucleus dots -->
+        <circle cx="175" cy="135" r="4" fill="#ffe600"/>
+        <circle cx="188" cy="155" r="4" fill="#ffe600"/>
+        <circle cx="225" cy="150" r="4" fill="#ffe600"/>
+        <!-- Ducto sebáceo -->
+        <path d="M 200 95 L 200 20" stroke="#ffe600" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <!-- Folículo piloso -->
+        <rect x="197" y="0" width="6" height="22" rx="3" fill="#d4a800"/>
+        <!-- Sebum drops leaving -->
+        <circle cx="200" cy="60" r="5" fill="#ffe600" opacity="0.9">
+          <animate attributeName="cy" from="85" to="10" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="1" to="0" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" from="4" to="2" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="205" cy="70" r="3" fill="#ffe600" opacity="0.8">
+          <animate attributeName="cy" from="82" to="8" dur="1.5s" repeatCount="indefinite" begin="0.5s"/>
+          <animate attributeName="opacity" from="0.8" to="0" dur="1.5s" repeatCount="indefinite" begin="0.5s"/>
+        </circle>
+        <!-- Labels -->
+        <text x="100" y="100" font-family="Orbitron,sans-serif" font-size="9" fill="#ffe600">ÁCINOS</text>
+        <line x1="130" y1="98" x2="155" y2="130" stroke="#ffe600" stroke-width="1" opacity="0.5"/>
+        <text x="245" y="90" font-family="Orbitron,sans-serif" font-size="9" fill="#ffe600">DUCTO</text>
+        <line x1="244" y1="92" x2="210" y2="60" stroke="#ffe600" stroke-width="1" opacity="0.5"/>
+        <text x="130" y="270" font-family="Orbitron,sans-serif" font-size="10" fill="#ffe600" font-weight="700">GLÂNDULA SEBÁCEA (HOLOCRINA)</text>
+        <!-- Bounce animation for whole gland -->
+        <animateTransform attributeName="transform" type="translate" additive="sum" values="0,0;0,-4;0,0" dur="3s" repeatCount="indefinite"/>
+      </svg>
+    </div>
+
+    <div class="fact-box reveal" style="--fact-color:var(--yellow)">
+      <div class="fact-title">⚠ CURIOSIDADE CLÍNICA — ACNE</div>
+      <div class="fact-body">
+        A <strong>acne vulgaris</strong> resulta da obstrução do folículo pilo-sebáceo por excesso de sebo + 
+        descamação de queratinócitos + colonização por <em>Cutibacterium acnes</em> (antiga <em>P. acnes</em>). 
+        Os androgénios da puberdade estimulam excessivamente as sebáceas → <strong>comedões, pápulas, pústulas, quistos</strong>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ SUDORÍPARAS ═══════════════ -->
+<div class="divider"></div>
+<section id="sudoriparas" class="bg-alt3">
+  <div class="section-inner">
+    <span class="chapter-tag tag-cyan reveal">CAPÍTULO 3 · O REFRIGERADOR</span>
+    <h2 class="section-title reveal" style="color:var(--cyan)">GLÂNDULAS SUDORÍPARAS<br>💧 AS MESTRES DO SUOR</h2>
+
+    <p class="section-body reveal">
+      Existem <em>dois tipos</em> de glândulas sudoríparas — e são completamente diferentes! 
+      Vamos conhecer os dois guerreiros do suor.
+    </p>
+
+    <!-- Cards: Écrinas vs Apócrinas -->
+    <div class="cards-grid reveal">
+      <!-- ÉCRINA -->
+      <div class="card" style="--card-color:var(--cyan)">
+        <span class="card-icon">💧</span>
+        <div class="card-title">ÉCRINAS</div>
+        <div class="card-body">
+          <strong style="color:var(--cyan)">A mais abundante!</strong><br>
+          2–4 milhões no corpo. Distribuição ubíqua (especialmente palmas, plantas, testa).
+          Secretam suor <strong>aquoso, incolor, inodoro</strong> directamente na superfície da pele.
+          Controladas por <strong>nervos colinérgicos</strong> (sistema simpático, mas usando ACh!).
+          Função: <em>termorregulação</em>.
+        </div>
+      </div>
+      <!-- APÓCRINA -->
+      <div class="card" style="--card-color:var(--pink)">
+        <span class="card-icon">🌸</span>
+        <div class="card-title">APÓCRINAS</div>
+        <div class="card-body">
+          <strong style="color:var(--pink)">A mais… cheirosa!</strong><br>
+          Localização restrita: axila, virilha, aréola mamária, região perineal.
+          Secretam suor <strong>viscoso, rico em proteínas e lípidos</strong> para o folículo piloso.
+          Controladas por <strong>nervos adrenérgicos</strong> (noradrenalina).
+          Ficam activas na <em>puberdade</em>. O odor corporal vem da degradação bacteriana!
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <table class="compare-table reveal">
+      <thead>
+        <tr>
+          <th class="th-cyan">CARACTERÍSTICA</th>
+          <th class="th-cyan">ÉCRINAS</th>
+          <th class="th-pink">APÓCRINAS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Número</strong></td><td>2–4 milhões</td><td>Menor número</td></tr>
+        <tr><td><strong>Localização</strong></td><td>Ubíquo (todo o corpo)</td><td>Axila, virilha, aréola, períneo</td></tr>
+        <tr><td><strong>Ducto abre em</strong></td><td>Superfície epidérmica directamente</td><td>Infundíbulo do folículo piloso</td></tr>
+        <tr><td><strong>Secreção</strong></td><td>Aquosa, incolor, inodora (99% água)</td><td>Viscosa, leitosa, rica em proteínas/lípidos</td></tr>
+        <tr><td><strong>Mecanismo</strong></td><td>Mero (écrino)</td><td>Apócrino (perda de citoplasma apical)</td></tr>
+        <tr><td><strong>Controlo nervoso</strong></td><td>Colinérgico (ACh)</td><td>Adrenérgico (NA) + hormonal</td></tr>
+        <tr><td><strong>Início actividade</strong></td><td>Nascimento</td><td>Puberdade</td></tr>
+        <tr><td><strong>Função principal</strong></td><td>Termorregulação, excreção</td><td>Feromónios?, comunicação química</td></tr>
+        <tr><td><strong>Odor</strong></td><td>Sem odor próprio</td><td>Odor após degradação bacteriana</td></tr>
+        <tr><td><strong>Glomérulo</strong></td><td>Derme profunda / hipoderme</td><td>Derme profunda / hipoderme</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Dialogue fun -->
+    <div class="bubble-wrap reveal" style="margin-top:32px">
+      <div class="char-avatar av-cyan">💧</div>
+      <div class="bubble b-cyan">
+        <span class="speaker s-cyan">ÉCRINA-CHAN</span>
+        Eu trabalho 24/7! Em repouso produzo 0,5–1L por dia, e em exercício intenso posso chegar 
+        a <strong>10–14L por hora!</strong> Sem mim, ficarias com uma febre de 40°C a fazer exercício!
+      </div>
+    </div>
+
+    <div class="bubble-wrap right reveal">
+      <div class="char-avatar av-pink">🌸</div>
+      <div class="bubble b-pink">
+        <span class="speaker s-pink">APÓCRINA-SAMA</span>
+        Humph! Eu sou mais <em>sofisticada</em>. Secreto feromonas — substâncias que podem influenciar 
+        comportamentos sociais! Estou activa na excitação, stress e exercício. O meu "cheiro" só aparece 
+        quando as bactérias decompõem as minhas proteínas. Culpa delas, não minha!
+      </div>
+    </div>
+
+    <!-- SVG Écrina animada -->
+    <div class="molecule-wrap reveal">
+      <svg width="min(500px,92vw)" height="340" viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="eg"><stop offset="0%" stop-color="#00f5ff" stop-opacity="0.15"/><stop offset="100%" stop-color="#00f5ff" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="180" cy="220" rx="90" ry="70" fill="url(#eg)"/>
+
+        <!-- Ducto espiral subindo -->
+        <path d="M 180 310 Q 195 290 175 270 Q 155 250 170 230 Q 185 210 170 190 Q 155 170 170 150 Q 185 130 170 100 L 170 0" 
+              stroke="#00f5ff" stroke-width="5" fill="none" opacity="0.8"/>
+        
+        <!-- Glomérulo helicoidal (bolinha no fundo) -->
+        <circle cx="180" cy="295" r="35" fill="none" stroke="rgba(0,245,255,0.3)" stroke-width="12"/>
+        <circle cx="180" cy="295" r="22" fill="none" stroke="rgba(0,245,255,0.2)" stroke-width="8"/>
+        <circle cx="180" cy="295" r="10" fill="rgba(0,245,255,0.3)" stroke="#00f5ff" stroke-width="2"/>
+        
+        <!-- Sweat drops animados -->
+        <g>
+          <circle cx="170" cy="20" r="5" fill="#00f5ff">
+            <animate attributeName="cy" from="90" to="0" dur="1.2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="1" to="0" dur="1.2s" repeatCount="indefinite"/>
+          </circle>
+        </g>
+        <g>
+          <circle cx="178" cy="10" r="3" fill="#00f5ff">
+            <animate attributeName="cy" from="85" to="-5" dur="1.2s" repeatCount="indefinite" begin="0.4s"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="1.2s" repeatCount="indefinite" begin="0.4s"/>
+          </circle>
+        </g>
+
+        <!-- Labels -->
+        <text x="195" y="10"  font-family="Orbitron,sans-serif" font-size="9" fill="#00f5ff">PORO SUDORÍPARO</text>
+        <text x="195" y="155" font-family="Orbitron,sans-serif" font-size="9" fill="#00f5ff">DUCTO ESPIRAL</text>
+        <text x="195" y="300" font-family="Orbitron,sans-serif" font-size="9" fill="#00f5ff">GLOMÉRULO SECRETOR</text>
+        <text x="50" y="335" font-family="Orbitron,sans-serif" font-size="11" fill="#00f5ff" font-weight="700">GLÂNDULA SUDORÍPARA ÉCRINA</text>
+
+        <!-- Apócrina lado direito -->
+        <!-- Ducto para folículo -->
+        <path d="M 380 250 L 380 80 Q 380 50 360 30" stroke="#ff2d78" stroke-width="4" fill="none"/>
+        <!-- Glomerulo apócrino (maior que écrina) -->
+        <circle cx="380" cy="290" r="38" fill="none" stroke="rgba(255,45,120,0.25)" stroke-width="14"/>
+        <circle cx="380" cy="290" r="24" fill="rgba(255,45,120,0.15)" stroke="#ff2d78" stroke-width="2"/>
+        <!-- Folículo piloso simplificado -->
+        <rect x="355" y="0" width="10" height="32" rx="5" fill="#d4006e"/>
+        <text x="357" y="-5" font-family="Orbitron,sans-serif" font-size="8" fill="#ff2d78">PÊLO</text>
+        <!-- Drops from apocrina (viscous = bigger drops) -->
+        <ellipse cx="365" cy="40" rx="6" ry="8" fill="#ff2d78" opacity="0.8">
+          <animate attributeName="cy" from="60" to="5" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" from="0.8" to="0" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <text x="315" y="335" font-family="Orbitron,sans-serif" font-size="10" fill="#ff2d78" font-weight="700">GLÂNDULA APÓCRINA</text>
+        <text x="320" y="300" font-family="Orbitron,sans-serif" font-size="9" fill="#ff2d78">GLOMÉRULO</text>
+      </svg>
+    </div>
+
+    <!-- ÉCRINO-APÓCRINAS (híbridas) nota -->
+    <div class="fact-box reveal" style="--fact-color:var(--purple)">
+      <div class="fact-title">🔬 TIPO ESPECIAL — GLANDS ÉCRINO-APÓCRINAS (Apócrinas Modificadas)</div>
+      <div class="fact-body">
+        Alguns autores descrevem as <strong>glândulas ceruminosas</strong> (ouvido externo), 
+        <strong>glândulas de Moll</strong> (margem palpebral), e <strong>glândulas mamárias</strong> 
+        como glândulas sudoríparas apócrinas modificadas. São consideradas glândulas cutâneas especializadas 
+        com características mistas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ OUTRAS GLÂNDULAS ═══════════════ -->
+<div class="divider"></div>
+<section id="outras">
+  <div class="section-inner">
+    <span class="chapter-tag tag-purple reveal">CAPÍTULO 4 · OS ESPECIALISTAS</span>
+    <h2 class="section-title reveal" style="color:var(--purple)">GLÂNDULAS ESPECIALIZADAS<br>🏆 OS HERÓIS SECRETOS</h2>
+
+    <p class="section-body reveal">
+      Além das sebáceas e sudoríparas, a pele aloja outros tipos fascinantes. Cada uma tem um papel 
+      <em>único e indispensável</em>.
+    </p>
+
+    <div class="hl-grid reveal">
+      <div class="hl-item" style="border-color:rgba(0,245,255,0.3); background:rgba(0,245,255,0.04)">
+        <div class="hl-icon">👁️</div>
+        <div class="hl-title" style="color:var(--cyan)">MEIBÓMIO</div>
+        <div class="hl-body">Nas pálpebras. Tipo sebáceo modificado. Produz a <strong>camada lipídica da lágrima</strong> — sem ela, o olho resseca! Também chamadas glândulas tarsais.</div>
+      </div>
+      <div class="hl-item" style="border-color:rgba(255,230,0,0.3); background:rgba(255,230,0,0.04)">
+        <div class="hl-icon">👁️‍🗨️</div>
+        <div class="hl-title" style="color:var(--yellow)">ZEISS</div>
+        <div class="hl-body">Associadas aos cílios. Glândulas <strong>sebáceas modificadas</strong>. Lubrificam a base dos cílios. Quando inflamam → <strong>hordéolo</strong> (terçol).</div>
+      </div>
+      <div class="hl-item" style="border-color:rgba(191,0,255,0.3); background:rgba(191,0,255,0.04)">
+        <div class="hl-icon">🌊</div>
+        <div class="hl-title" style="color:var(--purple)">MOLL</div>
+        <div class="hl-body">Margem palpebral. <strong>Apócrinas modificadas</strong>. Secretam substâncias que integram a película lacrimal.</div>
+      </div>
+      <div class="hl-item" style="border-color:rgba(255,107,0,0.3); background:rgba(255,107,0,0.04)">
+        <div class="hl-icon">👂</div>
+        <div class="hl-title" style="color:var(--orange)">CERUMINOSAS</div>
+        <div class="hl-body">Canal auditivo externo. <strong>Apócrinas modificadas</strong>. Produzem <strong>cerume</strong> (cera do ouvido) — protege contra insectos, humidade e infecções.</div>
+      </div>
+      <div class="hl-item" style="border-color:rgba(0,255,157,0.3); background:rgba(0,255,157,0.04)">
+        <div class="hl-icon">🍼</div>
+        <div class="hl-title" style="color:var(--green)">MAMÁRIAS</div>
+        <div class="hl-body">Modificação extrema de glândulas sudoríparas apócrinas. Produzem <strong>leite materno</strong>. Controladas por <em>prolactina e ocitocina</em>. As mais desenvolvidas do grupo!</div>
+      </div>
+      <div class="hl-item" style="border-color:rgba(255,45,120,0.3); background:rgba(255,45,120,0.04)">
+        <div class="hl-icon">👄</div>
+        <div class="hl-title" style="color:var(--pink)">FORDYCE</div>
+        <div class="hl-body">Glândulas sebáceas <strong>ectópicas</strong> (sem folículo piloso). Aparecem nos lábios, mucosa jugal, glande, lábios menores. <em>Variante normal</em> — não são doença!</div>
+      </div>
+    </div>
+
+    <!-- Moléculas animadas especiais -->
+    <div class="molecule-wrap reveal" style="gap:40px; flex-wrap:wrap">
+      <!-- Molécula sebo -->
+      <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <text x="80" y="15" font-family="Orbitron,sans-serif" font-size="8" fill="#ffe600" text-anchor="middle">SEBO</text>
+        <circle cx="80" cy="90" r="30" fill="rgba(255,230,0,0.15)" stroke="#ffe600" stroke-width="2"/>
+        <!-- Orbita 1 -->
+        <ellipse cx="80" cy="90" rx="50" ry="20" fill="none" stroke="rgba(255,230,0,0.3)" stroke-width="1">
+          <animateTransform attributeName="transform" type="rotate" from="0 80 90" to="360 80 90" dur="3s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Atom on orbit -->
+        <circle cx="130" cy="90" r="7" fill="#ffe600">
+          <animateTransform attributeName="transform" type="rotate" from="0 80 90" to="360 80 90" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Center nucleus -->
+        <circle cx="80" cy="90" r="12" fill="#ffe600" opacity="0.8">
+          <animate attributeName="r" values="12;15;12" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="80" y="94" font-family="Orbitron,sans-serif" font-size="8" fill="#000" text-anchor="middle" font-weight="700">C₁₈</text>
+        <text x="80" y="155" font-family="Nunito,sans-serif" font-size="9" fill="#ffe600" text-anchor="middle">Ácido gordo</text>
+      </svg>
+
+      <!-- Molécula água (suor) -->
+      <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <text x="80" y="15" font-family="Orbitron,sans-serif" font-size="8" fill="#00f5ff" text-anchor="middle">SUOR</text>
+        <!-- O -->
+        <circle cx="80" cy="90" r="22" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="2"/>
+        <text x="80" y="95" font-family="Orbitron,sans-serif" font-size="14" fill="#00f5ff" text-anchor="middle">O</text>
+        <!-- H1 -->
+        <circle cx="48" cy="115" r="14" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1.5">
+          <animate attributeName="cx" values="48;46;48" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="48" y="120" font-family="Orbitron,sans-serif" font-size="12" fill="#00f5ff" text-anchor="middle">H</text>
+        <!-- H2 -->
+        <circle cx="112" cy="115" r="14" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1.5">
+          <animate attributeName="cx" values="112;114;112" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="112" y="120" font-family="Orbitron,sans-serif" font-size="12" fill="#00f5ff" text-anchor="middle">H</text>
+        <!-- Bonds -->
+        <line x1="60" y1="104" x2="58" y2="110" stroke="#00f5ff" stroke-width="2"/>
+        <line x1="100" y1="104" x2="102" y2="110" stroke="#00f5ff" stroke-width="2"/>
+        <text x="80" y="155" font-family="Nunito,sans-serif" font-size="9" fill="#00f5ff" text-anchor="middle">H₂O (99% suor)</text>
+      </svg>
+
+      <!-- Molécula NaCl (sal do suor) -->
+      <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <text x="80" y="15" font-family="Orbitron,sans-serif" font-size="8" fill="#00ff9d" text-anchor="middle">SAL (SUOR)</text>
+        <circle cx="55" cy="90" r="22" fill="rgba(0,255,157,0.2)" stroke="#00ff9d" stroke-width="2">
+          <animate attributeName="cx" values="55;53;55" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <text x="55" y="95" font-family="Orbitron,sans-serif" font-size="12" fill="#00ff9d" text-anchor="middle">Na⁺</text>
+        <circle cx="105" cy="90" r="22" fill="rgba(255,107,0,0.15)" stroke="#ff6b00" stroke-width="2">
+          <animate attributeName="cx" values="105;107;105" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <text x="105" y="95" font-family="Orbitron,sans-serif" font-size="12" fill="#ff6b00" text-anchor="middle">Cl⁻</text>
+        <!-- Ionic bond oscillating line -->
+        <line x1="77" y1="90" x2="83" y2="90" stroke="white" stroke-width="2" opacity="0.6">
+          <animate attributeName="stroke-dasharray" values="2,3;4,1;2,3" dur="1s" repeatCount="indefinite"/>
+        </line>
+        <text x="80" y="155" font-family="Nunito,sans-serif" font-size="9" fill="#00ff9d" text-anchor="middle">NaCl — liga iónica</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ COMPARAÇÃO GERAL ═══════════════ -->
+<div class="divider"></div>
+<section id="comparacao" class="bg-alt1">
+  <div class="section-inner">
+    <span class="chapter-tag tag-green reveal">CAPÍTULO 5 · O GRANDE CONFRONTO</span>
+    <h2 class="section-title reveal" style="color:var(--green)">COMPARAÇÃO GERAL<br>⚔️ TODAS vs TODAS</h2>
+
+    <table class="compare-table reveal">
+      <thead>
+        <tr>
+          <th class="th-green">GLÂNDULA</th>
+          <th class="th-cyan">TIPO SECRETÓRIO</th>
+          <th class="th-yellow">PRODUTO</th>
+          <th class="th-green">CONTROLO</th>
+          <th style="color:var(--purple); border-bottom:2px solid var(--purple)">LOCALIZAÇÃO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--yellow)">🧴 Sebácea</strong></td>
+          <td>Holocrina</td>
+          <td>Sebo (lípidos, esqualeno, ceras)</td>
+          <td>Androgénios (DHT)</td>
+          <td>Quase ubíqua (c/ folículo)</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--cyan)">💧 Écrina</strong></td>
+          <td>Mero (écrino)</td>
+          <td>Suor aquoso (NaCl, ureia, ácido láctico)</td>
+          <td>Simpático colinérgico (ACh)</td>
+          <td>Todo o corpo (esp. palmas, plantas)</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--pink)">🌸 Apócrina</strong></td>
+          <td>Apócrino</td>
+          <td>Suor viscoso (proteínas, lípidos)</td>
+          <td>Adrenérgico (NA) + hormonas</td>
+          <td>Axila, virilha, aréola, períneo</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--purple)">👁️ Meibómio</strong></td>
+          <td>Holocrina (sebácea mod.)</td>
+          <td>Lípidos para lágrima</td>
+          <td>Neural / hormonal</td>
+          <td>Pálpebras (tarso)</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--orange)">👂 Ceruminosa</strong></td>
+          <td>Apócrino</td>
+          <td>Cerume (cera protetora)</td>
+          <td>Neural / hormonal</td>
+          <td>Canal auditivo externo</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--green)">🍼 Mamária</strong></td>
+          <td>Apócrino + merócrino</td>
+          <td>Leite materno</td>
+          <td>Prolactina + Ocitocina</td>
+          <td>Mama (glândula modificada)</td>
+        </tr>
+        <tr>
+          <td><strong style="color:#e040fb">👄 Fordyce</strong></td>
+          <td>Holocrina (sebácea ect.)</td>
+          <td>Sebo (sem folículo)</td>
+          <td>Androgénios</td>
+          <td>Lábios, mucosa, glande</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- TIPOS DE SECREÇÃO EXPLICADOS -->
+    <h3 class="section-title reveal" style="font-size:2rem; margin-top:48px; color:var(--green)">
+      OS 3 MODOS DE SECREÇÃO 🎭
+    </h3>
+
+    <div class="cards-grid reveal">
+      <div class="card" style="--card-color:var(--green)">
+        <span class="card-icon">💥</span>
+        <div class="card-title">HOLOCRINA</div>
+        <div class="card-body">
+          A célula <strong>morre completamente</strong> e torna-se ela própria o produto secretado. 
+          É como um kamikaze! Todo o citoplasma é libertado. 
+          <em>Exemplo exclusivo: glândulas sebáceas.</em>
+        </div>
+      </div>
+      <div class="card" style="--card-color:var(--pink)">
+        <span class="card-icon">✂️</span>
+        <div class="card-title">APÓCRINO</div>
+        <div class="card-body">
+          A célula perde a porção <strong>apical do citoplasma</strong> juntamente com o produto. 
+          Como cortar a ponta. A célula sobrevive e regenera!
+          <em>Exemplo: glândulas apócrinas, mamárias.</em>
+        </div>
+      </div>
+      <div class="card" style="--card-color:var(--cyan)">
+        <span class="card-icon">📦</span>
+        <div class="card-title">MERÓCRINO (ÉCRINO)</div>
+        <div class="card-body">
+          O produto é libertado por <strong>exocitose</strong>, sem perda de membrana ou citoplasma. 
+          A célula permanece intacta. O modo mais "gentil" e eficiente!
+          <em>Exemplo: glândulas écrinas, salivares.</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- Animated comparison diagram -->
+    <div class="molecule-wrap reveal">
+      <svg width="min(680px,95vw)" height="220" viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- HOLOCRINA -->
+        <g>
+          <text x="100" y="20" font-family="Bangers,cursive" font-size="18" fill="#00ff9d" text-anchor="middle">HOLOCRINA</text>
+          <!-- Células em fases diferentes -->
+          <!-- Fase 1: célula jovem -->
+          <circle cx="40" cy="90" r="20" fill="rgba(0,255,157,0.15)" stroke="#00ff9d" stroke-width="2"/>
+          <circle cx="40" cy="90" r="6" fill="#00ff9d" opacity="0.6"/>
+          <text x="40" y="122" font-family="Nunito,sans-serif" font-size="7" fill="#00ff9d" text-anchor="middle">jovem</text>
+          <!-- Fase 2: lípidos acumulando -->
+          <circle cx="90" cy="90" r="22" fill="rgba(255,230,0,0.15)" stroke="#00ff9d" stroke-width="2"/>
+          <circle cx="82" cy="84" r="5" fill="#ffe600" opacity="0.6"/>
+          <circle cx="96" cy="94" r="6" fill="#ffe600" opacity="0.6"/>
+          <circle cx="86" cy="100" r="4" fill="#ffe600" opacity="0.6"/>
+          <text x="90" y="124" font-family="Nunito,sans-serif" font-size="7" fill="#00ff9d" text-anchor="middle">matura</text>
+          <!-- Fase 3: explode/desintegra -->
+          <circle cx="145" cy="90" r="20" fill="rgba(255,230,0,0.08)" stroke="#00ff9d" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <circle cx="130" cy="78" r="5" fill="#ffe600" opacity="0.7"/>
+          <circle cx="158" cy="82" r="4" fill="#ffe600" opacity="0.7"/>
+          <circle cx="138" cy="105" r="6" fill="#ffe600" opacity="0.7"/>
+          <circle cx="155" cy="100" r="4" fill="#ffe600" opacity="0.5"/>
+          <text x="145" y="124" font-family="Nunito,sans-serif" font-size="7" fill="#00ff9d" text-anchor="middle">desintegra</text>
+          <!-- Arrows -->
+          <line x1="63" y1="90" x2="68" y2="90" stroke="#00ff9d" stroke-width="1.5" marker-end="url(#arr)"/>
+          <line x1="115" y1="90" x2="120" y2="90" stroke="#00ff9d" stroke-width="1.5"/>
+          <polygon points="118,87 125,90 118,93" fill="#00ff9d"/>
+        </g>
+
+        <!-- Divider -->
+        <line x1="210" y1="10" x2="210" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+        <!-- APÓCRINO -->
+        <g transform="translate(230,0)">
+          <text x="100" y="20" font-family="Bangers,cursive" font-size="18" fill="#ff2d78" text-anchor="middle">APÓCRINO</text>
+          <!-- Célula com protusão apical -->
+          <circle cx="90" cy="110" r="28" fill="rgba(255,45,120,0.12)" stroke="#ff2d78" stroke-width="2"/>
+          <circle cx="90" cy="80" r="14" fill="rgba(255,45,120,0.2)" stroke="#ff2d78" stroke-width="1.5"/>
+          <text x="90" y="76" font-family="Nunito,sans-serif" font-size="8" fill="#ff2d78" text-anchor="middle">conteúdo</text>
+          <!-- Conteúdo sendo libertado (corte da porção apical) -->
+          <path d="M 76 72 Q 90 55 104 72" fill="none" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <!-- Drops liberados -->
+          <circle cx="75" cy="50" r="6" fill="rgba(255,45,120,0.5)" stroke="#ff2d78" stroke-width="1">
+            <animate attributeName="cy" from="65" to="30" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="90" cy="40" r="5" fill="rgba(255,45,120,0.4)" stroke="#ff2d78" stroke-width="1">
+            <animate attributeName="cy" from="60" to="25" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+            <animate attributeName="opacity" from="0.7" to="0" dur="1.5s" repeatCount="indefinite" begin="0.4s"/>
+          </circle>
+          <text x="90" y="148" font-family="Nunito,sans-serif" font-size="7" fill="#ff2d78" text-anchor="middle">porção apical perdida</text>
+        </g>
+
+        <!-- Divider 2 -->
+        <line x1="450" y1="10" x2="450" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+        <!-- MERÓCRINO -->
+        <g transform="translate(468,0)">
+          <text x="100" y="20" font-family="Bangers,cursive" font-size="18" fill="#00f5ff" text-anchor="middle">MERÓCRINO</text>
+          <!-- Célula intacta com vesículas -->
+          <circle cx="90" cy="110" r="28" fill="rgba(0,245,255,0.12)" stroke="#00f5ff" stroke-width="2"/>
+          <!-- Vesículas internas -->
+          <circle cx="80" cy="105" r="8" fill="rgba(0,245,255,0.25)" stroke="#00f5ff" stroke-width="1">
+            <animate attributeName="cy" from="105" to="90" dur="1s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="98" cy="112" r="7" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="1">
+            <animate attributeName="cy" from="112" to="96" dur="1.2s" repeatCount="indefinite" begin="0.3s"/>
+          </circle>
+          <!-- Exocytosis arrows (tiny vesicles leaving at top) -->
+          <circle cx="80" cy="85" r="5" fill="#00f5ff" opacity="0.8">
+            <animate attributeName="cy" from="92" to="65" dur="0.8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.8" to="0" dur="0.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="93" cy="82" r="4" fill="#00f5ff" opacity="0.7">
+            <animate attributeName="cy" from="90" to="60" dur="0.9s" repeatCount="indefinite" begin="0.2s"/>
+            <animate attributeName="opacity" from="0.7" to="0" dur="0.9s" repeatCount="indefinite" begin="0.2s"/>
+          </circle>
+          <!-- Nucleus stays intact -->
+          <circle cx="90" cy="120" r="10" fill="rgba(0,245,255,0.3)" stroke="#00f5ff" stroke-width="1.5"/>
+          <text x="90" y="124" font-family="Orbitron,sans-serif" font-size="7" fill="#00f5ff" text-anchor="middle">N</text>
+          <text x="90" y="153" font-family="Nunito,sans-serif" font-size="7" fill="#00f5ff" text-anchor="middle">exocitose · célula intacta</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CLÍNICA ═══════════════ -->
+<div class="divider"></div>
+<section id="clinica" class="bg-alt2">
+  <div class="section-inner">
+    <span class="chapter-tag tag-pink reveal">CAPÍTULO 6 · OS VILÕES</span>
+    <h2 class="section-title reveal" style="color:var(--pink)">CORRELAÇÕES CLÍNICAS<br>🔴 QUANDO AS GLÂNDULAS ADOECEM</h2>
+
+    <p class="section-body reveal">
+      As glândulas da pele, quando disfuncionam, causam <em>patologias comuns e bem conhecidas</em>. 
+      Conhecer a anatomia é a chave para entender a doença.
+    </p>
+
+    <!-- Timeline clínica -->
+    <div class="timeline reveal">
+      <div class="tl-item" style="--tl-color:var(--yellow)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS SEBÁCEAS</div>
+        <div class="tl-title">🧴 Acne Vulgaris</div>
+        <div class="tl-body">
+          <strong>Causa:</strong> Hiper-secreção sebácea (androgénios) + obstrução folicular (hiperqueratinização) 
+          + colonização por <em>Cutibacterium acnes</em> → inflamação. 
+          <strong>Clínica:</strong> comedões abertos (ponto negro) e fechados (ponto branco), pápulas, 
+          pústulas, quistos. <strong>Tto:</strong> retinóides, antibióticos, isotretinoína.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--orange)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS SEBÁCEAS</div>
+        <div class="tl-title">🧴 Quisto Sebáceo (Epidermóide)</div>
+        <div class="tl-body">
+          Obstrução do ducto da glândula sebácea → acumulação de sebo e queratina → 
+          formação de quisto. Nódulo dérmico bem delimitado, com "punctum" central. 
+          Pode inflamar e infectar (→ abcesso). Tto: excisão cirúrgica.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--cyan)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS SUDORÍPARAS ÉCRINAS</div>
+        <div class="tl-title">💧 Miliária (Brotoeja)</div>
+        <div class="tl-body">
+          Obstrução dos ductos écrinos em ambiente quente e húmido → 
+          suor fica retido na pele → vesículas/pápulas pruriginosas. 
+          Tipos: <em>miliária cristalina</em> (neonatos), <em>rubra</em> (prickly heat), <em>profunda</em>.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--cyan)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS SUDORÍPARAS ÉCRINAS</div>
+        <div class="tl-title">💧 Hiperidrose / Aniidrose</div>
+        <div class="tl-body">
+          <strong>Hiperidrose:</strong> sudorese excessiva (palmar, axilar, plantar) — disfunção autonómica; 
+          tratamento com toxina botulínica, anticolinérgicos. 
+          <strong>Aniidrose:</strong> ausência de suor → incapacidade de termorregular → risco de vida em calor.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--pink)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS APÓCRINAS</div>
+        <div class="tl-title">🌸 Hidradenite Supurativa</div>
+        <div class="tl-body">
+          Doença inflamatória crónica das glândulas apócrinas (axila, virilha, perianal). 
+          Obstrução folicular → ruptura → abcessos recorrentes, fístulas, cicatrizes. 
+          Prevalência: 1-4%. Factores: tabaco, obesidade, hormonas. 
+          Tto: antibióticos, biológicos (adalimumab), cirurgia.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--purple)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">GLÂNDULAS DE MEIBÓMIO/ZEISS</div>
+        <div class="tl-title">👁️ Hordéolo & Calázio</div>
+        <div class="tl-body">
+          <strong>Hordéolo (terçol):</strong> infecção aguda das glândulas de Zeiss/Moll → nódulo doloroso, 
+          eritematoso, na margem palpebral. Geralmente por <em>S. aureus</em>. 
+          <strong>Calázio:</strong> inflamação granulomatosa crónica da glândula de Meibómio → nódulo indolor, 
+          sem sinais inflamatórios agudos. Tto: compressas quentes, drenagem.
+        </div>
+      </div>
+      <div class="tl-item" style="--tl-color:var(--green)">
+        <div class="tl-dot"></div>
+        <div class="tl-label">TUMORES</div>
+        <div class="tl-title">🔬 Adenomas & Carcinomas de Glândulas</div>
+        <div class="tl-body">
+          <strong>Cilindroma:</strong> tumor benigno de glândulas sudoríparas (couro cabeludo). 
+          <strong>Siringoma:</strong> hamartoma de ductos écrinos (periorbitário, benigno). 
+          <strong>Carcinoma sebáceo:</strong> raro, região palpebral → não confundir com calázio recorrente! 
+          <strong>Carcinoma das glândulas sudoríparas:</strong> muito raro, agressivo.
+        </div>
+      </div>
+    </div>
+
+    <div class="fact-box reveal" style="--fact-color:var(--green)">
+      <div class="fact-title">🔑 PÉROLA DIAGNÓSTICA</div>
+      <div class="fact-body">
+        Um <strong>calázio recorrente</strong> no mesmo local deve sempre levantar a suspeita de 
+        <em>carcinoma sebáceo da pálpebra</em> — um tumor raro mas maligno que pode mimetizar 
+        blefarite e calázio. Biopsie sempre!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ QUIZ ═══════════════ -->
+<div class="divider"></div>
+<section id="quiz">
+  <div class="section-inner">
+    <span class="chapter-tag tag-yellow reveal">CAPÍTULO FINAL · BOSS BATTLE</span>
+    <h2 class="section-title reveal" style="color:var(--yellow)">QUIZ FINAL 🎮<br>TESTA O TEU PODER!</h2>
+
+    <p class="section-body reveal">Responde às perguntas e prova que és um verdadeiro ninja da dermatologia!</p>
+
+    <div id="quiz-container" class="reveal"></div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<div class="divider"></div>
+<footer>
+  <div class="footer-logo">DEMILMED-UL</div>
+  <div class="footer-sub">UNIVERSIDADE LICUNGO · 2026</div>
+  <div class="footer-line"></div>
+  <p style="font-size:0.8rem; color:#4a6080; line-height:1.8; max-width:500px; margin:0 auto">
+    Material Educativo · Glândulas da Pele<br>
+    Histologia & Fisiologia Cutânea<br>
+    <span style="color:#2a3a50">Feito com 💙 para estudantes de medicina</span>
+  </p>
+  <div class="footer-line"></div>
+  <div class="footer-copy">© 2026 DemilMed-UL · Universidade Licungo · Todos os direitos reservados</div>
+</footer>
+
+<script>
+// ═══ PROGRESS BAR ═══
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (scrollTop / docHeight * 100) + '%';
+});
+
+// ═══ PARTICLES ═══
+function createParticles() {
+  const hero = document.getElementById('hero');
+  const colors = ['#00f5ff','#ff2d78','#ffe600','#00ff9d','#bf00ff'];
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 6 + 2;
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      left:${Math.random()*100}%;
+      animation-duration:${Math.random()*10+8}s;
+      animation-delay:${Math.random()*8}s;
+      box-shadow:0 0 ${size*2}px currentColor;
+    `;
+    hero.appendChild(p);
+  }
+}
+createParticles();
+
+// ═══ SCROLL REVEAL ═══
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.classList.contains('tl-item')) {
+        e.target.classList.add('visible');
+      }
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal, .tl-item').forEach(el => observer.observe(el));
+
+// ═══ QUIZ ═══
+const questions = [
+  {
+    q: "Qual o mecanismo de secreção exclusivo das glândulas SEBÁCEAS?",
+    opts: ["Merócrino (écrino)", "Apócrino", "Holocrino", "Exocitose simples"],
+    correct: 2,
+    explain: "As glândulas sebáceas são as ÚNICAS glândulas holocrinas do corpo — a célula destrói-se completamente para libertar o sebo!"
+  },
+  {
+    q: "Qual neurotransmissor controla as glândulas ÉCRINAS, apesar de pertencerem ao sistema nervoso simpático?",
+    opts: ["Noradrenalina", "Acetilcolina (ACh)", "Dopamina", "Serotonina"],
+    correct: 1,
+    explain: "Paradoxo clássico! As écrinas são simpáticas COLINÉRGICAS — usam ACh em vez de NA. Daí os anticolinérgicos tratarem a hiperidrose."
+  },
+  {
+    q: "As glândulas de Meibómio são modificações de que tipo de glândula?",
+    opts: ["Sudorípara apócrina", "Sudorípara écrina", "Sebácea", "Ceruminosa"],
+    correct: 2,
+    explain: "As glândulas de Meibómio são glândulas SEBÁCEAS MODIFICADAS nas pálpebras, produzindo a camada lipídica da lágrima."
+  },
+  {
+    q: "Qual patologia resulta da inflamação crónica das glândulas APÓCRINAS com formação de abcessos recorrentes?",
+    opts: ["Miliária rubra", "Hidradenite supurativa", "Acne vulgaris", "Quisto sebáceo"],
+    correct: 1,
+    explain: "A Hidradenite Supurativa afecta especificamente as áreas com glândulas apócrinas (axila, virilha) — doença crónica e debilitante."
+  },
+  {
+    q: "As glândulas de FORDYCE são glândulas...",
+    opts: ["Sudoríparas écrinas sem ducto", "Sebáceas ectópicas sem folículo piloso", "Apócrinas modificadas do nariz", "Ceruminosas da boca"],
+    correct: 1,
+    explain: "As glândulas de Fordyce são sebáceas ECTÓPICAS — estão no sítio errado (lábios, mucosa) e não têm folículo piloso associado. São variante normal!"
+  },
+  {
+    q: "O odor corporal das glândulas APÓCRINAS é causado directamente por...",
+    opts: ["O suor apócrino em si", "A degradação bacteriana dos componentes do suor apócrino", "Os androgénios circulantes", "O calor corporal"],
+    correct: 1,
+    explain: "O suor apócrino é inodoro! O cheiro surge quando BACTÉRIAS cutâneas decompõem as proteínas e lípidos do suor apócrino."
+  },
+];
+
+function buildQuiz() {
+  const container = document.getElementById('quiz-container');
+  let score = 0;
+  let answered = 0;
+
+  questions.forEach((q, i) => {
+    const box = document.createElement('div');
+    box.className = 'quiz-box';
+    box.innerHTML = `
+      <div class="quiz-q">❓ ${i+1}. ${q.q}</div>
+      <div class="quiz-opts">
+        ${q.opts.map((o, j) => `<button class="quiz-opt" onclick="answer(this, ${i}, ${j})">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+      </div>
+      <div class="quiz-result" id="qr-${i}"></div>
+    `;
+    container.appendChild(box);
+  });
+
+  // Score display
+  const scoreBox = document.createElement('div');
+  scoreBox.id = 'score-box';
+  scoreBox.style.cssText = `display:none; text-align:center; padding:32px; background:var(--panel); border:1px solid var(--border); border-radius:16px; margin-top:24px;`;
+  container.appendChild(scoreBox);
+}
+
+window.answer = function(btn, qi, choice) {
+  const q = questions[qi];
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.disabled = true);
+
+  if (choice === q.correct) {
+    btn.classList.add('correct');
+    document.getElementById('qr-'+qi).innerHTML = `<span style="color:var(--green)">✅ CORRECTO! ${q.explain}</span>`;
+  } else {
+    btn.classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    document.getElementById('qr-'+qi).innerHTML = `<span style="color:var(--pink)">❌ Errado! ${q.explain}</span>`;
+  }
+
+  // Check if all answered
+  const allResults = document.querySelectorAll('.quiz-result');
+  let done = 0;
+  allResults.forEach(r => { if(r.innerHTML) done++; });
+  if (done === questions.length) {
+    let sc = document.querySelectorAll('.quiz-opt.correct').length;
+    // Each question has one correct, count only the ones chosen correctly
+    let score = 0;
+    document.querySelectorAll('.quiz-opt.correct').forEach(el => {
+      if (!el.classList.contains('wrong')) score++;
+    });
+    // simpler: count green buttons that were CLICKED (not just highlighted as answer)
+    // Use a different approach
+    showScore();
+  }
+}
+
+function showScore() {
+  let score = 0;
+  questions.forEach((q, i) => {
+    const res = document.getElementById('qr-'+i).innerHTML;
+    if (res.includes('✅')) score++;
+  });
+  const box = document.getElementById('score-box');
+  const pct = Math.round(score/questions.length*100);
+  let msg, color;
+  if (pct >= 80) { msg = "🏆 LENDA DA DERMATOLOGIA!"; color = "var(--green)"; }
+  else if (pct >= 60) { msg = "💪 MUITO BOM! Continua a estudar!"; color = "var(--cyan)"; }
+  else if (pct >= 40) { msg = "📚 A melhorar! Revê o material!"; color = "var(--yellow)"; }
+  else { msg = "😅 Volta ao capítulo 1!"; color = "var(--pink)"; }
+
+  box.style.display = 'block';
+  box.innerHTML = `
+    <div style="font-family:Bangers,cursive; font-size:3rem; color:${color}">${score}/${questions.length}</div>
+    <div style="font-size:1.1rem; color:${color}; margin:8px 0">${msg}</div>
+    <div style="font-size:0.9rem; color:var(--dim)">${pct}% de acerto</div>
+    <button onclick="location.reload()" style="margin-top:20px; font-family:Orbitron,sans-serif; font-size:0.7rem; background:transparent; border:1px solid ${color}; color:${color}; padding:10px 24px; border-radius:4px; cursor:pointer; letter-spacing:2px;">
+      🔄 TENTAR NOVAMENTE
+    </button>
+  `;
+  box.scrollIntoView({behavior:'smooth'});
+}
+
+buildQuiz();
+
+// ═══ ACTIVE NAV ═══
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 120) cur = s.id;
+  });
+  document.querySelectorAll('nav .chapters a').forEach(a => {
+    a.style.color = a.href.includes(cur) ? 'var(--cyan)' : '';
+    a.style.borderColor = a.href.includes(cur) ? 'var(--cyan)' : '';
+  });
+});
+</script>
+</body>
+</html>

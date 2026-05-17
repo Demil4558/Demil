@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OsseoMundo — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Nunito:wght@300;400;700;900&display=swap');
+
+  :root {
+    --bg: #050a14;
+    --panel: #0a1628;
+    --panel2: #0d1f3c;
+    --cyan: #00f5ff;
+    --magenta: #ff006e;
+    --yellow: #ffd60a;
+    --green: #39ff14;
+    --orange: #ff6b00;
+    --purple: #c77dff;
+    --white: #e8f4f8;
+    --dim: #4a7fa5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ========= STARFIELD ========= */
+  #starfield {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--dur) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { from { opacity: 0.1; } to { opacity: 0.9; } }
+
+  /* ========= SCROLL PROGRESS ========= */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 4px; background: linear-gradient(90deg, var(--cyan), var(--magenta), var(--yellow));
+    z-index: 999; transition: width 0.1s;
+  }
+
+  /* ========= NAV ========= */
+  nav {
+    position: fixed; top: 4px; left: 0; width: 100%;
+    display: flex; gap: 6px; justify-content: center; flex-wrap: wrap;
+    padding: 10px 20px; z-index: 998;
+    background: rgba(5,10,20,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,245,255,0.15);
+  }
+  nav a {
+    color: var(--dim); text-decoration: none;
+    font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+  nav a:hover {
+    color: var(--cyan); border-color: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+    background: rgba(0,245,255,0.05);
+  }
+
+  /* ========= SECTIONS ========= */
+  section {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 120px 20px 80px;
+    overflow: hidden;
+  }
+
+  /* ========= HERO ========= */
+  #hero {
+    background: radial-gradient(ellipse at 50% 40%, #0a1f3f 0%, var(--bg) 70%);
+    text-align: center;
+  }
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    animation: heroGlow 3s ease-in-out infinite alternate;
+    margin-bottom: 20px;
+  }
+  @keyframes heroGlow {
+    from { filter: drop-shadow(0 0 20px var(--cyan)); }
+    to   { filter: drop-shadow(0 0 40px var(--magenta)); }
+  }
+  .hero-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: var(--yellow);
+    letter-spacing: 4px; text-transform: uppercase;
+    margin-bottom: 30px;
+    animation: fadeSlide 1s 0.5s both;
+  }
+  .hero-desc {
+    max-width: 700px; font-size: 1.1rem; color: #a0c4d8;
+    line-height: 1.8; margin-bottom: 40px;
+    animation: fadeSlide 1s 0.8s both;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-start {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif; font-size: 1rem;
+    color: var(--bg); background: var(--cyan);
+    padding: 16px 40px; border-radius: 50px;
+    text-decoration: none; font-weight: 700;
+    box-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,245,255,0.3);
+    transition: all 0.3s;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .btn-start:hover {
+    background: var(--magenta);
+    box-shadow: 0 0 30px var(--magenta), 0 0 60px rgba(255,0,110,0.3);
+    transform: scale(1.05);
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 30px var(--cyan), 0 0 60px rgba(0,245,255,0.3); }
+    50%      { box-shadow: 0 0 50px var(--cyan), 0 0 100px rgba(0,245,255,0.5); }
+  }
+
+  /* BONE HERO SVG */
+  .bone-hero {
+    width: min(400px, 90vw);
+    margin: 40px auto 0;
+    filter: drop-shadow(0 0 30px var(--cyan));
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-20px) rotate(2deg); }
+  }
+
+  /* ========= CHARACTER BUBBLE ========= */
+  .character-scene {
+    display: flex; align-items: flex-start; gap: 20px;
+    max-width: 900px; width: 100%; margin: 30px auto;
+  }
+  .character-scene.right { flex-direction: row-reverse; }
+
+  .char-avatar {
+    width: 90px; height: 90px; flex-shrink: 0;
+    border-radius: 50%; border: 3px solid var(--cyan);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    background: radial-gradient(circle, #0a2a4a, #020a14);
+    box-shadow: 0 0 20px var(--cyan);
+    animation: avatarPulse 3s ease-in-out infinite;
+  }
+  .character-scene.right .char-avatar { border-color: var(--magenta); box-shadow: 0 0 20px var(--magenta); }
+  @keyframes avatarPulse {
+    0%,100% { transform: scale(1); }
+    50%      { transform: scale(1.05); }
+  }
+
+  .bubble {
+    background: var(--panel);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 0 20px 20px 20px;
+    padding: 20px 25px;
+    position: relative;
+    flex: 1;
+    box-shadow: 0 0 20px rgba(0,245,255,0.1);
+  }
+  .character-scene.right .bubble {
+    border-radius: 20px 0 20px 20px;
+    border-color: rgba(255,0,110,0.3);
+    box-shadow: 0 0 20px rgba(255,0,110,0.1);
+  }
+  .bubble::before {
+    content: '';
+    position: absolute; top: 20px; left: -12px;
+    border: 6px solid transparent;
+    border-right-color: rgba(0,245,255,0.3);
+  }
+  .character-scene.right .bubble::before {
+    left: auto; right: -12px;
+    border-right-color: transparent;
+    border-left-color: rgba(255,0,110,0.3);
+  }
+  .bubble .char-name {
+    font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
+    color: var(--cyan); letter-spacing: 2px; margin-bottom: 8px;
+  }
+  .character-scene.right .bubble .char-name { color: var(--magenta); }
+  .bubble p { font-size: 1rem; line-height: 1.7; color: var(--white); }
+
+  /* ========= SECTION TITLES ========= */
+  .sec-header {
+    text-align: center; margin-bottom: 60px;
+  }
+  .sec-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 5rem; font-weight: 900; line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(0,245,255,0.2);
+    position: absolute; top: 60px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none; user-select: none;
+  }
+  .sec-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.8rem; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--yellow); margin-bottom: 10px;
+  }
+  .sec-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    font-weight: 900; line-height: 1.1;
+    margin-bottom: 15px;
+  }
+  .sec-title span { color: var(--cyan); }
+  .sec-line {
+    width: 80px; height: 3px; margin: 0 auto;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    border-radius: 2px;
+  }
+
+  /* ========= CARDS GRID ========= */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px; max-width: 1100px; width: 100%;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 16px; padding: 28px;
+    position: relative; overflow: hidden;
+    transition: all 0.4s;
+    cursor: pointer;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent, var(--cyan));
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent, var(--cyan));
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(0,245,255,0.1);
+  }
+  .card-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+  .card h3 {
+    font-family: 'Orbitron', sans-serif; font-size: 1rem;
+    color: var(--accent, var(--cyan)); margin-bottom: 10px;
+    letter-spacing: 1px;
+  }
+  .card p { font-size: 0.9rem; color: #8ab4cc; line-height: 1.7; }
+
+  /* ========= TIMELINE ========= */
+  .timeline {
+    max-width: 800px; width: 100%;
+    position: relative;
+    padding-left: 30px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--magenta), var(--yellow), var(--green));
+  }
+  .tl-item {
+    position: relative; margin-bottom: 50px;
+    padding-left: 30px;
+    opacity: 0; transform: translateX(-30px);
+    transition: all 0.6s;
+  }
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+  .tl-dot {
+    position: absolute; left: -39px; top: 6px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--accent, var(--cyan));
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 15px var(--accent, var(--cyan));
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { box-shadow: 0 0 10px var(--accent, var(--cyan)); }
+    50%      { box-shadow: 0 0 25px var(--accent, var(--cyan)), 0 0 50px rgba(0,245,255,0.3); }
+  }
+  .tl-label {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.75rem;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: var(--accent, var(--cyan)); margin-bottom: 5px;
+  }
+  .tl-title {
+    font-family: 'Orbitron', sans-serif; font-size: 1.1rem;
+    color: var(--white); margin-bottom: 8px;
+  }
+  .tl-text { font-size: 0.95rem; color: #8ab4cc; line-height: 1.7; }
+
+  /* ========= BONE CANVAS ========= */
+  .canvas-wrap {
+    width: 100%; max-width: 700px;
+    background: var(--panel);
+    border: 1px solid rgba(0,245,255,0.2);
+    border-radius: 20px; padding: 20px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,245,255,0.1);
+  }
+  canvas { display: block; width: 100%; border-radius: 12px; }
+
+  /* ========= CELL CARDS ========= */
+  .cells-wrap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px; max-width: 1000px; width: 100%;
+  }
+  .cell-card {
+    background: var(--panel2);
+    border: 2px solid transparent;
+    border-radius: 20px; padding: 30px 24px;
+    text-align: center; transition: all 0.4s; cursor: pointer;
+    position: relative; overflow: hidden;
+  }
+  .cell-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 0%, var(--c,rgba(0,245,255,0.1)), transparent 70%);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .cell-card:hover { border-color: var(--c, var(--cyan)); transform: scale(1.04); }
+  .cell-card:hover::after { opacity: 1; }
+  .cell-emoji { font-size: 3rem; display: block; margin-bottom: 15px; }
+  .cell-card h3 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+    color: var(--c, var(--cyan)); margin-bottom: 10px; letter-spacing: 1px;
+  }
+  .cell-card p { font-size: 0.88rem; color: #8ab4cc; line-height: 1.6; }
+  .cell-tag {
+    display: inline-block; margin-top: 12px;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.75rem;
+    padding: 4px 12px; border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--c, var(--cyan));
+    color: var(--c, var(--cyan));
+  }
+
+  /* ========= RECEPTOR SECTION ========= */
+  .receptor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px; max-width: 1100px; width: 100%;
+  }
+  .rec-card {
+    border-radius: 18px; padding: 28px 22px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--panel);
+    position: relative; overflow: hidden;
+    transition: all 0.4s;
+  }
+  .rec-card:hover { transform: translateY(-6px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+  .rec-icon {
+    width: 60px; height: 60px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; margin-bottom: 18px;
+  }
+  .rec-card h3 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+    letter-spacing: 1px; margin-bottom: 10px;
+  }
+  .rec-card p { font-size: 0.88rem; color: #8ab4cc; line-height: 1.6; }
+
+  /* ========= QUIZ / SIMULATOR ========= */
+  .quiz-box {
+    max-width: 700px; width: 100%;
+    background: var(--panel);
+    border: 1px solid rgba(0,245,255,0.3);
+    border-radius: 24px; padding: 40px;
+    box-shadow: 0 0 60px rgba(0,245,255,0.1);
+  }
+  .quiz-q {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: var(--cyan); margin-bottom: 30px;
+    line-height: 1.5;
+  }
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .quiz-btn {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 15px 20px;
+    color: var(--white); font-family: 'Nunito', sans-serif;
+    font-size: 1rem; text-align: left; cursor: pointer;
+    transition: all 0.3s;
+  }
+  .quiz-btn:hover { border-color: var(--cyan); background: rgba(0,245,255,0.08); }
+  .quiz-btn.correct { border-color: var(--green); background: rgba(57,255,20,0.1); color: var(--green); }
+  .quiz-btn.wrong   { border-color: var(--magenta); background: rgba(255,0,110,0.1); color: var(--magenta); }
+  .quiz-feedback {
+    min-height: 50px; font-size: 1rem;
+    line-height: 1.6; color: var(--yellow);
+    font-style: italic;
+  }
+  .quiz-nav { display: flex; gap: 12px; margin-top: 20px; }
+  .q-btn {
+    padding: 10px 24px; border-radius: 50px;
+    font-family: 'Orbitron', sans-serif; font-size: 0.8rem;
+    cursor: pointer; border: 2px solid;
+    transition: all 0.3s; font-weight: 700;
+  }
+  .q-btn.next { border-color: var(--cyan); color: var(--bg); background: var(--cyan); }
+  .q-btn.next:hover { background: transparent; color: var(--cyan); }
+  .q-btn.prev { border-color: var(--dim); color: var(--dim); background: transparent; }
+  .q-btn.prev:hover { border-color: var(--white); color: var(--white); }
+  .quiz-score {
+    font-family: 'Orbitron', sans-serif; font-size: 3rem;
+    text-align: center; color: var(--yellow);
+    margin-bottom: 10px;
+  }
+  .quiz-progress { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-bottom: 30px; }
+  .quiz-progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--cyan), var(--magenta)); transition: width 0.5s; }
+
+  /* ========= ACIDENTES SECTION ========= */
+  .bone-map {
+    position: relative; max-width: 600px; width: 100%;
+    margin: 0 auto 40px;
+  }
+  .bone-map svg { width: 100%; }
+  .hotspot {
+    cursor: pointer; transition: all 0.3s;
+  }
+  .hotspot circle { transition: all 0.3s; }
+  .hotspot:hover circle { r: 18; }
+  .acidente-info {
+    background: var(--panel2);
+    border: 1px solid var(--yellow);
+    border-radius: 16px; padding: 24px;
+    max-width: 600px; width: 100%;
+    min-height: 120px;
+    box-shadow: 0 0 30px rgba(255,214,10,0.15);
+    transition: all 0.4s;
+  }
+  .acidente-info h3 {
+    font-family: 'Orbitron', sans-serif; font-size: 1rem;
+    color: var(--yellow); margin-bottom: 10px;
+  }
+  .acidente-info p { font-size: 0.95rem; color: #a0c4d8; line-height: 1.7; }
+
+  /* ========= MOLECULE CANVAS ========= */
+  .molecule-scene {
+    max-width: 700px; width: 100%;
+    background: var(--panel);
+    border: 1px solid rgba(199,125,255,0.3);
+    border-radius: 20px; overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 40px rgba(199,125,255,0.15);
+  }
+
+  /* ========= FUNÇÕES TABLE ========= */
+  .funcs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; max-width: 1000px; width: 100%;
+  }
+  .func-item {
+    background: var(--panel2);
+    border-left: 4px solid var(--accent, var(--cyan));
+    border-radius: 0 12px 12px 0;
+    padding: 20px;
+    transition: all 0.3s;
+  }
+  .func-item:hover { transform: translateX(6px); }
+  .func-item h4 {
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 1rem; color: var(--accent, var(--cyan));
+    margin-bottom: 6px; letter-spacing: 1px;
+  }
+  .func-item p { font-size: 0.88rem; color: #8ab4cc; line-height: 1.6; }
+
+  /* ========= CLASSIFICAÇÃO ========= */
+  .class-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    justify-content: center; margin-bottom: 30px;
+  }
+  .tab-btn {
+    padding: 10px 20px; border-radius: 30px;
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 0.9rem; letter-spacing: 1px;
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.15);
+    background: transparent; color: var(--dim);
+    transition: all 0.3s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    border-color: var(--cyan); color: var(--cyan);
+    background: rgba(0,245,255,0.07);
+    box-shadow: 0 0 15px rgba(0,245,255,0.2);
+  }
+  .tab-panel { display: none; max-width: 900px; width: 100%; }
+  .tab-panel.active { display: block; }
+  .class-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .class-card {
+    background: var(--panel2); border-radius: 16px; padding: 24px;
+    border: 1px solid rgba(0,245,255,0.15);
+    text-align: center; transition: all 0.3s;
+  }
+  .class-card:hover { border-color: var(--cyan); transform: scale(1.03); }
+  .class-card .big-em { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+  .class-card h4 {
+    font-family: 'Orbitron', sans-serif; font-size: 0.85rem;
+    color: var(--cyan); margin-bottom: 8px;
+  }
+  .class-card p { font-size: 0.85rem; color: #8ab4cc; line-height: 1.6; }
+  .class-card .example {
+    margin-top: 10px; font-size: 0.8rem;
+    color: var(--yellow); font-style: italic;
+  }
+
+  /* ========= BADGE LABEL ========= */
+  .badge {
+    display: inline-block;
+    font-family: 'Rajdhani', sans-serif; font-size: 0.7rem;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  /* ========= FOOTER ========= */
+  footer {
+    position: relative; z-index: 1;
+    background: rgba(5,10,20,0.97);
+    border-top: 1px solid rgba(0,245,255,0.15);
+    padding: 50px 20px 30px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', sans-serif; font-size: 1.8rem;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 10px;
+  }
+  .footer-info {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem; color: var(--dim);
+    line-height: 2; letter-spacing: 1px;
+  }
+  .footer-info strong { color: var(--yellow); }
+  .footer-copy {
+    margin-top: 20px; font-size: 0.8rem; color: #2a4a65;
+    border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;
+  }
+
+  /* ========= SCROLL REVEAL ========= */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ========= GLITCH TEXT ========= */
+  .glitch {
+    position: relative;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .glitch::before { animation: glitch1 4s infinite; clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%); }
+  .glitch::after  { animation: glitch2 4s infinite; clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%); }
+  @keyframes glitch1 {
+    0%,90%,100% { transform: none; }
+    92% { transform: translate(-3px, 1px); }
+    94% { transform: translate(3px, -1px); }
+    96% { transform: translate(-2px, 2px); }
+  }
+  @keyframes glitch2 {
+    0%,90%,100% { transform: none; }
+    92% { transform: translate(3px, -1px); }
+    94% { transform: translate(-3px, 1px); }
+    96% { transform: translate(2px, -2px); }
+  }
+
+  /* ========= PARTICLE ========= */
+  .particle-wrap { position: absolute; inset: 0; pointer-events: none; }
+
+  /* Section bg alternates */
+  #intro      { background: radial-gradient(ellipse at 30% 50%, #0a1a2e 0%, var(--bg) 70%); }
+  #classif    { background: radial-gradient(ellipse at 70% 50%, #0d1428 0%, var(--bg) 70%); }
+  #funcoes    { background: radial-gradient(ellipse at 30% 60%, #0a2018 0%, var(--bg) 70%); }
+  #celulas    { background: radial-gradient(ellipse at 70% 40%, #1a0a2e 0%, var(--bg) 70%); }
+  #acidentes  { background: radial-gradient(ellipse at 40% 50%, #1a1000 0%, var(--bg) 70%); }
+  #receptores { background: radial-gradient(ellipse at 60% 50%, #001a2e 0%, var(--bg) 70%); }
+  #simulador  { background: radial-gradient(ellipse at 50% 50%, #0a0a2e 0%, var(--bg) 70%); }
+
+  /* Tooltip */
+  [data-tip] { position: relative; cursor: help; }
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute; bottom: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%);
+    background: #0d2035; border: 1px solid var(--cyan);
+    color: var(--white); padding: 8px 14px; border-radius: 8px;
+    font-size: 0.8rem; width: max-content; max-width: 220px;
+    pointer-events: none; opacity: 0;
+    transition: opacity 0.3s; z-index: 100;
+    white-space: normal; text-align: center;
+  }
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* Neon text */
+  .neon-c { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+  .neon-m { color: var(--magenta); text-shadow: 0 0 10px var(--magenta); }
+  .neon-y { color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
+  .neon-g { color: var(--green); text-shadow: 0 0 10px var(--green); }
+  .neon-p { color: var(--purple); text-shadow: 0 0 10px var(--purple); }
+  .neon-o { color: var(--orange); text-shadow: 0 0 10px var(--orange); }
+</style>
+</head>
+<body>
+
+<div id="starfield"></div>
+<div id="progress-bar"></div>
+
+<nav>
+  <a href="#hero">🏠 Início</a>
+  <a href="#intro">📖 O Que é?</a>
+  <a href="#classif">🗂️ Classificação</a>
+  <a href="#funcoes">⚙️ Funções</a>
+  <a href="#celulas">🔬 Células</a>
+  <a href="#acidentes">🗺️ Acidentes</a>
+  <a href="#receptores">📡 Receptores</a>
+  <a href="#simulador">🎮 Simulador</a>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="sec-number">骨</div>
+  <div class="hero-sub">Missão: Desvendar os Ossos</div>
+  <h1 class="hero-title glitch" data-text="OSSEO MUNDO">OSSEO MUNDO</h1>
+  <p class="hero-desc">
+    Bem-vindo, recruta! Nunca estudaste ossos antes? <span class="neon-c">Perfeito.</span>
+    Esta é a tua missão secreta: dominar a <strong>Osteologia</strong> — a ciência que revela os mistérios
+    do esqueleto humano — de forma épica, visual e inesquecível.
+  </p>
+  <a href="#intro" class="btn-start">⚡ INICIAR MISSÃO</a>
+
+  <!-- Animated Bone SVG -->
+  <svg class="bone-hero" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <linearGradient id="boneGrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#00f5ff"/>
+        <stop offset="100%" stop-color="#c77dff"/>
+      </linearGradient>
+    </defs>
+    <!-- Shaft -->
+    <rect x="100" y="70" width="100" height="60" rx="30" fill="url(#boneGrad)" filter="url(#glow)" opacity="0.9"/>
+    <!-- Epiphysis left -->
+    <ellipse cx="95" cy="100" rx="30" ry="40" fill="url(#boneGrad)" filter="url(#glow)" opacity="0.85"/>
+    <!-- Epiphysis right -->
+    <ellipse cx="205" cy="100" rx="30" ry="40" fill="url(#boneGrad)" filter="url(#glow)" opacity="0.85"/>
+    <!-- Marrow hint -->
+    <rect x="115" y="88" width="70" height="24" rx="12" fill="#050a14" opacity="0.7"/>
+    <rect x="125" y="93" width="50" height="14" rx="7" fill="#ff006e" opacity="0.4" filter="url(#glow)"/>
+    <!-- Labels -->
+    <text x="60" y="147" font-family="Orbitron,sans-serif" font-size="8" fill="#ffd60a" text-anchor="middle">EPÍFISE</text>
+    <text x="150" y="160" font-family="Orbitron,sans-serif" font-size="8" fill="#00f5ff" text-anchor="middle">DIÁFISE</text>
+    <text x="240" y="147" font-family="Orbitron,sans-serif" font-size="8" fill="#ffd60a" text-anchor="middle">EPÍFISE</text>
+    <!-- floating particles -->
+    <circle cx="150" cy="40" r="3" fill="#39ff14" opacity="0.8"><animate attributeName="cy" values="40;30;40" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="170" cy="55" r="2" fill="#ff006e" opacity="0.8"><animate attributeName="cy" values="55;45;55" dur="1.5s" repeatCount="indefinite"/></circle>
+    <circle cx="130" cy="50" r="2" fill="#00f5ff" opacity="0.8"><animate attributeName="cy" values="50;38;50" dur="2.5s" repeatCount="indefinite"/></circle>
+  </svg>
+</section>
+
+<!-- ===== INTRO ===== -->
+<section id="intro">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 01</div>
+    <h2 class="sec-title">O que é a <span>Osteologia?</span></h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene reveal">
+    <div class="char-avatar">👩‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">// DOUTORA OSSAMURA</div>
+      <p>Olá, recruta! Sou a <strong class="neon-c">Dra. Ossamura</strong>, a tua guia nesta missão.
+      Antes de mais: já te perguntaste <em>porque é que consegues ficar de pé sem cair como um saco de farinha?</em>
+      A resposta está nos teus <strong class="neon-y">ossos</strong>! 🦴</p>
+    </div>
+  </div>
+
+  <div class="character-scene right reveal">
+    <div class="char-avatar">🤖</div>
+    <div class="bubble">
+      <div class="char-name">// SKELE-BOT 3000</div>
+      <p>Processando... <strong class="neon-m">Osteologia</strong> vem do grego:
+      <em>osteon</em> = osso + <em>logos</em> = estudo. É o ramo da anatomia que estuda
+      os ossos: sua forma, estrutura, composição, classificação e funções. Simples, não? 😎</p>
+    </div>
+  </div>
+
+  <div class="cards-grid reveal" style="max-width:900px;">
+    <div class="card" style="--accent:var(--cyan)">
+      <span class="card-icon">🏛️</span>
+      <h3>Definição</h3>
+      <p>Osteologia é o estudo científico dos ossos. Faz parte da <strong>Anatomia Descritiva</strong>
+      e é a base para entender como o corpo humano se sustenta, move e protege os órgãos internos.</p>
+    </div>
+    <div class="card" style="--accent:var(--magenta)">
+      <span class="card-icon">🧬</span>
+      <h3>Composição</h3>
+      <p>Os ossos são tecidos <em>vivos</em>! Compostos por <strong class="neon-m">70% de minerais</strong>
+      (principalmente hidroxiapatite de cálcio) e <strong>30% de matéria orgânica</strong> (colagénio tipo I).
+      Sim, os ossos crescem e regeneram!</p>
+    </div>
+    <div class="card" style="--accent:var(--yellow)">
+      <span class="card-icon">📊</span>
+      <h3>Dados Épicos</h3>
+      <p>O ser humano adulto tem <strong class="neon-y">206 ossos</strong>.
+      Um recém-nascido tem cerca de <strong>270–300</strong> — alguns fundem-se com o crescimento.
+      O menor osso? O <em>estribo</em> do ouvido (3mm)! O maior? O <em>fémur</em>!</p>
+    </div>
+    <div class="card" style="--accent:var(--green)">
+      <span class="card-icon">⚡</span>
+      <h3>Osso Vivo!</h3>
+      <p>Ao contrário do que pensas, os ossos <strong class="neon-g">não são inertes</strong>.
+      São irrigados por vasos sanguíneos e nervos, constantemente remodelados pelas
+      células ósseas — um processo chamado <em>remodelação óssea</em>.</p>
+    </div>
+  </div>
+
+  <!-- Timeline história -->
+  <div style="max-width:800px;width:100%;margin-top:60px;">
+    <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--purple);margin-bottom:30px;text-align:center;">
+      📜 Cronologia: Da Formação ao Osso Adulto
+    </h3>
+    <div class="timeline">
+      <div class="tl-item" style="--accent:var(--cyan)">
+        <div class="tl-dot" style="--accent:var(--cyan)"></div>
+        <div class="tl-label">Semana 5–6 (embrião)</div>
+        <div class="tl-title">Ossificação começa!</div>
+        <div class="tl-text">O esqueleto começa como cartilagem e membranas fibrosas.
+        As primeiras células ósseas (osteoblastos) começam a depositar minerais — processo chamado <strong>ossificação</strong>.</div>
+      </div>
+      <div class="tl-item" style="--accent:var(--magenta)">
+        <div class="tl-dot" style="--accent:var(--magenta)"></div>
+        <div class="tl-label">Nascimento</div>
+        <div class="tl-title">Esqueleto parcialmente ossificado</div>
+        <div class="tl-text">O bebé nasce com áreas de cartilagem (fontanelas no crânio).
+        Os ossos longos têm centros de ossificação primários (diáfise) e secundários (epífises).</div>
+      </div>
+      <div class="tl-item" style="--accent:var(--yellow)">
+        <div class="tl-dot" style="--accent:var(--yellow)"></div>
+        <div class="tl-label">Infância / Adolescência</div>
+        <div class="tl-title">Crescimento e Placas Epifisárias</div>
+        <div class="tl-text">As <strong>placas de crescimento</strong> (cartilagem epifisária) são as "fábricas" de alongamento dos ossos.
+        O pico de massa óssea ocorre entre 25–30 anos.</div>
+      </div>
+      <div class="tl-item" style="--accent:var(--green)">
+        <div class="tl-dot" style="--accent:var(--green)"></div>
+        <div class="tl-label">Adulto (~25 anos)</div>
+        <div class="tl-title">Ossificação completa — 206 ossos</div>
+        <div class="tl-text">As placas de crescimento fecham-se. O esqueleto está completo.
+        Mas os ossos continuam a ser remodelados ao longo de toda a vida!</div>
+      </div>
+      <div class="tl-item" style="--accent:var(--purple)">
+        <div class="tl-dot" style="--accent:var(--purple)"></div>
+        <div class="tl-label">Idoso</div>
+        <div class="tl-title">Perda de massa óssea</div>
+        <div class="tl-text">Com o envelhecimento, a reabsorção supera a formação óssea →
+        <strong>osteoporose</strong>. Especialmente em mulheres pós-menopausa (perda de estrogénio).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CLASSIFICAÇÃO ===== -->
+<section id="classif">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 02</div>
+    <h2 class="sec-title"><span>Classificação</span> dos Ossos</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene reveal">
+    <div class="char-avatar">👩‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">// DOUTORA OSSAMURA</div>
+      <p>Recruta, os ossos classificam-se de <strong class="neon-c">3 formas principais</strong>:
+      pela <em>forma</em>, pela <em>estrutura interna</em> e pela <em>localização</em>.
+      Vou mostrar-te os separadores — escolhe o que quiseres explorar! 🗂️</p>
+    </div>
+  </div>
+
+  <div class="class-tabs reveal">
+    <button class="tab-btn active" onclick="switchTab('forma')">🔷 Por Forma</button>
+    <button class="tab-btn" onclick="switchTab('estrutura')">🔬 Por Estrutura</button>
+    <button class="tab-btn" onclick="switchTab('localizacao')">📍 Por Localização</button>
+  </div>
+
+  <div id="tab-forma" class="tab-panel active reveal">
+    <div class="class-cards">
+      <div class="class-card">
+        <span class="big-em">📏</span>
+        <h4>Ossos Longos</h4>
+        <p>Comprimento > largura. Têm <strong>diáfise</strong> (corpo) e <strong>epífises</strong> (extremidades). Contêm medula óssea amarela.</p>
+        <div class="example">Ex: Fémur, úmero, tíbia, rádio</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">⬛</span>
+        <h4>Ossos Curtos</h4>
+        <p>Dimensões aproximadamente iguais nos 3 eixos. Compostos maioritariamente por osso esponjoso.</p>
+        <div class="example">Ex: Ossos do carpo (punho), tarso (pé)</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🫓</span>
+        <h4>Ossos Planos</h4>
+        <p>Largura e comprimento > espessura. Protegem órgãos vitais. Contêm medula vermelha (hematopoiese).</p>
+        <div class="example">Ex: Crânio, escápula, esterno, costelas</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🔶</span>
+        <h4>Ossos Irregulares</h4>
+        <p>Forma complexa, não se enquadram nas categorias anteriores. Formas variadas e únicas.</p>
+        <div class="example">Ex: Vértebras, maxilar, osso temporal</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🌱</span>
+        <h4>Ossos Sesamóides</h4>
+        <p>Desenvolvem-se dentro de tendões, perto de articulações. Protegem tendões de desgaste.</p>
+        <div class="example">Ex: Rótula (patela) — o maior!</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🧩</span>
+        <h4>Ossos Pneumáticos</h4>
+        <p>Contêm cavidades cheias de ar (seios). Aliviam o peso do crânio e ressoam a voz.</p>
+        <div class="example">Ex: Frontal, maxilar, etmóide, esfenóide</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-estrutura" class="tab-panel reveal">
+    <div class="class-cards">
+      <div class="class-card">
+        <span class="big-em">🧱</span>
+        <h4>Osso Compacto (Cortical)</h4>
+        <p>Camada externa densa, organizada em <strong>ostéons</strong> (sistemas de Havers). Suporta grandes forças. Constitui ~80% da massa óssea total.</p>
+        <div class="example">Encontrado na diáfise dos ossos longos</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🕸️</span>
+        <h4>Osso Esponjoso (Trabecular)</h4>
+        <p>Rede de trabéculas ósseas com espaços preenchidos por medula. Mais leve, mas resistente. Alta atividade metabólica.</p>
+        <div class="example">Epífises, ossos planos e curtos</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🔴</span>
+        <h4>Medula Óssea Vermelha</h4>
+        <p>Produz células sanguíneas (<strong>hematopoiese</strong>): glóbulos vermelhos, brancos e plaquetas. Predomina em crianças.</p>
+        <div class="example">Esterno, ilíaco, costelas no adulto</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🟡</span>
+        <h4>Medula Óssea Amarela</h4>
+        <p>Composta maioritariamente por células adiposas. Reserva energética. Em situações de emergência, pode converter-se em vermelha.</p>
+        <div class="example">Diáfise dos ossos longos no adulto</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-localizacao" class="tab-panel reveal">
+    <div class="class-cards">
+      <div class="class-card">
+        <span class="big-em">👤</span>
+        <h4>Esqueleto Axial</h4>
+        <p>Eixo central do corpo. <strong>80 ossos</strong>. Suporta e protege o sistema nervoso central e órgãos torácicos.</p>
+        <div class="example">Crânio (28) + Coluna (26) + Costelas (24) + Esterno (1) + Hióide (1)</div>
+      </div>
+      <div class="class-card">
+        <span class="big-em">🙌</span>
+        <h4>Esqueleto Apendicular</h4>
+        <p>Membros superiores e inferiores + cinturas escapular e pélvica. <strong>126 ossos</strong>. Permite a locomoção e manipulação.</p>
+        <div class="example">Braços, pernas, ombros, bacia</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FUNÇÕES ===== -->
+<section id="funcoes">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 03</div>
+    <h2 class="sec-title">As <span>Funções</span> do Esqueleto</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene right reveal">
+    <div class="char-avatar">🤖</div>
+    <div class="bubble">
+      <div class="char-name">// SKELE-BOT 3000</div>
+      <p>Os ossos são verdadeiros <strong class="neon-m">multitarefa!</strong>
+      Não servem apenas de "suporte" — têm 6 funções fundamentais que tornam a vida possível.
+      Vou listá-las com precisão de robot! 💻</p>
+    </div>
+  </div>
+
+  <div class="funcs-grid reveal">
+    <div class="func-item" style="--accent:var(--cyan)">
+      <h4>⚙️ Suporte Mecânico</h4>
+      <p>O esqueleto é o "andaime" do corpo. Sustenta os tecidos moles e órgãos, permitindo que o corpo mantenha a sua forma.</p>
+    </div>
+    <div class="func-item" style="--accent:var(--magenta)">
+      <h4>🛡️ Protecção</h4>
+      <p>O crânio protege o encéfalo, a caixa torácica protege o coração e pulmões, a coluna protege a medula espinhal.</p>
+    </div>
+    <div class="func-item" style="--accent:var(--yellow)">
+      <h4>🏃 Movimento</h4>
+      <p>Os ossos funcionam como alavancas. Os músculos, ao contrair-se, puxam os ossos pelas inserções tendíneas, gerando movimento.</p>
+    </div>
+    <div class="func-item" style="--accent:var(--green)">
+      <h4>🩸 Hematopoiese</h4>
+      <p>A medula óssea vermelha produz <strong>todas as células sanguíneas</strong>: eritrócitos, leucócitos e plaquetas (trombócitos).</p>
+    </div>
+    <div class="func-item" style="--accent:var(--purple)">
+      <h4>🧪 Reserva Mineral</h4>
+      <p>Os ossos armazenam <strong>99% do cálcio</strong> e <strong>85% do fósforo</strong> do organismo. Libertam-nos quando necessário (homeostase).</p>
+    </div>
+    <div class="func-item" style="--accent:var(--orange)">
+      <h4>🔋 Reserva Energética</h4>
+      <p>A medula óssea amarela armazena gordura (triglicerídeos) como reserva energética, mobilizável em situações de necessidade.</p>
+    </div>
+    <div class="func-item" style="--accent:var(--cyan)">
+      <h4>📡 Função Endócrina</h4>
+      <p>Os osteócitos libertam a <strong>FGF-23</strong> (regula o fósforo) e os osteoblastos produzem <strong>osteocalcina</strong> (regula metabolismo energético e fertilidade).</p>
+    </div>
+    <div class="func-item" style="--accent:var(--magenta)">
+      <h4>🔊 Condução Sonora</h4>
+      <p>Os <strong>ossículos</strong> do ouvido médio (martelo, bigorna e estribo) transmitem vibrações sonoras do tímpano para o ouvido interno.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CÉLULAS ÓSSEAS ===== -->
+<section id="celulas">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 04</div>
+    <h2 class="sec-title">As <span>Células</span> do Osso</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene reveal">
+    <div class="char-avatar">👩‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">// DOUTORA OSSAMURA</div>
+      <p>Agora vem a parte que <em>toda a gente confunde</em> nas provas!
+      Existem <strong class="neon-c">4 tipos de células ósseas</strong>, cada uma com um papel
+      absolutamente distinto. Pensa nelas como uma equipa de super-heróis! 🦸</p>
+    </div>
+  </div>
+
+  <div class="cells-wrap reveal">
+    <div class="cell-card" style="--c:var(--cyan)">
+      <span class="cell-emoji">🏗️</span>
+      <h3>Osteoblasto</h3>
+      <p><strong>O Construtor.</strong> Sintetiza e secreta a <em>matriz óssea</em> (osteóide).
+      Deposita minerais (calcificação). Produzem osteocalcina e osteopontina.
+      Quando ficam "aprisionados" na matriz que criaram, diferenciam-se em osteócitos.</p>
+      <span class="cell-tag">Formação óssea</span>
+    </div>
+    <div class="cell-card" style="--c:var(--magenta)">
+      <span class="cell-emoji">💣</span>
+      <h3>Osteoclasto</h3>
+      <p><strong>O Destruidor.</strong> Célula gigante multinucleada (derivada de monócitos).
+      Reabsorve o osso através da secreção de <em>ácido clorídrico</em> e enzimas lisossomais.
+      Cria as lacunas de Howship. Essencial para a remodelação óssea.</p>
+      <span class="cell-tag">Reabsorção óssea</span>
+    </div>
+    <div class="cell-card" style="--c:var(--yellow)">
+      <span class="cell-emoji">👁️</span>
+      <h3>Osteócito</h3>
+      <p><strong>O Sensor.</strong> Osteoblasto maduro, aprisionado em lacunas na matriz.
+      Comunica através de <em>canalículos</em>. Detecta forças mecânicas (mecanossensão)
+      e regula a remodelação óssea. Célula mais abundante do osso!</p>
+      <span class="cell-tag">Mecanossensão</span>
+    </div>
+    <div class="cell-card" style="--c:var(--green)">
+      <span class="cell-emoji">🌱</span>
+      <h3>Célula de Revestimento</h3>
+      <p><strong>O Guardião.</strong> Osteoblastos "dormentes" que cobrem as superfícies ósseas inactivas.
+      Regulam o tráfego de iões (cálcio). Podem reactivar-se e diferenciar-se em osteoblastos
+      quando há sinais de remodelação.</p>
+      <span class="cell-tag">Regulação / Quiescência</span>
+    </div>
+  </div>
+
+  <!-- Animated molecule canvas -->
+  <div class="reveal" style="max-width:800px;width:100%;margin-top:50px;">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--purple);text-align:center;margin-bottom:20px;letter-spacing:2px;">
+      ⚡ REMODELAÇÃO ÓSSEA — Equilíbrio Dinâmico
+    </h3>
+    <div class="molecule-scene">
+      <canvas id="remoCanvas" height="250"></canvas>
+      <div style="display:flex;justify-content:center;gap:30px;padding:12px 20px;border-top:1px solid rgba(199,125,255,0.2);">
+        <span style="font-size:0.8rem;color:var(--cyan)">🏗️ Osteoblasto (formação)</span>
+        <span style="font-size:0.8rem;color:var(--magenta)">💣 Osteoclasto (reabsorção)</span>
+        <span style="font-size:0.8rem;color:var(--yellow)">💊 Mineral Ca²⁺</span>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;">
+      <div style="background:var(--panel2);border-radius:12px;padding:20px;border-left:3px solid var(--cyan)">
+        <h4 style="color:var(--cyan);font-family:'Rajdhani',sans-serif;font-size:1rem;margin-bottom:8px;">RANK: Osteoblasto</h4>
+        <p style="font-size:0.85rem;color:#8ab4cc;line-height:1.6;">
+          Regulado por: PTH (activa), Estrogénio (protege), vitamina D, IGF-1, BMP.
+          Inibido por: corticosteroides, RANKL (indirectamente).
+        </p>
+      </div>
+      <div style="background:var(--panel2);border-radius:12px;padding:20px;border-left:3px solid var(--magenta)">
+        <h4 style="color:var(--magenta);font-family:'Rajdhani',sans-serif;font-size:1rem;margin-bottom:8px;">RANK: Osteoclasto</h4>
+        <p style="font-size:0.85rem;color:#8ab4cc;line-height:1.6;">
+          Activado por: RANKL (produzido por osteoblastos!), PTH, IL-1, IL-6, TNF-α.
+          Inibido por: osteoprotegerina (OPG), calcitonina, bisfosfonatos.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ACIDENTES ÓSSEOS ===== -->
+<section id="acidentes">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 05</div>
+    <h2 class="sec-title"><span>Acidentes</span> Ósseos</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene right reveal">
+    <div class="char-avatar">🤖</div>
+    <div class="bubble">
+      <div class="char-name">// SKELE-BOT 3000</div>
+      <p><strong class="neon-m">"Acidentes ósseos"</strong> — não são quedas! 😄
+      São as <em>saliências, depressões, orifícios e rugosidades</em> naturais da superfície dos ossos.
+      Cada "acidente" tem um nome específico e uma função.
+      Clica nos pontos do osso abaixo para explorar!</p>
+    </div>
+  </div>
+
+  <div class="bone-map reveal">
+    <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="boneGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <linearGradient id="bG2" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#1a3a5c"/><stop offset="100%" stop-color="#0d2035"/>
+        </linearGradient>
+      </defs>
+      <!-- Femur shape -->
+      <ellipse cx="120" cy="80" rx="40" ry="50" fill="url(#bG2)" stroke="#4a7fa5" stroke-width="1.5"/>
+      <rect x="130" y="100" width="60" height="130" rx="30" fill="url(#bG2)" stroke="#4a7fa5" stroke-width="1.5"/>
+      <ellipse cx="160" cy="240" rx="50" ry="40" fill="url(#bG2)" stroke="#4a7fa5" stroke-width="1.5"/>
+      <!-- Bone highlight -->
+      <ellipse cx="120" cy="80" rx="40" ry="50" fill="none" stroke="rgba(0,245,255,0.3)" stroke-width="0.5"/>
+
+      <!-- hotspots -->
+      <g class="hotspot" onclick="showAcidente('cabeca')" data-id="cabeca">
+        <circle cx="100" cy="60" r="12" fill="rgba(0,245,255,0.2)" stroke="#00f5ff" stroke-width="2"/>
+        <text x="100" y="64" text-anchor="middle" font-size="10" fill="#00f5ff">1</text>
+      </g>
+      <g class="hotspot" onclick="showAcidente('colo')" data-id="colo">
+        <circle cx="128" cy="90" r="12" fill="rgba(255,214,10,0.2)" stroke="#ffd60a" stroke-width="2"/>
+        <text x="128" y="94" text-anchor="middle" font-size="10" fill="#ffd60a">2</text>
+      </g>
+      <g class="hotspot" onclick="showAcidente('tubero')" data-id="tubero">
+        <circle cx="195" cy="115" r="12" fill="rgba(255,0,110,0.2)" stroke="#ff006e" stroke-width="2"/>
+        <text x="195" y="119" text-anchor="middle" font-size="10" fill="#ff006e">3</text>
+      </g>
+      <g class="hotspot" onclick="showAcidente('diafise')" data-id="diafise">
+        <circle cx="165" cy="170" r="12" fill="rgba(57,255,20,0.2)" stroke="#39ff14" stroke-width="2"/>
+        <text x="165" y="174" text-anchor="middle" font-size="10" fill="#39ff14">4</text>
+      </g>
+      <g class="hotspot" onclick="showAcidente('condilo')" data-id="condilo">
+        <circle cx="145" cy="265" r="12" fill="rgba(199,125,255,0.2)" stroke="#c77dff" stroke-width="2"/>
+        <text x="145" y="269" text-anchor="middle" font-size="10" fill="#c77dff">5</text>
+      </g>
+      <g class="hotspot" onclick="showAcidente('fossa')" data-id="fossa">
+        <circle cx="185" cy="255" r="12" fill="rgba(255,107,0,0.2)" stroke="#ff6b00" stroke-width="2"/>
+        <text x="185" y="259" text-anchor="middle" font-size="10" fill="#ff6b00">6</text>
+      </g>
+
+      <!-- Legend lines -->
+      <line x1="112" y1="60" x2="270" y2="50" stroke="rgba(0,245,255,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="48" font-size="9" fill="#00f5ff" font-family="Rajdhani,sans-serif">1 - Cabeça (Head)</text>
+
+      <line x1="140" y1="90" x2="270" y2="85" stroke="rgba(255,214,10,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="83" font-size="9" fill="#ffd60a" font-family="Rajdhani,sans-serif">2 - Colo (Neck)</text>
+
+      <line x1="205" y1="115" x2="270" y2="120" stroke="rgba(255,0,110,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="118" font-size="9" fill="#ff006e" font-family="Rajdhani,sans-serif">3 - Tubérculo/Tuberosidade</text>
+
+      <line x1="175" y1="170" x2="270" y2="160" stroke="rgba(57,255,20,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="158" font-size="9" fill="#39ff14" font-family="Rajdhani,sans-serif">4 - Diáfise (Shaft)</text>
+
+      <line x1="148" y1="273" x2="270" y2="280" stroke="rgba(199,125,255,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="278" font-size="9" fill="#c77dff" font-family="Rajdhani,sans-serif">5 - Côndilo</text>
+
+      <line x1="190" y1="260" x2="270" y2="300" stroke="rgba(255,107,0,0.4)" stroke-width="1" stroke-dasharray="4"/>
+      <text x="272" y="298" font-size="9" fill="#ff6b00" font-family="Rajdhani,sans-serif">6 - Fossa</text>
+    </svg>
+  </div>
+
+  <div class="acidente-info reveal" id="acidente-display">
+    <h3>👆 Clica num número para explorar o acidente ósseo</h3>
+    <p>Cada saliência, depressão ou orifício nos ossos tem um nome anatómico específico e uma função precisa.</p>
+  </div>
+
+  <!-- Cards resumo acidentes -->
+  <div style="max-width:1000px;width:100%;margin-top:40px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;" class="reveal">
+      <div class="card" style="--accent:var(--cyan);padding:18px;">
+        <h3 style="font-size:0.85rem;">SALIÊNCIAS</h3>
+        <p style="font-size:0.82rem;margin-top:8px;">
+          <strong class="neon-c">Processo/Apófise:</strong> projecção geral<br>
+          <strong class="neon-c">Tubérculo:</strong> pequena saliência arredondada<br>
+          <strong class="neon-c">Tuberosidade:</strong> saliência rugosa maior<br>
+          <strong class="neon-c">Côndilo:</strong> saliência articular arredondada<br>
+          <strong class="neon-c">Epicôndilo:</strong> acima do côndilo<br>
+          <strong class="neon-c">Crista:</strong> saliência estreita e longa<br>
+          <strong class="neon-c">Espinha/Espícula:</strong> saliência aguda<br>
+          <strong class="neon-c">Trocânter:</strong> grande saliência (só no fémur)<br>
+          <strong class="neon-c">Cabeça:</strong> extremidade articular esférica<br>
+          <strong class="neon-c">Colo:</strong> região estreita abaixo da cabeça
+        </p>
+      </div>
+      <div class="card" style="--accent:var(--magenta);padding:18px;">
+        <h3 style="font-size:0.85rem;">DEPRESSÕES</h3>
+        <p style="font-size:0.82rem;margin-top:8px;">
+          <strong class="neon-m">Fossa:</strong> depressão ampla e rasa<br>
+          <strong class="neon-m">Sulco/Goteira:</strong> canal estreito e longo<br>
+          <strong class="neon-m">Incisura:</strong> recorte em forma de "U"<br>
+          <strong class="neon-m">Cavidade Glenoidal:</strong> depressão articular<br>
+          <strong class="neon-m">Acetábulo:</strong> cavidade coxo-femoral<br>
+          <strong class="neon-m">Fóvea:</strong> pequena depressão<br>
+          <strong class="neon-m">Meato:</strong> canal tubular<br>
+          <strong class="neon-m">Seio:</strong> cavidade no osso
+        </p>
+      </div>
+      <div class="card" style="--accent:var(--yellow);padding:18px;">
+        <h3 style="font-size:0.85rem;">ORIFÍCIOS</h3>
+        <p style="font-size:0.82rem;margin-top:8px;">
+          <strong class="neon-y">Foramen/Forame:</strong> buraco de passagem<br>
+          <strong class="neon-y">Canal:</strong> foramen tubular longo<br>
+          <strong class="neon-y">Fissura:</strong> fenda estreita<br>
+          <strong class="neon-y">Foramen Magno:</strong> o maior (crânio/medula)<br>
+          <strong class="neon-y">Foramen Vertebral:</strong> medula espinhal<br>
+          <strong class="neon-y">Foramen Obturador:</strong> maior forame ósseo
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RECEPTORES ===== -->
+<section id="receptores">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 06 — BOSS LEVEL</div>
+    <h2 class="sec-title"><span>Receptores</span> Ósseos</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene reveal">
+    <div class="char-avatar">👩‍🔬</div>
+    <div class="bubble">
+      <div class="char-name">// DOUTORA OSSAMURA</div>
+      <p>Este é o capítulo que separa os iniciados dos mestres!
+      Os <strong class="neon-c">receptores</strong> são proteínas específicas que ficam
+      à superfície (ou interior) das células ósseas, prontas para receber "mensagens químicas"
+      e desencadear respostas. São o <em>sistema de comunicação</em> do osso! 📡</p>
+    </div>
+  </div>
+
+  <!-- Animated receptor canvas -->
+  <div class="reveal" style="max-width:700px;width:100%;margin-bottom:40px;">
+    <div style="background:var(--panel);border:1px solid rgba(0,245,255,0.2);border-radius:20px;overflow:hidden;box-shadow:0 0 40px rgba(0,245,255,0.1);">
+      <canvas id="recCanvas" height="300"></canvas>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px;padding:12px 20px;border-top:1px solid rgba(0,245,255,0.1);">
+        <span style="font-size:0.8rem;color:var(--cyan)">🔵 Ligando (hormona/molécula)</span>
+        <span style="font-size:0.8rem;color:var(--magenta)">🔴 Receptor</span>
+        <span style="font-size:0.8rem;color:var(--yellow)">⚡ Sinal Intracelular</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="receptor-grid reveal">
+    <!-- PTH Receptor -->
+    <div class="rec-card" style="border-color:rgba(0,245,255,0.2)">
+      <div class="rec-icon" style="background:rgba(0,245,255,0.1);color:var(--cyan)">🧲</div>
+      <h3 style="color:var(--cyan)">Receptor PTH/PTHrP (PTH1R)</h3>
+      <p>Receptor acoplado à proteína G (GPCR). Presente nos <strong>osteoblastos e osteócitos</strong>.
+      Liga-se ao PTH (paratormona) e PTHrP.
+      Activa a adenilato ciclase (↑AMPc) → activa PKA → estimula formação e reabsorção óssea dependendo do padrão de exposição.
+      Exposição <em>intermitente</em> = anabólico (formação). Exposição <em>contínua</em> = catabólico (reabsorção via RANKL).</p>
+    </div>
+
+    <!-- Vitamin D Receptor -->
+    <div class="rec-card" style="border-color:rgba(255,214,10,0.2)">
+      <div class="rec-icon" style="background:rgba(255,214,10,0.1);color:var(--yellow)">☀️</div>
+      <h3 style="color:var(--yellow)">Receptor da Vitamina D (VDR)</h3>
+      <p>Receptor nuclear (factor de transcrição). Presente em <strong>osteoblastos, osteócitos e células intestinais</strong>.
+      Liga-se à 1,25(OH)₂D₃ (calcitriol — forma activa).
+      Actua no núcleo → aumenta absorção intestinal de Ca²⁺, estimula RANKL nos osteoblastos,
+      promove mineralização e diferenciação celular.</p>
+    </div>
+
+    <!-- Estrogen Receptor -->
+    <div class="rec-card" style="border-color:rgba(255,0,110,0.2)">
+      <div class="rec-icon" style="background:rgba(255,0,110,0.1);color:var(--magenta)">💗</div>
+      <h3 style="color:var(--magenta)">Receptores de Estrogénio (ERα e ERβ)</h3>
+      <p>Receptores nucleares e de membrana. Presentes em <strong>osteoblastos, osteoclastos e osteócitos</strong>.
+      O estrogénio inibe a apoptose dos osteoblastos e promove a apoptose dos osteoclastos.
+      Protege a massa óssea. A queda pós-menopausa de estrogénio → ↑reabsorção → osteoporose.</p>
+    </div>
+
+    <!-- RANK -->
+    <div class="rec-card" style="border-color:rgba(255,107,0,0.2)">
+      <div class="rec-icon" style="background:rgba(255,107,0,0.1);color:var(--orange)">🔥</div>
+      <h3 style="color:var(--orange)">RANK (Receptor Activador do NF-κB)</h3>
+      <p>Receptor de membrana presente nos <strong>precursores de osteoclastos e osteoclastos maduros</strong>.
+      Liga-se ao RANKL (produzido por osteoblastos/osteócitos).
+      Activa NF-κB → diferenciação e activação dos osteoclastos → reabsorção óssea.
+      O eixo <strong>RANK/RANKL/OPG</strong> é o principal regulador da remodelação óssea!</p>
+    </div>
+
+    <!-- Calcitonin Receptor -->
+    <div class="rec-card" style="border-color:rgba(57,255,20,0.2)">
+      <div class="rec-icon" style="background:rgba(57,255,20,0.1);color:var(--green)">🐟</div>
+      <h3 style="color:var(--green)">Receptor da Calcitonina (CTR)</h3>
+      <p>GPCR expresso principalmente nos <strong>osteoclastos</strong>.
+      A calcitonina (produzida pelas células C da tiróide) liga-se → ↑AMPc → inibição imediata da reabsorção óssea.
+      Os osteoclastos retraem as suas ruffled borders e param. Usado terapeuticamente (Miacalcic®) na osteoporose.</p>
+    </div>
+
+    <!-- Insulin Receptor -->
+    <div class="rec-card" style="border-color:rgba(199,125,255,0.2)">
+      <div class="rec-icon" style="background:rgba(199,125,255,0.1);color:var(--purple)">🍬</div>
+      <h3 style="color:var(--purple)">Receptor da Insulina (IR) e IGF-1R</h3>
+      <p>Receptores tirosina cinase. Presentes em <strong>osteoblastos</strong>.
+      A insulina e o IGF-1 estimulam a proliferação e diferenciação dos osteoblastos.
+      Os osteoblastos, por sua vez, produzem <strong>osteocalcina</strong> que estimula a secreção de insulina pelo pâncreas!
+      Um loop de feedback fascinante.</p>
+    </div>
+
+    <!-- Androgen Receptor -->
+    <div class="rec-card" style="border-color:rgba(0,245,255,0.2)">
+      <div class="rec-icon" style="background:rgba(0,245,255,0.1);color:var(--cyan)">💪</div>
+      <h3 style="color:var(--cyan)">Receptor de Androgénios (AR)</h3>
+      <p>Receptor nuclear. Presente em <strong>osteoblastos, osteócitos e osteoclastos</strong>.
+      A testosterona (directamente) e a DHT estimulam a formação óssea.
+      O défice de androgénios nos homens causa osteoporose.
+      A testosterona também é aromatizada a estradiol localmente no osso!</p>
+    </div>
+
+    <!-- Glucocorticoid Receptor -->
+    <div class="rec-card" style="border-color:rgba(255,0,110,0.2)">
+      <div class="rec-icon" style="background:rgba(255,0,110,0.1);color:var(--magenta)">💊</div>
+      <h3 style="color:var(--magenta)">Receptor de Glucocorticóides (GR)</h3>
+      <p>Receptor nuclear. Presente em <strong>todas as células ósseas</strong>.
+      O cortisol e corticóides exógenos (prednisona etc.) inibem os osteoblastos,
+      aumentam a apoptose de osteócitos e reduzem a absorção intestinal de cálcio.
+      O uso crónico de corticóides é a 2ª causa de osteoporose!</p>
+    </div>
+
+    <!-- Wnt Receptor -->
+    <div class="rec-card" style="border-color:rgba(57,255,20,0.2)">
+      <div class="rec-icon" style="background:rgba(57,255,20,0.1);color:var(--green)">🌿</div>
+      <h3 style="color:var(--green)">Receptores Wnt (LRP5/LRP6 + Frizzled)</h3>
+      <p>Co-receptores de membrana nos <strong>osteoblastos e osteócitos</strong>.
+      A via Wnt/β-catenina é a principal via anabólica óssea! Estimula proliferação de osteoblastos.
+      A <strong>esclerostina</strong> (produzida por osteócitos) bloqueia LRP5/6 → inibe formação.
+      Anti-esclerostina (romosozumab) é fármaco anti-osteoporose!</p>
+    </div>
+
+    <!-- TRPV1 -->
+    <div class="rec-card" style="border-color:rgba(255,107,0,0.2)">
+      <div class="rec-icon" style="background:rgba(255,107,0,0.1);color:var(--orange)">🌡️</div>
+      <h3 style="color:var(--orange)">Canais TRP (TRPV1, TRPV4)</h3>
+      <p>Canais iónicos mecanossensíveis. Presentes em <strong>osteócitos e osteoblastos</strong>.
+      Detectam forças mecânicas, temperatura e gradientes de cálcio.
+      O TRPV4 é crucial para a mecanossensação óssea — converte deformação mecânica
+      em sinais intracelulares de cálcio (Ca²⁺ signalling).</p>
+    </div>
+
+    <!-- FGF Receptor -->
+    <div class="rec-card" style="border-color:rgba(199,125,255,0.2)">
+      <div class="rec-icon" style="background:rgba(199,125,255,0.1);color:var(--purple)">🔬</div>
+      <h3 style="color:var(--purple)">Receptor FGF (FGFR1-3)</h3>
+      <p>Receptores tirosina cinase. Presentes em <strong>condrócitos e osteoblastos</strong>.
+      Mutações no FGFR3 causam <strong>acondroplasia</strong> (forma mais comum de nanismo).
+      O FGF-23 produzido pelos osteócitos liga-se ao rim, regulando o fósforo sérico e vitamina D.</p>
+    </div>
+
+    <!-- Piezo1 -->
+    <div class="rec-card" style="border-color:rgba(0,245,255,0.2)">
+      <div class="rec-icon" style="background:rgba(0,245,255,0.1);color:var(--cyan)">⚡</div>
+      <h3 style="color:var(--cyan)">Canal Piezo1 (Mecanorreceptor)</h3>
+      <p>Canal mecanossensível de iões. Altamente expresso nos <strong>osteócitos</strong>.
+      Converte forças mecânicas (compressão, flexão) em influxo de Ca²⁺.
+      Fundamental para a adaptação óssea ao exercício físico (Lei de Wolff).
+      Exercício → activa Piezo1 → sinalização → formação óssea.</p>
+    </div>
+  </div>
+
+  <!-- Tabela Resumo Receptores -->
+  <div class="reveal" style="max-width:900px;width:100%;margin-top:50px;overflow-x:auto;">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--yellow);margin-bottom:20px;text-align:center;letter-spacing:2px;">
+      📋 TABELA MESTRE — Receptores Ósseos
+    </h3>
+    <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+      <thead>
+        <tr style="background:rgba(0,245,255,0.1);border-bottom:2px solid var(--cyan);">
+          <th style="padding:12px;text-align:left;font-family:'Rajdhani',sans-serif;color:var(--cyan);letter-spacing:1px;">RECEPTOR</th>
+          <th style="padding:12px;text-align:left;font-family:'Rajdhani',sans-serif;color:var(--cyan);letter-spacing:1px;">LIGANDO</th>
+          <th style="padding:12px;text-align:left;font-family:'Rajdhani',sans-serif;color:var(--cyan);letter-spacing:1px;">CÉLULA</th>
+          <th style="padding:12px;text-align:left;font-family:'Rajdhani',sans-serif;color:var(--cyan);letter-spacing:1px;">EFEITO</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+          <td style="padding:10px;color:var(--cyan)">PTH1R</td>
+          <td style="padding:10px;color:#8ab4cc">PTH / PTHrP</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoblasto, Osteócito</td>
+          <td style="padding:10px;color:var(--yellow)">↑Formação (intermitente) / ↑Reabsorção (contínuo)</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+          <td style="padding:10px;color:var(--yellow)">VDR</td>
+          <td style="padding:10px;color:#8ab4cc">1,25(OH)₂D₃</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoblasto, Intestino</td>
+          <td style="padding:10px;color:var(--green)">↑Mineralização, ↑Ca²⁺ intestinal, ↑RANKL</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+          <td style="padding:10px;color:var(--magenta)">ERα / ERβ</td>
+          <td style="padding:10px;color:#8ab4cc">Estradiol</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoblasto, Osteoclasto, Osteócito</td>
+          <td style="padding:10px;color:var(--green)">↑Formação, ↓Reabsorção, ↓Apoptose osteoblasto</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+          <td style="padding:10px;color:var(--orange)">RANK</td>
+          <td style="padding:10px;color:#8ab4cc">RANKL</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoclasto (precursor)</td>
+          <td style="padding:10px;color:var(--magenta)">↑Diferenciação, ↑Reabsorção</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+          <td style="padding:10px;color:var(--green)">CTR</td>
+          <td style="padding:10px;color:#8ab4cc">Calcitonina</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoclasto</td>
+          <td style="padding:10px;color:var(--green)">↓Reabsorção (inibição imediata)</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+          <td style="padding:10px;color:var(--purple)">IR / IGF-1R</td>
+          <td style="padding:10px;color:#8ab4cc">Insulina / IGF-1</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoblasto</td>
+          <td style="padding:10px;color:var(--green)">↑Proliferação, ↑Diferenciação</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+          <td style="padding:10px;color:var(--magenta)">GR</td>
+          <td style="padding:10px;color:#8ab4cc">Cortisol / Corticóides</td>
+          <td style="padding:10px;color:#8ab4cc">Todas as células ósseas</td>
+          <td style="padding:10px;color:var(--magenta)">↓Formação, ↑Apoptose osteócito</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+          <td style="padding:10px;color:var(--green)">LRP5/Frizzled</td>
+          <td style="padding:10px;color:#8ab4cc">Wnt</td>
+          <td style="padding:10px;color:#8ab4cc">Osteoblasto, Osteócito</td>
+          <td style="padding:10px;color:var(--green)">↑↑Formação óssea (via anabólica)</td>
+        </tr>
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+          <td style="padding:10px;color:var(--cyan)">Piezo1</td>
+          <td style="padding:10px;color:#8ab4cc">Força mecânica</td>
+          <td style="padding:10px;color:#8ab4cc">Osteócito</td>
+          <td style="padding:10px;color:var(--green)">↑Ca²⁺ intracel. → ↑Formação</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ===== SIMULADOR / QUIZ ===== -->
+<section id="simulador">
+  <div class="sec-header reveal">
+    <div class="sec-tag">Capítulo 07 — TESTE FINAL</div>
+    <h2 class="sec-title">🎮 <span>Simulador</span> de Conhecimento</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="character-scene right reveal">
+    <div class="char-avatar">🤖</div>
+    <div class="bubble">
+      <div class="char-name">// SKELE-BOT 3000</div>
+      <p>Chegou a hora da verdade, recruta! 
+      <strong class="neon-m">10 perguntas</strong> sobre tudo o que aprendeste.
+      Não desistas! Cada erro é uma oportunidade de aprender melhor. Boa sorte! ⚔️</p>
+    </div>
+  </div>
+
+  <div class="quiz-box reveal" id="quiz-container">
+    <div class="quiz-progress">
+      <div class="quiz-progress-fill" id="quiz-prog" style="width:10%"></div>
+    </div>
+    <div id="quiz-inner">
+      <!-- JS generated -->
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-info">
+    <strong>UNIVERSIDADE LICUNGO</strong><br>
+    Faculdade de Medicina<br>
+    2.º Ano de Medicina — Anatomia Humana<br>
+    <strong>ANO 2026</strong>
+  </div>
+  <div class="footer-copy">
+    © 2026 DemilMed-UL · Universidade Licungo · Material Educativo de Osteologia<br>
+    Desenvolvido para fins académicos — 2.º Ano de Medicina
+  </div>
+</footer>
+
+<script>
+// ========= STARFIELD =========
+(function(){
+  const sf = document.getElementById('starfield');
+  for(let i=0;i<180;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random()*2.5+0.5;
+    s.style.cssText = `
+      width:${sz}px;height:${sz}px;
+      top:${Math.random()*100}%;left:${Math.random()*100}%;
+      --dur:${Math.random()*3+2}s;
+      animation-delay:${Math.random()*3}s;
+    `;
+    sf.appendChild(s);
+  }
+})();
+
+// ========= SCROLL PROGRESS =========
+window.addEventListener('scroll',()=>{
+  const d = document.documentElement;
+  const pct = (d.scrollTop/(d.scrollHeight-d.clientHeight))*100;
+  document.getElementById('progress-bar').style.width = pct+'%';
+});
+
+// ========= REVEAL ON SCROLL =========
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('.reveal,.tl-item').forEach(el=>{
+  revealObserver.observe(el);
+});
+
+// ========= TABS =========
+function switchTab(id){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ========= ACIDENTES =========
+const acidenteData = {
+  cabeca:{
+    name:'Cabeça (Head)',
+    color:'var(--cyan)',
+    desc:'Porção articular esférica do osso longo. No fémur, articula-se com o acetábulo do ilíaco para formar a articulação coxo-femoral (anca). Coberta por cartilagem hialina. Contém a fóvea, pequena depressão onde se insere o ligamento da cabeça do fémur.'
+  },
+  colo:{
+    name:'Colo (Neck)',
+    color:'var(--yellow)',
+    desc:'Região estreitada que une a cabeça à diáfise. No fémur, forma um ângulo de ~126° com a diáfise (ângulo de inclinação). Zona frequente de fracturas nos idosos com osteoporose ("fractura do colo do fémur")!'
+  },
+  tubero:{
+    name:'Tubérculo / Tuberosidade / Trocânter',
+    color:'var(--magenta)',
+    desc:'Saliências ósseas rugosas que servem de ponto de inserção para tendões e ligamentos musculares. Quanto maior a saliência, mais força pode ser transmitida. No fémur: grande trocânter (inserção do glúteo médio) e pequeno trocânter (inserção do ileopsoas).'
+  },
+  diafise:{
+    name:'Diáfise (Shaft / Corpo)',
+    color:'var(--green)',
+    desc:'Corpo cilíndrico do osso longo. Composto principalmente por osso cortical (compacto). Contém o canal medular preenchido por medula óssea amarela (gordura) no adulto. As artérias nutrientes entram pela diáfise através de forames nutrientes.'
+  },
+  condilo:{
+    name:'Côndilo',
+    color:'var(--purple)',
+    desc:'Saliência articular arredondada, lisa, coberta por cartilagem hialina. No fémur distal: côndilo medial e lateral que se articulam com a tíbia na articulação do joelho. O término "epicôndilo" refere-se às saliências acima dos côndilos onde se inserem ligamentos.'
+  },
+  fossa:{
+    name:'Fossa / Sulco / Depressão',
+    color:'var(--orange)',
+    desc:'Depressão ou cavidade na superfície óssea. Pode alojar tendões (sulco), servir de superfície articular (fossa glenoidal do ombro), ou dar passagem a vasos e nervos. A fossa intercondiliana do fémur separa os dois côndilos e aloja os ligamentos cruzados.'
+  }
+};
+
+function showAcidente(id){
+  const d = acidenteData[id];
+  const el = document.getElementById('acidente-display');
+  el.style.borderColor = d.color;
+  el.style.boxShadow = `0 0 30px ${d.color}40`;
+  el.innerHTML = `<h3 style="color:${d.color}">📍 ${d.name}</h3><p>${d.desc}</p>`;
+}
+
+// ========= REMODELAÇÃO CANVAS =========
+(function(){
+  const canvas = document.getElementById('remoCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 700;
+  canvas.height = 250;
+
+  const particles = [];
+  const builders = [];
+  const destroyers = [];
+
+  // Osteoblasts (builders) - left side
+  for(let i=0;i<4;i++){
+    builders.push({
+      x: 80 + Math.random()*80,
+      y: 50 + Math.random()*150,
+      r: 14+Math.random()*6,
+      vx: (Math.random()-0.5)*0.5,
+      vy: (Math.random()-0.5)*0.5,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+
+  // Osteoclasts (destroyers) - right side
+  for(let i=0;i<3;i++){
+    destroyers.push({
+      x: canvas.width*.6 + Math.random()*100,
+      y: 50 + Math.random()*150,
+      r: 18+Math.random()*8,
+      vx: (Math.random()-0.5)*0.5,
+      vy: (Math.random()-0.5)*0.5,
+      phase: Math.random()*Math.PI*2
+    });
+  }
+
+  // Ca particles
+  for(let i=0;i<20;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: 3+Math.random()*3,
+      vx: (Math.random()-0.5)*1.5,
+      vy: (Math.random()-0.5)*1.5,
+      alpha: 0.5+Math.random()*0.5
+    });
+  }
+
+  let t = 0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // Background bone strip
+    ctx.fillStyle = 'rgba(20,40,60,0.4)';
+    ctx.fillRect(canvas.width*0.35,0,canvas.width*0.3,canvas.height);
+
+    // Bone label
+    ctx.fillStyle = 'rgba(74,127,165,0.5)';
+    ctx.font = '12px Rajdhani,sans-serif';
+    ctx.fillText('SUPERFÍCIE ÓSSEA',canvas.width/2-60,canvas.height/2);
+
+    // Ca particles
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0||p.x>canvas.width) p.vx*=-1;
+      if(p.y<0||p.y>canvas.height) p.vy*=-1;
+
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(255,214,10,${p.alpha})`;
+      ctx.fill();
+      ctx.font = '8px sans-serif';
+      ctx.fillStyle = '#050a14';
+      ctx.fillText('Ca',p.x-5,p.y+3);
+    });
+
+    // Builders
+    builders.forEach(b=>{
+      b.phase += 0.02;
+      b.x += Math.sin(b.phase)*0.3 + b.vx;
+      b.y += Math.cos(b.phase*0.7)*0.3 + b.vy;
+      b.x = Math.max(30,Math.min(canvas.width*0.4,b.x));
+      b.y = Math.max(20,Math.min(canvas.height-20,b.y));
+
+      // Glow
+      const g = ctx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*2);
+      g.addColorStop(0,'rgba(0,245,255,0.3)');
+      g.addColorStop(1,'rgba(0,245,255,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.r*2,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+      ctx.fillStyle = 'rgba(0,245,255,0.7)';
+      ctx.fill();
+      ctx.strokeStyle = '#00f5ff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#050a14';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('OB',b.x,b.y+3);
+      ctx.textAlign = 'left';
+
+      // Draw line to bone
+      ctx.beginPath();
+      ctx.moveTo(b.x+b.r,b.y);
+      ctx.lineTo(canvas.width*0.36,b.y);
+      ctx.strokeStyle = 'rgba(0,245,255,0.2)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3,4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Destroyers
+    destroyers.forEach(d=>{
+      d.phase += 0.015;
+      d.x += Math.sin(d.phase)*0.4 + d.vx;
+      d.y += Math.cos(d.phase*0.8)*0.4 + d.vy;
+      d.x = Math.max(canvas.width*0.6,Math.min(canvas.width-30,d.x));
+      d.y = Math.max(20,Math.min(canvas.height-20,d.y));
+
+      const g2 = ctx.createRadialGradient(d.x,d.y,0,d.x,d.y,d.r*2.5);
+      g2.addColorStop(0,'rgba(255,0,110,0.3)');
+      g2.addColorStop(1,'rgba(255,0,110,0)');
+      ctx.fillStyle = g2;
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,d.r*2.5,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle = 'rgba(255,0,110,0.7)';
+      ctx.fill();
+      ctx.strokeStyle = '#ff006e';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('OC',d.x,d.y+3);
+      ctx.textAlign = 'left';
+
+      ctx.beginPath();
+      ctx.moveTo(d.x-d.r,d.y);
+      ctx.lineTo(canvas.width*0.64,d.y);
+      ctx.strokeStyle = 'rgba(255,0,110,0.2)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3,4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    // Labels
+    ctx.font = 'bold 11px Rajdhani,sans-serif';
+    ctx.fillStyle = '#00f5ff';
+    ctx.fillText('OSTEOBLASTOS', 10, 20);
+    ctx.fillStyle = '#ff006e';
+    ctx.fillText('OSTEOCLASTOS', canvas.width-130, 20);
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ========= RECEPTOR CANVAS =========
+(function(){
+  const canvas = document.getElementById('recCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * window.devicePixelRatio || 700;
+  canvas.height = 300;
+
+  const W = canvas.width, H = canvas.height;
+
+  // Cell membrane
+  const memY = H * 0.55;
+
+  // Receptor proteins on membrane
+  const receptors = [
+    {x:W*0.15,y:memY,active:false,timer:0,color:'#ff006e',label:'PTH1R'},
+    {x:W*0.35,y:memY,active:false,timer:0,color:'#ffd60a',label:'VDR'},
+    {x:W*0.55,y:memY,active:false,timer:0,color:'#39ff14',label:'RANK'},
+    {x:W*0.75,y:memY,active:false,timer:0,color:'#c77dff',label:'LRP5'},
+  ];
+
+  // Ligands floating above
+  const ligands = [];
+  function spawnLigand(){
+    const rec = receptors[Math.floor(Math.random()*receptors.length)];
+    ligands.push({
+      x: Math.random()*W,
+      y: 10+Math.random()*30,
+      tx: rec.x,
+      ty: rec.y - 30,
+      speed: 0.02+Math.random()*0.02,
+      t: 0,
+      color: rec.color,
+      recIdx: receptors.indexOf(rec),
+      r: 8
+    });
+  }
+
+  for(let i=0;i<4;i++) spawnLigand();
+
+  // Signal particles going down
+  const signals = [];
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    // BG gradient
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#050a14');
+    bg.addColorStop(1,'#0a1628');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0,0,W,H);
+
+    // Extracellular label
+    ctx.fillStyle = 'rgba(74,127,165,0.6)';
+    ctx.font = '11px Rajdhani,sans-serif';
+    ctx.fillText('ESPAÇO EXTRACELULAR',10,memY-15);
+    ctx.fillText('CITOPLASMA',10,memY+20);
+
+    // Membrane
+    const memGrad = ctx.createLinearGradient(0,memY-8,0,memY+8);
+    memGrad.addColorStop(0,'rgba(0,100,160,0.9)');
+    memGrad.addColorStop(1,'rgba(0,50,100,0.9)');
+    ctx.fillStyle = memGrad;
+    ctx.fillRect(0,memY-8,W,16);
+    // Membrane sparkle
+    ctx.strokeStyle = 'rgba(0,245,255,0.3)';
+    ctx.lineWidth = 0.5;
+    for(let x=0;x<W;x+=20){
+      ctx.beginPath();
+      ctx.moveTo(x,memY-8);
+      ctx.lineTo(x,memY+8);
+      ctx.stroke();
+    }
+
+    // Receptors
+    receptors.forEach((rec,i)=>{
+      if(rec.timer>0) rec.timer--;
+      if(rec.timer<=0) rec.active=false;
+
+      // Transmembrane protein shape
+      const col = rec.active ? rec.color : 'rgba(74,127,165,0.8)';
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      // U-shape receptor
+      ctx.moveTo(rec.x-14,memY-18);
+      ctx.lineTo(rec.x-14,memY+12);
+      ctx.quadraticCurveTo(rec.x-14,memY+22,rec.x-4,memY+22);
+      ctx.quadraticCurveTo(rec.x+14,memY+22,rec.x+14,memY+12);
+      ctx.lineTo(rec.x+14,memY-18);
+      ctx.stroke();
+
+      if(rec.active){
+        const g = ctx.createRadialGradient(rec.x,memY,0,rec.x,memY,40);
+        g.addColorStop(0,rec.color+'33');
+        g.addColorStop(1,'transparent');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(rec.x,memY,40,0,Math.PI*2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = rec.active ? rec.color : '#4a7fa5';
+      ctx.font = 'bold 8px Orbitron,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(rec.label,rec.x,memY+38);
+      ctx.textAlign = 'left';
+    });
+
+    // Ligands
+    ligands.forEach((l,i)=>{
+      l.t = Math.min(l.t+l.speed,1);
+      l.x = l.x + (l.tx-l.x)*l.t*0.05;
+      l.y = l.y + (l.ty-l.y)*l.t*0.05;
+
+      const dist = Math.hypot(l.x-l.tx,l.y-l.ty);
+
+      if(dist < 25){
+        // Bind!
+        receptors[l.recIdx].active = true;
+        receptors[l.recIdx].timer = 80;
+        // Spawn signal
+        signals.push({
+          x: receptors[l.recIdx].x,
+          y: memY+22,
+          vy: 2,
+          alpha: 1,
+          color: l.color,
+          r: 6
+        });
+        // Reset ligand
+        l.x = Math.random()*W;
+        l.y = 10+Math.random()*20;
+        l.t = 0;
+        const rec = receptors[Math.floor(Math.random()*receptors.length)];
+        l.tx = rec.x;
+        l.ty = rec.y - 30;
+        l.color = rec.color;
+        l.recIdx = receptors.indexOf(rec);
+      }
+
+      // Draw ligand
+      ctx.beginPath();
+      ctx.arc(l.x,l.y,l.r,0,Math.PI*2);
+      ctx.fillStyle = l.color+'cc';
+      ctx.fill();
+      ctx.strokeStyle = l.color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Trail
+      ctx.beginPath();
+      ctx.moveTo(l.x,l.y);
+      ctx.lineTo(l.x+(l.tx-l.x)*0.1,l.y+(l.ty-l.y)*0.1);
+      ctx.strokeStyle = l.color+'44';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Signal particles going down
+    for(let i=signals.length-1;i>=0;i--){
+      const s = signals[i];
+      s.y += s.vy;
+      s.alpha -= 0.015;
+
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle = s.color+Math.floor(s.alpha*255).toString(16).padStart(2,'0');
+      ctx.fill();
+
+      // Lightning bolt effect
+      ctx.strokeStyle = '#ffd60a'+Math.floor(s.alpha*200).toString(16).padStart(2,'0');
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(s.x,s.y-s.r);
+      ctx.lineTo(s.x-5,s.y);
+      ctx.lineTo(s.x+3,s.y);
+      ctx.lineTo(s.x-3,s.y+s.r);
+      ctx.stroke();
+
+      if(s.alpha<=0||s.y>H) signals.splice(i,1);
+    }
+
+    // Legend top
+    ctx.fillStyle = 'rgba(0,245,255,0.7)';
+    ctx.font = '10px Rajdhani,sans-serif';
+    ctx.fillText('● Ligando (hormona)',W-180,15);
+    ctx.fillStyle = 'rgba(255,214,10,0.7)';
+    ctx.fillText('⚡ Sinal activado',W-180,30);
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ========= QUIZ =========
+const questions = [
+  {
+    q:'O que é a Osteologia?',
+    opts:['Estudo dos músculos','Estudo dos nervos','Estudo dos ossos','Estudo dos ligamentos'],
+    ans:2,
+    exp:'Osteologia vem do grego osteon (osso) + logos (estudo). É o ramo da anatomia que estuda os ossos.'
+  },
+  {
+    q:'Quantos ossos tem o esqueleto humano adulto?',
+    opts:['270','198','206','215'],
+    ans:2,
+    exp:'O adulto tem 206 ossos. Ao nascer temos ~270–300, que vão fundindo ao longo do crescimento.'
+  },
+  {
+    q:'Qual é a célula óssea responsável pela FORMAÇÃO de osso?',
+    opts:['Osteoclasto','Osteócito','Osteoblasto','Célula de Howship'],
+    ans:2,
+    exp:'O Osteoblasto é o "construtor" — sintetiza a matriz óssea e deposita minerais.'
+  },
+  {
+    q:'A qual célula óssea pertencem as lacunas de Howship?',
+    opts:['Osteócito','Osteoblasto','Célula de revestimento','Osteoclasto'],
+    ans:3,
+    exp:'Os Osteoclastos criam as lacunas de Howship ao reabsorver o osso com ácido clorídrico e enzimas.'
+  },
+  {
+    q:'Qual receptor quando activado pelo RANKL promove a reabsorção óssea?',
+    opts:['VDR','PTH1R','RANK','Receptor de estrogénio'],
+    ans:2,
+    exp:'O RANK (expresso nos osteoclastos) quando se liga ao RANKL activa o NF-κB → diferenciação e activação dos osteoclastos.'
+  },
+  {
+    q:'O Receptor da Vitamina D (VDR) é um receptor:',
+    opts:['GPCR (acoplado a proteína G)','Nuclear (factor de transcrição)','Canal iónico','Receptor tirosina cinase'],
+    ans:1,
+    exp:'O VDR é um receptor nuclear — penetra no núcleo e actua directamente como factor de transcrição.'
+  },
+  {
+    q:'Qual das seguintes é uma saliência óssea? (Acidente de elevação)',
+    opts:['Fossa','Sulco','Meato','Tubérculo'],
+    ans:3,
+    exp:'O Tubérculo é uma pequena saliência arredondada. Fossa, sulco e meato são depressões/orifícios.'
+  },
+  {
+    q:'O osso Fémur classifica-se como:',
+    opts:['Osso curto','Osso irregular','Osso plano','Osso longo'],
+    ans:3,
+    exp:'O Fémur é o maior osso longo do corpo — tem comprimento muito maior que largura, com diáfise e epífises.'
+  },
+  {
+    q:'Qual é a função da medula óssea VERMELHA?',
+    opts:['Armazenar gordura','Produzir células sanguíneas (hematopoiese)','Produzir hormónios sexuais','Conduzir impulsos nervosos'],
+    ans:1,
+    exp:'A medula vermelha realiza hematopoiese: produz eritrócitos, leucócitos e plaquetas.'
+  },
+  {
+    q:'O canal Piezo1 nos osteócitos é activado por:',
+    opts:['Calcitonina','Vitamina D','Forças mecânicas (pressão/deformação)','Glucocorticóides'],
+    ans:2,
+    exp:'Piezo1 é um mecanorreceptor — converte forças mecânicas em influxo de Ca²⁺, fundamental para a adaptação ao exercício (Lei de Wolff).'
+  }
+];
+
+let curQ = 0, score = 0, answered = false;
+const answers = new Array(questions.length).fill(null);
+
+function renderQuiz(){
+  const c = document.getElementById('quiz-inner');
+  if(curQ >= questions.length){
+    // Result
+    const pct = Math.round((score/questions.length)*100);
+    let msg='', col=var_green;
+    if(pct>=80){msg='🏆 MESTRE DOS OSSOS! Impressionante!';col='var(--green)';}
+    else if(pct>=60){msg='⚡ Muito bem! Continua a praticar.';col='var(--yellow)';}
+    else {msg='💪 Continua estudando! Podes fazer melhor.';col='var(--magenta)';}
+    c.innerHTML = `
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:0.8rem;color:var(--dim);letter-spacing:2px;margin-bottom:10px;">RESULTADO FINAL</div>
+        <div class="quiz-score">${score}/${questions.length}</div>
+        <div style="font-size:3rem;margin:10px 0">${pct>=80?'🏆':pct>=60?'⭐':'💀'}</div>
+        <div style="color:${col};font-family:'Rajdhani',sans-serif;font-size:1.2rem;margin-bottom:20px;">${msg}</div>
+        <div style="color:#8ab4cc;font-size:0.9rem;margin-bottom:30px;">Precisão: ${pct}%</div>
+        <button class="q-btn next" onclick="restartQuiz()">🔄 RECOMEÇAR</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = questions[curQ];
+  document.getElementById('quiz-prog').style.width = ((curQ+1)/questions.length*100)+'%';
+
+  c.innerHTML = `
+    <div style="font-family:'Rajdhani',sans-serif;font-size:0.75rem;color:var(--dim);letter-spacing:2px;margin-bottom:12px;">
+      PERGUNTA ${curQ+1} DE ${questions.length}
+    </div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-options">
+      ${q.opts.map((o,i)=>`
+        <button class="quiz-btn" id="qopt-${i}" onclick="selectAnswer(${i})">
+          ${['A','B','C','D'][i]}) ${o}
+        </button>
+      `).join('')}
+    </div>
+    <div class="quiz-feedback" id="qfeed"></div>
+    <div class="quiz-nav">
+      ${curQ>0?'<button class="q-btn prev" onclick="prevQ()">← ANTERIOR</button>':''}
+      <button class="q-btn next" id="qnext" onclick="nextQ()" style="display:none">PRÓXIMA →</button>
+    </div>
+  `;
+
+  // Restore answer if already answered
+  if(answers[curQ]!==null){
+    showResult(answers[curQ],false);
+  }
+}
+
+function selectAnswer(idx){
+  if(answered) return;
+  answered = true;
+  const q = questions[curQ];
+  const wasCorrect = idx === q.ans;
+  if(answers[curQ]===null){
+    if(wasCorrect) score++;
+    answers[curQ] = idx;
+  }
+  showResult(idx, wasCorrect);
+}
+
+function showResult(idx, wasCorrect){
+  const q = questions[curQ];
+  answered = true;
+  q.opts.forEach((_,i)=>{
+    const btn = document.getElementById('qopt-'+i);
+    if(!btn) return;
+    btn.disabled = true;
+    if(i===q.ans) btn.classList.add('correct');
+    else if(i===idx && idx!==q.ans) btn.classList.add('wrong');
+  });
+  const feed = document.getElementById('qfeed');
+  if(feed){
+    feed.textContent = (idx===q.ans?'✅ Correcto! ':'❌ Errado! ') + q.exp;
+    feed.style.color = idx===q.ans?'var(--green)':'var(--magenta)';
+  }
+  const nxt = document.getElementById('qnext');
+  if(nxt) nxt.style.display='inline-block';
+}
+
+function nextQ(){
+  curQ++;
+  answered = false;
+  renderQuiz();
+}
+function prevQ(){
+  curQ--;
+  answered = answers[curQ]!==null;
+  renderQuiz();
+}
+function restartQuiz(){
+  curQ=0;score=0;answered=false;
+  answers.fill(null);
+  renderQuiz();
+}
+
+// Start quiz
+renderQuiz();
+
+// Resize canvases on load
+window.addEventListener('load',()=>{
+  ['remoCanvas','recCanvas'].forEach(id=>{
+    const c = document.getElementById(id);
+    if(c){
+      c.width = c.offsetWidth;
+    }
+  });
+});
+</script>
+</body>
+</html>

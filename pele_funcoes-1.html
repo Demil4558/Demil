@@ -1,0 +1,1898 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A PELE – DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Nunito:wght@300;400;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --bg2: #0d0d1e;
+    --panel: #12122a;
+    --neon-cyan: #00fff7;
+    --neon-pink: #ff2d78;
+    --neon-yellow: #ffe600;
+    --neon-green: #39ff14;
+    --neon-orange: #ff6b00;
+    --neon-purple: #bf00ff;
+    --neon-blue: #007bff;
+    --text: #e8e8ff;
+    --dim: #888aaa;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0a12; }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
+  /* ===== PARTICLES BG ===== */
+  #particles {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    animation: float-particle linear infinite;
+    opacity: 0.4;
+  }
+  @keyframes float-particle {
+    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.4; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at center, #1a0a2e 0%, #0a0a12 70%);
+    padding: 40px 20px;
+    overflow: hidden;
+  }
+
+  .hero-skin-layer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 180px;
+    background: linear-gradient(180deg, transparent 0%, #1a0033 40%, #2d0050 100%);
+    clip-path: polygon(0 60%, 5% 40%, 10% 55%, 15% 35%, 20% 50%, 25% 30%, 30% 48%, 35% 25%, 40% 45%, 45% 20%, 50% 42%, 55% 18%, 60% 40%, 65% 22%, 70% 44%, 75% 30%, 80% 50%, 85% 35%, 90% 55%, 95% 38%, 100% 60%, 100% 100%, 0 100%);
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3rem, 10vw, 8rem);
+    letter-spacing: 6px;
+    line-height: 1;
+    text-shadow:
+      0 0 10px var(--neon-cyan),
+      0 0 30px var(--neon-cyan),
+      0 0 60px var(--neon-cyan),
+      4px 4px 0 var(--neon-pink);
+    animation: title-pulse 2s ease-in-out infinite;
+  }
+  @keyframes title-pulse {
+    0%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-cyan), 4px 4px 0 var(--neon-pink); }
+    50% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-cyan), 4px 4px 0 var(--neon-pink); }
+  }
+
+  .hero-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.8rem, 2.5vw, 1.3rem);
+    color: var(--neon-yellow);
+    letter-spacing: 4px;
+    margin: 16px 0;
+    animation: flicker 3s infinite;
+  }
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.4; }
+    97% { opacity: 1; }
+    98% { opacity: 0.3; }
+    99% { opacity: 1; }
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    font-size: 1.1rem;
+    color: var(--dim);
+    margin: 20px auto;
+    line-height: 1.8;
+  }
+
+  .hero-char {
+    position: absolute;
+    font-size: 5rem;
+    animation: hero-bounce 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px var(--neon-cyan));
+  }
+  .hero-char.left { left: 5%; top: 30%; animation-delay: 0.5s; }
+  .hero-char.right { right: 5%; top: 30%; animation-delay: 1s; }
+  @keyframes hero-bounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  .start-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 16px 50px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 3px;
+    color: var(--bg);
+    background: var(--neon-cyan);
+    border: none; border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 0 20px var(--neon-cyan), 0 0 50px var(--neon-cyan);
+    transition: all 0.3s;
+    animation: btn-pulse 2s ease-in-out infinite;
+  }
+  .start-btn:hover {
+    background: var(--neon-pink);
+    box-shadow: 0 0 30px var(--neon-pink), 0 0 80px var(--neon-pink);
+    transform: scale(1.05);
+  }
+  @keyframes btn-pulse {
+    0%, 100% { box-shadow: 0 0 20px var(--neon-cyan), 0 0 50px var(--neon-cyan); }
+    50% { box-shadow: 0 0 30px var(--neon-cyan), 0 0 80px var(--neon-cyan), 0 0 120px var(--neon-cyan); }
+  }
+
+  /* ===== NAV ===== */
+  #nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,18,0.95);
+    border-bottom: 2px solid var(--neon-cyan);
+    backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .nav-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+  }
+  .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .nav-links a {
+    padding: 6px 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    color: var(--neon-yellow);
+    text-decoration: none;
+    border: 1px solid var(--neon-yellow);
+    border-radius: 2px;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .nav-links a:hover {
+    background: var(--neon-yellow);
+    color: var(--bg);
+    box-shadow: 0 0 10px var(--neon-yellow);
+  }
+
+  /* ===== PROGRESS ===== */
+  #progress-bar {
+    position: fixed; top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow));
+    z-index: 200;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* ===== SECTION BASE ===== */
+  .section {
+    position: relative; z-index: 1;
+    padding: 80px 20px;
+    overflow: hidden;
+  }
+
+  /* ===== MANGA PANEL ===== */
+  .manga-panel {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: center;
+  }
+  @media(max-width:768px) { .manga-panel { grid-template-columns: 1fr; } }
+
+  .manga-panel.reverse { direction: rtl; }
+  .manga-panel.reverse > * { direction: ltr; }
+
+  .manga-text-box {
+    background: var(--panel);
+    border: 3px solid var(--neon-cyan);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0,255,247,0.15), inset 0 0 30px rgba(0,255,247,0.03);
+    position: relative;
+  }
+  .manga-text-box::before {
+    content: '';
+    position: absolute; top: -3px; left: 20px;
+    width: 60px; height: 3px;
+    background: var(--neon-pink);
+  }
+
+  .chapter-badge {
+    display: inline-block;
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    background: var(--neon-pink);
+    color: var(--bg);
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: 3px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .section-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: #c8c8e8;
+  }
+
+  .highlight {
+    color: var(--neon-cyan);
+    font-weight: 700;
+  }
+  .highlight-yellow { color: var(--neon-yellow); font-weight: 700; }
+  .highlight-pink { color: var(--neon-pink); font-weight: 700; }
+  .highlight-green { color: var(--neon-green); font-weight: 700; }
+  .highlight-orange { color: var(--neon-orange); font-weight: 700; }
+  .highlight-purple { color: var(--neon-purple); font-weight: 700; }
+
+  /* ===== SPEECH BUBBLE ===== */
+  .bubble {
+    background: #fff;
+    color: #111;
+    border-radius: 16px;
+    padding: 14px 20px;
+    margin: 16px 0;
+    position: relative;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 3px 3px 0 #000;
+    border: 2px solid #000;
+  }
+  .bubble::after {
+    content: '';
+    position: absolute; bottom: -18px; left: 30px;
+    border: 10px solid transparent;
+    border-top-color: #fff;
+  }
+  .bubble.right::after { left: auto; right: 30px; }
+  .bubble.thought {
+    border-radius: 50px;
+    background: #e8e8ff;
+  }
+  .bubble.thought::after {
+    width: 10px; height: 10px;
+    background: #e8e8ff;
+    border: 2px solid #000;
+    border-radius: 50%;
+    bottom: -24px; left: 40px;
+  }
+
+  /* ===== ILLUS BOX ===== */
+  .illus-box {
+    background: var(--panel);
+    border: 3px solid;
+    border-radius: 12px;
+    min-height: 300px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 20px;
+  }
+
+  /* ===== SVG ANIMATIONS ===== */
+  .anim-svg {
+    width: 100%; max-width: 320px;
+  }
+
+  /* ===== FUNÇÃO CARDS ===== */
+  .funcoes-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .funcao-card {
+    background: var(--panel);
+    border-radius: 12px;
+    padding: 30px 24px;
+    border-left: 5px solid var(--neon-cyan);
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateY(40px);
+    animation: card-reveal 0.6s forwards;
+  }
+  .funcao-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 0 30px rgba(0,255,247,0.2);
+  }
+  .funcao-card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 80px; height: 80px;
+    border-radius: 0 0 0 80px;
+    opacity: 0.1;
+  }
+  @keyframes card-reveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .card-body { font-size: 0.95rem; color: var(--dim); line-height: 1.7; }
+  .card-num {
+    position: absolute; top: 16px; right: 16px;
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem; font-weight: 900;
+    opacity: 0.08; color: white;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute; left: 40px; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--neon-cyan), var(--neon-pink), var(--neon-yellow), var(--neon-green));
+    border-radius: 2px;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+    padding-left: 90px;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.6s;
+  }
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+
+  .tl-dot {
+    position: absolute; left: 28px; top: 8px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 3px solid;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    box-shadow: 0 0 15px currentColor;
+    z-index: 1;
+  }
+
+  .tl-content {
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 20px 24px;
+    border-top: 3px solid;
+    flex: 1;
+  }
+  .tl-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .tl-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .tl-text { font-size: 0.95rem; color: var(--dim); line-height: 1.7; }
+
+  /* ===== MOLECULE CANVAS ===== */
+  .molecule-container {
+    position: relative;
+    width: 100%; height: 300px;
+    overflow: hidden;
+  }
+  .mol-canvas { width: 100%; height: 100%; }
+
+  /* ===== QUIZ ===== */
+  .quiz-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 3px solid var(--neon-yellow);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 0 30px rgba(255,230,0,0.1);
+  }
+  .quiz-question {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+    color: var(--neon-yellow);
+    line-height: 1.3;
+  }
+  .quiz-opts { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-opt {
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s;
+    color: var(--text);
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+  }
+  .quiz-opt:hover { border-color: var(--neon-yellow); background: rgba(255,230,0,0.06); }
+  .quiz-opt.correct { border-color: var(--neon-green); background: rgba(57,255,20,0.1); color: var(--neon-green); }
+  .quiz-opt.wrong { border-color: var(--neon-pink); background: rgba(255,45,120,0.1); color: var(--neon-pink); }
+  .quiz-feedback {
+    margin-top: 20px; padding: 16px;
+    border-radius: 8px;
+    font-weight: 700; font-size: 1.1rem;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-next {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    background: var(--neon-cyan);
+    color: var(--bg);
+    border: none; border-radius: 6px;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 0 15px var(--neon-cyan);
+    transition: all 0.2s;
+  }
+  .quiz-next:hover { transform: scale(1.05); }
+  .quiz-score {
+    text-align: center;
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    display: none;
+  }
+
+  /* ===== SECTION DIVIDERS ===== */
+  .divider {
+    text-align: center;
+    padding: 30px 0 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 6px;
+    color: var(--dim);
+    position: relative; z-index: 1;
+  }
+  .divider::before, .divider::after {
+    content: '──────────────────────────────────';
+    opacity: 0.2;
+    margin: 0 16px;
+  }
+
+  /* ===== BG VARIANTS ===== */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(0,255,247,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,247,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .bg-radial-pink {
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,45,120,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(191,0,255,0.06) 0%, transparent 60%);
+  }
+  .bg-radial-green {
+    background: radial-gradient(ellipse at 50% 30%, rgba(57,255,20,0.07) 0%, transparent 60%);
+  }
+  .bg-radial-orange {
+    background: radial-gradient(ellipse at 50% 50%, rgba(255,107,0,0.07) 0%, transparent 60%);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position: relative; z-index: 1;
+    background: #050510;
+    border-top: 3px solid var(--neon-cyan);
+    padding: 50px 20px 30px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px var(--neon-cyan);
+    margin-bottom: 8px;
+  }
+  .footer-uni {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    color: var(--neon-yellow);
+    margin-bottom: 20px;
+  }
+  .footer-line {
+    width: 200px; height: 1px;
+    background: var(--neon-cyan);
+    margin: 20px auto;
+    opacity: 0.3;
+  }
+  .footer-copy { font-size: 0.85rem; color: var(--dim); }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== DECORATIVE ===== */
+  .corner-deco {
+    position: absolute;
+    width: 60px; height: 60px;
+    border-color: var(--neon-cyan);
+    border-style: solid;
+    opacity: 0.3;
+  }
+  .corner-deco.tl { top: 20px; left: 20px; border-width: 3px 0 0 3px; }
+  .corner-deco.tr { top: 20px; right: 20px; border-width: 3px 3px 0 0; }
+  .corner-deco.bl { bottom: 20px; left: 20px; border-width: 0 0 3px 3px; }
+  .corner-deco.br { bottom: 20px; right: 20px; border-width: 0 3px 3px 0; }
+
+  /* ===== MOLECULE ATOMS ===== */
+  .atom {
+    position: absolute;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.6rem; font-weight: 700; color: var(--bg);
+    font-family: 'Space Mono', monospace;
+    box-shadow: 0 0 15px currentColor;
+  }
+
+  /* ===== SKIN CROSS SECTION ===== */
+  .skin-section-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--panel);
+    border: 3px solid var(--neon-purple);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(191,0,255,0.2);
+  }
+
+  /* ===== INFO TOOLTIPS ===== */
+  .tip {
+    display: inline-block;
+    background: var(--neon-cyan);
+    color: var(--bg);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: help;
+    position: relative;
+  }
+  .tip:hover::after {
+    content: attr(data-tip);
+    position: absolute; bottom: 130%; left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    color: #111;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    font-weight: 400;
+  }
+
+  /* ===== METER BAR ===== */
+  .meter-label { font-size: 0.9rem; color: var(--dim); margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .meter-bar { background: rgba(255,255,255,0.05); border-radius: 4px; height: 10px; overflow: hidden; margin-bottom: 14px; }
+  .meter-fill {
+    height: 100%; border-radius: 4px;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 10px var(--neon-cyan);
+    animation: fill-anim 2s ease-out forwards;
+    width: 0%;
+  }
+  @keyframes fill-anim { to { width: var(--target-width); } }
+
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="particles"></div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="corner-deco tl"></div>
+  <div class="corner-deco tr"></div>
+  <div class="corner-deco bl"></div>
+  <div class="corner-deco br"></div>
+
+  <div class="hero-char left">🧬</div>
+  <div class="hero-char right">⚡</div>
+
+  <div class="hero-sub">◆ DEMILMED-UL APRESENTA ◆</div>
+  <h1 class="hero-title">A PELE</h1>
+  <div class="hero-sub" style="color:var(--neon-pink); font-size:1rem;">FUNÇÕES ESPECÍFICAS · MISSÃO COMPLETA</div>
+  <p class="hero-desc">
+    Uma aventura épica pelo órgão mais fascinante do corpo humano. 
+    Prepare-se para descobrir os seus <strong style="color:var(--neon-cyan)">7 superpoderes</strong> — 
+    narrado como nunca viu antes!
+  </p>
+  <a href="#intro" class="start-btn">▶ INICIAR MISSÃO</a>
+  <div class="hero-skin-layer"></div>
+</section>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">🧬 PELE · UL</div>
+  <div class="nav-links">
+    <a href="#intro">Intro</a>
+    <a href="#protecao">Proteção</a>
+    <a href="#termoreg">Termoreg.</a>
+    <a href="#sensacao">Sensação</a>
+    <a href="#metabolismo">Metab.</a>
+    <a href="#excreca">Excreção</a>
+    <a href="#imunidade">Imunidade</a>
+    <a href="#reserva">Reserva</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- INTRO -->
+<section id="intro" class="section bg-grid reveal">
+  <div style="max-width:900px; margin:0 auto; text-align:center; padding:20px 0 60px;">
+    <div class="chapter-badge">PRÓLOGO</div>
+    <h2 class="section-title" style="color:var(--neon-cyan); font-size:clamp(2.5rem,6vw,5rem);">
+      QUEM É A PELE?
+    </h2>
+    <div class="bubble" style="max-width:600px;margin:0 auto 30px;">
+      🎙️ Ei! Eu sou a Pele. O maior órgão do teu corpo.<br>
+      Peso entre <strong>3,5 a 10 kg</strong> e cubra cerca de <strong>1,5 a 2 m²</strong>!<br>
+      Hoje vou revelar todos os meus segredos... 👁️
+    </div>
+    <p class="section-body" style="max-width:680px;margin:0 auto 40px;">
+      A pele é composta por camadas — mas hoje focamo-nos nas suas 
+      <span class="highlight">funções específicas</span>, os superpoderes que a tornam indispensável à sobrevivência.
+      Sem ela, morrerias em horas. Não brincadeira.
+    </p>
+
+    <!-- Skin SVG Cross Section -->
+    <div class="skin-section-container">
+      <div style="padding:20px; background:linear-gradient(135deg,#12122a,#1a0a2e);">
+        <div style="font-family:'Orbitron',monospace;font-size:0.75rem;letter-spacing:3px;color:var(--neon-purple);margin-bottom:16px;">▶ CORTE TRANSVERSAL DA PELE</div>
+        <svg viewBox="0 0 700 220" style="width:100%;border-radius:8px;" xmlns="http://www.w3.org/2000/svg">
+          <!-- Epiderme -->
+          <rect x="0" y="0" width="700" height="60" fill="#2d1b4e" rx="8"/>
+          <text x="350" y="22" text-anchor="middle" fill="#bf00ff" font-family="Bangers" font-size="16" letter-spacing="2">EPIDERME</text>
+          <text x="350" y="42" text-anchor="middle" fill="#9966cc" font-family="Nunito" font-size="11">Camada mais externa · Queratinócitos · Melanócitos</text>
+          <!-- Squiggly border -->
+          <path d="M0,55 Q35,45 70,55 Q105,65 140,55 Q175,45 210,55 Q245,65 280,55 Q315,45 350,55 Q385,65 420,55 Q455,45 490,55 Q525,65 560,55 Q595,45 630,55 Q665,65 700,55" stroke="#bf00ff" stroke-width="2" fill="none" opacity="0.6"/>
+
+          <!-- Derme -->
+          <rect x="0" y="58" width="700" height="100" fill="#0d1e3a"/>
+          <text x="350" y="90" text-anchor="middle" fill="#00fff7" font-family="Bangers" font-size="16" letter-spacing="2">DERME</text>
+          <text x="350" y="110" text-anchor="middle" fill="#66cccc" font-family="Nunito" font-size="11">Colagénio · Elastina · Vasos sanguíneos · Nervos · Glândulas</text>
+
+          <!-- Fibers animation lines -->
+          <line x1="50" y1="70" x2="100" y2="150" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+          <line x1="150" y1="65" x2="200" y2="155" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+          <line x1="250" y1="72" x2="300" y2="148" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+          <line x1="400" y1="68" x2="450" y2="152" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+          <line x1="500" y1="75" x2="550" y2="145" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+          <line x1="600" y1="70" x2="650" y2="150" stroke="#00fff7" stroke-width="1" opacity="0.2"/>
+
+          <!-- Blood vessel -->
+          <ellipse cx="180" cy="125" rx="30" ry="8" fill="#ff2d78" opacity="0.6"/>
+          <text x="180" y="129" text-anchor="middle" fill="#fff" font-family="Nunito" font-size="8">vaso</text>
+          <ellipse cx="500" cy="120" rx="25" ry="7" fill="#ff2d78" opacity="0.6"/>
+          <text x="500" y="124" text-anchor="middle" fill="#fff" font-family="Nunito" font-size="8">vaso</text>
+
+          <!-- Nerve -->
+          <path d="M350,65 Q340,90 355,110 Q365,130 350,155" stroke="#ffe600" stroke-width="2" fill="none"/>
+          <text x="375" y="115" fill="#ffe600" font-family="Nunito" font-size="9">nervo</text>
+
+          <!-- Hipoderme -->
+          <rect x="0" y="158" width="700" height="62" fill="#1a0f00" rx="0"/>
+          <text x="350" y="183" text-anchor="middle" fill="#ff6b00" font-family="Bangers" font-size="16" letter-spacing="2">HIPODERME (TELA SUBCUTÂNEA)</text>
+          <text x="350" y="203" text-anchor="middle" fill="#cc8844" font-family="Nunito" font-size="11">Adipócitos (células de gordura) · Isolamento · Energia</text>
+
+          <!-- Fat cells -->
+          <ellipse cx="80" cy="190" rx="20" ry="12" fill="#ff6b00" opacity="0.15"/>
+          <ellipse cx="130" cy="195" rx="18" ry="10" fill="#ff6b00" opacity="0.15"/>
+          <ellipse cx="200" cy="188" rx="22" ry="13" fill="#ff6b00" opacity="0.15"/>
+          <ellipse cx="560" cy="192" rx="20" ry="11" fill="#ff6b00" opacity="0.15"/>
+          <ellipse cx="620" cy="186" rx="19" ry="12" fill="#ff6b00" opacity="0.15"/>
+        </svg>
+        <div style="display:flex;gap:16px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+          <span style="font-size:0.8rem;color:var(--neon-purple);">● Epiderme</span>
+          <span style="font-size:0.8rem;color:var(--neon-cyan);">● Derme</span>
+          <span style="font-size:0.8rem;color:var(--neon-orange);">● Hipoderme</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:50px;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.75rem;letter-spacing:4px;color:var(--dim);margin-bottom:24px;">OS 7 SUPERPODERES DA PELE</div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+        <span style="padding:8px 18px;border:2px solid var(--neon-cyan);border-radius:4px;font-size:0.9rem;color:var(--neon-cyan);">🛡️ Proteção</span>
+        <span style="padding:8px 18px;border:2px solid var(--neon-orange);border-radius:4px;font-size:0.9rem;color:var(--neon-orange);">🌡️ Termorregulação</span>
+        <span style="padding:8px 18px;border:2px solid var(--neon-yellow);border-radius:4px;font-size:0.9rem;color:var(--neon-yellow);">⚡ Sensação</span>
+        <span style="padding:8px 18px;border:2px solid var(--neon-green);border-radius:4px;font-size:0.9rem;color:var(--neon-green);">☀️ Metabolismo Vit.D</span>
+        <span style="padding:8px 18px;border:2px solid var(--neon-pink);border-radius:4px;font-size:0.9rem;color:var(--neon-pink);">💧 Excreção</span>
+        <span style="padding:8px 18px;border:2px solid var(--neon-purple);border-radius:4px;font-size:0.9rem;color:var(--neon-purple);">🦠 Imunidade</span>
+        <span style="padding:8px 18px;border:2px solid #ff9500;border-radius:4px;font-size:0.9rem;color:#ff9500;">⚡ Reserva Energética</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 1</div>
+
+<!-- PROTEÇÃO -->
+<section id="protecao" class="section bg-radial-pink">
+  <div class="manga-panel reveal">
+    <div class="manga-text-box" style="border-color:var(--neon-cyan);">
+      <div class="chapter-badge" style="background:var(--neon-cyan);">CAP. 01</div>
+      <h2 class="section-title" style="color:var(--neon-cyan);">🛡️ PROTEÇÃO</h2>
+      <div class="bubble">"Sou o teu ESCUDO contra o mundo exterior. Nada entra sem a minha permissão!" 🛡️</div>
+      <div class="section-body">
+        <p>A pele funciona como uma <span class="highlight">barreira física e química</span> sofisticada. Veja como:</p>
+        <br>
+        <p>🔵 <span class="highlight">Barreira Mecânica:</span> A <span class="tip" data-tip="Proteína dura que forma a camada protetora da pele">queratina</span> das células mortas da epiderme cria uma armadura rígida contra arranhões, pressão e impacto.</p>
+        <br>
+        <p>🔴 <span class="highlight">Barreira Química:</span> O pH ácido da pele (4,5–5,5) — o "<span class="highlight-yellow">manto ácido</span>" — mata bactérias e fungos que tentam colonizar a superfície.</p>
+        <br>
+        <p>🟣 <span class="highlight">Barreira contra UV:</span> Os <span class="tip" data-tip="Células que produzem melanina, o pigmento que protege contra radiação UV">melanócitos</span> produzem <span class="highlight-purple">melanina</span> — um "guarda-sol" natural que absorve a radiação ultravioleta e protege o DNA das células.</p>
+        <br>
+        <p>🟢 <span class="highlight">Barreira Hídrica:</span> Os lípidos intercelulares (gorduras entre células) impedem a perda de água — sem eles, desidratarias em horas!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-cyan); min-height:350px;">
+      <svg viewBox="0 0 300 320" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shield background -->
+        <defs>
+          <radialGradient id="shieldGrad" cx="50%" cy="40%">
+            <stop offset="0%" stop-color="#00fff720"/>
+            <stop offset="100%" stop-color="#00fff705"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Arrows (threats) -->
+        <g id="threats">
+          <line x1="40" y1="10" x2="100" y2="90" stroke="#ff2d78" stroke-width="3">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="1.5s" repeatCount="indefinite"/>
+          </line>
+          <polygon points="95,85 108,70 115,95" fill="#ff2d78">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="1.5s" repeatCount="indefinite"/>
+          </polygon>
+          <text x="10" y="25" fill="#ff2d78" font-size="11" font-family="Nunito" font-weight="700">Bactérias</text>
+
+          <line x1="260" y1="10" x2="200" y2="90" stroke="#ffe600" stroke-width="3">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="2s" repeatCount="indefinite"/>
+          </line>
+          <polygon points="205,85 192,70 185,95" fill="#ffe600">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="2s" repeatCount="indefinite"/>
+          </polygon>
+          <text x="215" y="25" fill="#ffe600" font-size="11" font-family="Nunito" font-weight="700">Raios UV</text>
+
+          <line x1="150" y1="5" x2="150" y2="95" stroke="#bf00ff" stroke-width="3">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="1.8s" repeatCount="indefinite"/>
+          </line>
+          <polygon points="145,90 155,90 150,105" fill="#bf00ff">
+            <animateTransform attributeName="transform" type="translate" values="0,0;0,-5;0,0" dur="1.8s" repeatCount="indefinite"/>
+          </polygon>
+          <text x="130" y="20" fill="#bf00ff" font-size="11" font-family="Nunito" font-weight="700">Toxinas</text>
+        </g>
+
+        <!-- Shield -->
+        <path d="M150,100 L60,130 L60,190 Q60,240 150,270 Q240,240 240,190 L240,130 Z"
+              fill="url(#shieldGrad)" stroke="#00fff7" stroke-width="3">
+          <animate attributeName="filter" values="drop-shadow(0 0 5px #00fff7);drop-shadow(0 0 20px #00fff7);drop-shadow(0 0 5px #00fff7)" dur="2s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Shield layers labels -->
+        <text x="150" y="155" text-anchor="middle" fill="#00fff7" font-family="Bangers" font-size="13" letter-spacing="1">QUERATINA</text>
+        <text x="150" y="185" text-anchor="middle" fill="#ffe600" font-family="Bangers" font-size="12" letter-spacing="1">MANTO ÁCIDO</text>
+        <text x="150" y="215" text-anchor="middle" fill="#bf00ff" font-family="Bangers" font-size="11" letter-spacing="1">MELANINA</text>
+        <text x="150" y="240" text-anchor="middle" fill="#39ff14" font-family="Bangers" font-size="11" letter-spacing="1">LÍPIDOS</text>
+
+        <!-- Bouncing arrows effect -->
+        <text x="75" y="125" fill="#ff2d78" font-size="20">✗</text>
+        <text x="195" y="125" fill="#ffe600" font-size="20">✗</text>
+        <text x="140" y="110" fill="#bf00ff" font-size="20">✗</text>
+
+        <text x="90" y="300" fill="#00fff7" font-size="11" font-family="Orbitron" letter-spacing="2">NADA PASSA!</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Barreira detail cards -->
+  <div style="max-width:1100px;margin:50px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;">
+    <div class="funcao-card reveal" style="border-left-color:var(--neon-cyan);animation-delay:0.1s;">
+      <div class="card-num">01</div>
+      <div class="card-icon">🧱</div>
+      <div class="card-title" style="color:var(--neon-cyan);">Barreira Física</div>
+      <div class="card-body">A epiderme tem ~15-20 camadas de células mortas cheias de queratina. Como tijolos numa parede, resistem a forças externas.</div>
+    </div>
+    <div class="funcao-card reveal" style="border-left-color:var(--neon-yellow);animation-delay:0.2s;">
+      <div class="card-num">02</div>
+      <div class="card-icon">🧪</div>
+      <div class="card-title" style="color:var(--neon-yellow);">Manto Ácido</div>
+      <div class="card-body">pH 4,5–5,5 criado pela mistura de suor, sebo e produtos bacterianos. Ambiente hostil para patogénios.</div>
+    </div>
+    <div class="funcao-card reveal" style="border-left-color:var(--neon-purple);animation-delay:0.3s;">
+      <div class="card-num">03</div>
+      <div class="card-icon">🌑</div>
+      <div class="card-title" style="color:var(--neon-purple);">Melanina UV</div>
+      <div class="card-body">Produzida pelos melanócitos e transferida aos queratinócitos. Forma um "chapéu" sobre o núcleo celular, protegendo o DNA.</div>
+    </div>
+    <div class="funcao-card reveal" style="border-left-color:var(--neon-green);animation-delay:0.4s;">
+      <div class="card-num">04</div>
+      <div class="card-icon">💧</div>
+      <div class="card-title" style="color:var(--neon-green);">Impermeabilidade</div>
+      <div class="card-body">Ceramidas e colesterol formam uma cera entre células. Impedem que a água do corpo escape — ou que agentes externos entrem.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 2</div>
+
+<!-- TERMORREGULAÇÃO -->
+<section id="termoreg" class="section bg-radial-orange">
+  <div class="manga-panel reverse reveal">
+    <div class="manga-text-box" style="border-color:var(--neon-orange);">
+      <div class="chapter-badge" style="background:var(--neon-orange);">CAP. 02</div>
+      <h2 class="section-title" style="color:var(--neon-orange);">🌡️ TERMORREGULAÇÃO</h2>
+      <div class="bubble right">"Eu sou o AR CONDICIONADO do teu corpo. Liga-me quando precisares!" 🌡️</div>
+      <div class="section-body">
+        <p>O corpo humano funciona a <span class="highlight-orange">36,5–37°C</span>. Sair disto é perigoso. A pele tem 4 mecanismos de controlo:</p>
+        <br>
+        <p>🔥 <span class="highlight-orange">Quando está calor:</span><br>
+        — <strong>Sudação:</strong> as glândulas sudoríparas libertam suor → a evaporação arrefece a pele<br>
+        — <strong>Vasodilatação:</strong> os vasos sanguíneos da derme alargam → libertam calor para o exterior (pele fica vermelha)</p>
+        <br>
+        <p>❄️ <span class="highlight">Quando está frio:</span><br>
+        — <strong>Vasoconstrição:</strong> os vasos contraem → guardam calor para os órgãos vitais<br>
+        — <strong>Arrepio:</strong> os músculos erectores da raiz do pelo contraem → geram calor por vibração</p>
+        <br>
+        <p>💡 Sabia que a pele pode dissipar até <span class="highlight-yellow">580 kcal/hora</span> por evaporação? É como um radiador biológico!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-orange); min-height:380px;">
+      <svg viewBox="0 0 300 360" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Thermometer background -->
+        <rect x="130" y="20" width="40" height="200" rx="10" fill="#1a1a2e" stroke="#ff6b00" stroke-width="2"/>
+        <rect x="138" y="28" width="24" height="184" rx="6" fill="#0d0d1e"/>
+
+        <!-- Mercury fill (hot scenario) -->
+        <rect x="139" y="100" width="22" height="112" rx="4" fill="#ff6b00">
+          <animate attributeName="height" values="50;112;50" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="y" values="162;100;162" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <circle cx="150" cy="220" r="18" fill="#ff6b00">
+          <animate attributeName="fill" values="#ff6b00;#ff2d78;#ff6b00" dur="3s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Temp markers -->
+        <line x1="125" y1="60" x2="130" y2="60" stroke="#ff2d78" stroke-width="2"/>
+        <text x="118" y="64" fill="#ff2d78" font-size="9" text-anchor="end" font-family="Space Mono">40°</text>
+        <line x1="125" y1="100" x2="130" y2="100" stroke="#ffe600" stroke-width="2"/>
+        <text x="118" y="104" fill="#ffe600" font-size="9" text-anchor="end" font-family="Space Mono">37°</text>
+        <line x1="125" y1="140" x2="130" y2="140" stroke="#00fff7" stroke-width="2"/>
+        <text x="118" y="144" fill="#00fff7" font-size="9" text-anchor="end" font-family="Space Mono">35°</text>
+        <line x1="125" y1="180" x2="130" y2="180" stroke="#007bff" stroke-width="2"/>
+        <text x="118" y="184" fill="#007bff" font-size="9" text-anchor="end" font-family="Space Mono">30°</text>
+
+        <!-- HOT side: sweat drops -->
+        <g>
+          <ellipse cx="220" cy="80" rx="6" ry="8" fill="#00bfff" opacity="0.8">
+            <animate attributeName="cy" values="80;200;80" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.8;0;0.8" dur="2s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="240" cy="100" rx="5" ry="7" fill="#00bfff" opacity="0.6">
+            <animate attributeName="cy" values="100;210;100" dur="2.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.6;0;0.6" dur="2.5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="260" cy="60" rx="4" ry="6" fill="#00bfff" opacity="0.7">
+            <animate attributeName="cy" values="60;190;60" dur="1.8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.7;0;0.7" dur="1.8s" repeatCount="indefinite"/>
+          </ellipse>
+          <text x="240" y="40" fill="#00bfff" font-family="Bangers" font-size="13" text-anchor="middle">SUOR ↑</text>
+        </g>
+
+        <!-- COLD side: vessels -->
+        <g>
+          <text x="60" y="40" fill="#007bff" font-family="Bangers" font-size="13" text-anchor="middle">FRIO</text>
+          <rect x="30" y="60" width="60" height="12" rx="6" fill="#007bff" opacity="0.5">
+            <animate attributeName="width" values="60;20;60" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="x" values="30;50;30" dur="3s" repeatCount="indefinite"/>
+          </rect>
+          <text x="60" y="90" fill="#007bff" font-size="9" text-anchor="middle" font-family="Nunito">vasoconstricção</text>
+          <text x="60" y="120" fill="#ffe600" font-size="20" text-anchor="middle">🥶</text>
+        </g>
+
+        <!-- Labels -->
+        <text x="150" y="280" text-anchor="middle" fill="#ff6b00" font-family="Bangers" font-size="16" letter-spacing="2">TERMOSTATO</text>
+        <text x="150" y="298" text-anchor="middle" fill="#ff6b00" font-family="Bangers" font-size="14">BIOLÓGICO</text>
+        <text x="150" y="318" text-anchor="middle" fill="#888aaa" font-family="Nunito" font-size="10">36.5 – 37°C</text>
+
+        <!-- HOT label -->
+        <text x="240" y="160" fill="#ff6b00" font-size="20" text-anchor="middle">🔥</text>
+        <text x="240" y="180" fill="#ff6b00" font-family="Nunito" font-size="9" text-anchor="middle">vasodilatação</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Timeline termoreg -->
+  <div style="max-width:700px;margin:60px auto 0;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:4px;color:var(--neon-orange);text-align:center;margin-bottom:30px;">COMO ACONTECE QUANDO TENS CALOR</div>
+    <div class="timeline">
+      <div class="tl-item reveal" style="--color:var(--neon-orange);">
+        <div class="tl-dot" style="color:var(--neon-orange);border-color:var(--neon-orange);">1</div>
+        <div class="tl-content" style="border-top-color:var(--neon-orange);">
+          <div class="tl-label" style="color:var(--neon-orange);">PASSO 1 → DETEÇÃO</div>
+          <div class="tl-title" style="color:var(--neon-orange);">HIPOTÁLAMO ALERTA!</div>
+          <div class="tl-text">O hipotálamo (termostato do cérebro) deteta que a temperatura interna subiu acima de 37°C e envia sinais de emergência.</div>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="--color:#ff9500;">
+        <div class="tl-dot" style="color:#ff9500;border-color:#ff9500;">2</div>
+        <div class="tl-content" style="border-top-color:#ff9500;">
+          <div class="tl-label" style="color:#ff9500;">PASSO 2 → RESPOSTA VASCULAR</div>
+          <div class="tl-title" style="color:#ff9500);">VASODILATAÇÃO</div>
+          <div class="tl-text">Os vasos sanguíneos da derme dilatam. Mais sangue quente chega à superfície → calor escapa para o ar. A pele fica avermelhada.</div>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="--color:var(--neon-cyan);">
+        <div class="tl-dot" style="color:var(--neon-cyan);border-color:var(--neon-cyan);">3</div>
+        <div class="tl-content" style="border-top-color:var(--neon-cyan);">
+          <div class="tl-label" style="color:var(--neon-cyan);">PASSO 3 → EVAPORAÇÃO</div>
+          <div class="tl-title" style="color:var(--neon-cyan);">SUDAÇÃO ATIVA</div>
+          <div class="tl-text">Glândulas sudoríparas bombeiam suor (maioritariamente água + NaCl). Ao evaporar, absorve calor da pele — efeito de arrefecimento!</div>
+        </div>
+      </div>
+      <div class="tl-item reveal" style="--color:var(--neon-green);">
+        <div class="tl-dot" style="color:var(--neon-green);border-color:var(--neon-green);">4</div>
+        <div class="tl-content" style="border-top-color:var(--neon-green);">
+          <div class="tl-label" style="color:var(--neon-green);">RESULTADO</div>
+          <div class="tl-title" style="color:var(--neon-green);">HOMEOSTASIA RESTAURADA</div>
+          <div class="tl-text">A temperatura regressa a 37°C. O hipotálamo desativa os mecanismos. Equilíbrio reestabelecido. ✅</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 3</div>
+
+<!-- SENSAÇÃO -->
+<section id="sensacao" class="section bg-grid reveal">
+  <div class="manga-panel">
+    <div class="manga-text-box" style="border-color:var(--neon-yellow);">
+      <div class="chapter-badge" style="background:var(--neon-yellow); color:#000;">CAP. 03</div>
+      <h2 class="section-title" style="color:var(--neon-yellow);">⚡ FUNÇÃO SENSORIAL</h2>
+      <div class="bubble">"Tenho MILHÕES de sensores! Sou o interface do teu corpo com o mundo!" ⚡</div>
+      <div class="section-body">
+        <p>A pele é um <span class="highlight-yellow">órgão sensorial complexo</span>. Contém diferentes tipos de receptores nervosos, cada um especializado numa sensação:</p>
+        <br>
+        <p>🟡 <span class="highlight-yellow">Corpúsculos de Meissner:</span> Toque leve e discriminação fina. Estão nas pontas dos dedos — é por isso que lês Braille!</p>
+        <br>
+        <p>🔵 <span class="highlight">Corpúsculos de Pacini:</span> Vibração e pressão profunda. Detetam texturas grosseiras e movimentos rápidos.</p>
+        <br>
+        <p>🔴 <span class="highlight-pink">Terminações de Ruffini:</span> Estiramento da pele e calor. Avisam quando a pele está a ser puxada.</p>
+        <br>
+        <p>🟢 <span class="highlight-green">Discos de Merkel:</span> Toque mantido e forma. Permitem reconhecer objetos sem olhar — a estereognosia.</p>
+        <br>
+        <p>⚡ <span class="highlight-orange">Terminações Livres:</span> Dor, temperatura extrema e comichão. O sistema de alarme da pele!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-yellow); min-height:400px; padding:30px;">
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--neon-yellow);margin-bottom:16px;text-align:center;">MAPA DE RECEPTORES</div>
+      <svg viewBox="0 0 280 340" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Skin surface -->
+        <path d="M0,30 Q35,15 70,30 Q105,45 140,30 Q175,15 210,30 Q245,45 280,30" stroke="#00fff7" stroke-width="2" fill="none"/>
+
+        <!-- Skin body -->
+        <rect x="0" y="30" width="280" height="310" fill="#0d0d1e" opacity="0.7"/>
+
+        <!-- Corpúsculo de Meissner -->
+        <g transform="translate(40, 50)">
+          <ellipse cx="0" cy="0" rx="15" ry="20" fill="none" stroke="#ffe600" stroke-width="2">
+            <animate attributeName="rx" values="15;17;15" dur="2s" repeatCount="indefinite"/>
+          </ellipse>
+          <line x1="0" y1="0" x2="-6" y2="8" stroke="#ffe600" stroke-width="1.5"/>
+          <line x1="0" y1="0" x2="6" y2="8" stroke="#ffe600" stroke-width="1.5"/>
+          <line x1="-6" y1="8" x2="6" y2="8" stroke="#ffe600" stroke-width="1.5"/>
+          <line x1="0" y1="20" x2="0" y2="60" stroke="#ffe600" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="0" y="-25" text-anchor="middle" fill="#ffe600" font-size="8" font-family="Nunito" font-weight="700">Meissner</text>
+          <text x="0" y="-14" text-anchor="middle" fill="#ffe600" font-size="7" font-family="Nunito">toque leve</text>
+        </g>
+
+        <!-- Corpúsculo de Pacini -->
+        <g transform="translate(140, 130)">
+          <ellipse cx="0" cy="0" rx="20" ry="28" fill="none" stroke="#00fff7" stroke-width="2">
+            <animate attributeName="ry" values="28;32;28" dur="1.5s" repeatCount="indefinite"/>
+          </ellipse>
+          <ellipse cx="0" cy="0" rx="12" ry="18" fill="none" stroke="#00fff7" stroke-width="1.5" opacity="0.6"/>
+          <ellipse cx="0" cy="0" rx="6" ry="10" fill="none" stroke="#00fff7" stroke-width="1" opacity="0.4"/>
+          <line x1="0" y1="-28" x2="0" y2="-50" stroke="#00fff7" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="50" y="-10" fill="#00fff7" font-size="8" font-family="Nunito" font-weight="700">Pacini</text>
+          <text x="50" y="2" fill="#00fff7" font-size="7" font-family="Nunito">vibração</text>
+        </g>
+
+        <!-- Discos de Merkel -->
+        <g transform="translate(220, 55)">
+          <rect x="-8" y="-4" width="16" height="8" rx="2" fill="none" stroke="#39ff14" stroke-width="2">
+            <animate attributeName="width" values="16;20;16" dur="2.2s" repeatCount="indefinite"/>
+            <animate attributeName="x" values="-8;-10;-8" dur="2.2s" repeatCount="indefinite"/>
+          </rect>
+          <line x1="0" y1="4" x2="0" y2="50" stroke="#39ff14" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="0" y="-12" text-anchor="middle" fill="#39ff14" font-size="8" font-family="Nunito" font-weight="700">Merkel</text>
+          <text x="0" y="-2" text-anchor="middle" fill="#39ff14" font-size="7" font-family="Nunito">forma/pressão</text>
+        </g>
+
+        <!-- Terminações livres -->
+        <g transform="translate(90, 30)">
+          <path d="M0,0 Q5,10 0,20 Q-5,30 0,40" stroke="#ff2d78" stroke-width="2" fill="none">
+            <animate attributeName="d" values="M0,0 Q5,10 0,20 Q-5,30 0,40;M0,0 Q-5,10 0,20 Q5,30 0,40;M0,0 Q5,10 0,20 Q-5,30 0,40" dur="1s" repeatCount="indefinite"/>
+          </path>
+          <text x="12" y="10" fill="#ff2d78" font-size="8" font-family="Nunito" font-weight="700">T. Livres</text>
+          <text x="12" y="22" fill="#ff2d78" font-size="7" font-family="Nunito">dor/temp</text>
+        </g>
+
+        <!-- Ruffini -->
+        <g transform="translate(200, 200)">
+          <path d="M-20,0 Q-10,-10 0,0 Q10,10 20,0" stroke="#ff6b00" stroke-width="2" fill="none">
+            <animate attributeName="d" values="M-20,0 Q-10,-10 0,0 Q10,10 20,0;M-20,0 Q-10,10 0,0 Q10,-10 20,0;M-20,0 Q-10,-10 0,0 Q10,10 20,0" dur="2s" repeatCount="indefinite"/>
+          </path>
+          <line x1="0" y1="0" x2="0" y2="-40" stroke="#ff6b00" stroke-width="1.5" stroke-dasharray="3"/>
+          <text x="0" y="-50" text-anchor="middle" fill="#ff6b00" font-size="8" font-family="Nunito" font-weight="700">Ruffini</text>
+          <text x="0" y="-38" text-anchor="middle" fill="#ff6b00" font-size="7" font-family="Nunito">estiramento</text>
+        </g>
+
+        <!-- Nerve axon main -->
+        <path d="M140,340 L140,280 Q120,260 100,250 Q60,220 40,180 Q30,150 40,110" stroke="#ffe600" stroke-width="2" fill="none" stroke-dasharray="4">
+          <animate attributeName="stroke-dashoffset" values="0;-20" dur="0.5s" repeatCount="indefinite"/>
+        </path>
+        <text x="100" y="330" fill="#ffe600" font-size="10" font-family="Bangers" letter-spacing="1">NERVO → CÉREBRO</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 4</div>
+
+<!-- METABOLISMO VIT D -->
+<section id="metabolismo" class="section bg-radial-green">
+  <div class="manga-panel reverse reveal">
+    <div class="manga-text-box" style="border-color:var(--neon-green);">
+      <div class="chapter-badge" style="background:var(--neon-green); color:#000;">CAP. 04</div>
+      <h2 class="section-title" style="color:var(--neon-green);">☀️ SÍNTESE DE VITAMINA D</h2>
+      <div class="bubble right">"Uso a LUZ DO SOL como ingrediente. Sou literalmente uma fábrica solar!" ☀️</div>
+      <div class="section-body">
+        <p>Esta é uma das funções mais fascinantes. A pele <span class="highlight-green">produz Vitamina D</span> quando exposta à radiação ultravioleta B (UVB):</p>
+        <br>
+
+        <div style="background:rgba(57,255,20,0.05);border:1px solid rgba(57,255,20,0.2);border-radius:8px;padding:16px;margin:12px 0;">
+          <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--neon-green);margin-bottom:10px;">CASCATA DE REAÇÕES</div>
+          <p style="font-size:0.9rem;line-height:2;">
+            <span style="color:#fff;">1.</span> <span class="highlight-yellow">7-desidrocolesterol</span> (pré-cursor na pele)<br>
+            <span style="color:var(--neon-green);">↓ UVB solar ↓</span><br>
+            <span style="color:#fff;">2.</span> <span class="highlight-green">Colecalciferol (Vit D3)</span> na pele<br>
+            <span style="color:var(--neon-cyan);">↓ Fígado ↓</span><br>
+            <span style="color:#fff;">3.</span> <span class="highlight">25-hidroxivitamina D</span><br>
+            <span style="color:var(--neon-pink);">↓ Rins ↓</span><br>
+            <span style="color:#fff;">4.</span> <span class="highlight-pink">1,25-dihidroxivitamina D (calcitriol)</span> ← FORMA ATIVA!
+          </p>
+        </div>
+        <br>
+        <p>💪 A Vitamina D é crucial para: <span class="highlight-green">absorção de cálcio</span>, saúde óssea, imunidade e prevenção de doenças crónicas.</p>
+        <br>
+        <p>⚠️ Pele muito escura, idosos, ou pouca exposição solar → risco de deficiência de Vitamina D!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-green); min-height:380px;">
+      <svg viewBox="0 0 300 360" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sun -->
+        <circle cx="150" cy="45" r="30" fill="#ffe600" opacity="0.9">
+          <animate attributeName="r" values="30;34;30" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Sun rays -->
+        <g stroke="#ffe600" stroke-width="2">
+          <line x1="150" y1="5" x2="150" y2="-5"><animate attributeName="y2" values="-5;-15;-5" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="185" y1="20" x2="195" y2="10"><animate attributeName="x2" values="195;205;195" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="195" y1="55" x2="210" y2="55"><animate attributeName="x2" values="210;220;210" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="185" y1="75" x2="195" y2="85"><animate attributeName="y2" values="85;95;85" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="115" y1="20" x2="105" y2="10"><animate attributeName="x2" values="105;95;105" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="105" y1="55" x2="90" y2="55"><animate attributeName="x2" values="90;80;90" dur="2s" repeatCount="indefinite"/></line>
+          <line x1="115" y1="75" x2="105" y2="85"><animate attributeName="y2" values="85;95;85" dur="2s" repeatCount="indefinite"/></line>
+        </g>
+        <text x="150" y="50" text-anchor="middle" fill="#111" font-family="Bangers" font-size="10">UVB</text>
+
+        <!-- UVB arrows -->
+        <g fill="#ffe600">
+          <polygon points="110,80 115,70 120,80">
+            <animate attributeName="points" values="110,80 115,70 120,80;110,95 115,85 120,95;110,80 115,70 120,80" dur="1s" repeatCount="indefinite"/>
+          </polygon>
+          <polygon points="145,80 150,70 155,80">
+            <animate attributeName="points" values="145,80 150,70 155,80;145,95 150,85 155,95;145,80 150,70 155,80" dur="1s" repeatCount="indefinite" begin="0.3s"/>
+          </polygon>
+          <polygon points="180,80 185,70 190,80">
+            <animate attributeName="points" values="180,80 185,70 190,80;180,95 185,85 190,95;180,80 185,70 190,80" dur="1s" repeatCount="indefinite" begin="0.6s"/>
+          </polygon>
+        </g>
+
+        <!-- Skin -->
+        <rect x="30" y="100" width="240" height="50" fill="#2d1b4e" rx="4"/>
+        <text x="150" y="122" text-anchor="middle" fill="#bf00ff" font-family="Bangers" font-size="12" letter-spacing="1">EPIDERME</text>
+        <text x="150" y="138" text-anchor="middle" fill="#9966cc" font-family="Nunito" font-size="9">7-desidrocolesterol → Vit D3</text>
+
+        <!-- Arrow down to liver -->
+        <line x1="150" y1="150" x2="150" y2="185" stroke="#39ff14" stroke-width="2">
+          <animate attributeName="stroke-dasharray" values="0,40;40,0" dur="1s" repeatCount="indefinite"/>
+        </line>
+        <polygon points="145,185 155,185 150,195" fill="#39ff14"/>
+        <text x="165" y="170" fill="#39ff14" font-size="9" font-family="Nunito">corrente sanguínea</text>
+
+        <!-- Liver -->
+        <ellipse cx="100" cy="220" rx="40" ry="25" fill="#cc4400" opacity="0.8">
+          <animate attributeName="rx" values="40;43;40" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <text x="100" y="216" text-anchor="middle" fill="#fff" font-family="Bangers" font-size="11">FÍGADO</text>
+        <text x="100" y="228" text-anchor="middle" fill="#ffaa66" font-size="8" font-family="Nunito">25-OH Vit D</text>
+
+        <!-- Kidney -->
+        <ellipse cx="220" cy="250" rx="35" ry="22" fill="#8844cc" opacity="0.8">
+          <animate attributeName="ry" values="22;25;22" dur="1.8s" repeatCount="indefinite"/>
+        </ellipse>
+        <text x="220" y="246" text-anchor="middle" fill="#fff" font-family="Bangers" font-size="11">RINS</text>
+        <text x="220" y="258" text-anchor="middle" fill="#cc99ff" font-size="8" font-family="Nunito">calcitriol</text>
+
+        <!-- Arrows liver/kidney -->
+        <path d="M140,225 Q160,240 185,248" stroke="#ffe600" stroke-width="2" fill="none" stroke-dasharray="4">
+          <animate attributeName="stroke-dashoffset" values="0;-10" dur="0.5s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Final result -->
+        <rect x="50" y="295" width="200" height="45" rx="8" fill="#006600" stroke="#39ff14" stroke-width="2"/>
+        <text x="150" y="316" text-anchor="middle" fill="#39ff14" font-family="Bangers" font-size="13" letter-spacing="2">VITAMINA D ATIVA!</text>
+        <text x="150" y="330" text-anchor="middle" fill="#66ff66" font-family="Nunito" font-size="9">ossos fortes · imunidade · Ca²⁺</text>
+
+        <!-- Arrow to result -->
+        <line x1="220" y1="272" x2="190" y2="295" stroke="#39ff14" stroke-width="1.5" stroke-dasharray="3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 5</div>
+
+<!-- EXCREÇÃO -->
+<section id="excreca" class="section bg-radial-pink reveal">
+  <div class="manga-panel">
+    <div class="manga-text-box" style="border-color:var(--neon-pink);">
+      <div class="chapter-badge" style="background:var(--neon-pink);">CAP. 05</div>
+      <h2 class="section-title" style="color:var(--neon-pink);">💧 EXCREÇÃO</h2>
+      <div class="bubble">"Ajudo o teu corpo a limpar-se. Sou um rim extra! (pequenino, mas existe!)" 🚿</div>
+      <div class="section-body">
+        <p>Através das <span class="highlight-pink">glândulas sudoríparas</span>, a pele elimina resíduos do metabolismo celular:</p>
+        <br>
+        <p>💧 <span class="highlight-pink">Água</span> — a maior parte do suor (termorregulação + excreção)</p>
+        <p>🧂 <span class="highlight-yellow">NaCl (sal)</span> — eletrólito excretado. Por isso o suor é salgado!</p>
+        <p>🟡 <span class="highlight-green">Ureia</span> — produto do metabolismo de proteínas (< que nos rins, mas existe)</p>
+        <p>⚗️ <span class="highlight-orange">Ácido lático e amónia</span> — produtos do esforço muscular</p>
+        <p>🔵 <span class="highlight">Iões (K⁺, Ca²⁺)</span> — em pequenas quantidades</p>
+        <br>
+        <div style="background:rgba(255,45,120,0.05);border:1px solid rgba(255,45,120,0.2);border-radius:8px;padding:14px;">
+          <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--neon-pink);margin-bottom:6px;">CURIOSIDADE!</div>
+          <p style="font-size:0.9rem;color:#ccc;line-height:1.7;">Em condições normais, excretas ~500ml de suor por dia. No calor intenso ou exercício, pode chegar a <span class="highlight-pink">10-12 litros!</span> Por isso é crucial reidratar!</p>
+        </div>
+        <br>
+        <p>⚠️ A excreção pela pele é <span class="highlight-yellow">SECUNDÁRIA</span> — os rins são os órgãos principais. Mas em insuficiência renal, a pele tenta compensar!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-pink); min-height:360px;">
+      <svg viewBox="0 0 300 340" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sweat gland structure -->
+        <text x="150" y="20" text-anchor="middle" fill="#ff2d78" font-family="Bangers" font-size="14" letter-spacing="2">GLÂNDULA SUDORÍPARA</text>
+
+        <!-- Duct -->
+        <path d="M150,40 Q140,60 155,80 Q165,100 150,120 Q135,140 150,160" stroke="#00fff7" stroke-width="3" fill="none"/>
+        <text x="185" y="100" fill="#00fff7" font-size="9" font-family="Nunito">ducto excretor</text>
+
+        <!-- Secretory coil -->
+        <path d="M150,160 Q120,175 115,195 Q110,215 130,220 Q150,225 160,210 Q170,195 155,185 Q140,175 145,165" stroke="#ff2d78" stroke-width="3" fill="none">
+          <animate attributeName="stroke" values="#ff2d78;#ff9500;#ff2d78" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <text x="175" y="200" fill="#ff2d78" font-size="9" font-family="Nunito">parte secretora</text>
+        <text x="175" y="212" fill="#ff2d78" font-size="8" font-family="Nunito">(enrollada)</text>
+
+        <!-- Sweat drops falling from pore -->
+        <circle cx="150" cy="35" r="4" fill="#00bfff" opacity="0.8"/>
+        <text x="150" y="32" text-anchor="middle" fill="#000" font-size="6">PORO</text>
+
+        <!-- Drops -->
+        <ellipse cx="160" cy="50" rx="4" ry="6" fill="#00bfff" opacity="0.6">
+          <animate attributeName="cy" values="50;10;50" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="140" cy="45" rx="3" ry="5" fill="#00bfff" opacity="0.5">
+          <animate attributeName="cy" values="45;5;45" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.5;0;0.5" dur="2.5s" repeatCount="indefinite"/>
+        </ellipse>
+
+        <!-- Composition boxes -->
+        <rect x="10" y="250" width="280" height="80" rx="8" fill="#1a0020" stroke="#ff2d78" stroke-width="1.5"/>
+        <text x="150" y="268" text-anchor="middle" fill="#ff2d78" font-family="Orbitron" font-size="9" letter-spacing="2">COMPOSIÇÃO DO SUOR</text>
+
+        <!-- composition bars -->
+        <rect x="20" y="280" width="120" height="8" rx="3" fill="#334"/>
+        <rect x="20" y="280" width="96" height="8" rx="3" fill="#00bfff">
+          <animate attributeName="width" values="0;96" dur="2s" fill="freeze"/>
+        </rect>
+        <text x="20" y="276" fill="#00bfff" font-size="8" font-family="Nunito">Água 96%</text>
+
+        <rect x="20" y="298" width="120" height="8" rx="3" fill="#334"/>
+        <rect x="20" y="298" width="24" height="8" rx="3" fill="#ffe600">
+          <animate attributeName="width" values="0;24" dur="2s" fill="freeze"/>
+        </rect>
+        <text x="20" y="294" fill="#ffe600" font-size="8" font-family="Nunito">NaCl 2%</text>
+
+        <rect x="160" y="280" width="120" height="8" rx="3" fill="#334"/>
+        <rect x="160" y="280" width="12" height="8" rx="3" fill="#39ff14">
+          <animate attributeName="width" values="0;12" dur="2s" fill="freeze"/>
+        </rect>
+        <text x="160" y="276" fill="#39ff14" font-size="8" font-family="Nunito">Ureia 1%</text>
+
+        <rect x="160" y="298" width="120" height="8" rx="3" fill="#334"/>
+        <rect x="160" y="298" width="8" height="8" rx="3" fill="#ff6b00">
+          <animate attributeName="width" values="0;8" dur="2s" fill="freeze"/>
+        </rect>
+        <text x="160" y="294" fill="#ff6b00" font-size="8" font-family="Nunito">outros 1%</text>
+
+        <!-- Blood vessel feeding gland -->
+        <ellipse cx="90" cy="200" rx="22" ry="8" fill="#ff2d78" opacity="0.4"/>
+        <text x="90" y="204" text-anchor="middle" fill="#fff" font-size="7" font-family="Nunito">vaso sanguíneo</text>
+        <line x1="112" y1="198" x2="130" y2="190" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 6</div>
+
+<!-- IMUNIDADE -->
+<section id="imunidade" class="section bg-radial-green reveal">
+  <div class="manga-panel reverse">
+    <div class="manga-text-box" style="border-color:var(--neon-purple);">
+      <div class="chapter-badge" style="background:var(--neon-purple);">CAP. 06</div>
+      <h2 class="section-title" style="color:var(--neon-purple);">🦠 IMUNIDADE</h2>
+      <div class="bubble right">"Tenho o meu próprio EXÉRCITO de células imunes! Invasores não passam!" 🦠⚔️</div>
+      <div class="section-body">
+        <p>A pele não é apenas uma barreira passiva — é um órgão imune ativo, com células especializadas:</p>
+        <br>
+        <p>🟣 <span class="highlight-purple">Células de Langerhans:</span> São células dendríticas da epiderme. Capturam antigénios (pedaços de vírus/bactérias), migram para os gânglios linfáticos e ativam linfócitos T. São os <strong>espiões da pele!</strong></p>
+        <br>
+        <p>🔵 <span class="highlight">Linfócitos T (na derme):</span> Linfócitos T de memória residem na pele. Reagem rapidamente a invasores que já viram antes.</p>
+        <br>
+        <p>🟡 <span class="highlight-yellow">Queratinócitos:</span> Produzem <span class="tip" data-tip="Proteínas de sinalização do sistema imune">citocinas</span> (IL-1, TNF-α) quando infetados → ativam a inflamação como sinal de alarme.</p>
+        <br>
+        <p>🟢 <span class="highlight-green">Mastócitos:</span> Libertam histamina durante reações alérgicas ou inflamação → causa vermelhidão, inchaço, comichão.</p>
+        <br>
+        <p>🔴 <span class="highlight-pink">Microbioma cutâneo:</span> A pele tem bactérias benéficas (ex: <em>Staphylococcus epidermidis</em>) que competem com patogénios — o exército aliado!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:var(--neon-purple); min-height:380px; background:#0d0020;">
+      <svg viewBox="0 0 300 360" class="anim-svg" xmlns="http://www.w3.org/2000/svg">
+        <text x="150" y="18" text-anchor="middle" fill="#bf00ff" font-family="Bangers" font-size="14" letter-spacing="2">SISTEMA IMUNE DA PELE</text>
+
+        <!-- Bacteria invader -->
+        <g id="bacteria">
+          <ellipse cx="50" cy="80" rx="14" ry="10" fill="#ff2d78" opacity="0.8">
+            <animate attributeName="cx" values="50;70;50" dur="3s" repeatCount="indefinite"/>
+          </ellipse>
+          <line x1="36" y1="75" x2="26" y2="65" stroke="#ff2d78" stroke-width="1.5">
+            <animate attributeName="x1" values="36;56;36" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="26;46;26" dur="3s" repeatCount="indefinite"/>
+          </line>
+          <line x1="36" y1="84" x2="26" y2="94" stroke="#ff2d78" stroke-width="1.5">
+            <animate attributeName="x1" values="36;56;36" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="26;46;26" dur="3s" repeatCount="indefinite"/>
+          </line>
+          <line x1="64" y1="75" x2="74" y2="65" stroke="#ff2d78" stroke-width="1.5">
+            <animate attributeName="x1" values="64;84;64" dur="3s" repeatCount="indefinite"/>
+            <animate attributeName="x2" values="74;94;74" dur="3s" repeatCount="indefinite"/>
+          </line>
+          <text x="50" y="82" text-anchor="middle" fill="#fff" font-size="8" font-family="Nunito" font-weight="700">
+            <animate attributeName="x" values="50;70;50" dur="3s" repeatCount="indefinite"/>
+            VÍRUS
+          </text>
+          <text x="50" y="60" text-anchor="middle" fill="#ff2d78" font-family="Nunito" font-size="9">
+            <animate attributeName="x" values="50;70;50" dur="3s" repeatCount="indefinite"/>
+            Invasor! ⚠️
+          </text>
+        </g>
+
+        <!-- Skin layer -->
+        <rect x="0" y="110" width="300" height="20" fill="#2d1b4e"/>
+        <text x="150" y="124" text-anchor="middle" fill="#bf00ff" font-size="9" font-family="Nunito">— EPIDERME —</text>
+
+        <!-- Langerhans cell -->
+        <g transform="translate(150, 160)">
+          <circle cx="0" cy="0" r="22" fill="#4400aa" stroke="#bf00ff" stroke-width="2">
+            <animate attributeName="r" values="22;25;22" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Dendrites -->
+          <path d="M0,-22 Q15,-35 10,-50" stroke="#bf00ff" stroke-width="2" fill="none"/>
+          <path d="M0,-22 Q-15,-35 -10,-50" stroke="#bf00ff" stroke-width="2" fill="none"/>
+          <path d="M22,0 Q35,15 50,10" stroke="#bf00ff" stroke-width="2" fill="none"/>
+          <path d="M-22,0 Q-35,15 -50,10" stroke="#bf00ff" stroke-width="2" fill="none"/>
+          <path d="M15,17 Q20,35 10,45" stroke="#bf00ff" stroke-width="2" fill="none"/>
+          <text x="0" y="-5" text-anchor="middle" fill="#fff" font-family="Bangers" font-size="9" letter-spacing="1">Langerhans</text>
+          <text x="0" y="7" text-anchor="middle" fill="#cc99ff" font-size="7" font-family="Nunito">captura antigénio</text>
+        </g>
+
+        <!-- Lymph node -->
+        <ellipse cx="240" cy="220" rx="30" ry="20" fill="#006600" stroke="#39ff14" stroke-width="2">
+          <animate attributeName="rx" values="30;33;30" dur="2.5s" repeatCount="indefinite"/>
+        </ellipse>
+        <text x="240" y="216" text-anchor="middle" fill="#39ff14" font-family="Bangers" font-size="10">GÂNGLIO</text>
+        <text x="240" y="228" text-anchor="middle" fill="#66ff66" font-size="7" font-family="Nunito">ativa T cells</text>
+
+        <!-- Arrow Langerhans → Lymph -->
+        <path d="M172,168 Q210,190 212,215" stroke="#bf00ff" stroke-width="1.5" fill="none" stroke-dasharray="5">
+          <animate attributeName="stroke-dashoffset" values="0;-15" dur="0.5s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- T cell -->
+        <circle cx="60" cy="240" r="16" fill="#004488" stroke="#00fff7" stroke-width="2">
+          <animate attributeName="r" values="16;18;16" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <text x="60" y="237" text-anchor="middle" fill="#fff" font-family="Bangers" font-size="10">Linfócito</text>
+        <text x="60" y="248" text-anchor="middle" fill="#66ccff" font-size="7" font-family="Nunito">T memória</text>
+
+        <!-- Mast cell -->
+        <circle cx="180" cy="310" r="20" fill="#440000" stroke="#ff6b00" stroke-width="2">
+          <animate attributeName="r" values="20;22;20" dur="2.2s" repeatCount="indefinite"/>
+        </circle>
+        <!-- granules releasing -->
+        <circle cx="165" cy="295" r="3" fill="#ff6b00" opacity="0.8">
+          <animate attributeName="cy" values="295;275;295" dur="1s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0;0.8" dur="1s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="195" cy="295" r="3" fill="#ff6b00" opacity="0.7">
+          <animate attributeName="cy" values="295;270;295" dur="1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.7;0;0.7" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="180" y="308" text-anchor="middle" fill="#fff" font-family="Bangers" font-size="10">Mastócito</text>
+        <text x="180" y="320" text-anchor="middle" fill="#ff9966" font-size="7" font-family="Nunito">liberta histamina</text>
+        <text x="130" y="275" fill="#ff6b00" font-size="8" font-family="Nunito">🔔 Alarme!</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="divider">CAPÍTULO 7</div>
+
+<!-- RESERVA ENERGÉTICA -->
+<section id="reserva" class="section reveal">
+  <div class="manga-panel">
+    <div class="manga-text-box" style="border-color:#ff9500;">
+      <div class="chapter-badge" style="background:#ff9500; color:#000;">CAP. 07</div>
+      <h2 class="section-title" style="color:#ff9500;">⚡ RESERVA ENERGÉTICA</h2>
+      <div class="bubble">"A hipoderme é a minha "poupança" de energia. Uso quando precisas!" ⚡</div>
+      <div class="section-body">
+        <p>A <span style="color:#ff9500;" class="highlight">hipoderme (tela subcutânea)</span> — a camada mais profunda da pele — é composta por <span class="highlight-yellow">adipócitos</span> (células de gordura) que servem múltiplos propósitos:</p>
+        <br>
+        <p>⚡ <span style="color:#ff9500;">Reserva Energética:</span> Os triglicéridos armazenados nos adipócitos são mobilizados em jejum prolongado ou esforço intenso → fornecem energia ao corpo.</p>
+        <br>
+        <p>🛡️ <span class="highlight">Amortecimento:</span> A camada gorda absorve impactos e protege estruturas profundas (músculos, tendões, vasos).</p>
+        <br>
+        <p>🌡️ <span class="highlight-orange">Isolamento Térmico:</span> A gordura conduz mal o calor → mantém a temperatura corporal. Por isso os animais polares têm muito tecido adiposo!</p>
+        <br>
+        <p>📡 <span class="highlight-pink">Endócrina:</span> Os adipócitos produzem <span class="tip" data-tip="Hormona que regula o apetite e metabolismo">leptina</span> e <span class="tip" data-tip="Hormona anti-inflamatória produzida pelo tecido adiposo">adiponectina</span> — hormonas que regulam o metabolismo e apetite!</p>
+      </div>
+    </div>
+
+    <div class="illus-box" style="border-color:#ff9500; min-height:360px;">
+      <!-- Animated adipocyte cells -->
+      <canvas id="adipocyte-canvas" width="280" height="320" style="border-radius:8px;"></canvas>
+    </div>
+  </div>
+
+  <!-- Molecule canvas -->
+  <div style="max-width:1100px;margin:60px auto 0;">
+    <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:4px;color:#ff9500;text-align:center;margin-bottom:30px;">MOLÉCULA DE TRIGLICÉRIDO — ANIMADA</div>
+    <canvas id="mol-canvas" width="800" height="200" style="width:100%;border:2px solid rgba(255,149,0,0.3);border-radius:12px;background:#0d0d1e;"></canvas>
+  </div>
+</section>
+
+<div class="divider">RESUMO ÉPICO</div>
+
+<!-- OVERVIEW CARDS -->
+<section class="section bg-grid reveal">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;">
+    <div class="chapter-badge" style="background:var(--neon-cyan);">MAPA FINAL</div>
+    <h2 class="section-title" style="color:var(--neon-cyan);margin-bottom:10px;">OS 7 SUPERPODERES</h2>
+    <p style="color:var(--dim);margin-bottom:50px;">Clica em cada card para revelar o detalhe!</p>
+    <div class="funcoes-grid">
+      <div class="funcao-card" style="border-left-color:var(--neon-cyan);animation-delay:0.1s;" onclick="this.style.transform='scale(1.03)'">
+        <div class="card-num">01</div>
+        <div class="card-icon">🛡️</div>
+        <div class="card-title" style="color:var(--neon-cyan);">PROTEÇÃO</div>
+        <div class="card-body">Barreira física (queratina), química (manto ácido pH 4,5-5,5), UV (melanina) e hídrica (lípidos intercelulares).</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:var(--neon-orange);animation-delay:0.2s;">
+        <div class="card-num">02</div>
+        <div class="card-icon">🌡️</div>
+        <div class="card-title" style="color:var(--neon-orange);">TERMORREGULAÇÃO</div>
+        <div class="card-body">Sudação + vasodilatação (calor) vs vasoconstrição + arrepio (frio). Mantém 36,5–37°C.</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:var(--neon-yellow);animation-delay:0.3s;">
+        <div class="card-num">03</div>
+        <div class="card-icon">⚡</div>
+        <div class="card-title" style="color:var(--neon-yellow);">SENSAÇÃO</div>
+        <div class="card-body">Meissner (toque), Pacini (vibração), Ruffini (estiramento), Merkel (forma), terminações livres (dor/temperatura).</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:var(--neon-green);animation-delay:0.4s;">
+        <div class="card-num">04</div>
+        <div class="card-icon">☀️</div>
+        <div class="card-title" style="color:var(--neon-green);">VIT. D</div>
+        <div class="card-body">UVB converte 7-desidrocolesterol → Vit D3 → ativada no fígado e rins. Essencial para cálcio e ossos.</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:var(--neon-pink);animation-delay:0.5s;">
+        <div class="card-num">05</div>
+        <div class="card-icon">💧</div>
+        <div class="card-title" style="color:var(--neon-pink);">EXCREÇÃO</div>
+        <div class="card-body">Elimina água, NaCl, ureia, ácido lático via glândulas sudoríparas. Função secundária mas real.</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:var(--neon-purple);animation-delay:0.6s;">
+        <div class="card-num">06</div>
+        <div class="card-icon">🦠</div>
+        <div class="card-title" style="color:var(--neon-purple);">IMUNIDADE</div>
+        <div class="card-body">Células de Langerhans, linfócitos T, queratinócitos imunes, mastócitos e microbioma benéfico.</div>
+      </div>
+      <div class="funcao-card" style="border-left-color:#ff9500;animation-delay:0.7s;">
+        <div class="card-num">07</div>
+        <div class="card-icon">⚡</div>
+        <div class="card-title" style="color:#ff9500;">RESERVA ENERGÉTICA</div>
+        <div class="card-body">Hipoderme com adipócitos: triglicéridos → energia. Mais: amortecimento, isolamento térmico, hormonas (leptina).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider">MISSÃO FINAL</div>
+
+<!-- QUIZ -->
+<section id="quiz" class="section reveal">
+  <div style="max-width:800px;margin:0 auto;text-align:center;margin-bottom:40px;">
+    <div class="chapter-badge" style="background:var(--neon-yellow);color:#000;">QUIZ FINAL</div>
+    <h2 class="section-title" style="color:var(--neon-yellow);">🎯 TESTA O TEU PODER!</h2>
+    <p style="color:var(--dim);">5 questões para provar que és um mestre da pele. Boa sorte, guerreiro! ⚔️</p>
+  </div>
+
+  <div class="quiz-box">
+    <div id="quiz-container">
+      <div class="quiz-question" id="q-text"></div>
+      <div class="quiz-opts" id="q-opts"></div>
+      <div class="quiz-feedback" id="q-feedback"></div>
+      <button class="quiz-next" id="q-next" onclick="nextQuestion()">PRÓXIMA →</button>
+    </div>
+    <div class="quiz-score" id="quiz-score"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DEMILMED</div>
+  <div class="footer-uni">UL — UNIVERSIDADE LICUNGO</div>
+  <div class="footer-line"></div>
+  <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:3px;color:var(--neon-cyan);margin-bottom:10px;">FUNÇÕES ESPECÍFICAS DA PELE</div>
+  <div class="footer-copy">
+    © 2026 DemilMed-UL · Universidade Licungo<br>
+    <span style="color:var(--dim);font-size:0.8rem;">Material educativo interactivo · Todos os direitos reservados</span>
+  </div>
+  <div style="margin-top:30px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+    <span style="font-size:0.8rem;color:var(--dim);">🧬 Histologia</span>
+    <span style="font-size:0.8rem;color:var(--dim);">·</span>
+    <span style="font-size:0.8rem;color:var(--dim);">🔬 Fisiologia</span>
+    <span style="font-size:0.8rem;color:var(--dim);">·</span>
+    <span style="font-size:0.8rem;color:var(--dim);">⚡ Dermatologia</span>
+    <span style="font-size:0.8rem;color:var(--dim);">·</span>
+    <span style="font-size:0.8rem;color:var(--dim);">🌍 Moçambique 2026</span>
+  </div>
+</footer>
+
+<script>
+// ===== PARTICLES =====
+const pContainer = document.getElementById('particles');
+const colors = ['#00fff7','#ff2d78','#ffe600','#39ff14','#ff6b00','#bf00ff'];
+for(let i=0;i<40;i++){
+  const p = document.createElement('div');
+  p.classList.add('particle');
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  const s = Math.random()*6+2;
+  p.style.cssText = `
+    width:${s}px;height:${s}px;
+    background:${c};
+    left:${Math.random()*100}%;
+    animation-duration:${Math.random()*15+10}s;
+    animation-delay:${Math.random()*10}s;
+    box-shadow:0 0 ${s*2}px ${c};
+  `;
+  pContainer.appendChild(p);
+}
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement.scrollTop;
+  const h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress-bar').style.width=(s/h*100)+'%';
+});
+
+// ===== SCROLL REVEAL =====
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+    }
+  });
+},{threshold:0.1});
+
+document.querySelectorAll('.reveal,.tl-item').forEach(el=>obs.observe(el));
+
+// ===== ADIPOCYTE CANVAS =====
+const adipCtx = document.getElementById('adipocyte-canvas').getContext('2d');
+const cells = [];
+for(let i=0;i<12;i++){
+  cells.push({
+    x: 40+Math.random()*200,
+    y: 40+Math.random()*240,
+    r: 20+Math.random()*30,
+    phase: Math.random()*Math.PI*2,
+    speed: 0.01+Math.random()*0.02,
+    color: `hsl(${20+Math.random()*30},90%,${40+Math.random()*20}%)`
+  });
+}
+
+function drawAdipocytes(){
+  adipCtx.clearRect(0,0,280,320);
+  adipCtx.fillStyle='#0d0d1e';
+  adipCtx.fillRect(0,0,280,320);
+
+  // Label
+  adipCtx.fillStyle='#ff9500';
+  adipCtx.font='bold 10px Orbitron';
+  adipCtx.textAlign='center';
+  adipCtx.fillText('ADIPÓCITOS',140,15);
+
+  cells.forEach((c,i)=>{
+    c.phase += c.speed;
+    const pulse = Math.sin(c.phase)*3;
+
+    // Outer membrane
+    adipCtx.beginPath();
+    adipCtx.arc(c.x,c.y,c.r+pulse,0,Math.PI*2);
+    adipCtx.strokeStyle=c.color;
+    adipCtx.lineWidth=2;
+    adipCtx.stroke();
+    adipCtx.fillStyle=c.color+'22';
+    adipCtx.fill();
+
+    // Lipid droplet inside
+    adipCtx.beginPath();
+    adipCtx.arc(c.x,c.y,(c.r+pulse)*0.7,0,Math.PI*2);
+    adipCtx.fillStyle=c.color+'55';
+    adipCtx.fill();
+
+    // Nucleus (pushed to edge)
+    adipCtx.beginPath();
+    adipCtx.arc(c.x+c.r*0.6, c.y-c.r*0.3, 4, 0, Math.PI*2);
+    adipCtx.fillStyle='rgba(255,200,100,0.8)';
+    adipCtx.fill();
+
+    // Label first few
+    if(i<3){
+      adipCtx.fillStyle='rgba(255,149,0,0.7)';
+      adipCtx.font='7px Nunito';
+      adipCtx.textAlign='center';
+      adipCtx.fillText('TG',c.x,c.y+3);
+    }
+  });
+
+  // Legend
+  adipCtx.fillStyle='#ff9500';
+  adipCtx.font='9px Nunito';
+  adipCtx.textAlign='left';
+  adipCtx.fillText('● Triglicéridos',10,300);
+  adipCtx.fillStyle='rgba(255,200,100,0.8)';
+  adipCtx.fillText('● Núcleo',10,315);
+
+  requestAnimationFrame(drawAdipocytes);
+}
+drawAdipocytes();
+
+// ===== MOLECULE CANVAS =====
+const molCtx = document.getElementById('mol-canvas').getContext('2d');
+const W = 800, H = 200;
+document.getElementById('mol-canvas').width=W;
+document.getElementById('mol-canvas').height=H;
+
+let molT = 0;
+const atoms = [
+  {label:'Glicerol', x:0.1, y:0.5, r:22, color:'#00fff7', electrons:3},
+  {label:'O', x:0.22, y:0.3, r:14, color:'#ff2d78', electrons:2},
+  {label:'O', x:0.22, y:0.5, r:14, color:'#ff2d78', electrons:2},
+  {label:'O', x:0.22, y:0.7, r:14, color:'#ff2d78', electrons:2},
+  {label:'AG1', x:0.5, y:0.2, r:20, color:'#ffe600', electrons:0},
+  {label:'AG2', x:0.5, y:0.5, r:20, color:'#39ff14', electrons:0},
+  {label:'AG3', x:0.5, y:0.8, r:20, color:'#ff6b00', electrons:0},
+  {label:'C', x:0.35, y:0.2, r:12, color:'#888', electrons:1},
+  {label:'C', x:0.35, y:0.5, r:12, color:'#888', electrons:1},
+  {label:'C', x:0.35, y:0.8, r:12, color:'#888', electrons:1},
+];
+
+const bonds = [
+  [0,1],[0,2],[0,3],
+  [1,7],[7,4],
+  [2,8],[8,5],
+  [3,9],[9,6],
+];
+
+function drawMolecule(){
+  molCtx.clearRect(0,0,W,H);
+  molCtx.fillStyle='#0d0d1e';
+  molCtx.fillRect(0,0,W,H);
+
+  molT+=0.02;
+
+  // Draw bonds
+  bonds.forEach(([a,b])=>{
+    const ax=atoms[a].x*W, ay=atoms[a].y*H+Math.sin(molT+a)*5;
+    const bx=atoms[b].x*W, by=atoms[b].y*H+Math.sin(molT+b)*5;
+    molCtx.beginPath();
+    molCtx.moveTo(ax,ay);
+    molCtx.lineTo(bx,by);
+    molCtx.strokeStyle='rgba(255,255,255,0.25)';
+    molCtx.lineWidth=3;
+    molCtx.stroke();
+  });
+
+  // Draw atoms
+  atoms.forEach((a,i)=>{
+    const x=a.x*W, y=a.y*H+Math.sin(molT+i)*5;
+    // glow
+    const grad=molCtx.createRadialGradient(x,y,0,x,y,a.r*2);
+    grad.addColorStop(0,a.color+'44');
+    grad.addColorStop(1,'transparent');
+    molCtx.beginPath();
+    molCtx.arc(x,y,a.r*2,0,Math.PI*2);
+    molCtx.fillStyle=grad;
+    molCtx.fill();
+
+    // atom
+    molCtx.beginPath();
+    molCtx.arc(x,y,a.r,0,Math.PI*2);
+    molCtx.fillStyle=a.color+'cc';
+    molCtx.fill();
+    molCtx.strokeStyle=a.color;
+    molCtx.lineWidth=2;
+    molCtx.stroke();
+
+    // label
+    molCtx.fillStyle='#fff';
+    molCtx.font=`bold ${Math.min(a.r,12)}px Space Mono`;
+    molCtx.textAlign='center';
+    molCtx.textBaseline='middle';
+    molCtx.fillText(a.label,x,y);
+  });
+
+  // Title
+  molCtx.fillStyle='rgba(255,149,0,0.8)';
+  molCtx.font='11px Orbitron';
+  molCtx.textAlign='center';
+  molCtx.textBaseline='bottom';
+  molCtx.fillText('TRIGLICÉRIDO = GLICEROL + 3 ÁCIDOS GORDOS',W/2,H-5);
+
+  // Chain labels
+  ['Ácido Gordo 1','Ácido Gordo 2','Ácido Gordo 3'].forEach((l,i)=>{
+    molCtx.fillStyle=['#ffe600','#39ff14','#ff6b00'][i];
+    molCtx.font='10px Nunito';
+    molCtx.textAlign='left';
+    molCtx.fillText(l, W*0.55, [H*0.2, H*0.5, H*0.8][i]+Math.sin(molT+i)*5);
+  });
+
+  requestAnimationFrame(drawMolecule);
+}
+drawMolecule();
+
+// ===== QUIZ =====
+const questions = [
+  {
+    q: "Qual célula da epiderme produz o pigmento que nos protege da radiação UV?",
+    opts: ["Queratinócito","Melanócito","Célula de Langerhans","Fibroblasto"],
+    ans: 1,
+    exp: "✅ Os Melanócitos produzem melanina e transferem-na aos queratinócitos, formando um 'guarda-sol' sobre o núcleo celular!"
+  },
+  {
+    q: "Que mecanismo a pele usa para ARREFECER o corpo quando está muito calor?",
+    opts: ["Vasoconstrição","Produção de queratina","Sudação e vasodilatação","Produção de melanina"],
+    ans: 2,
+    exp: "✅ A sudação (evaporação refresca) + vasodilatação (vasos dilatam para libertar calor) são os mecanismos de arrefecimento!"
+  },
+  {
+    q: "Qual receptor cutâneo é especializado em detetar VIBRAÇÃO e pressão profunda?",
+    opts: ["Corpúsculo de Meissner","Disco de Merkel","Corpúsculo de Pacini","Terminações de Ruffini"],
+    ans: 2,
+    exp: "✅ Os Corpúsculos de Pacini têm estrutura lamelar que os torna sensíveis a vibrações de alta frequência e pressão profunda!"
+  },
+  {
+    q: "A Vitamina D produzida na pele precisa de passar por quais órgãos para ficar ativa?",
+    opts: ["Coração e pulmões","Fígado e rins","Estômago e intestino","Baço e timo"],
+    ans: 1,
+    exp: "✅ O fígado converte para 25-OH Vit D, depois os rins convertem para calcitriol (1,25-OH₂ Vit D) — a forma ativa!"
+  },
+  {
+    q: "Que células imunes da EPIDERME capturam antigénios e os apresentam aos linfócitos T?",
+    opts: ["Mastócitos","Queratinócitos","Células de Langerhans","Fibroblastos"],
+    ans: 2,
+    exp: "✅ As Células de Langerhans são células dendríticas da epiderme — os 'espiões imunológicos' que patrulham e alertam o sistema imune!"
+  }
+];
+
+let qIdx=0, score=0, answered=false;
+
+function loadQuestion(){
+  const q=questions[qIdx];
+  document.getElementById('q-text').textContent=`Pergunta ${qIdx+1}/5: ${q.q}`;
+  const optsEl=document.getElementById('q-opts');
+  optsEl.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';
+    btn.textContent=o;
+    btn.onclick=()=>answer(i,btn);
+    optsEl.appendChild(btn);
+  });
+  document.getElementById('q-feedback').className='quiz-feedback';
+  document.getElementById('q-next').style.display='none';
+  answered=false;
+}
+
+function answer(i,btn){
+  if(answered)return;
+  answered=true;
+  const q=questions[qIdx];
+  const fb=document.getElementById('q-feedback');
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.style.pointerEvents='none');
+
+  if(i===q.ans){
+    btn.classList.add('correct');
+    fb.style.background='rgba(57,255,20,0.1)';
+    fb.style.border='1px solid #39ff14';
+    fb.style.color='#39ff14';
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.style.background='rgba(255,45,120,0.1)';
+    fb.style.border='1px solid #ff2d78';
+    fb.style.color='#ff2d78';
+  }
+  fb.textContent=q.exp;
+  fb.classList.add('show');
+  document.getElementById('q-next').style.display='block';
+}
+
+function nextQuestion(){
+  qIdx++;
+  if(qIdx<questions.length){
+    loadQuestion();
+  } else {
+    showScore();
+  }
+}
+
+function showScore(){
+  document.getElementById('quiz-container').style.display='none';
+  const sc=document.getElementById('quiz-score');
+  sc.style.display='block';
+  const pct=score/questions.length;
+  let msg='', color='';
+  if(pct>=0.8){msg='🏆 MESTRE DA PELE!';color='var(--neon-green)';}
+  else if(pct>=0.6){msg='⚡ BEM FEITO!';color='var(--neon-yellow)';}
+  else{msg='💪 CONTINUA A ESTUDAR!';color='var(--neon-pink)';}
+  sc.innerHTML=`
+    <div style="font-size:4rem;margin-bottom:10px;">${pct>=0.8?'🏆':pct>=0.6?'⭐':'📚'}</div>
+    <div style="color:${color};font-size:2.5rem;font-family:Bangers;letter-spacing:3px;">${msg}</div>
+    <div style="margin:16px 0;font-size:1.5rem;color:#fff;">${score}/${questions.length} corretas</div>
+    <div style="font-size:0.9rem;color:var(--dim);margin-bottom:24px;">Pontuação: ${Math.round(pct*100)}%</div>
+    <button onclick="restartQuiz()" style="padding:12px 30px;background:var(--neon-cyan);color:#000;border:none;border-radius:6px;font-family:Bangers;font-size:1.4rem;letter-spacing:2px;cursor:pointer;box-shadow:0 0 15px var(--neon-cyan);">
+      🔄 TENTAR NOVAMENTE
+    </button>
+  `;
+}
+
+function restartQuiz(){
+  qIdx=0;score=0;answered=false;
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('quiz-score').style.display='none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>

@@ -1,0 +1,2974 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CARCINOGÊNESE — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #030712;
+    --bg2: #0a0f1e;
+    --neon-red: #ff2d55;
+    --neon-cyan: #00f5ff;
+    --neon-yellow: #ffe600;
+    --neon-green: #39ff14;
+    --neon-purple: #bf00ff;
+    --neon-orange: #ff6b00;
+    --neon-pink: #ff00aa;
+    --text: #e0e8ff;
+    --dim: #6677aa;
+    --panel: rgba(10,15,40,0.85);
+    --border: rgba(0,245,255,0.2);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== STARFIELD ===== */
+  #stars {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events:none; z-index:0;
+    background: radial-gradient(ellipse at 20% 30%, rgba(191,0,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(255,45,85,0.06) 0%, transparent 60%);
+  }
+
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d,3s) ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.2); }
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  #hero::before {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,45,85,0.15) 0%, transparent 70%);
+    animation: pulse-bg 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-bg {
+    0%,100% { opacity:0.5; }
+    50% { opacity:1; }
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--neon-cyan);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border: 1px solid var(--neon-cyan);
+    padding: 0.4rem 1.2rem;
+    margin-bottom: 2rem;
+    animation: blink-border 2s infinite;
+  }
+
+  @keyframes blink-border {
+    0%,100% { box-shadow: 0 0 5px var(--neon-cyan), inset 0 0 5px rgba(0,245,255,0.1); }
+    50% { box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 15px rgba(0,245,255,0.2); }
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ff2d55, #ff6b00, #ffe600);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(255,45,85,0.8));
+    animation: title-flicker 5s ease-in-out infinite;
+  }
+
+  @keyframes title-flicker {
+    0%,90%,100% { filter: drop-shadow(0 0 30px rgba(255,45,85,0.8)); }
+    92% { filter: drop-shadow(0 0 5px rgba(255,45,85,0.3)); }
+    94% { filter: drop-shadow(0 0 40px rgba(255,45,85,1)); }
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    color: var(--neon-cyan);
+    font-weight: 300;
+    letter-spacing: 6px;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--dim);
+    max-width: 600px;
+    margin: 1.5rem auto 3rem;
+    line-height: 1.7;
+  }
+
+  /* DNA Helix animation */
+  .dna-container {
+    position: absolute;
+    right: -80px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.4;
+  }
+
+  .dna-left { position:absolute; right:-80px; top:50%; transform:translateY(-50%); opacity:0.15; }
+
+  /* ===== CHAPTERS NAV ===== */
+  .chapters-nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: center;
+    padding: 0 2rem 4rem;
+  }
+
+  .ch-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ch-btn::before {
+    content:'';
+    position:absolute; inset:0;
+    background: currentColor;
+    opacity:0;
+    transition:0.3s;
+  }
+
+  .ch-btn:hover::before { opacity:0.15; }
+  .ch-btn:hover { transform:translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+
+  .ch-btn.red { color:var(--neon-red); border-color:var(--neon-red); }
+  .ch-btn.cyan { color:var(--neon-cyan); border-color:var(--neon-cyan); }
+  .ch-btn.yellow { color:var(--neon-yellow); border-color:var(--neon-yellow); }
+  .ch-btn.green { color:var(--neon-green); border-color:var(--neon-green); }
+  .ch-btn.purple { color:var(--neon-purple); border-color:var(--neon-purple); }
+  .ch-btn.orange { color:var(--neon-orange); border-color:var(--neon-orange); }
+  .ch-btn.pink { color:var(--neon-pink); border-color:var(--neon-pink); }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    position: relative;
+    z-index: 2;
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+    margin: 0 auto 4rem;
+    max-width: 800px;
+    animation: scan 3s ease-in-out infinite;
+  }
+
+  @keyframes scan {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  /* Chapter headers */
+  .ch-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .ch-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.15;
+  }
+
+  .ch-title-block { flex: 1; }
+
+  .ch-episode {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .ch-title-main {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  /* ===== MANGA PANELS ===== */
+  .manga-grid {
+    display: grid;
+    gap: 2px;
+    margin: 2rem 0;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+  }
+
+  .manga-grid-2 { grid-template-columns: 1fr 1fr; }
+  .manga-grid-3 { grid-template-columns: 2fr 1fr; }
+  .manga-grid-4 { grid-template-columns: 1fr 2fr 1fr; }
+
+  .manga-panel {
+    background: var(--panel);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .manga-panel:hover {
+    background: rgba(10,15,40,0.95);
+    z-index: 5;
+  }
+
+  .manga-panel::after {
+    content:'';
+    position:absolute;
+    top:0; left:0; right:0; height:2px;
+    background: var(--accent, var(--neon-cyan));
+    transform: scaleX(0);
+    transition: transform 0.4s;
+    transform-origin: left;
+  }
+
+  .manga-panel:hover::after { transform: scaleX(1); }
+
+  .panel-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 0.8rem;
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .panel-text {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #b0bcd8;
+  }
+
+  /* ===== MOLECULE CANVAS ===== */
+  .molecule-stage {
+    position: relative;
+    height: 320px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.4);
+    overflow: hidden;
+    margin: 2rem 0;
+    border-radius: 4px;
+  }
+
+  .molecule-stage canvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  .molecule-label {
+    position: absolute;
+    bottom: 1rem; left: 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    padding-left: 3rem;
+    margin: 3rem 0;
+  }
+
+  .timeline::before {
+    content:'';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--neon-red), var(--neon-purple), var(--neon-cyan));
+    animation: timeline-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes timeline-pulse {
+    0%,100% { box-shadow: 0 0 5px var(--neon-red); }
+    50% { box-shadow: 0 0 15px var(--neon-cyan); }
+  }
+
+  .tl-event {
+    position: relative;
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.6s;
+  }
+
+  .tl-event.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: -3.5rem;
+    top: 0.3rem;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tl-dot::after {
+    content:'';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes dot-pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+  }
+
+  .tl-time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .tl-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+  }
+
+  .tl-body {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #b0bcd8;
+  }
+
+  /* ===== INFO CARDS ===== */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 1.8rem;
+    position: relative;
+    transition: all 0.3s;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0; width:4px; height:100%;
+    background: var(--accent, var(--neon-cyan));
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent, var(--neon-cyan));
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,245,255,0.1);
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--accent, var(--neon-cyan));
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: #9ab;
+  }
+
+  /* ===== HIGHLIGHT BOXES ===== */
+  .highlight-box {
+    border: 1px solid;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+    position: relative;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .highlight-box .hb-tag {
+    position: absolute;
+    top: -0.7rem;
+    left: 1rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    padding: 0.2rem 0.8rem;
+    background: var(--bg);
+  }
+
+  .highlight-box.danger {
+    border-color: var(--neon-red);
+    box-shadow: 0 0 20px rgba(255,45,85,0.1);
+  }
+
+  .highlight-box.danger .hb-tag { color: var(--neon-red); }
+
+  .highlight-box.info {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.1);
+  }
+
+  .highlight-box.info .hb-tag { color: var(--neon-cyan); }
+
+  .highlight-box.warning {
+    border-color: var(--neon-yellow);
+    box-shadow: 0 0 20px rgba(255,230,0,0.1);
+  }
+
+  .highlight-box.warning .hb-tag { color: var(--neon-yellow); }
+
+  .highlight-box.success {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px rgba(57,255,20,0.1);
+  }
+
+  .highlight-box.success .hb-tag { color: var(--neon-green); }
+
+  /* ===== PATHWAY DIAGRAM ===== */
+  .pathway {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2rem 0;
+    margin: 2rem 0;
+  }
+
+  .pw-node {
+    flex-shrink: 0;
+    background: var(--panel);
+    border: 1px solid;
+    padding: 1rem 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
+    min-width: 100px;
+    position: relative;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .pw-node:hover {
+    transform: scale(1.1);
+    z-index: 5;
+    box-shadow: 0 0 25px currentColor;
+  }
+
+  .pw-arrow {
+    flex-shrink: 0;
+    font-size: 1.5rem;
+    padding: 0 0.3rem;
+    opacity: 0.6;
+    animation: arrow-flow 1.5s ease-in-out infinite;
+  }
+
+  @keyframes arrow-flow {
+    0% { opacity: 0.3; transform: translateX(-3px); }
+    100% { opacity: 1; transform: translateX(3px); }
+  }
+
+  /* ===== GENE TABLE ===== */
+  .gene-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    font-size: 0.9rem;
+  }
+
+  .gene-table th {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    color: var(--neon-cyan);
+  }
+
+  .gene-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #b0bcd8;
+    vertical-align: top;
+  }
+
+  .gene-table tr:hover td {
+    background: rgba(0,245,255,0.03);
+  }
+
+  .gene-badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    border: 1px solid currentColor;
+  }
+
+  /* ===== HALLMARKS GRID ===== */
+  .hallmarks-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+  }
+
+  .hallmark-cell {
+    padding: 1.8rem;
+    background: var(--bg2);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hallmark-cell::before {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(circle at 50% 100%, var(--c, var(--neon-red)) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .hallmark-cell:hover::before { opacity: 0.15; }
+
+  .hallmark-cell:hover { transform: scale(1.02); z-index: 2; }
+
+  .hm-icon { font-size: 2.8rem; margin-bottom: 0.8rem; display: block; }
+
+  .hm-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  .hm-sub { font-size: 0.8rem; color: #6677aa; line-height: 1.5; }
+
+  /* ===== TOOLTIP ===== */
+  .tooltip-wrap {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dashed var(--neon-cyan);
+    cursor: help;
+  }
+
+  .tooltip-wrap .tip {
+    display: none;
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0a1020;
+    border: 1px solid var(--neon-cyan);
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    white-space: nowrap;
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(0,245,255,0.3);
+    color: var(--text);
+    min-width: 200px;
+    white-space: normal;
+    text-align: left;
+  }
+
+  .tooltip-wrap:hover .tip { display: block; }
+
+  /* ===== QUIZ / INTERACTION ===== */
+  .quiz-box {
+    border: 1px solid var(--neon-purple);
+    padding: 2rem;
+    margin: 3rem 0;
+    background: rgba(191,0,255,0.05);
+    position: relative;
+  }
+
+  .quiz-box .hb-tag {
+    position:absolute; top:-0.7rem; left:1rem;
+    font-family:'Orbitron',sans-serif;
+    font-size:0.6rem;
+    font-weight:700;
+    letter-spacing:3px;
+    padding:0.2rem 0.8rem;
+    background:var(--bg);
+    color:var(--neon-purple);
+    border:1px solid var(--neon-purple);
+  }
+
+  .quiz-q {
+    font-family:'Orbitron',sans-serif;
+    font-size:0.95rem;
+    font-weight:700;
+    margin-bottom:1.5rem;
+    line-height:1.4;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .quiz-opt {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid rgba(191,0,255,0.3);
+    background: rgba(191,0,255,0.05);
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-align: left;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+  }
+
+  .quiz-opt:hover { border-color: var(--neon-purple); background: rgba(191,0,255,0.1); }
+  .quiz-opt.correct { border-color: var(--neon-green); background: rgba(57,255,20,0.1); color: var(--neon-green); }
+  .quiz-opt.wrong { border-color: var(--neon-red); background: rgba(255,45,85,0.1); color: var(--neon-red); }
+
+  .quiz-feedback {
+    display:none;
+    margin-top:1rem;
+    padding:1rem;
+    font-size:0.9rem;
+    line-height:1.6;
+    border-left:3px solid;
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  .progress-wrap {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    z-index: 1000;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-red), var(--neon-orange), var(--neon-yellow));
+    width: 0%;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--neon-orange);
+  }
+
+  /* ===== NAV ===== */
+  .top-nav {
+    position: fixed;
+    top: 3px; left: 0; right: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 2rem;
+    background: rgba(3,7,18,0.9);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: var(--neon-red);
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--neon-cyan); }
+
+  /* ===== BIG TEXT ===== */
+  .big-stat {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px;
+    opacity: 0.1;
+    position: absolute;
+    pointer-events: none;
+    right: -1rem;
+    top: 0;
+  }
+
+  /* ===== NARRATOR BOX ===== */
+  .narrator {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255,230,0,0.05);
+    border-left: 3px solid var(--neon-yellow);
+  }
+
+  .narrator-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    background: rgba(255,230,0,0.1);
+    border: 2px solid var(--neon-yellow);
+    animation: avatar-spin 10s linear infinite;
+  }
+
+  @keyframes avatar-spin {
+    0% { box-shadow: 0 0 10px var(--neon-yellow); }
+    50% { box-shadow: 0 0 25px var(--neon-yellow), 0 0 50px rgba(255,230,0,0.3); }
+    100% { box-shadow: 0 0 10px var(--neon-yellow); }
+  }
+
+  .narrator-text {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #d0d8f0;
+    font-style: italic;
+  }
+
+  .narrator-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--neon-yellow);
+    letter-spacing: 3px;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ===== SECTION DIVIDERS ===== */
+  .act-divider {
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .act-divider::before, .act-divider::after {
+    content:'';
+    position:absolute;
+    left:0; right:0;
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--neon-red), transparent);
+  }
+
+  .act-divider::before { top:2rem; }
+  .act-divider::after { bottom:2rem; }
+
+  .act-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 6px;
+    color: var(--neon-red);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .act-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff2d55, #bf00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ===== CELL ANIMATION ===== */
+  @keyframes cell-divide {
+    0% { transform: scale(1); border-radius: 50%; }
+    40% { transform: scale(1.3) scaleX(0.8); border-radius: 40%; }
+    60% { transform: scale(0.6) scaleX(1.4); border-radius: 30%; }
+    80% { transform: scale(0.8); }
+    100% { transform: scale(1); border-radius: 50%; }
+  }
+
+  .cell-demo {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    margin: 2rem 0;
+    flex-wrap: wrap;
+  }
+
+  .cell {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    text-align: center;
+    color: rgba(255,255,255,0.8);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .cell .nucleus {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid var(--border);
+    padding: 4rem 2rem;
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--neon-red);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-info {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--dim);
+    line-height: 2;
+    letter-spacing: 2px;
+  }
+
+  .footer-sources {
+    margin-top: 2rem;
+    font-size: 0.75rem;
+    color: #445;
+    line-height: 2;
+  }
+
+  .footer-sources span { color: var(--neon-cyan); }
+
+  /* ===== ANIMATIONS REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--neon-red); }
+
+  /* responsive */
+  @media (max-width:768px) {
+    .manga-grid-2, .manga-grid-3, .manga-grid-4 { grid-template-columns: 1fr; }
+    .hallmarks-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .pathway { flex-wrap: wrap; }
+    .gene-table { font-size: 0.8rem; }
+  }
+
+  @media (max-width:480px) {
+    .hallmarks-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Extra glow effects */
+  .glow-red { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+  .glow-cyan { color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan); }
+  .glow-yellow { color: var(--neon-yellow); text-shadow: 0 0 10px var(--neon-yellow); }
+  .glow-green { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+  .glow-purple { color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+  .glow-orange { color: var(--neon-orange); text-shadow: 0 0 10px var(--neon-orange); }
+
+  /* Step list */
+  .step-list { list-style: none; margin: 1.5rem 0; }
+  .step-list li {
+    padding: 0.8rem 0 0.8rem 2.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #b0bcd8;
+  }
+  .step-list li::before {
+    content: attr(data-n);
+    position: absolute;
+    left: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--neon-cyan);
+    top: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap"><div class="progress-fill" id="progress"></div></div>
+
+<!-- NAV -->
+<nav class="top-nav">
+  <div class="nav-logo">⚗ DEMILMED-UL</div>
+  <ul class="nav-links">
+    <li><a href="#inicio">Início</a></li>
+    <li><a href="#cap1">Iniciação</a></li>
+    <li><a href="#cap2">Promoção</a></li>
+    <li><a href="#cap3">Progressão</a></li>
+    <li><a href="#cap4">Genes</a></li>
+    <li><a href="#cap5">Hallmarks</a></li>
+    <li><a href="#cap6">Agentes</a></li>
+    <li><a href="#cap7">Defesas</a></li>
+  </ul>
+</nav>
+
+<!-- STARS -->
+<div id="stars"></div>
+
+<!-- ========================= HERO ========================= -->
+<section id="inicio" style="padding-top:80px;">
+  <div id="hero">
+    <div class="hero-badge">// DEMILMED-UL · 2º ANO DE MEDICINA · 2026 //</div>
+
+    <h1 class="hero-title">CARCINOGÊNESE</h1>
+    <p class="hero-sub">A ORIGEM DO INIMIGO</p>
+    <p class="hero-desc">
+      Uma célula normal. Uma mensagem corrompida. O início de uma batalha dentro do corpo.
+      Descobre como o cancro nasce — passo a passo, gene a gene, mutação a mutação.
+    </p>
+
+    <!-- ANIMATED DNA SVG -->
+    <svg width="300" height="200" viewBox="0 0 300 200" style="opacity:0.6;margin-bottom:2rem;">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- DNA strands animated -->
+      <g filter="url(#glow)">
+        <path id="strand1" d="" stroke="#00f5ff" stroke-width="2.5" fill="none"/>
+        <path id="strand2" d="" stroke="#ff2d55" stroke-width="2.5" fill="none"/>
+      </g>
+      <g id="basepairs"></g>
+    </svg>
+
+    <div class="chapters-nav">
+      <button class="ch-btn red" onclick="scrollTo('#cap1')">⬡ Cap.1 Iniciação</button>
+      <button class="ch-btn cyan" onclick="scrollTo('#cap2')">⬡ Cap.2 Promoção</button>
+      <button class="ch-btn yellow" onclick="scrollTo('#cap3')">⬡ Cap.3 Progressão</button>
+      <button class="ch-btn green" onclick="scrollTo('#cap4')">⬡ Cap.4 Oncogenes</button>
+      <button class="ch-btn purple" onclick="scrollTo('#cap5')">⬡ Cap.5 Hallmarks</button>
+      <button class="ch-btn orange" onclick="scrollTo('#cap6')">⬡ Cap.6 Carcinógenos</button>
+      <button class="ch-btn pink" onclick="scrollTo('#cap7')">⬡ Cap.7 Defesas</button>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== PROLOGUE ====================== -->
+<div class="act-divider">
+  <div class="act-label">// Prólogo //</div>
+  <div class="act-title">O CORPO EM EQUILÍBRIO</div>
+</div>
+
+<section class="section reveal">
+  <div class="narrator">
+    <div class="narrator-avatar">🔬</div>
+    <div>
+      <div class="narrator-name">// NARRADOR — DR. CÉLULA //</div>
+      <div class="narrator-text">
+        "Imagina o teu corpo como uma cidade gigante com 37 biliões de habitantes — as células.
+        Cada uma tem uma função, um lugar, e sabe exactamente quando nascer, trabalhar e morrer.
+        Esta ordem perfeita chama-se <strong style="color:var(--neon-cyan)">homeostase</strong>.
+        Mas o que acontece quando um habitante desta cidade recusa seguir as regras?"
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2">
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// conceito fundamental //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">O QUE É O CANCRO?</div>
+      <div class="panel-text">
+        Cancro é uma doença genética — não no sentido de "herdada", mas no sentido de que ocorre
+        por <strong>alterações no DNA</strong> das células. Uma célula normal sofre mutações que a fazem
+        proliferar sem controlo, invadir outros tecidos e escapar ao sistema imune.
+        <br><br>
+        Não é um acontecimento súbito. É um <strong>processo de décadas</strong>, com múltiplas etapas.
+        Carcinogênese = o processo pelo qual células normais se transformam em células cancerosas.
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-red);">
+      <div class="panel-label">// estatística global //</div>
+      <div class="panel-title" style="color:var(--neon-red)">O INIMIGO EM NÚMEROS</div>
+      <div class="panel-text">
+        🌍 <strong>~20 milhões</strong> de novos casos de cancro por ano no mundo<br>
+        💀 <strong>~10 milhões</strong> de mortes anuais<br>
+        🧬 <strong>2ª causa</strong> de morte global, depois das doenças cardiovasculares<br>
+        ⏳ O risco aumenta com a idade — a maioria dos cancros ocorre após os 50 anos<br>
+        🔬 São necessárias em média <strong>5 a 10 mutações acumuladas</strong> para que uma célula se torne maligna
+      </div>
+    </div>
+  </div>
+
+  <!-- Molecule canvas 1 -->
+  <div class="molecule-stage">
+    <canvas id="mol1"></canvas>
+    <div class="molecule-label">// VISUALIZAÇÃO: DNA NORMAL vs DNA MUTADO //</div>
+  </div>
+
+  <div class="highlight-box info">
+    <div class="hb-tag">CONCEITO-CHAVE</div>
+    <p style="font-size:1rem;line-height:1.8;">
+      A carcinogênese é um processo <strong style="color:var(--neon-cyan)">multifásico</strong>,
+      <strong style="color:var(--neon-cyan)">multigênico</strong> e
+      <strong style="color:var(--neon-cyan)">clonal</strong>.
+      Multifásico = ocorre em etapas. Multigênico = envolve vários genes.
+      Clonal = todo o tumor deriva de <em>uma única</em> célula ancestral mutada.
+    </p>
+  </div>
+</section>
+
+<!-- ====================== CAP 1 INICIAÇÃO ====================== -->
+<div class="act-divider" id="cap1">
+  <div class="act-label">// Capítulo 01 //</div>
+  <div class="act-title">INICIAÇÃO</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-red">01</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-red)">// A PRIMEIRA FAÍSCA //</div>
+      <div class="ch-title-main" style="color:var(--neon-red)">INICIAÇÃO CELULAR</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">⚡</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "Tudo começa com um evento silencioso. Uma única célula sofre uma mutação no seu DNA —
+        uma letra errada no código de 3 mil milhões de pares de bases. Na maioria das vezes, nada acontece.
+        Mas quando essa mutação atinge um gene crítico... a faísca está acesa."
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-red);">
+      <div class="panel-label">// definição //</div>
+      <div class="panel-title" style="color:var(--neon-red)">O QUE É INICIAÇÃO?</div>
+      <div class="panel-text">
+        A <strong>iniciação</strong> é a primeira etapa da carcinogênese. Ocorre quando um
+        <span class="tooltip-wrap">agente carcinogénico<span class="tip">Agente capaz de causar cancro. Pode ser químico, físico (radiação) ou biológico (vírus).</span></span>
+        causa uma <strong>alteração permanente e irreversível</strong> no DNA de uma célula — uma mutação.
+        <br><br>
+        Esta célula iniciada não é ainda cancerosa. É apenas... diferente. Potencialmente perigosa.
+        Pode permanecer latente durante anos.
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-orange);">
+      <div class="panel-label">// características //</div>
+      <div class="panel-title" style="color:var(--neon-orange)">PROPRIEDADES DA CÉLULA INICIADA</div>
+      <div class="panel-text">
+        ✦ A mutação é <strong>permanente e hereditária</strong> (passa para as células-filhas)<br><br>
+        ✦ <strong>Não causa cancro por si só</strong> — precisa de promoção posterior<br><br>
+        ✦ A célula parece <strong>morfologicamente normal</strong><br><br>
+        ✦ A iniciação requer que a célula <strong>se divida</strong> para fixar a mutação no DNA<br><br>
+        ✦ É um processo <strong>estocástico</strong> (aleatório) — ocorre por acidente
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider reveal"></div>
+
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--neon-yellow);margin:2rem 0 1rem;letter-spacing:3px;">// COMO OCORREM AS MUTAÇÕES? //</h3>
+
+  <div class="cards reveal">
+    <div class="card" style="--accent:var(--neon-red);">
+      <span class="card-icon">☢</span>
+      <div class="card-title">MUTAÇÕES DIRETAS</div>
+      <div class="card-text">
+        O agente carcinogénico ataca <strong>directamente o DNA</strong>.
+        Ex: radiação ionizante quebra as ligações fosfodiéster.
+        Ex: raios UV causam dímeros de pirimidina (fusão de dois T's ou C's).
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-orange);">
+      <span class="card-icon">⚗</span>
+      <div class="card-title">ADUTOS DE DNA</div>
+      <div class="card-text">
+        Substâncias químicas (ex: benzopireno do tabaco) ligam-se covalentemente ao DNA,
+        formando <strong>adutos</strong>. Estes bloqueiam a replicação ou causam leituras erradas.
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-purple);">
+      <span class="card-icon">🔁</span>
+      <div class="card-title">ERROS DE REPLICAÇÃO</div>
+      <div class="card-text">
+        Durante cada divisão celular, a DNA polimerase comete ~1 erro por cada bilião de pares.
+        Normalmente são corrigidos. Quando os sistemas de <strong>reparação falham</strong>... persistem.
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-cyan);">
+      <span class="card-icon">🧬</span>
+      <div class="card-title">INSTABILIDADE GENÓMICA</div>
+      <div class="card-text">
+        Mutações nos genes de <strong>reparação do DNA</strong> (como BRCA1, MMR) criam um estado
+        de hipermutabilidade — a célula acumula erros muito mais depressa que o normal.
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-event visible">
+      <div class="tl-dot" style="color:var(--neon-red);border-color:var(--neon-red);"></div>
+      <div class="tl-time" style="color:var(--neon-red)">Momento 0</div>
+      <div class="tl-title">Exposição ao Carcinógeno</div>
+      <div class="tl-body">O agente atinge a célula — uma substância química, radiação ou vírus. O DNA é danificado.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-orange);border-color:var(--neon-orange);"></div>
+      <div class="tl-time" style="color:var(--neon-orange)">Horas depois</div>
+      <div class="tl-title">Tentativa de Reparação</div>
+      <div class="tl-body">Os sistemas de reparação (NER, BER, MMR) tentam corrigir o dano. Se têm sucesso → nada acontece. Se falham → a mutação persiste.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-yellow);border-color:var(--neon-yellow);"></div>
+      <div class="tl-time" style="color:var(--neon-yellow)">Primeira divisão</div>
+      <div class="tl-title">Fixação da Mutação</div>
+      <div class="tl-body">A célula divide-se antes da reparação ser completa. A mutação fica <em>fixada</em> no DNA — permanente, hereditária. A célula está "iniciada".</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-green);border-color:var(--neon-green);"></div>
+      <div class="tl-time" style="color:var(--neon-green)">Anos / décadas</div>
+      <div class="tl-title">Latência</div>
+      <div class="tl-body">A célula iniciada prolifera lentamente. Parece normal. Aguarda o próximo evento — a promoção.</div>
+    </div>
+  </div>
+
+  <div class="highlight-box danger reveal">
+    <div class="hb-tag">ATENÇÃO CRÍTICA</div>
+    <p style="font-size:0.95rem;line-height:1.8;color:#d0bbd0;">
+      A iniciação por si só <strong style="color:var(--neon-red)">não produz cancro</strong>.
+      Para isso é necessária a fase seguinte: a <strong>promoção</strong>.
+      Pensa assim: a iniciação acende a espoleta, mas a promoção detona a bomba.
+      Sem promoção, muitas células iniciadas morrem naturalmente por apoptose ou senescência.
+    </p>
+  </div>
+
+  <!-- Quiz 1 -->
+  <div class="quiz-box reveal">
+    <div class="hb-tag">// TESTE RÁPIDO //</div>
+    <div class="quiz-q">💡 Uma célula sofreu uma mutação num oncogene, mas o sistema de reparação falhou. A célula dividiu-se uma vez. O que acontece a seguir para que ocorra cancro?</div>
+    <div class="quiz-options" id="q1">
+      <button class="quiz-opt" onclick="answer(this,'wrong','q1','fb1')">A célula transforma-se imediatamente em cancerosa</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','q1','fb1')">A célula está "iniciada" e precisa de promoção continuada para se tornar maligna</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q1','fb1')">A mutação é revertida na próxima divisão</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q1','fb1')">Nada — uma mutação é insuficiente para qualquer efeito</button>
+    </div>
+    <div class="quiz-feedback" id="fb1" style="border-color:var(--neon-green);color:var(--neon-green);">
+      ✅ Correcto! A iniciação é apenas o primeiro passo. A mutação está fixada, mas o cancro requer múltiplos eventos moleculares adicionais — promoção e depois progressão. É um processo de décadas!
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CAP 2 PROMOÇÃO ====================== -->
+<div class="act-divider" id="cap2">
+  <div class="act-label">// Capítulo 02 //</div>
+  <div class="act-title">PROMOÇÃO</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-cyan">02</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-cyan)">// O COMBUSTÍVEL //</div>
+      <div class="ch-title-main" style="color:var(--neon-cyan)">PROMOÇÃO TUMORAL</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">🔥</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "A célula iniciada estava a dormir. Mas agora chega um promotor — não um agente que muda o DNA,
+        mas um agente que grita às células: <em>'Dividam-se! Crescam! Não parem!'</em>.
+        A espoleta está acesa. O combustível foi adicionado. A explosão aproxima-se."
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// definição //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">O QUE É PROMOÇÃO?</div>
+      <div class="panel-text">
+        A promoção é a segunda etapa. Os <strong>agentes promotores</strong> não causam mutações no DNA —
+        em vez disso, estimulam a <strong>proliferação das células iniciadas</strong>, amplificando
+        a sua expansão clonal.
+        <br><br>
+        São geralmente <strong>reversíveis</strong>: se o promotor for removido, a proliferação pode parar.
+        Por isso, eliminar fatores de risco (fumar, álcool, inflamação crónica) ainda pode ajudar nesta fase!
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-green);">
+      <div class="panel-label">// exemplos de promotores //</div>
+      <div class="panel-title" style="color:var(--neon-green)">AGENTES PROMOTORES</div>
+      <div class="panel-text">
+        🚬 <strong>Nicotina e fenóis</strong> do tabaco → cancro do pulmão<br>
+        🍺 <strong>Álcool</strong> → cancro do fígado e esófago<br>
+        🌶 <strong>Ésteres de forbol</strong> (TPA) → promotor clássico experimental<br>
+        🦠 <strong>Inflamação crónica</strong> (H. pylori) → cancro gástrico<br>
+        🧴 <strong>Estrogénios</strong> → cancro da mama e endométrio<br>
+        ⚫ <strong>Sacarina</strong> (a altas doses) → promotor em bexiga de ratos<br>
+        🍔 <strong>Dieta hiperlipídica</strong> → cancro colo-rectal
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider reveal"></div>
+
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--neon-cyan);margin:2rem 0 1rem;letter-spacing:3px;">// MECANISMOS DA PROMOÇÃO //</h3>
+
+  <div class="cards reveal">
+    <div class="card" style="--accent:var(--neon-cyan);">
+      <span class="card-icon">📡</span>
+      <div class="card-title">RECEPTORES E SINALIZAÇÃO</div>
+      <div class="card-text">
+        Promotores ligam-se a receptores celulares e activam vias como
+        <strong>PKC (proteína-cinase C)</strong> e <strong>MAP-cinases</strong>, que levam à
+        transcrição de genes proliferativos.
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-green);">
+      <span class="card-icon">🔓</span>
+      <div class="card-title">INIBIÇÃO DA APOPTOSE</div>
+      <div class="card-text">
+        Os promotores frequentemente <strong>bloqueiam a morte celular programada</strong> (apoptose),
+        deixando as células iniciadas sobreviver mais tempo do que deveriam.
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-yellow);">
+      <span class="card-icon">🧪</span>
+      <div class="card-title">ALTERAÇÕES EPIGENÉTICAS</div>
+      <div class="card-text">
+        Muitos promotores alteram a <strong>metilação do DNA</strong> ou modificações das histonas,
+        silenciando genes supressores de tumores sem alterar a sequência do DNA.
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-orange);">
+      <span class="card-icon">🔥</span>
+      <div class="card-title">INFLAMAÇÃO CRÓNICA</div>
+      <div class="card-text">
+        A inflamação crónica liberta
+        <strong>ROS (espécies reactivas de oxigénio)</strong>, citocinas (TNF-α, IL-6) e
+        factores de crescimento que promovem a expansão clonal.
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box warning reveal">
+    <div class="hb-tag">DIFERENÇA CRUCIAL</div>
+    <p style="font-size:0.95rem;line-height:1.8;">
+      🧬 <strong style="color:var(--neon-yellow)">Iniciação:</strong> Irreversível, modifica o DNA, ocorre uma vez, requer apenas uma exposição<br>
+      🔥 <strong style="color:var(--neon-cyan)">Promoção:</strong> Reversível, não muda o DNA, requer exposição prolongada e repetida, pode ser interrompida
+      <br><br>
+      👉 Isto explica porque parar de fumar, perder peso ou tratar H. pylori <em>reduz o risco</em> — remove o promotor!
+    </p>
+  </div>
+
+  <!-- Cell division animation -->
+  <div class="cell-demo reveal">
+    <div style="text-align:center;">
+      <div class="cell" style="background:rgba(0,245,255,0.1);border:2px solid var(--neon-cyan);animation:cell-divide 4s ease-in-out infinite;">
+        <div class="nucleus" style="background:rgba(0,245,255,0.3);border:1px solid var(--neon-cyan);"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--neon-cyan);margin-top:0.5rem;">CÉLULA NORMAL</div>
+    </div>
+    <div style="font-size:2rem;color:var(--neon-orange);animation:arrow-flow 1s ease-in-out infinite alternate;">→</div>
+    <div style="text-align:center;">
+      <div class="cell" style="background:rgba(255,107,0,0.15);border:2px solid var(--neon-orange);animation:cell-divide 2s ease-in-out infinite;">
+        <div class="nucleus" style="background:rgba(255,107,0,0.4);border:1px solid var(--neon-orange);"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--neon-orange);margin-top:0.5rem;">INICIADA + PROMOTOR</div>
+    </div>
+    <div style="font-size:2rem;color:var(--neon-red);animation:arrow-flow 0.8s ease-in-out infinite alternate;">→</div>
+    <div style="text-align:center;position:relative;">
+      <div class="cell" style="background:rgba(255,45,85,0.2);border:2px solid var(--neon-red);animation:cell-divide 1s ease-in-out infinite;width:100px;height:100px;">
+        <div class="nucleus" style="background:rgba(255,45,85,0.5);border:1px solid var(--neon-red);width:40px;height:40px;"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--neon-red);margin-top:0.5rem;">CLONE EXPANDIDO</div>
+    </div>
+    <div style="text-align:center;padding:0 1rem;max-width:200px;">
+      <div style="font-size:0.85rem;color:#6677aa;line-height:1.6;">
+        Com promoção contínua, a clone expande exponencialmente, acumulando mais mutações
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CAP 3 PROGRESSÃO ====================== -->
+<div class="act-divider" id="cap3">
+  <div class="act-label">// Capítulo 03 //</div>
+  <div class="act-title">PROGRESSÃO</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-yellow">03</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-yellow)">// SEM RETORNO //</div>
+      <div class="ch-title-main" style="color:var(--neon-yellow)">PROGRESSÃO MALIGNA</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">💀</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "As regras foram quebradas. A célula já não está apenas a crescer mais depressa —
+        está a acumular novas mutações a cada divisão. Como numa evolução acelerada e caótica,
+        as mais agressivas sobrevivem. As mais invasoras dominam. Chegámos ao ponto sem retorno."
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-yellow);">
+      <div class="panel-label">// definição //</div>
+      <div class="panel-title" style="color:var(--neon-yellow)">O QUE É PROGRESSÃO?</div>
+      <div class="panel-text">
+        A progressão é a terceira e mais dramática fase. O clone celular acumula mais mutações,
+        tornando-se cada vez mais <strong>anaplástico</strong> (menos diferenciado) e
+        <strong>maligno</strong>.
+        <br><br>
+        É <strong>irreversível</strong>. A célula adquire características que definem o cancro:
+        invasão local, angiogênese, e eventualmente <strong>metástase</strong>.
+        Os sistemas de defesa do corpo já não conseguem controlar a situação.
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-red);">
+      <div class="panel-label">// evolução clonal //</div>
+      <div class="panel-title" style="color:var(--neon-red)">SELEÇÃO DARWINIANA</div>
+      <div class="panel-text">
+        Dentro do tumor, as células competem. As que têm <strong>vantagem proliferativa</strong>
+        sobrevivem e dominam. É evolução somática — seleção natural dentro do corpo.
+        <br><br>
+        🏆 Sobrevivem as células com: maior velocidade de divisão, resistência à apoptose,
+        capacidade de invadir, resistência à quimioterapia.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider reveal"></div>
+
+  <!-- PATHWAY: Normal → Hiperplasia → Displasia → CIS → Cancro invasivo → Metástase -->
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon-yellow);margin:2rem 0 1rem;letter-spacing:3px;">// VIA DE PROGRESSÃO MORFOLÓGICA //</h3>
+
+  <div class="pathway reveal">
+    <div class="pw-node" style="border-color:var(--neon-green);color:var(--neon-green);">
+      TECIDO<br>NORMAL<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Mitoses normais</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-green);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-cyan);color:var(--neon-cyan);">
+      HIPERPLASIA<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">↑ proliferação, morfologia normal</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-cyan);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-yellow);color:var(--neon-yellow);">
+      METAPLASIA<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Mudança de tipo celular</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-yellow);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-orange);color:var(--neon-orange);">
+      DISPLASIA<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Atipia celular, pré-maligno</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-orange);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-red);color:var(--neon-red);">
+      CARCINOMA<br>IN SITU<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Maligno, não invasivo</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-red);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-pink);color:var(--neon-pink);">
+      CANCRO<br>INVASIVO<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Rompe membrana basal</div>
+    </div>
+    <div class="pw-arrow" style="color:var(--neon-pink);">→</div>
+    <div class="pw-node" style="border-color:var(--neon-purple);color:var(--neon-purple);">
+      METÁSTASE<br>
+      <div style="font-size:0.5rem;color:#6677aa;margin-top:0.3rem;">Disseminação a distância</div>
+    </div>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-event visible">
+      <div class="tl-dot" style="color:var(--neon-yellow);border-color:var(--neon-yellow);"></div>
+      <div class="tl-time" style="color:var(--neon-yellow)">Fase inicial</div>
+      <div class="tl-title">Instabilidade Genómica</div>
+      <div class="tl-body">A célula perde a integridade dos sistemas de reparação. Começa a acumular mutações muito mais rápido. Cada divisão traz novos erros — é uma catástrofe em câmara lenta.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-orange);border-color:var(--neon-orange);"></div>
+      <div class="tl-time" style="color:var(--neon-orange)">Crescimento local</div>
+      <div class="tl-title">Invasão Local e Angiogênese</div>
+      <div class="tl-body">O tumor ultrapassa a membrana basal. Para crescer além de 1-2mm, precisa de sangue: liberta VEGF para recrutar novos vasos sanguíneos (angiogênese tumoral).</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-red);border-color:var(--neon-red);"></div>
+      <div class="tl-time" style="color:var(--neon-red)">Fase avançada</div>
+      <div class="tl-title">Metástase</div>
+      <div class="tl-body">A jornada mais perigosa: células separam-se (perda de E-caderina), entram na corrente sanguínea ou linfática, escapam ao sistema imune, extravasam e colonizam órgãos distantes.</div>
+    </div>
+  </div>
+
+  <!-- Metastasis cascade -->
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-pink);">
+      <div class="panel-label">// CASCATA METASTÁTICA //</div>
+      <div class="panel-title" style="color:var(--neon-pink)">7 PASSOS DA METÁSTASE</div>
+      <div class="panel-text">
+        <ul class="step-list">
+          <li data-n="1.">Invasão local da matriz extracelular (MMPs degradam colagénio)</li>
+          <li data-n="2.">Intravasação (célula entra em vaso sanguíneo ou linfático)</li>
+          <li data-n="3.">Sobrevivência na circulação (escape das NK cells)</li>
+          <li data-n="4.">Extravasação no órgão-alvo</li>
+          <li data-n="5.">Formação de micrometástase</li>
+          <li data-n="6.">Colonização e crescimento no novo local</li>
+          <li data-n="7.">Tumor secundário estabelecido</li>
+        </ul>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// TROPISMO METASTÁTICO //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">ONDE METASTIZA CADA CANCRO?</div>
+      <div class="panel-text">
+        🫁 <strong>Pulmão</strong> → fígado, osso, cérebro, supra-renais<br>
+        🎗 <strong>Mama</strong> → osso, pulmão, fígado, cérebro<br>
+        🟤 <strong>Cólon</strong> → fígado (via porta!), pulmão, peritóneu<br>
+        🟣 <strong>Próstata</strong> → osso (predominantemente)<br>
+        🖤 <strong>Melanoma</strong> → cérebro, fígado, pulmão, osso<br><br>
+        <em style="color:#6677aa;font-size:0.8rem;">
+          "Teoria da semente e solo" (Paget, 1889): cada cancro tem tecidos preferidos — como sementes que só crescem em solos específicos.
+        </em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CAP 4 GENES ====================== -->
+<div class="act-divider" id="cap4">
+  <div class="act-label">// Capítulo 04 //</div>
+  <div class="act-title">A GENÉTICA DO CANCRO</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-green">04</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-green)">// O CÓDIGO CORROMPIDO //</div>
+      <div class="ch-title-main" style="color:var(--neon-green)">ONCOGENES & SUPRESSORES</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">🧬</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "O cancro é fundamentalmente uma doença de genes. Não basta um único gene mutado —
+        são precisos activar os aceleradores e destruir os travões.
+        Dois grandes grupos de genes controlam o destino da célula: os <strong>oncogenes</strong> e
+        os <strong>genes supressores de tumores</strong>."
+      </div>
+    </div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-red);background:rgba(255,45,85,0.05);">
+      <div class="panel-label">// ACELERADOR //</div>
+      <div class="panel-title" style="color:var(--neon-red); font-size:1.3rem;">⚡ ONCOGENES</div>
+      <div class="panel-text">
+        Os <strong>proto-oncogenes</strong> são genes normais que controlam o crescimento celular.
+        Quando sofrem mutação (ganho de função), tornam-se <strong>oncogenes</strong> — versões
+        hiperactivas que empurram a célula a crescer sem parar.
+        <br><br>
+        É como um <strong>acelerador preso</strong> no carro: a célula não consegue parar.
+        <br><br>
+        🔑 Bastante <strong>UM alelo</strong> mutado (dominante)
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-green);background:rgba(57,255,20,0.03);">
+      <div class="panel-label">// TRAVÃO //</div>
+      <div class="panel-title" style="color:var(--neon-green); font-size:1.3rem;">🛑 GENES SUPRESSORES</div>
+      <div class="panel-text">
+        Os <strong>genes supressores de tumores</strong> (TSGs) controlam negativamente o crescimento,
+        activam a apoptose e reparam o DNA.
+        <br><br>
+        Quando ambos os alelos são inactivados (perda de função), o "travão" desaparece.
+        <br><br>
+        É como <strong>cortar os travões</strong> do carro — agora não há quem pare a célula.
+        <br><br>
+        🔑 Precisam de <strong>DOIS alelos</strong> mutados (recessivo — "Two-Hit Hypothesis")
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box info reveal">
+    <div class="hb-tag">TWO-HIT HYPOTHESIS — KNUDSON (1971)</div>
+    <p style="font-size:0.95rem;line-height:1.8;">
+      Alfred Knudson propôs que nos cancros hereditários (ex: retinoblastoma),
+      o primeiro "hit" é herdado (mutação germinal) e o segundo ocorre somaticamente.
+      Nos cancros esporádicos, ambos os hits são somáticos — por isso estes são mais raros e surgem mais tarde.
+      <br><br>
+      📌 <strong style="color:var(--neon-cyan)">RB1 (retinoblastoma)</strong> foi o primeiro TSG descoberto, graças a esta hipótese.
+    </p>
+  </div>
+
+  <div class="section-divider reveal"></div>
+
+  <!-- ONCOGENES TABLE -->
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon-red);margin:2rem 0 1rem;letter-spacing:3px;">// ONCOGENES PRINCIPAIS //</h3>
+
+  <table class="gene-table reveal">
+    <thead>
+      <tr>
+        <th>Gene</th>
+        <th>Função Normal</th>
+        <th>Mecanismo de Activação</th>
+        <th>Cancros Associados</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-red);">RAS</span></td>
+        <td>Transdução de sinal (GTPase)</td>
+        <td>Mutação pontual (G12V) → não hidrolisa GTP → sempre activo</td>
+        <td>Pâncreas (90%), cólon (50%), pulmão (30%)</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-orange);">MYC</span></td>
+        <td>Factor de transcrição, controla ciclo celular</td>
+        <td>Amplificação, translocação cromossómica t(8;14)</td>
+        <td>Linfoma de Burkitt, mama, pulmão</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-yellow);">HER2/NEU</span></td>
+        <td>Receptor de tirosina-cinase (RTK)</td>
+        <td>Amplificação génica → sobreexpressão</td>
+        <td>Mama (25-30%), estômago</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-cyan);">BCR-ABL</span></td>
+        <td>Tirosina-cinase regulada</td>
+        <td>Translocação t(9;22) → cromossoma Philadelphia → tirosina-cinase constitutiva</td>
+        <td>LMC (100%), LLA</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-green);">BRAF</span></td>
+        <td>Serina-treonina cinase (via MAPK)</td>
+        <td>Mutação V600E → activação constitutiva</td>
+        <td>Melanoma (60%), cólon, tireoide</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-purple);">EGFR</span></td>
+        <td>RTK para EGF</td>
+        <td>Mutação, amplificação, deleção</td>
+        <td>Pulmão (NSCLC), cabeça e pescoço</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- TSGs TABLE -->
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon-green);margin:3rem 0 1rem;letter-spacing:3px;">// GENES SUPRESSORES PRINCIPAIS //</h3>
+
+  <table class="gene-table reveal">
+    <thead>
+      <tr>
+        <th>Gene</th>
+        <th>Função Normal</th>
+        <th>Mecanismo de Inactivação</th>
+        <th>Cancros Associados</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-green);">TP53</span></td>
+        <td>"Guardião do genoma" — activa apoptose e reparo do DNA em resposta a dano</td>
+        <td>Mutação pontual (missense) + LOH do 2º alelo</td>
+        <td>50% de TODOS os cancros humanos</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-cyan);">RB1</span></td>
+        <td>Controla transição G1→S; bloqueia factor E2F</td>
+        <td>Mutação + LOH; ou hiperpetilação do promotor</td>
+        <td>Retinoblastoma, osteossarcoma, mama, pulmão</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-yellow);">BRCA1/2</span></td>
+        <td>Reparação de quebras duplas do DNA (recombinação homóloga)</td>
+        <td>Mutação germinal + LOH somático</td>
+        <td>Mama hereditária (70%), ovário (40%), próstata</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-orange);">APC</span></td>
+        <td>Degrada β-catenina; inibe via Wnt</td>
+        <td>Mutação → β-catenina acumula → transcreve MYC, ciclina D1</td>
+        <td>Cólon (80%), PAF (100%)</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-pink);">PTEN</span></td>
+        <td>Fosfatase; inibe via PI3K/AKT/mTOR</td>
+        <td>Mutação, deleção, silenciamento epigenético</td>
+        <td>Próstata, endométrio, mama, glioblastoma</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-purple);">CDKN2A (p16)</span></td>
+        <td>Inibe CDK4/6 → mantém Rb activo → bloqueia G1→S</td>
+        <td>Deleção homozigótica, mutação, metilação</td>
+        <td>Melanoma, pâncreas, pulmão</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- molecule canvas 2 - signaling pathways -->
+  <div class="molecule-stage reveal">
+    <canvas id="mol2"></canvas>
+    <div class="molecule-label">// REDE DE SINALIZAÇÃO CELULAR INTERACTIVA //</div>
+  </div>
+
+  <!-- Via RAS/MAPK explained -->
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-red);">
+      <div class="panel-label">// VIA RAS/MAPK //</div>
+      <div class="panel-title" style="color:var(--neon-red)">A VIA MAIS MUTADA EM CANCRO</div>
+      <div class="panel-text">
+        <ol style="padding-left:1.5rem;line-height:2;font-size:0.9rem;color:#b0bcd8;">
+          <li>Factor de crescimento liga-se ao RTK (ex: EGFR)</li>
+          <li>RTK activa RAS (troca GDP por GTP)</li>
+          <li>RAS activa RAF (BRAF)</li>
+          <li>RAF activa MEK</li>
+          <li>MEK activa ERK</li>
+          <li>ERK activa factores de transcrição (MYC, FOS, JUN)</li>
+          <li>Transcrição de genes de proliferação → DIVISÃO CELULAR</li>
+        </ol>
+        <br>
+        <em style="color:#556;font-size:0.8rem;">RAS mutado = ficou preso em "ON" → proliferação constante sem sinal externo</em>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// VIA PI3K/AKT/mTOR //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">A VIA DE SOBREVIVÊNCIA</div>
+      <div class="panel-text">
+        <ol style="padding-left:1.5rem;line-height:2;font-size:0.9rem;color:#b0bcd8;">
+          <li>RTK activado recruta PI3K</li>
+          <li>PI3K converte PIP2 → PIP3</li>
+          <li>PIP3 recruta AKT (= PKB)</li>
+          <li>AKT activa mTOR</li>
+          <li>mTOR estimula síntese proteica e crescimento</li>
+          <li>AKT também inibe apoptose (fosforila BAD, activa NF-κB)</li>
+        </ol>
+        <br>
+        <em style="color:#556;font-size:0.8rem;">PTEN inibe PI3K — logo PTEN perdido = AKT sempre activo = imortalidade celular</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 2 -->
+  <div class="quiz-box reveal">
+    <div class="hb-tag">// TESTE RÁPIDO //</div>
+    <div class="quiz-q">🧬 Um doente tem LMC (Leucemia Mieloide Crónica). A biópsia mostra a translocação t(9;22). Qual é o produto desta translocação e como causa cancro?</div>
+    <div class="quiz-options" id="q2">
+      <button class="quiz-opt" onclick="answer(this,'wrong','q2','fb2')">Produz BCL-2, que inibe a apoptose</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','q2','fb2')">Produz BCR-ABL, uma tirosina-cinase constitutivamente activa que sinaliza proliferação sem parar</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q2','fb2')">Inactiva TP53, removendo o controlo do ciclo celular</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q2','fb2')">Amplifica MYC, levando a sobreexpressão do factor de transcrição</button>
+    </div>
+    <div class="quiz-feedback" id="fb2" style="border-color:var(--neon-green);color:var(--neon-green);">
+      ✅ Perfeito! O cromossoma Philadelphia (t9;22) funde BCR ao ABL, criando BCR-ABL — uma tirosina-cinase sempre activa. É por isso que o Imatinib (Gleevec) funciona: bloqueia especificamente esta cinase. Um triunfo da medicina molecular!
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CAP 5 HALLMARKS ====================== -->
+<div class="act-divider" id="cap5">
+  <div class="act-label">// Capítulo 05 //</div>
+  <div class="act-title">AS 10 MARCAS DO CANCRO</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-purple">05</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-purple)">// HALLMARKS OF CANCER //</div>
+      <div class="ch-title-main" style="color:var(--neon-purple)">HANAHAN & WEINBERG</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">📖</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "Em 2000, Hanahan e Weinberg publicaram um dos artigos mais citados da biologia — 
+        'The Hallmarks of Cancer'. Identificaram 6 capacidades que todas as células malignas adquirem.
+        Em 2011, actualizaram para 10. São as marcas registadas do inimigo. Conhece-las é
+        a base para compreender e combater o cancro."
+      </div>
+    </div>
+  </div>
+
+  <div class="hallmarks-grid reveal">
+    <div class="hallmark-cell" style="--c:var(--neon-red);" onclick="showHallmark(0)">
+      <span class="hm-icon">⚡</span>
+      <div class="hm-title" style="color:var(--neon-red)">AUTO-SUFICIÊNCIA EM SINAIS DE CRESCIMENTO</div>
+      <div class="hm-sub">Produz os seus próprios factores de crescimento</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-orange);" onclick="showHallmark(1)">
+      <span class="hm-icon">🚫</span>
+      <div class="hm-title" style="color:var(--neon-orange)">INSENSIBILIDADE A SINAIS ANTI-PROLIFERATIVOS</div>
+      <div class="hm-sub">Ignora os "pára!" do organismo</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-yellow);" onclick="showHallmark(2)">
+      <span class="hm-icon">🛡</span>
+      <div class="hm-title" style="color:var(--neon-yellow)">EVASÃO À APOPTOSE</div>
+      <div class="hm-sub">Recusa morrer mesmo quando deveria</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-green);" onclick="showHallmark(3)">
+      <span class="hm-icon">∞</span>
+      <div class="hm-title" style="color:var(--neon-green)">POTENCIAL REPLICATIVO ILIMITADO</div>
+      <div class="hm-sub">Imortalidade via telomerase</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-cyan);" onclick="showHallmark(4)">
+      <span class="hm-icon">🩸</span>
+      <div class="hm-title" style="color:var(--neon-cyan)">ANGIOGÊNESE SUSTENTADA</div>
+      <div class="hm-sub">Recruta novos vasos sanguíneos (VEGF)</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-purple);" onclick="showHallmark(5)">
+      <span class="hm-icon">🦠</span>
+      <div class="hm-title" style="color:var(--neon-purple)">INVASÃO E METÁSTASE</div>
+      <div class="hm-sub">Coloniza outros órgãos</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-pink);" onclick="showHallmark(6)">
+      <span class="hm-icon">🔥</span>
+      <div class="hm-title" style="color:var(--neon-pink)">INFLAMAÇÃO PROMOTORA DE TUMOR</div>
+      <div class="hm-sub">Usa inflamação como aliada (2011)</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-red);" onclick="showHallmark(7)">
+      <span class="hm-icon">💀</span>
+      <div class="hm-title" style="color:var(--neon-red)">EVASÃO AO SISTEMA IMUNE</div>
+      <div class="hm-sub">Escapa às defesas imunitárias (2011)</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-orange);" onclick="showHallmark(8)">
+      <span class="hm-icon">🧫</span>
+      <div class="hm-title" style="color:var(--neon-orange)">REPROGRAMAÇÃO DO METABOLISMO</div>
+      <div class="hm-sub">Efeito Warburg — glicólise anaeróbica</div>
+    </div>
+    <div class="hallmark-cell" style="--c:var(--neon-cyan);" onclick="showHallmark(9)">
+      <span class="hm-icon">🧬</span>
+      <div class="hm-title" style="color:var(--neon-cyan)">INSTABILIDADE GENÓMICA</div>
+      <div class="hm-sub">Motor que gera todas as mutações</div>
+    </div>
+  </div>
+
+  <!-- Hallmark detail panels -->
+  <div id="hallmark-detail" style="display:none;margin:2rem 0;" class="reveal">
+    <div class="highlight-box info">
+      <div class="hb-tag" id="hd-tag">HALLMARK</div>
+      <div id="hd-content" style="font-size:0.95rem;line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- WARBURG EFFECT detail -->
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-orange);">
+      <div class="panel-label">// METABOLISMO TUMORAL //</div>
+      <div class="panel-title" style="color:var(--neon-orange)">⚡ O EFEITO WARBURG</div>
+      <div class="panel-text">
+        Uma das características mais bizarras do cancro: mesmo com oxigénio disponível, as células
+        cancerosas preferem fazer <strong>glicólise anaeróbica</strong> em vez de respiração oxidativa.
+        <br><br>
+        🍬 Normal: 1 glucose → 36 ATP (respiração)<br>
+        🔥 Cancro: 1 glucose → 2 ATP (glicólise) — mas muito mais rápido!<br><br>
+        Porquê? A glicólise fornece <strong>precursores biossintéticos</strong> para construir biomassa
+        (membranas, nucleotídeos, aminoácidos) — essencial para crescimento rápido.
+        <br><br>
+        <em style="color:#667;font-size:0.8rem;">Base do PET scan: tumores captam mais 18F-FDG (análogo de glucose) que tecidos normais.</em>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-pink);">
+      <div class="panel-label">// IMUNOEVASÃO //</div>
+      <div class="panel-title" style="color:var(--neon-pink)">🛡 COMO O CANCRO ENGANA O SISTEMA IMUNE</div>
+      <div class="panel-text">
+        O sistema imune devia destruir células anormais. O cancro evita isso através de:
+        <br><br>
+        ◉ <strong>Downregulation de MHC-I</strong> → células NK não reconhecem o tumor<br>
+        ◉ <strong>Expressão de PD-L1</strong> → bloqueia células T citotóxicas<br>
+        ◉ <strong>TGF-β e IL-10</strong> → suprimem resposta imune local<br>
+        ◉ <strong>Recrutamento de Tregs e MDSCs</strong> → criam microambiente imunossupressor<br>
+        ◉ <strong>Perda de antígenos tumorais</strong> → o sistema imune não vê nada para atacar
+        <br><br>
+        <em style="color:#667;font-size:0.8rem;">Base da imunoterapia: bloqueadores de PD-1/PD-L1 (pembrolizumab, nivolumab) reactivam a resposta imune.</em>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CAP 6 CARCINÓGENOS ====================== -->
+<div class="act-divider" id="cap6">
+  <div class="act-label">// Capítulo 06 //</div>
+  <div class="act-title">OS AGENTES DO CRIME</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-orange">06</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-orange)">// CARCINÓGENOS //</div>
+      <div class="ch-title-main" style="color:var(--neon-orange)">QUEM INICIA A GUERRA?</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">☠</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "Nem toda a mutação é causada por acidente. Existem agentes — químicos, físicos e biológicos —
+        que empurram activamente o DNA para o caos. São os carcinógenos.
+        Conhecê-los é o primeiro passo para a prevenção."
+      </div>
+    </div>
+  </div>
+
+  <div class="cards reveal">
+    <div class="card" style="--accent:var(--neon-orange);">
+      <span class="card-icon">⚗</span>
+      <div class="card-title">CARCINÓGENOS QUÍMICOS</div>
+      <div class="card-text">
+        A maioria requer <strong>activação metabólica</strong> pelo CYP450 hepático (pró-carcinógenos → carcinógenos activos).
+        <br><br>
+        ▸ <strong>Hidrocarbonetos aromáticos policíclicos</strong> (HAPs) — tabaco, carne grelhada<br>
+        ▸ <strong>Aminas aromáticas</strong> — corantes industriais → cancro da bexiga<br>
+        ▸ <strong>Aflatoxina B1</strong> (fungo Aspergillus) → mutação TP53 codon 249 → CHC<br>
+        ▸ <strong>Nitrosaminas</strong> — carnes processadas, fumo<br>
+        ▸ <strong>Benzeno</strong> → leucemia<br>
+        ▸ <strong>Asbesto</strong> → mesotelioma, pulmão (efeito sinérgico com tabaco!)
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-yellow);">
+      <span class="card-icon">☢</span>
+      <div class="card-title">CARCINÓGENOS FÍSICOS</div>
+      <div class="card-text">
+        <strong>Radiação ionizante</strong> (raios X, γ, partículas α/β/nêutrons):
+        Causa quebras de dupla hélice, translocações cromossómicas, deleções.
+        Ex: Hiroshima → leucemia. Chernobyl → cancro da tireoide.
+        <br><br>
+        <strong>Radiação UV</strong> (UV-B, 280-315nm):
+        Cria dímeros de ciclobutano-pirimidina (CPD) → mutações características C→T em TP53 → melanoma, carcinoma basocelular.
+        <br><br>
+        <strong>Radão</strong> (gás natural radioactivo) → 2ª causa de cancro de pulmão em não-fumadores!
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-purple);">
+      <span class="card-icon">🦠</span>
+      <div class="card-title">VÍRUS ONCOGÉNICOS</div>
+      <div class="card-text">
+        <strong>HPV</strong> (16 e 18): E6 degrada p53; E7 bloqueia Rb → cancro do colo do útero, orofaringe<br><br>
+        <strong>HBV/HCV</strong>: inflamação crónica + cirrose → Carcinoma hepatocelular<br><br>
+        <strong>EBV</strong>: EBNA-2 activa MYC → Linfoma de Burkitt, Hodgkin, NPC<br><br>
+        <strong>HTLV-1</strong>: proteína Tax activa NF-κB → leucemia/linfoma de células T<br><br>
+        <strong>HHV-8</strong> (KSHV): codifica homólogos de ciclina D → Sarcoma de Kaposi
+      </div>
+    </div>
+    <div class="card" style="--accent:var(--neon-pink);">
+      <span class="card-icon">🦠</span>
+      <div class="card-title">BACTÉRIAS E PARASITAS</div>
+      <div class="card-text">
+        <strong>H. pylori</strong>: Causa inflamação crónica gástrica → activa NF-κB → citocinas → cancro gástrico. CagA injecta proteína oncogénica via sistema de secreção tipo IV!<br><br>
+        <strong>Schistosoma haematobium</strong>: Inflamação crónica na bexiga → carcinoma de células escamosas da bexiga<br><br>
+        <strong>Opisthorchis viverrini</strong>: Nos ductos biliares → colangiocarcinoma
+      </div>
+    </div>
+  </div>
+
+  <!-- Aflatoxin mechanism detail -->
+  <div class="highlight-box warning reveal">
+    <div class="hb-tag">CASO CLÍNICO MOLECULAR: AFLATOXINA B1</div>
+    <p style="font-size:0.95rem;line-height:1.8;">
+      🌽 A aflatoxina B1 (produzida pelo fungo <em>Aspergillus flavus</em> em alimentos mal armazenados) é um dos
+      carcinógenos mais potentes conhecidos.<br><br>
+      ⚙️ <strong>Mecanismo:</strong> CYP3A4 no fígado converte AFB1 → AFB1-8,9-epóxido →
+      liga-se covalentemente à guanina do DNA (aduto) → durante replicação, causa substituição G→T
+      especificamente no <strong>codão 249 do TP53</strong>.<br><br>
+      📍 Esta mutação "assinatura" (R249S) é encontrada em 50-60% dos CHC em regiões endémicas
+      de África subsaariana e Ásia, onde o consumo de alimentos contaminados com aflatoxina é comum.
+      Esta é uma das provas mais elegantes da <strong>etiologia molecular do cancro</strong>.
+    </p>
+  </div>
+
+  <!-- DNA Repair Systems -->
+  <div class="section-divider reveal"></div>
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--neon-cyan);margin:2rem 0 1rem;letter-spacing:3px;">// SISTEMAS DE REPARAÇÃO DO DNA //</h3>
+
+  <table class="gene-table reveal">
+    <thead>
+      <tr>
+        <th>Sistema</th>
+        <th>Tipo de Dano Reparado</th>
+        <th>Genes Chave</th>
+        <th>Se Falhar → Cancro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-cyan);">NER</span><br><small>Nucleotide Excision Repair</small></td>
+        <td>Adutos de DNA, dímeros de pirimidina (UV)</td>
+        <td>XPA, XPC, ERCC1-6, RPA</td>
+        <td>Xeroderma pigmentoso → cancros de pele (1000× risco)</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-green);">BER</span><br><small>Base Excision Repair</small></td>
+        <td>Bases oxidadas, desaminadas, alquiladas; quebras simples</td>
+        <td>OGG1, APE1, PARP, XRCC1</td>
+        <td>Acumulação de 8-oxoguanina → transversões G:C → T:A</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-yellow);">MMR</span><br><small>Mismatch Repair</small></td>
+        <td>Erros de replicação (mismatches, inserções/deleções)</td>
+        <td>MLH1, MSH2, MSH6, PMS2</td>
+        <td>Síndrome de Lynch → CCR hereditário, cancro do endométrio; instabilidade de microssatélites (MSI)</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-red);">HRR</span><br><small>Homologous Recombination</small></td>
+        <td>Quebras de dupla hélice (DSBs)</td>
+        <td>BRCA1, BRCA2, RAD51, ATM</td>
+        <td>Síndrome de BRCA → mama, ovário; ataxia-telangiectasia (ATM)</td>
+      </tr>
+      <tr>
+        <td><span class="gene-badge" style="color:var(--neon-purple);">NHEJ</span><br><small>Non-Homologous End Joining</small></td>
+        <td>Quebras de dupla hélice (backup de HRR)</td>
+        <td>KU70, KU80, DNA-PKcs, LIGIV</td>
+        <td>Translocações cromossómicas → leucemias, linfomas</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ====================== CAP 7 CICLO CELULAR ====================== -->
+<div class="act-divider" id="cap7">
+  <div class="act-label">// Capítulo 07 //</div>
+  <div class="act-title">DEFESAS E CHECKPOINTS</div>
+</div>
+
+<section class="section">
+  <div class="ch-header">
+    <div class="ch-number glow-pink">07</div>
+    <div class="ch-title-block">
+      <div class="ch-episode" style="color:var(--neon-pink)">// A ÚLTIMA LINHA //</div>
+      <div class="ch-title-main" style="color:var(--neon-pink)">CICLO CELULAR & APOPTOSE</div>
+    </div>
+  </div>
+
+  <div class="narrator reveal">
+    <div class="narrator-avatar">🔒</div>
+    <div>
+      <div class="narrator-name">// NARRADOR //</div>
+      <div class="narrator-text">
+        "O corpo não é indefeso. Construiu um sistema de checkpoints que verifica o DNA antes
+        de cada divisão. E se tudo correr mal, existe um último recurso: a apoptose —
+        o suicídio programado da célula. Para o cancro sobreviver, tem de desactivar AMBOS."
+      </div>
+    </div>
+  </div>
+
+  <!-- Cell cycle diagram -->
+  <div class="molecule-stage reveal">
+    <canvas id="mol3"></canvas>
+    <div class="molecule-label">// CICLO CELULAR E CHECKPOINTS //</div>
+  </div>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// CHECKPOINTS DO CICLO CELULAR //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">OS PORTÕES DE CONTROLO</div>
+      <div class="panel-text">
+        <strong style="color:var(--neon-yellow)">G1/S checkpoint:</strong> Verifica tamanho, dano no DNA,
+        nutrientes. Rb bloqueia E2F. Se DNA danificado → p53 activa → p21 inibe CDK2 → paragem.<br><br>
+        <strong style="color:var(--neon-orange)">Intra-S checkpoint:</strong> Monitoriza replicação.
+        ATR e ATM detectam forquilhas paradas ou DSBs → CHK1/CHK2 → inibem CDKs.<br><br>
+        <strong style="color:var(--neon-red)">G2/M checkpoint:</strong> Garante que o DNA foi completamente
+        e correctamente replicado antes da mitose.<br><br>
+        <strong style="color:var(--neon-purple)">Spindle checkpoint (SAC):</strong> Garante que cada
+        cromossoma está correctamente ligado ao fuso mitótico. Previne aneuploidia.
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-green);">
+      <div class="panel-label">// CDKs E CICLINAS //</div>
+      <div class="panel-title" style="color:var(--neon-green)">OS ACELERADORES DO CICLO</div>
+      <div class="panel-text">
+        As ciclinas activam as CDKs (cinases dependentes de ciclina) que impulsionam o ciclo:<br><br>
+        ▸ <strong>Ciclina D + CDK4/6</strong> → fosforila Rb → liberta E2F → genes S-fase<br>
+        ▸ <strong>Ciclina E + CDK2</strong> → transição G1→S<br>
+        ▸ <strong>Ciclina A + CDK2</strong> → replicação do DNA (S-fase)<br>
+        ▸ <strong>Ciclina B + CDK1 (CDC2)</strong> → entrada em mitose<br><br>
+        Em cancro: ciclina D1 sobreexpressa (amplificação CCND1), CDK4 amplificado,
+        p16 (CDKN2A) inactivado → Rb é fosforilado e inactivo → divisão descontrolada.
+      </div>
+    </div>
+  </div>
+
+  <!-- Apoptosis -->
+  <div class="section-divider reveal"></div>
+  <h3 class="reveal" style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--neon-red);margin:2rem 0 1rem;letter-spacing:3px;">// APOPTOSE — O SUICÍDIO PROGRAMADO //</h3>
+
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-red);">
+      <div class="panel-label">// VIA INTRÍNSECA //</div>
+      <div class="panel-title" style="color:var(--neon-red)">MITOCONDRIAL</div>
+      <div class="panel-text">
+        Activada por: dano no DNA, hipóxia, factores de crescimento reduzidos, stress do RE
+        <br><br>
+        <strong>Família BCL-2</strong> controla esta via:<br>
+        ▸ <strong>Pro-apoptóticos</strong>: BAX, BAK, BID, BIM, PUMA, NOXA<br>
+        ▸ <strong>Anti-apoptóticos</strong>: BCL-2, BCL-XL, MCL-1<br><br>
+        Quando pro-apoptóticos dominam → permeabilização da membrana mitocondrial externa
+        → libertação de citocromo c → formação do <strong>apoptossoma</strong> (citocromo c + APAF-1 + Caspase-9)
+        → activação de Caspase-3 → MORTE CELULAR
+        <br><br>
+        <em style="color:#556;font-size:0.8rem;">BCL-2 sobreexpresso em Linfoma folicular [t(14;18)]: a célula cancerosa é imortal porque BCL-2 bloqueia BAX/BAK.</em>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-orange);">
+      <div class="panel-label">// VIA EXTRÍNSECA //</div>
+      <div class="panel-title" style="color:var(--neon-orange)">RECEPTORES DE MORTE</div>
+      <div class="panel-text">
+        Activada por: FasL (células T citotóxicas), TNF-α, TRAIL
+        <br><br>
+        FasL liga-se a Fas (CD95) → trimerização → recrutamento de FADD → recruta Caspase-8
+        → forma o <strong>DISC</strong> (complexo indutor de morte) → Caspase-8 activa-se → activa Caspase-3
+        → MORTE CELULAR
+        <br><br>
+        ▸ Caspase-8 também pode clivar BID → tBID → activa via mitocondrial (cross-talk)
+        <br><br>
+        <strong style="color:var(--neon-yellow)">Como o cancro escapa:</strong><br>
+        ◉ Downregulation de Fas/TRAIL-R<br>
+        ◉ Sobreexpressão de FLIP (inibe Caspase-8)<br>
+        ◉ Sobreexpressão de XIAP (inibe caspases)<br>
+        ◉ Mutação/perda de p53 → PUMA e NOXA não são transcritos
+      </div>
+    </div>
+  </div>
+
+  <!-- TP53 deep dive -->
+  <div class="highlight-box danger reveal">
+    <div class="hb-tag">DESTAQUE: TP53 — O GUARDIÃO DO GENOMA</div>
+    <p style="font-size:0.95rem;line-height:1.8;">
+      <strong style="color:var(--neon-red)">p53</strong> é a proteína mais importante na prevenção do cancro.
+      É mutada em ~50% de TODOS os cancros humanos.<br><br>
+      <strong>Em condições normais:</strong> p53 tem semi-vida curta (~20 min) — é continuamente
+      ubiquitinada pela MDM2 e degradada pelo proteasoma.<br><br>
+      <strong>Quando o DNA é danificado:</strong> ATM/ATR fosforilam p53 → impede ligação a MDM2 →
+      p53 estabiliza → activa transcrição de:<br>
+      ▸ <strong>p21 (CDKN1A)</strong>: inibe CDK2 → para em G1<br>
+      ▸ <strong>GADD45</strong>: reparação do DNA<br>
+      ▸ <strong>BAX, PUMA, NOXA</strong>: apoptose<br>
+      ▸ <strong>p16</strong>: senescência<br><br>
+      <em>Se o dano é irreparável → p53 força apoptose. Se é reparável → p53 para o ciclo para dar tempo.</em><br><br>
+      <strong style="color:var(--neon-yellow)">Síndrome de Li-Fraumeni:</strong> Mutação germinal de TP53 →
+      múltiplos cancros precoces (sarcomas, mama, cérebro, leucemias) — demonstra que TP53 é
+      verdadeiramente o guardião do genoma.
+    </p>
+  </div>
+
+  <!-- Senescence -->
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-purple);">
+      <div class="panel-label">// SENESCÊNCIA E TELÓMEROS //</div>
+      <div class="panel-title" style="color:var(--neon-purple)">A BARREIRA MORTAL</div>
+      <div class="panel-text">
+        Cada divisão celular encurta os telómeros (~50-200 pb por divisão). Após ~50-70 divisões
+        (Limite de Hayflick), os telómeros ficam criticamente curtos → sinais de dano no DNA →
+        <strong>senescência</strong> (paragem permanente) ou apoptose.<br><br>
+        Para se tornar imortal, o cancro precisa de manter os telómeros:<br>
+        ▸ <strong>Telomerase (hTERT)</strong>: reactivada em 85-90% dos cancros — adiciona TTAGGG repetidamente<br>
+        ▸ <strong>ALT (Alternative Lengthening of Telomeres)</strong>: recombinação homóloga — nos restantes 10-15%
+        <br><br>
+        <em style="color:#556;font-size:0.8rem;">A telomerase é alvo terapêutico promissor — é activa no cancro mas quase ausente em células somáticas normais.</em>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-green);">
+      <div class="panel-label">// ANGIOGÊNESE TUMORAL //</div>
+      <div class="panel-title" style="color:var(--neon-green)">RECRUTAR VASOS: O ANGIOGENIC SWITCH</div>
+      <div class="panel-text">
+        Um tumor > 1-2mm precisa de vascularização própria. Activa o <strong>"angiogenic switch"</strong>:<br><br>
+        <strong>Pró-angiogénicos ↑:</strong> VEGF-A (principal), bFGF, PDGF, angiopoietinas<br>
+        <strong>Anti-angiogénicos ↓:</strong> Trombospondina-1, angiostatina, endostatina<br><br>
+        <strong>Mecanismo:</strong> Hipóxia tumoral → HIF-1α estabiliza (sem degradação por VHL) →
+        transcreve VEGF → VEGF liga VEGFR2 em células endoteliais → proliferação, migração →
+        novos vasos caóticos, imaturos, permeáveis<br><br>
+        <em style="color:#556;font-size:0.8rem;">Bevacizumab (anti-VEGF) e sorafenib (anti-VEGFR) são antiangiogénicos usados clinicamente.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz 3 -->
+  <div class="quiz-box reveal">
+    <div class="hb-tag">// TESTE FINAL //</div>
+    <div class="quiz-q">🔬 Um doente com Síndrome de Lynch tem mutação germinal no gene MSH2. Qual o mecanismo pelo qual isso leva a cancro colo-rectal?</div>
+    <div class="quiz-options" id="q3">
+      <button class="quiz-opt" onclick="answer(this,'wrong','q3','fb3')">MSH2 é um oncogene que estimula proliferação quando mutado</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q3','fb3')">MSH2 regula a apoptose; sem ele, células danificadas sobrevivem</button>
+      <button class="quiz-opt" onclick="answer(this,'correct','q3','fb3')">MSH2 é parte do sistema MMR; sem ele, erros de replicação acumulam-se (instabilidade de microssatélites), incluindo em genes como APC, KRAS e outros, acelerando a carcinogénese</button>
+      <button class="quiz-opt" onclick="answer(this,'wrong','q3','fb3')">MSH2 controla a angiogênese; sem ele, o tumor vasculariza mais rapidamente</button>
+    </div>
+    <div class="quiz-feedback" id="fb3" style="border-color:var(--neon-green);color:var(--neon-green);">
+      ✅ Excelente! O MMR (sistema de reparação por excisão de mismatch) corrige erros introduzidos pela DNA polimerase. Sem MSH2, os microssatélites tornam-se instáveis (MSI-H) e mutações acumulam-se rapidamente em genes críticos. O diagnóstico é feito por MSI testing e imunohistoquímica. A imunoterapia (anti-PD-1) é especialmente eficaz em tumores MSI-H!
+    </div>
+  </div>
+</section>
+
+<!-- ====================== CRONOLOGIA COMPLETA ====================== -->
+<div class="act-divider">
+  <div class="act-label">// Resumo Mestre //</div>
+  <div class="act-title">CRONOLOGIA DA CARCINOGÊNESE</div>
+</div>
+
+<section class="section">
+  <div class="narrator reveal">
+    <div class="narrator-avatar">📚</div>
+    <div>
+      <div class="narrator-name">// NARRADOR — EPILOGO //</div>
+      <div class="narrator-text">
+        "Agora tens o mapa completo. Uma célula normal → uma faísca de mutação → anos de promoção
+        → acumulação de erros → ruptura das defesas → invasão → metástase.
+        Décadas de batalha silenciosa. Mas compreender é o primeiro passo para vencer."
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-event visible">
+      <div class="tl-dot" style="color:var(--neon-green);border-color:var(--neon-green);"></div>
+      <div class="tl-time" style="color:var(--neon-green)">Ano 0 — Célula Normal</div>
+      <div class="tl-title">Homeostase Perfeita</div>
+      <div class="tl-body">Ciclo celular regulado, apoptose funcional, telómeros intactos, DNA íntegro. Todos os checkpoints operacionais.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-cyan);border-color:var(--neon-cyan);"></div>
+      <div class="tl-time" style="color:var(--neon-cyan)">Ano 0 → Anos 5-10 — INICIAÇÃO</div>
+      <div class="tl-title">1ª Mutação Crítica</div>
+      <div class="tl-body">Exposição a carcinógeno (tabaco, UV, aflatoxina, vírus...). Mutação num proto-oncogene (ex: RAS) ou TSG (ex: APC). Célula "iniciada" — silenciosa mas alterada.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-yellow);border-color:var(--neon-yellow);"></div>
+      <div class="tl-time" style="color:var(--neon-yellow)">Anos 5-20 — PROMOÇÃO</div>
+      <div class="tl-title">Expansão Clonal</div>
+      <div class="tl-body">Exposição prolongada a promotores. Célula iniciada prolifera → clone de milhões de células. Ainda reversível se o promotor for removido. Displasia pode ser visível histologicamente.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-orange);border-color:var(--neon-orange);"></div>
+      <div class="tl-time" style="color:var(--neon-orange)">Anos 15-30 — PROGRESSÃO</div>
+      <div class="tl-title">Acumulação de Mutações</div>
+      <div class="tl-body">Instabilidade genómica. Novas mutações em TP53, PTEN, BRCA... Células mais agressivas selecionadas. Aparecimento de anaplasia, carcinoma in situ.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-red);border-color:var(--neon-red);"></div>
+      <div class="tl-time" style="color:var(--neon-red)">Anos 25-40 — MALIGNIDADE</div>
+      <div class="tl-title">Cancro Invasivo</div>
+      <div class="tl-body">Ruptura da membrana basal. Angiogênese tumoral (VEGF). Evasão ao sistema imune (PD-L1). O tumor é agora clinicamente detectável. Sintomas podem surgir.</div>
+    </div>
+    <div class="tl-event">
+      <div class="tl-dot" style="color:var(--neon-purple);border-color:var(--neon-purple);"></div>
+      <div class="tl-time" style="color:var(--neon-purple)">Fase final — METÁSTASE</div>
+      <div class="tl-title">Disseminação Sistémica</div>
+      <div class="tl-body">Células invadem vasos, circulam, extravasam. Colonização de órgãos distantes. Prognóstico grave. Base para terapias sistémicas (quimio, imuno, targeted therapy).</div>
+    </div>
+  </div>
+
+  <!-- Summary cards -->
+  <div class="manga-grid manga-grid-2 reveal">
+    <div class="manga-panel" style="--accent:var(--neon-cyan);">
+      <div class="panel-label">// RESUMO DAS ETAPAS //</div>
+      <div class="panel-title" style="color:var(--neon-cyan)">AS 3 FASES EM SEGUNDOS</div>
+      <div class="panel-text">
+        <table style="width:100%;font-size:0.85rem;border-collapse:collapse;">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:0.5rem;color:var(--neon-red);font-weight:700;">INICIAÇÃO</td>
+            <td style="padding:0.5rem;color:#9ab;">Mutação permanente no DNA. Irreversível. Uma exposição. Célula parece normal.</td>
+          </tr>
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+            <td style="padding:0.5rem;color:var(--neon-cyan);font-weight:700;">PROMOÇÃO</td>
+            <td style="padding:0.5rem;color:#9ab;">Proliferação do clone. Reversível. Exposição prolongada necessária. Displasia.</td>
+          </tr>
+          <tr>
+            <td style="padding:0.5rem;color:var(--neon-yellow);font-weight:700;">PROGRESSÃO</td>
+            <td style="padding:0.5rem;color:#9ab;">Mais mutações, invasão, metástase. Irreversível. Evolução clonal darwiniana.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="manga-panel" style="--accent:var(--neon-purple);">
+      <div class="panel-label">// BASE PARA TERAPÊUTICA //</div>
+      <div class="panel-title" style="color:var(--neon-purple)">COMO ESTE CONHECIMENTO CURA</div>
+      <div class="panel-text">
+        🎯 <strong>Targeted therapy:</strong> Imatinib (BCR-ABL), Trastuzumab (HER2), Vemurafenib (BRAF V600E)<br><br>
+        🛡 <strong>Imunoterapia:</strong> Anti-PD-1/PD-L1 (restaura resposta T), CAR-T (células T modificadas)<br><br>
+        💉 <strong>Prevenção:</strong> Vacina HPV, vacina HBV, rastreio colonoscopia (CCR)<br><br>
+        🧬 <strong>Screening genético:</strong> BRCA1/2, Lynch, Li-Fraumeni<br><br>
+        💊 <strong>Quimioprofilaxia:</strong> Tamoxifeno (mama BRCA+), aspirina (CCR)<br><br>
+        🔬 <strong>Diagnóstico molecular:</strong> NGS, liquid biopsy (DNA tumoral circulante)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== FOOTER ====================== -->
+<footer>
+  <div class="footer-logo">⚗ DemilMed-UL</div>
+  <div class="footer-info">
+    UNIVERSIDADE LICUNGO · UL<br>
+    2º ANO DE MEDICINA · ANO 2026<br>
+    CARCINOGÊNESE — ESTUDO COMPLETO E INTERACTIVO
+  </div>
+  <div class="footer-sources">
+    <strong style="color:var(--dim);">// FONTES //</strong><br>
+    <span>Fisiologia Médica de Boron & Boulpaep</span> · 
+    <span>Robbins Bases da Patologia — 10ª Edição</span> · 
+    <span>derangedphysiology.com</span> · 
+    <span>PubMed / NCBI</span><br>
+    Hanahan D & Weinberg RA. Cell. 2000; 2011. | Knudson AG. PNAS. 1971.
+  </div>
+  <div style="margin-top:2rem;font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:#334;letter-spacing:3px;">
+    DESIGNED WITH ♥ FOR MEDICAL EDUCATION · NOT FOR CLINICAL USE
+  </div>
+</footer>
+
+<script>
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+});
+
+// ===== STARS =====
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 200; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const sz = Math.random() * 2 + 0.5;
+  s.style.cssText = `
+    width:${sz}px; height:${sz}px;
+    left:${Math.random()*100}%;
+    top:${Math.random()*100}%;
+    --d:${2+Math.random()*4}s;
+    animation-delay:${Math.random()*4}s;
+  `;
+  starsEl.appendChild(s);
+}
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      if (e.target.classList.contains('tl-event')) e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal, .tl-event').forEach(el => observer.observe(el));
+
+// ===== SMOOTH SCROLL =====
+function scrollTo(id) {
+  document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== QUIZ =====
+function answer(btn, result, qid, fbid) {
+  const opts = document.querySelectorAll(`#${qid} .quiz-opt`);
+  opts.forEach(o => o.disabled = true);
+  btn.classList.add(result);
+  const fb = document.getElementById(fbid);
+  fb.style.display = 'block';
+  if (result === 'wrong') {
+    fb.style.borderColor = 'var(--neon-red)';
+    fb.style.color = 'var(--neon-red)';
+    fb.textContent = '❌ Não é essa. ' + (fbid === 'fb1' ? 'A célula ainda precisa de promoção para evoluir para cancro. A iniciação é apenas o primeiro passo.' : fbid === 'fb2' ? 'A resposta correcta envolve BCR-ABL — a tirosina-cinase do cromossoma Philadelphia!' : 'MSH2 é um gene de reparação de DNA (MMR), não um oncogene nem regulador de angiogénese.');
+  }
+}
+
+// ===== HALLMARKS =====
+const hallmarkData = [
+  {
+    tag: 'HALLMARK 1: AUTO-SUFICIÊNCIA',
+    content: `<strong style="color:var(--neon-red)">Auto-suficiência em sinais de crescimento</strong><br><br>
+    Células normais precisam de factores de crescimento externos (EGF, PDGF, FGF) para proliferar.
+    Células cancerosas adquirem independência de três formas:<br>
+    ▸ <strong>Produção autócrina:</strong> produzem os seus próprios factores de crescimento (ex: glioblastoma produz PDGF)<br>
+    ▸ <strong>Sobreexpressão de receptores:</strong> HER2 amplificado → sinalização com níveis mínimos de ligando<br>
+    ▸ <strong>Activação constitutiva de vias downstream:</strong> RAS mutado actua sem necessidade de sinal no receptor<br><br>
+    📌 Exemplo clínico: Cancro do pulmão com mutação EGFR → erlotinib/gefitinib bloqueiam este receptor mutado`
+  },
+  {
+    tag: 'HALLMARK 2: INSENSIBILIDADE',
+    content: `<strong style="color:var(--neon-orange)">Insensibilidade a sinais anti-proliferativos</strong><br><br>
+    O tecido normal envia sinais de "para de crescer" — TGF-β, contacto célula-célula, ancoragem ao substrato.
+    O cancro torna-se surdo a estes sinais:<br>
+    ▸ <strong>TGF-β:</strong> normalmente activa SMAD2/3 → p15, p21 (inibidores de CDK). Em cancro: receptores mutados, SMADs inactivados, ou o cancro "inverte" o sinal de TGF-β em pró-invasivo!<br>
+    ▸ <strong>Inibição por contacto:</strong> células normais param quando se tocam (NF2/Merlin, LKB1). Células cancerosas ignoram este sinal.<br>
+    ▸ <strong>Ancoragem dependente:</strong> células normais morrem sem aderência (anoikis). Células cancerosas sobrevivem em suspensão — necessário para metástase!`
+  },
+  {
+    tag: 'HALLMARK 3: EVASÃO À APOPTOSE',
+    content: `<strong style="color:var(--neon-yellow)">Resistência à apoptose</strong><br><br>
+    A apoptose é o "suicídio" celular programado — essencial para eliminar células danificadas.
+    O cancro resiste de múltiplas formas:<br>
+    ▸ <strong>Perda de TP53:</strong> sem p53, PUMA/NOXA não são transcritos → via intrínseca comprometida<br>
+    ▸ <strong>BCL-2 sobreexpresso:</strong> bloqueia BAX/BAK → citocromo c não é libertado [t(14;18) no linfoma folicular]<br>
+    ▸ <strong>Sobreexpressão de XIAP, survivina:</strong> inibem directamente caspases<br>
+    ▸ <strong>Activação de AKT:</strong> fosforila e inactiva BAD, promove NF-κB → genes anti-apoptóticos<br>
+    ▸ <strong>Downregulation de Fas/TRAIL-R:</strong> imune à morte mediada por células T`
+  },
+  {
+    tag: 'HALLMARK 4: IMORTALIDADE',
+    content: `<strong style="color:var(--neon-green)">Potencial replicativo ilimitado</strong><br><br>
+    Células normais têm no máximo ~50-70 divisões (Limite de Hayflick) devido ao encurtamento telomérico.
+    O cancro evita isso:<br>
+    ▸ <strong>Telomerase (hTERT):</strong> reactivada em 85-90% dos cancros. Adiciona TTAGGG ao final dos cromossomas após cada divisão. Normalmente activa apenas em células germinais e estaminais.<br>
+    ▸ <strong>ALT (Alternative Lengthening of Telomeres):</strong> utilizada em 10-15% dos cancros (especialmente sarcomas e gliomas). Baseada em recombinação homóloga entre cromossomas.<br><br>
+    Sem telomerase → crise de telómeros → fusões cromossoma-ponte-ruptura → instabilidade genómica massiva → morte ou transformação adicional`
+  },
+  {
+    tag: 'HALLMARK 5: ANGIOGÊNESE',
+    content: `<strong style="color:var(--neon-cyan)">Angiogênese sustentada</strong><br><br>
+    Nenhuma célula pode sobreviver a mais de ~200μm de um vaso. Um tumor sólido > 1-2mm precisa de sangue próprio.
+    O "angiogenic switch" é activado quando:<br>
+    ▸ <strong>VEGF-A</strong> (Vascular Endothelial Growth Factor) sobreexpresso — induzido por HIF-1α sob hipóxia, por RAS activado, por perda de p53/VHL<br>
+    ▸ <strong>bFGF, PDGF, angiopoietinas</strong> promovem maturação e estabilização dos novos vasos<br>
+    ▸ <strong>Trombospondina-1</strong> (inibidor fisiológico) é perdida (por mutação de p53 ou RAS)<br><br>
+    Vasos tumorais são anómalos: irregulares, tortuosos, permeáveis — criam hipóxia paradoxal e resistência à quimioterapia`
+  },
+  {
+    tag: 'HALLMARK 6: INVASÃO E METÁSTASE',
+    content: `<strong style="color:var(--neon-purple)">Invasão tissular e metástase</strong><br><br>
+    A capacidade mais letal do cancro. Requer múltiplas aquisições:<br>
+    ▸ <strong>Transição Epitélio-Mesenquimatosa (EMT):</strong> células perdem E-caderina (suprimida por Snail, Twist, ZEB1/2 activados por TGF-β e Wnt) → ganham N-caderina e vimentina → motilidade e invasividade<br>
+    ▸ <strong>Degradação da MEC:</strong> MMPs (metaloproteinases de matriz), especialmente MMP-2 e MMP-9, degradam colagénio tipo IV da membrana basal<br>
+    ▸ <strong>Mobilidade:</strong> reorganização do citoesqueleto de actina, lamelipódios, invadopódios<br>
+    ▸ <strong>Extravasação e colonização:</strong> sobrevivência no sangue (formação de clusters com plaquetas), extravasação, adaptação ao microambiente metastático`
+  },
+  {
+    tag: 'HALLMARK 7: INFLAMAÇÃO',
+    content: `<strong style="color:var(--neon-pink)">Inflamação promotora de tumor</strong> (adicionada em 2011)<br><br>
+    Rudolf Virchow observou leucócitos em tumores em 1863. Hoje sabemos que a inflamação crónica alimenta o cancro:<br>
+    ▸ <strong>TAMs (Tumor-Associated Macrophages):</strong> polarizados para fenótipo M2 pelo tumor → secretam EGF, VEGF, MMPs, IL-10, TGF-β → promovem crescimento, angiogênese, imunossupressão<br>
+    ▸ <strong>NF-κB:</strong> activado por inflamação → transcreve ciclina D1, BCL-2, VEGF, IL-6, TNF-α → proliferação e sobrevivência<br>
+    ▸ <strong>ROS e RNS:</strong> espécies reactivas danificam DNA → mutações adicionais<br>
+    ▸ <strong>COX-2:</strong> prostaglandinas promovem proliferação → base para uso de AINEs na prevenção do CCR`
+  },
+  {
+    tag: 'HALLMARK 8: EVASÃO IMUNE',
+    content: `<strong style="color:var(--neon-red)">Evasão à destruição imune</strong> (adicionada em 2011)<br><br>
+    O sistema imune patrulha e destrói células anormais (imuno-vigilância). O cancro sabota-o:<br>
+    ▸ <strong>Downregulation de MHC-I:</strong> células T CD8+ não reconhecem o tumor<br>
+    ▸ <strong>PD-L1 (CD274):</strong> sinal "não me mates" — liga PD-1 nas células T → anergia das células T<br>
+    ▸ <strong>CTLA-4 activação:</strong> suprime activação de células T via competição com CD28<br>
+    ▸ <strong>Recrutamento de Tregs:</strong> reguladores imunes que suprimem localmente<br>
+    ▸ <strong>MDSCs:</strong> células supressoras derivadas da mieloide — segregam arginase, ROS<br><br>
+    💊 <strong>Base dos checkpoints imunes:</strong> Ipilimumab (anti-CTLA-4), Pembrolizumab/Nivolumab (anti-PD-1) = imunoterapia revolucionária`
+  },
+  {
+    tag: 'HALLMARK 9: REPROGRAMAÇÃO METABÓLICA',
+    content: `<strong style="color:var(--neon-orange)">Reprogramação do metabolismo energético</strong> (adicionada em 2011)<br><br>
+    O famoso <strong>Efeito Warburg</strong> (Otto Warburg, 1924):<br>
+    Células cancerosas preferem glicólise aeróbica mesmo com O₂ disponível.<br><br>
+    ▸ Normal: Glucose → Piruvato → Ciclo de Krebs + Fosforilação oxidativa = 36 ATP/glicose<br>
+    ▸ Cancro: Glucose → Lactato = 2 ATP/glicose (mas 100× mais rápido!)<br><br>
+    <strong>Porquê?</strong> A glicólise rápida produz: NADPH (defesa vs ROS), ribose-5-fosfato (síntese de nucleotídeos), glicerol-3-P (membranas), acetil-CoA (lipídeos) → biossíntese para crescimento rápido<br><br>
+    <strong>Regulação:</strong> HIF-1α upregula glicólise (GLUT1, hexoquinase, LDHA, PDK1), MYC upregula glutaminólise, TP53 mutado perde regulação de TIGAR<br><br>
+    📡 Aplicação clínica: FDG-PET scan detecta tumores pela avidez aumentada de glucose`
+  },
+  {
+    tag: 'HALLMARK 10: INSTABILIDADE GENÓMICA',
+    content: `<strong style="color:var(--neon-cyan)">Instabilidade genómica e mutação</strong> (adicionada em 2011)<br><br>
+    O motor que gera todos os outros hallmarks. Sem instabilidade genómica, as células não acumulam mutações suficientemente rápido para evoluir para cancro:<br><br>
+    ▸ <strong>Instabilidade de microssatélites (MSI):</strong> defeito no MMR (MLH1, MSH2...) → acumulação de erros em repetições curtas → Lynch syndrome<br>
+    ▸ <strong>Instabilidade cromossómica (CIN):</strong> defeito no checkpoint do fuso → aneuploidia, ganhos/perdas de cromossomas inteiros<br>
+    ▸ <strong>Instabilidade de nucleotídeos (MIN/NIN):</strong> defeito na NER ou BER → acumulação de mutações pontuais<br>
+    ▸ <strong>Catastrophic events:</strong> Chromothripsis (fragmentação e reconstituição de um cromossoma em evento único), Chromoplexy (rearranjos complexos ligados)`
+  }
+];
+
+function showHallmark(idx) {
+  const d = document.getElementById('hallmark-detail');
+  document.getElementById('hd-tag').textContent = hallmarkData[idx].tag;
+  document.getElementById('hd-content').innerHTML = hallmarkData[idx].content;
+  d.style.display = 'block';
+  d.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ===== CANVAS 1: DNA MUTATION =====
+(function() {
+  const canvas = document.getElementById('mol1');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  const particles = [];
+
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * 800,
+      y: Math.random() * 300,
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: 3 + Math.random() * 4,
+      color: Math.random() < 0.3 ? '#ff2d55' : Math.random() < 0.5 ? '#00f5ff' : '#39ff14',
+      mutated: Math.random() < 0.15
+    });
+  }
+
+  function drawDNA(x, damaged) {
+    const W = canvas.width;
+    const H = canvas.height;
+    const cx = x;
+    const amp = 40;
+    const freq = 0.05;
+
+    // Strand 1
+    ctx.beginPath();
+    ctx.strokeStyle = damaged ? '#ff2d55' : '#00f5ff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = damaged ? '#ff2d55' : '#00f5ff';
+    ctx.shadowBlur = 8;
+    for (let y = 20; y < H - 20; y += 2) {
+      const rx = cx + Math.sin(y * freq + t) * amp;
+      if (y === 20) ctx.moveTo(rx, y);
+      else ctx.lineTo(rx, y);
+    }
+    ctx.stroke();
+
+    // Strand 2
+    ctx.beginPath();
+    ctx.strokeStyle = damaged ? '#ff6b00' : '#bf00ff';
+    ctx.shadowColor = damaged ? '#ff6b00' : '#bf00ff';
+    for (let y = 20; y < H - 20; y += 2) {
+      const rx = cx - Math.sin(y * freq + t) * amp;
+      if (y === 20) ctx.moveTo(rx, y);
+      else ctx.lineTo(rx, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Base pairs
+    for (let y = 30; y < H - 30; y += 25) {
+      const x1 = cx + Math.sin(y * freq + t) * amp;
+      const x2 = cx - Math.sin(y * freq + t) * amp;
+      const isMutated = damaged && (y > H*0.3 && y < H*0.6) && Math.sin(y) > 0.3;
+      ctx.beginPath();
+      ctx.strokeStyle = isMutated ? '#ff2d55' : 'rgba(255,255,255,0.3)';
+      ctx.lineWidth = isMutated ? 2 : 1;
+      ctx.setLineDash(isMutated ? [3, 3] : []);
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      if (isMutated) {
+        ctx.beginPath();
+        ctx.arc(cx, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,45,85,0.6)';
+        ctx.fill();
+      }
+    }
+
+    // Label
+    ctx.font = '11px Share Tech Mono';
+    ctx.fillStyle = damaged ? '#ff2d55' : '#00f5ff';
+    ctx.fillText(damaged ? 'DNA MUTADO' : 'DNA NORMAL', cx - 35, H - 8);
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(0,0,0,0.1)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + '33';
+      ctx.fill();
+    });
+
+    const W = canvas.width;
+    const H = canvas.height;
+
+    // Divider
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.setLineDash([5, 5]);
+    ctx.moveTo(W/2, 0);
+    ctx.lineTo(W/2, H);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    drawDNA(W * 0.25, false);
+    drawDNA(W * 0.75, true);
+
+    t += 0.02;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ===== CANVAS 2: SIGNALING NETWORK =====
+(function() {
+  const canvas = document.getElementById('mol2');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const nodes = [
+    { label: 'EGF', x: 0.15, y: 0.15, color: '#00f5ff', active: true },
+    { label: 'EGFR', x: 0.15, y: 0.35, color: '#00f5ff', active: true },
+    { label: 'RAS', x: 0.35, y: 0.5, color: '#ff2d55', active: true },
+    { label: 'RAF', x: 0.55, y: 0.4, color: '#ff6b00', active: false },
+    { label: 'MEK', x: 0.7, y: 0.55, color: '#ffe600', active: false },
+    { label: 'ERK', x: 0.85, y: 0.4, color: '#39ff14', active: false },
+    { label: 'PI3K', x: 0.35, y: 0.75, color: '#bf00ff', active: false },
+    { label: 'AKT', x: 0.55, y: 0.8, color: '#bf00ff', active: false },
+    { label: 'mTOR', x: 0.75, y: 0.8, color: '#ff00aa', active: false },
+    { label: 'PTEN', x: 0.2, y: 0.9, color: '#39ff14', active: true, suppressor: true },
+    { label: 'p53', x: 0.85, y: 0.15, color: '#39ff14', active: true, suppressor: true },
+    { label: 'MYC', x: 0.7, y: 0.2, color: '#ff2d55', active: false },
+  ];
+
+  const edges = [
+    [0,1], [1,2], [2,3], [3,4], [4,5], [1,6], [6,7], [7,8], [5,11]
+  ];
+
+  let t = 0;
+  const signals = [];
+  edges.forEach((e, i) => {
+    signals.push({ edge: i, progress: Math.random(), speed: 0.005 + Math.random() * 0.008 });
+  });
+
+  function getPos(node) {
+    return {
+      x: node.x * canvas.width,
+      y: node.y * canvas.height
+    };
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw edges
+    edges.forEach((e, i) => {
+      const a = getPos(nodes[e[0]]);
+      const b = getPos(nodes[e[1]]);
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    });
+
+    // Draw signals
+    signals.forEach(sig => {
+      sig.progress += sig.speed;
+      if (sig.progress > 1) sig.progress = 0;
+      const e = edges[sig.edge];
+      const a = getPos(nodes[e[0]]);
+      const b = getPos(nodes[e[1]]);
+      const sx = a.x + (b.x - a.x) * sig.progress;
+      const sy = a.y + (b.y - a.y) * sig.progress;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 4, 0, Math.PI * 2);
+      ctx.fillStyle = nodes[e[0]].color;
+      ctx.shadowColor = nodes[e[0]].color;
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+
+    // Draw nodes
+    nodes.forEach((n, i) => {
+      const p = getPos(n);
+      const pulse = Math.sin(t * 2 + i) * 3;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 22 + pulse, 0, Math.PI * 2);
+      ctx.fillStyle = n.color + '22';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 18, 0, Math.PI * 2);
+      ctx.strokeStyle = n.color;
+      ctx.lineWidth = n.suppressor ? 2 : 1.5;
+      ctx.setLineDash(n.suppressor ? [4, 2] : []);
+      ctx.shadowColor = n.color;
+      ctx.shadowBlur = 12;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.shadowBlur = 0;
+
+      ctx.font = '9px Orbitron';
+      ctx.fillStyle = n.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.label, p.x, p.y);
+    });
+
+    t += 0.02;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ===== CANVAS 3: CELL CYCLE =====
+(function() {
+  const canvas = document.getElementById('mol3');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+
+  const phases = [
+    { label: 'G1', angle: -Math.PI/2, color: '#00f5ff', detail: 'G1: Crescimento\nciclina D/CDK4' },
+    { label: 'S', angle: 0, color: '#ffe600', detail: 'S: Replicação DNA\nciclina A/CDK2' },
+    { label: 'G2', angle: Math.PI/2, color: '#39ff14', detail: 'G2: Preparação\nciclina B/CDK1' },
+    { label: 'M', angle: Math.PI, color: '#ff2d55', detail: 'M: Mitose\nfuso mitótico' },
+  ];
+
+  const checkpoints = [
+    { angle: -0.4, label: 'G1/S\nCheckpoint\n(Rb/p53)', color: '#ff2d55' },
+    { angle: Math.PI * 0.6, label: 'G2/M\nCheckpoint', color: '#ff6b00' },
+    { angle: Math.PI * 1.1, label: 'Spindle\nCheckpoint', color: '#bf00ff' },
+  ];
+
+  function animate() {
+    const W = canvas.width;
+    const H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2;
+    const cy = H / 2;
+    const R = Math.min(W, H) * 0.32;
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, R + 20, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 40;
+    ctx.stroke();
+
+    // Phase arcs
+    const phaseAngles = [-Math.PI/2, 0, Math.PI/2, Math.PI];
+    phases.forEach((ph, i) => {
+      const startA = phaseAngles[i] - Math.PI/4 * 1.8;
+      const endA = phaseAngles[i] + Math.PI/4 * 1.8;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, startA, endA);
+      ctx.strokeStyle = ph.color + '44';
+      ctx.lineWidth = 30;
+      ctx.stroke();
+
+      // Label
+      const lx = cx + Math.cos(phaseAngles[i]) * (R + 50);
+      const ly = cy + Math.sin(phaseAngles[i]) * (R + 50);
+      ctx.font = 'bold 14px Orbitron';
+      ctx.fillStyle = ph.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = ph.color;
+      ctx.shadowBlur = 10;
+      ctx.fillText(ph.label, lx, ly);
+      ctx.shadowBlur = 0;
+    });
+
+    // Main circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Moving cell
+    const cellAngle = t - Math.PI / 2;
+    const cellX = cx + Math.cos(cellAngle) * R;
+    const cellY = cy + Math.sin(cellAngle) * R;
+
+    // Glow trail
+    for (let i = 0; i < 20; i++) {
+      const ta = cellAngle - (i * 0.05);
+      const tx = cx + Math.cos(ta) * R;
+      const ty = cy + Math.sin(ta) * R;
+      ctx.beginPath();
+      ctx.arc(tx, ty, (20 - i) * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,245,255,${(20-i)/200})`;
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(cellX, cellY, 14, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,245,255,0.3)';
+    ctx.fill();
+    ctx.strokeStyle = '#00f5ff';
+    ctx.lineWidth = 2;
+    ctx.shadowColor = '#00f5ff';
+    ctx.shadowBlur = 20;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Nucleus
+    ctx.beginPath();
+    ctx.arc(cellX, cellY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = '#00f5ff';
+    ctx.shadowColor = '#00f5ff';
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Checkpoints
+    checkpoints.forEach(cp => {
+      const cpX = cx + Math.cos(cp.angle) * R;
+      const cpY = cy + Math.sin(cp.angle) * R;
+
+      const dist = Math.sqrt((cellX-cpX)**2 + (cellY-cpY)**2);
+      const active = dist < 30;
+
+      ctx.beginPath();
+      ctx.arc(cpX, cpY, active ? 14 : 10, 0, Math.PI * 2);
+      ctx.strokeStyle = cp.color;
+      ctx.lineWidth = active ? 3 : 1.5;
+      ctx.shadowColor = active ? cp.color : 'transparent';
+      ctx.shadowBlur = active ? 20 : 0;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // inner X
+      if (!active) {
+        ctx.font = '10px Orbitron';
+        ctx.fillStyle = cp.color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('✓', cpX, cpY);
+      } else {
+        ctx.font = '12px Orbitron';
+        ctx.fillStyle = cp.color;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('!', cpX, cpY);
+      }
+    });
+
+    // Center label
+    ctx.font = '11px Orbitron';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('CICLO', cx, cy - 8);
+    ctx.fillText('CELULAR', cx, cy + 8);
+
+    t += 0.008;
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ===== DNA HERO =====
+(function() {
+  const strand1 = document.getElementById('strand1');
+  const strand2 = document.getElementById('strand2');
+  const basepairs = document.getElementById('basepairs');
+  if (!strand1) return;
+
+  const W = 300, H = 200;
+  let t = 0;
+
+  function update() {
+    const freq = 0.08;
+    const amp = 35;
+    const cx = W/2;
+
+    let d1 = '', d2 = '';
+    for (let y = 10; y <= H-10; y += 3) {
+      const x1 = cx + Math.sin(y * freq + t) * amp;
+      const x2 = cx - Math.sin(y * freq + t) * amp;
+      d1 += (y===10 ? `M${x1},${y}` : `L${x1},${y}`);
+      d2 += (y===10 ? `M${x2},${y}` : `L${x2},${y}`);
+    }
+    strand1.setAttribute('d', d1);
+    strand2.setAttribute('d', d2);
+
+    let bpHTML = '';
+    for (let y = 15; y < H-15; y += 20) {
+      const x1 = cx + Math.sin(y * freq + t) * amp;
+      const x2 = cx - Math.sin(y * freq + t) * amp;
+      bpHTML += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>`;
+    }
+    basepairs.innerHTML = bpHTML;
+
+    t += 0.03;
+    requestAnimationFrame(update);
+  }
+  update();
+})();
+</script>
+</body>
+</html>

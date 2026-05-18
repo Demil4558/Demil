@@ -1,0 +1,2445 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONCOGÊNESE | DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Nunito:wght@300;400;700;900&display=swap');
+
+  :root {
+    --bg-deep: #020408;
+    --bg-dark: #060d14;
+    --bg-panel: #0a1520;
+    --bg-card: #0d1e2e;
+    --neon-cyan: #00f5ff;
+    --neon-pink: #ff00c8;
+    --neon-green: #00ff88;
+    --neon-orange: #ff6600;
+    --neon-yellow: #ffdd00;
+    --neon-red: #ff2244;
+    --neon-purple: #cc00ff;
+    --text-main: #e0f0ff;
+    --text-dim: #7090b0;
+    --text-bright: #ffffff;
+    --border-glow: rgba(0,245,255,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* SCANLINE OVERLAY */
+  body::before {
+    content:'';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CANVAS DNA BG */
+  #dna-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.18;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1;
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .hero-bg-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid;
+    animation: spin-ring linear infinite;
+  }
+  .ring1 { width:600px;height:600px; border-color: rgba(0,245,255,0.15); animation-duration:30s; top:50%;left:50%; transform:translate(-50%,-50%); }
+  .ring2 { width:800px;height:800px; border-color: rgba(255,0,200,0.1); animation-duration:50s; animation-direction:reverse; top:50%;left:50%; transform:translate(-50%,-50%); }
+  .ring3 { width:1000px;height:1000px; border-color: rgba(0,255,136,0.07); animation-duration:70s; top:50%;left:50%; transform:translate(-50%,-50%); }
+
+  @keyframes spin-ring { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--neon-cyan);
+    text-transform: uppercase;
+    border: 1px solid var(--neon-cyan);
+    padding: 0.3rem 1rem;
+    margin-bottom: 1.5rem;
+    animation: pulse-border 2s ease-in-out infinite;
+    position: relative; z-index: 2;
+  }
+
+  @keyframes pulse-border {
+    0%,100% { box-shadow: 0 0 5px var(--neon-cyan), inset 0 0 5px rgba(0,245,255,0.1); }
+    50% { box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 15px rgba(0,245,255,0.2); }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    position: relative; z-index: 2;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,0.5));
+    animation: title-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes title-glow {
+    0%,100% { filter: drop-shadow(0 0 20px rgba(0,245,255,0.4)); }
+    50% { filter: drop-shadow(0 0 50px rgba(255,0,200,0.6)); }
+  }
+
+  .hero-subtitle {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.4rem);
+    color: var(--neon-pink);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+    position: relative; z-index: 2;
+    animation: flicker 4s ease-in-out infinite;
+  }
+
+  @keyframes flicker {
+    0%,98%,100% { opacity:1; }
+    99% { opacity:0.5; }
+  }
+
+  .hero-desc {
+    max-width: 700px;
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    margin-top: 2rem;
+    line-height: 1.8;
+    position: relative; z-index: 2;
+  }
+
+  .scroll-btn {
+    margin-top: 3rem;
+    position: relative; z-index: 2;
+    background: transparent;
+    border: 2px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  }
+
+  .scroll-btn:hover {
+    background: var(--neon-cyan);
+    color: var(--bg-deep);
+    box-shadow: 0 0 30px var(--neon-cyan);
+  }
+
+  /* NAV */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(2,4,8,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,245,255,0.2);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 1rem;
+  }
+
+  .sticky-nav::-webkit-scrollbar { display: none; }
+
+  .nav-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    padding: 1rem 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    text-decoration: none;
+    display: block;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--neon-cyan);
+    border-bottom-color: var(--neon-cyan);
+  }
+
+  /* CHAPTER HEADERS */
+  .chapter {
+    position: relative;
+    z-index: 1;
+    padding: 4rem 1rem 2rem;
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(0,245,255,0.05) 0%, transparent 100%);
+    border-left: 4px solid var(--neon-cyan);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter-header::after {
+    content: attr(data-chapter);
+    position: absolute;
+    right: -0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bangers', cursive;
+    font-size: 8rem;
+    color: rgba(0,245,255,0.04);
+    letter-spacing: 0.1em;
+  }
+
+  .chapter-num {
+    font-family: 'Bangers', cursive;
+    font-size: 4rem;
+    color: var(--neon-cyan);
+    line-height: 1;
+    text-shadow: 0 0 20px var(--neon-cyan);
+  }
+
+  .chapter-title-wrap h2 {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    line-height: 1;
+  }
+
+  .chapter-title-wrap p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--neon-pink);
+    letter-spacing: 0.2em;
+    margin-top: 0.3rem;
+  }
+
+  /* MANGA PANEL GRID */
+  .panel-grid {
+    display: grid;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+    padding: 0 1rem;
+  }
+
+  .panel-2col { grid-template-columns: 1fr 1fr; }
+  .panel-3col { grid-template-columns: 1fr 1fr 1fr; }
+  .panel-hero { grid-template-columns: 2fr 1fr; }
+  .panel-rev { grid-template-columns: 1fr 2fr; }
+  .panel-1col { grid-template-columns: 1fr; }
+
+  @media (max-width: 768px) {
+    .panel-2col, .panel-3col, .panel-hero, .panel-rev { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid rgba(0,245,255,0.15);
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(0,245,255,0.1);
+  }
+
+  .panel-pink { border-color: rgba(255,0,200,0.3); }
+  .panel-pink:hover { box-shadow: 0 10px 40px rgba(255,0,200,0.15); }
+  .panel-green { border-color: rgba(0,255,136,0.3); }
+  .panel-green:hover { box-shadow: 0 10px 40px rgba(0,255,136,0.15); }
+  .panel-orange { border-color: rgba(255,102,0,0.3); }
+  .panel-orange:hover { box-shadow: 0 10px 40px rgba(255,102,0,0.15); }
+  .panel-red { border-color: rgba(255,34,68,0.3); }
+  .panel-red:hover { box-shadow: 0 10px 40px rgba(255,34,68,0.15); }
+  .panel-purple { border-color: rgba(204,0,255,0.3); }
+  .panel-purple:hover { box-shadow: 0 10px 40px rgba(204,0,255,0.15); }
+  .panel-yellow { border-color: rgba(255,221,0,0.3); }
+
+  .panel-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    margin-bottom: 0.8rem;
+    display: inline-block;
+  }
+
+  .tag-cyan { background: rgba(0,245,255,0.15); color: var(--neon-cyan); }
+  .tag-pink { background: rgba(255,0,200,0.15); color: var(--neon-pink); }
+  .tag-green { background: rgba(0,255,136,0.15); color: var(--neon-green); }
+  .tag-orange { background: rgba(255,102,0,0.15); color: var(--neon-orange); }
+  .tag-red { background: rgba(255,34,68,0.15); color: var(--neon-red); }
+  .tag-purple { background: rgba(204,0,255,0.15); color: var(--neon-purple); }
+  .tag-yellow { background: rgba(255,221,0,0.15); color: var(--neon-yellow); }
+
+  .panel h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+  }
+
+  .panel p, .panel li {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-main);
+  }
+
+  .panel ul { padding-left: 1.2rem; }
+  .panel li { margin-bottom: 0.4rem; }
+
+  .highlight {
+    color: var(--neon-cyan);
+    font-weight: 700;
+  }
+
+  .highlight-pink { color: var(--neon-pink); font-weight: 700; }
+  .highlight-green { color: var(--neon-green); font-weight: 700; }
+  .highlight-orange { color: var(--neon-orange); font-weight: 700; }
+  .highlight-red { color: var(--neon-red); font-weight: 700; }
+  .highlight-purple { color: var(--neon-purple); font-weight: 700; }
+  .highlight-yellow { color: var(--neon-yellow); font-weight: 700; }
+
+  /* DIALOGUE BOXES */
+  .dialogue {
+    background: rgba(0,245,255,0.05);
+    border: 2px solid var(--neon-cyan);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    position: relative;
+    font-style: italic;
+  }
+
+  .dialogue::before {
+    content: '💬';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    font-size: 1.2rem;
+    background: var(--bg-panel);
+    padding: 0 0.3rem;
+  }
+
+  .dialogue-pink {
+    background: rgba(255,0,200,0.05);
+    border-color: var(--neon-pink);
+  }
+  .dialogue-green {
+    background: rgba(0,255,136,0.05);
+    border-color: var(--neon-green);
+  }
+  .dialogue-orange {
+    background: rgba(255,102,0,0.05);
+    border-color: var(--neon-orange);
+  }
+
+  .speaker {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  /* MOLECULE ANIMATION */
+  .molecule-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+  }
+
+  .mol-svg {
+    width: 100%;
+    max-width: 500px;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+    transform: translateX(-50%);
+  }
+
+  @media (max-width: 768px) {
+    .timeline::before { left: 20px; }
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    position: relative;
+    align-items: flex-start;
+  }
+
+  .tl-item:nth-child(even) { flex-direction: row-reverse; }
+
+  @media (max-width: 768px) {
+    .tl-item, .tl-item:nth-child(even) {
+      flex-direction: column;
+      padding-left: 3rem;
+    }
+  }
+
+  .tl-content {
+    flex: 1;
+    background: var(--bg-panel);
+    border: 1px solid rgba(0,245,255,0.2);
+    padding: 1.5rem;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    animation: fade-in-up 0.6s ease both;
+  }
+
+  .tl-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--neon-cyan);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 1.5rem;
+    box-shadow: 0 0 15px var(--neon-cyan);
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .tl-dot { left: 20px; }
+    .tl-content { margin-left: 0; }
+  }
+
+  /* INFO BOXES */
+  .info-box {
+    background: linear-gradient(135deg, rgba(0,245,255,0.08), rgba(0,245,255,0.02));
+    border: 1px solid rgba(0,245,255,0.3);
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 1200px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .info-box-pink { background: linear-gradient(135deg, rgba(255,0,200,0.08), rgba(255,0,200,0.02)); border-color: rgba(255,0,200,0.3); }
+  .info-box-green { background: linear-gradient(135deg, rgba(0,255,136,0.08), rgba(0,255,136,0.02)); border-color: rgba(0,255,136,0.3); }
+  .info-box-orange { background: linear-gradient(135deg, rgba(255,102,0,0.08), rgba(255,102,0,0.02)); border-color: rgba(255,102,0,0.3); }
+  .info-box-red { background: linear-gradient(135deg, rgba(255,34,68,0.08), rgba(255,34,68,0.02)); border-color: rgba(255,34,68,0.3); }
+
+  .info-box h4 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* MUTATION TABLE */
+  .mut-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+
+  .mut-table th {
+    background: rgba(0,245,255,0.1);
+    color: var(--neon-cyan);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.7rem 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--neon-cyan);
+  }
+
+  .mut-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .mut-table tr:hover td { background: rgba(0,245,255,0.03); }
+
+  /* PILL BADGES */
+  .pill {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin: 0.1rem;
+  }
+
+  .pill-cyan { background: rgba(0,245,255,0.15); color: var(--neon-cyan); border: 1px solid rgba(0,245,255,0.3); }
+  .pill-pink { background: rgba(255,0,200,0.15); color: var(--neon-pink); border: 1px solid rgba(255,0,200,0.3); }
+  .pill-green { background: rgba(0,255,136,0.15); color: var(--neon-green); border: 1px solid rgba(0,255,136,0.3); }
+  .pill-orange { background: rgba(255,102,0,0.15); color: var(--neon-orange); border: 1px solid rgba(255,102,0,0.3); }
+  .pill-red { background: rgba(255,34,68,0.15); color: var(--neon-red); border: 1px solid rgba(255,34,68,0.3); }
+  .pill-purple { background: rgba(204,0,255,0.15); color: var(--neon-purple); border: 1px solid rgba(204,0,255,0.3); }
+  .pill-yellow { background: rgba(255,221,0,0.15); color: var(--neon-yellow); border: 1px solid rgba(255,221,0,0.3); }
+
+  /* SECTION DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+  }
+
+  .divider-icon {
+    font-size: 1.5rem;
+    animation: spin 4s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* QUIZ */
+  .quiz-box {
+    background: var(--bg-card);
+    border: 2px solid var(--neon-yellow);
+    padding: 2rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quiz-box h4 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.8rem;
+    color: var(--neon-yellow);
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
+  }
+
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: rgba(255,221,0,0.05);
+    border: 1px solid rgba(255,221,0,0.2);
+    color: var(--text-main);
+    padding: 0.8rem 1.2rem;
+    margin: 0.5rem 0;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+
+  .quiz-option:hover { background: rgba(255,221,0,0.15); border-color: var(--neon-yellow); }
+  .quiz-option.correct { background: rgba(0,255,136,0.2); border-color: var(--neon-green); color: var(--neon-green); }
+  .quiz-option.wrong { background: rgba(255,34,68,0.2); border-color: var(--neon-red); color: var(--neon-red); }
+
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    display: none;
+    border-radius: 4px;
+  }
+
+  /* ACCORDION */
+  .accordion {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .accordion-item {
+    border: 1px solid rgba(0,245,255,0.2);
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    background: rgba(0,245,255,0.03);
+    transition: background 0.2s;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+
+  .accordion-header:hover { background: rgba(0,245,255,0.08); }
+  .accordion-header.open { background: rgba(0,245,255,0.1); color: var(--neon-cyan); }
+
+  .accordion-icon { transition: transform 0.3s; font-size: 1rem; }
+  .accordion-header.open .accordion-icon { transform: rotate(45deg); }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 1.5rem;
+  }
+
+  .accordion-body.open {
+    max-height: 2000px;
+    padding: 1.5rem;
+  }
+
+  /* CARD FLIP */
+  .flip-card {
+    perspective: 1000px;
+    width: 100%;
+    height: 220px;
+    cursor: pointer;
+  }
+
+  .flip-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+  }
+
+  .flip-card:hover .flip-inner,
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+
+  .flip-front, .flip-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    border: 1px solid rgba(0,245,255,0.2);
+    background: var(--bg-panel);
+  }
+
+  .flip-back { transform: rotateY(180deg); background: var(--bg-card); border-color: rgba(0,255,136,0.3); }
+
+  /* ANIMATIONS */
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in { animation: fade-in-up 0.6s ease both; }
+
+  /* Scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    z-index: 1000;
+    background: transparent;
+  }
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(to right, var(--neon-cyan), var(--neon-pink));
+    width: 0%;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* GLOW SEPARATOR */
+  .glow-sep {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--neon-pink), transparent);
+    margin: 3rem 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* FLOATING PARTICLES */
+  .particle {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float-particle linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes float-particle {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* DNA SVG Animation */
+  @keyframes dna-rotate { to { transform: rotate(360deg); } }
+  @keyframes pulse-node {
+    0%,100% { r: 5; opacity: 0.8; }
+    50% { r: 8; opacity: 1; }
+  }
+
+  /* ENZYME DIAGRAM */
+  .enzyme-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  .enz-box {
+    background: rgba(0,245,255,0.1);
+    border: 1px solid var(--neon-cyan);
+    padding: 0.5rem 1rem;
+    color: var(--neon-cyan);
+    text-align: center;
+    min-width: 100px;
+    position: relative;
+    animation: pulse-box 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-box {
+    0%,100% { box-shadow: 0 0 5px rgba(0,245,255,0.3); }
+    50% { box-shadow: 0 0 20px rgba(0,245,255,0.6); }
+  }
+
+  .enz-arrow {
+    color: var(--neon-yellow);
+    font-size: 1.5rem;
+    animation: arrow-pulse 1s ease-in-out infinite;
+  }
+
+  @keyframes arrow-pulse {
+    0%,100% { transform: scaleX(1); }
+    50% { transform: scaleX(1.3); }
+  }
+
+  .enz-mutated {
+    background: rgba(255,34,68,0.15);
+    border-color: var(--neon-red);
+    color: var(--neon-red);
+    animation: shake-box 0.5s ease-in-out infinite, pulse-red 2s ease-in-out infinite;
+  }
+
+  @keyframes shake-box {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+  }
+
+  @keyframes pulse-red {
+    0%,100% { box-shadow: 0 0 5px rgba(255,34,68,0.3); }
+    50% { box-shadow: 0 0 20px rgba(255,34,68,0.7); }
+  }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    background: rgba(2,4,8,0.98);
+    border-top: 1px solid rgba(0,245,255,0.2);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.1em;
+  }
+
+  .footer-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.2em;
+    margin-top: 0.5rem;
+  }
+
+  .footer-divider {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+    margin: 1.5rem auto;
+  }
+
+  .footer-copy {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* CUSTOM SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
+  /* SVG animations for molecules */
+  .atom-pulse { animation: atom-pulse 2s ease-in-out infinite; }
+  @keyframes atom-pulse {
+    0%,100% { opacity: 0.6; r: 4; }
+    50% { opacity: 1; r: 6; }
+  }
+
+  .bond-flow { stroke-dasharray: 8 4; animation: bond-flow 1.5s linear infinite; }
+  @keyframes bond-flow { to { stroke-dashoffset: -24; } }
+
+  .electron-orbit { animation: orbit 3s linear infinite; transform-origin: 50% 50%; }
+  @keyframes orbit { to { transform: rotate(360deg); } }
+
+  /* TOOLTIP */
+  [data-tip] { position: relative; cursor: help; border-bottom: 1px dotted var(--neon-cyan); }
+  [data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card);
+    border: 1px solid var(--neon-cyan);
+    color: var(--text-main);
+    font-size: 0.75rem;
+    padding: 0.5rem 0.8rem;
+    width: 200px;
+    z-index: 100;
+    font-style: normal;
+    line-height: 1.5;
+    pointer-events: none;
+    white-space: normal;
+  }
+
+  .max-w { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+
+  /* big centered canvas */
+  .anim-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid rgba(0,245,255,0.15);
+    padding: 1rem;
+    min-height: 200px;
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div class="progress-bar-wrap"><div id="progress-bar"></div></div>
+
+<!-- ANIMATED BACKGROUND -->
+<canvas id="dna-canvas"></canvas>
+
+<!-- FLOATING PARTICLES -->
+<div id="particles"></div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-bg-ring ring1"></div>
+  <div class="hero-bg-ring ring2"></div>
+  <div class="hero-bg-ring ring3"></div>
+
+  <div class="hero-badge">DemilMed-UL · Biologia Molecular do Câncer · 2026</div>
+
+  <h1 class="hero-title">ONCOGÊNESE</h1>
+  <p class="hero-subtitle">Genes · Mutações · Enzimas · Moléculas Tumorais</p>
+
+  <p class="hero-desc">
+    Uma jornada visual e interactiva pelo universo molecular do cancro. Desde o DNA normal até à célula transformada — tudo explicado com cronologia perfeita, rigor científico e linguagem acessível.
+  </p>
+
+  <a class="scroll-btn" href="#cap1">▶ INICIAR JORNADA</a>
+</section>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a class="nav-item" href="#cap1">I. O CÓDIGO</a>
+  <a class="nav-item" href="#cap2">II. MUTAÇÕES</a>
+  <a class="nav-item" href="#cap3">III. ONCOGENES</a>
+  <a class="nav-item" href="#cap4">IV. SUPRESSORES</a>
+  <a class="nav-item" href="#cap5">V. ENZIMAS</a>
+  <a class="nav-item" href="#cap6">VI. VIAS</a>
+  <a class="nav-item" href="#cap7">VII. DIAGNÓSTICO</a>
+  <a class="nav-item" href="#cap8">VIII. TERAPÊUTICA</a>
+  <a class="nav-item" href="#quiz">QUIZ</a>
+</nav>
+
+<!-- ===================== CAPÍTULO 1 ===================== -->
+<section class="chapter" id="cap1">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="I">
+      <div class="chapter-num">01</div>
+      <div class="chapter-title-wrap">
+        <h2 class="highlight">O CÓDIGO DA VIDA — O QUE É UM GENE?</h2>
+        <p>FUNDAMENTOS · GENOMA · DNA → RNA → PROTEÍNA</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIALOGUE INTRO -->
+  <div class="max-w">
+    <div class="dialogue reveal">
+      <div class="speaker highlight">🧬 NARRADOR:</div>
+      <p>Imagina que cada uma das tuas 37 biliões de células tem uma biblioteca gigante dentro dela — o <strong>NÚCLEO</strong>. Dentro dessa biblioteca há 23 pares de livros — os <strong>CROMOSSOMAS</strong>. Cada livro tem capítulos — os <strong>GENES</strong>. E cada capítulo é escrito num alfabeto de apenas 4 letras: <span class="highlight">A, T, G, C</span> — as bases do DNA.</p>
+    </div>
+  </div>
+
+  <div class="panel-grid panel-3col max-w">
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">ETIMOLOGIA</div>
+      <h3 class="highlight">DNA</h3>
+      <p><span class="highlight">D</span>eoxyribo<span class="highlight">N</span>ucleic <span class="highlight">A</span>cid<br>
+      <span class="highlight-pink">Ácido Desoxirribonucleico</span><br><br>
+      <em>Desoxiribo</em> = ribose sem um oxigénio (OH → H na posição 2'). <em>Nucleico</em> = vive no núcleo. Descoberto em 1869 por Miescher, a estrutura dupla hélice foi desvendada por Watson & Crick em 1953.</p>
+    </div>
+    <div class="panel panel-pink reveal">
+      <div class="panel-tag tag-pink">ESTRUTURA</div>
+      <h3 class="highlight-pink">A DUPLA HÉLICE</h3>
+      <p>2 fitas antiparalelas unidas por <span class="highlight">pontes de hidrogénio</span>:<br>
+      • <span class="highlight">A</span>denina ↔ <span class="highlight">T</span>imina (2 pontes)<br>
+      • <span class="highlight">G</span>uanina ↔ <span class="highlight">C</span>itosina (3 pontes)<br><br>
+      A sequência específica de bases = <span class="highlight-pink">INFORMAÇÃO GENÉTICA</span>. Cada 3 bases = 1 codão = 1 aminoácido.</p>
+    </div>
+    <div class="panel panel-green reveal">
+      <div class="panel-tag tag-green">CENTRAL DOGMA</div>
+      <h3 class="highlight-green">DNA → RNA → PROTEÍNA</h3>
+      <p>O <span class="highlight-green">Dogma Central da Biologia</span> define o fluxo da informação:<br>
+      1️⃣ <strong>Transcrição</strong>: DNA → mRNA (RNA mensageiro)<br>
+      2️⃣ <strong>Tradução</strong>: mRNA → Proteína (ribossoma)<br><br>
+      <em>Analogia</em>: o DNA é a receita original no cofre. O mRNA é a cópia que vai para a cozinha. A proteína é o prato final.</p>
+    </div>
+  </div>
+
+  <!-- ANIMATED DNA DIAGRAM -->
+  <div class="anim-panel max-w reveal" style="margin: 0 1rem 2rem;">
+    <svg class="mol-svg" viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow-cyan">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="glow-pink">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- DNA Backbone fita 1 -->
+      <path d="M20,90 C80,30 140,150 200,90 C260,30 320,150 380,90 C420,60 460,90 480,90" fill="none" stroke="#00f5ff" stroke-width="3" filter="url(#glow-cyan)" class="bond-flow"/>
+      <!-- DNA Backbone fita 2 -->
+      <path d="M20,90 C80,150 140,30 200,90 C260,150 320,30 380,90 C420,120 460,90 480,90" fill="none" stroke="#ff00c8" stroke-width="3" filter="url(#glow-pink)" class="bond-flow" style="animation-delay:0.5s"/>
+      <!-- Base pairs -->
+      <line x1="68" y1="52" x2="68" y2="128" stroke="#ffdd00" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+      <line x1="110" y1="90" x2="110" y2="90" stroke="#ffdd00" stroke-width="2"/>
+      <line x1="155" y1="128" x2="155" y2="52" stroke="#ffdd00" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+      <line x1="200" y1="90" x2="200" y2="90" stroke="#ffdd00" stroke-width="2"/>
+      <line x1="245" y1="52" x2="245" y2="128" stroke="#ffdd00" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+      <line x1="290" y1="128" x2="290" y2="52" stroke="#ffdd00" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+      <line x1="335" y1="52" x2="335" y2="128" stroke="#ffdd00" stroke-width="2" stroke-dasharray="4 2" opacity="0.8"/>
+      <!-- Base labels -->
+      <text x="55" y="42" fill="#00ff88" font-size="12" font-family="Share Tech Mono">A</text>
+      <text x="55" y="145" fill="#00ff88" font-size="12" font-family="Share Tech Mono">T</text>
+      <text x="143" y="42" fill="#ff6600" font-size="12" font-family="Share Tech Mono">G</text>
+      <text x="143" y="145" fill="#ff6600" font-size="12" font-family="Share Tech Mono">C</text>
+      <text x="233" y="42" fill="#00ff88" font-size="12" font-family="Share Tech Mono">T</text>
+      <text x="233" y="145" fill="#00ff88" font-size="12" font-family="Share Tech Mono">A</text>
+      <text x="278" y="145" fill="#ff6600" font-size="12" font-family="Share Tech Mono">G</text>
+      <text x="278" y="42" fill="#ff6600" font-size="12" font-family="Share Tech Mono">C</text>
+      <text x="325" y="42" fill="#cc00ff" font-size="12" font-family="Share Tech Mono">A</text>
+      <text x="325" y="145" fill="#cc00ff" font-size="12" font-family="Share Tech Mono">T</text>
+      <!-- Nucleosome indicators -->
+      <ellipse cx="110" cy="90" rx="18" ry="18" fill="none" stroke="rgba(0,245,255,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="102" y="94" fill="rgba(255,255,255,0.5)" font-size="8" font-family="Share Tech Mono">H2</text>
+      <!-- Label -->
+      <text x="250" y="175" fill="#7090b0" font-size="10" font-family="Share Tech Mono" text-anchor="middle">DUPLA HÉLICE DO DNA — 3.4Å por par de bases</text>
+    </svg>
+  </div>
+
+  <div class="panel-grid panel-2col max-w">
+    <div class="panel panel-orange reveal">
+      <div class="panel-tag tag-orange">GENE — DEFINIÇÃO</div>
+      <h3 class="highlight-orange">O QUE É UM GENE?</h3>
+      <p><em>Gene</em> vem do grego <strong>genos</strong> (origem, nascimento). É uma <span class="highlight-orange">sequência de DNA</span> que codifica uma proteína funcional ou um RNA regulatório.<br><br>
+      O genoma humano tem ~<span class="highlight">3,2 biliões de pares de bases</span>, mas apenas <span class="highlight-pink">~20.000 genes</span> codificam proteínas — apenas 1,5% do DNA total!<br><br>
+      O resto? <span class="highlight-green">DNA regulatório</span>, introns, sequências repetitivas, RNA não-codificante...</p>
+    </div>
+    <div class="panel panel-purple reveal">
+      <div class="panel-tag tag-purple">REPLICAÇÃO</div>
+      <h3 class="highlight-purple">CÓPIA FIEL... OU QUASE</h3>
+      <p>Cada vez que uma célula se divide, copia todo o seu DNA. A enzima <span class="highlight-purple">DNA Polimerase</span> comete <span class="highlight-red">1 erro por cada 10⁷ bases</span>. O sistema de <span class="highlight-green">reparação do DNA</span> corrige quase todos.<br><br>
+      Mas "quase todos" não é todos. Os erros que escapam = <span class="highlight-red">MUTAÇÕES</span>.<br><br>
+      <em>Analogia</em>: copiar um livro de 3,2 mil milhões de letras à mão, errando 1 vez em 10 milhões — o revisor corrige quase tudo, mas...</p>
+    </div>
+  </div>
+
+  <div class="info-box reveal max-w">
+    <h4 style="color:var(--neon-cyan)">⚡ CONCEITO CHAVE — PROTO-ONCOGENE vs GENE SUPRESSOR</h4>
+    <p>No DNA normal existem 2 grandes famílias de genes críticos para o cancro:</p>
+    <br>
+    <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+      <div style="flex:1; min-width:200px; background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.3); padding:1rem;">
+        <p class="highlight-green" style="font-family:'Orbitron',sans-serif; font-size:0.8rem;">PROTO-ONCOGENES</p>
+        <p style="margin-top:0.5rem;">Genes normais que <strong>PROMOVEM</strong> o crescimento celular. São os "aceleradores" da célula. Quando mutados tornam-se <span class="highlight-red">ONCOGENES</span> — ficam sempre ligados!</p>
+      </div>
+      <div style="flex:1; min-width:200px; background:rgba(255,34,68,0.08); border:1px solid rgba(255,34,68,0.3); padding:1rem;">
+        <p class="highlight-red" style="font-family:'Orbitron',sans-serif; font-size:0.8rem;">GENES SUPRESSORES TUMORAIS</p>
+        <p style="margin-top:0.5rem;">Genes que <strong>TRAVAM</strong> o crescimento e induzem apoptose. São os "travões" da célula. Quando perdidos, a célula divide sem controlo.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 2 ===================== -->
+<section class="chapter" id="cap2">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="II">
+      <div class="chapter-num" style="color:var(--neon-pink)">02</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-pink">MUTAÇÕES</span> — QUANDO O CÓDIGO ERRA</h2>
+        <p>TIPOS · MECANISMOS · CONSEQUÊNCIAS MOLECULARES</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue dialogue-pink reveal">
+      <div class="speaker highlight-pink">🔴 AGENTE DO CAOS (Mutação):</div>
+      <p>"Eu não sou um vilão aleatório. Tenho tipos, tenho causas, tenho consequências precisas. Para me combater tens primeiro de me conhecer..."</p>
+    </div>
+  </div>
+
+  <!-- GRANDE TABELA DE MUTAÇÕES -->
+  <div class="accordion max-w reveal">
+
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🔴 MUTAÇÕES PONTUAIS (Point Mutations) — A troca de uma letra</span>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:1rem;">Uma <span class="highlight">Mutação Pontual</span> (do latim <em>punctum</em> = ponto) é a substituição de <strong>uma única base nucleotídica</strong> por outra. São as mutações mais frequentes no cancro.</p>
+
+        <table class="mut-table">
+          <tr>
+            <th>SUBTIPO</th>
+            <th>O QUE ACONTECE</th>
+            <th>EXEMPLO NO CANCRO</th>
+            <th>EFEITO PROTEICO</th>
+          </tr>
+          <tr>
+            <td><span class="pill pill-red">Missense</span></td>
+            <td>A troca de base leva à troca de 1 aminoácido. <br><em>Ex: GAG → GTG</em></td>
+            <td><span class="highlight-red">RAS G12V</span> (85% dos adenocarcinomas pancreáticos)</td>
+            <td>Proteína com função alterada — pode ficar hiperactiva ou inactiva</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-orange">Nonsense</span></td>
+            <td>A troca cria um codão STOP prematuro (UAA, UAG, UGA)</td>
+            <td><span class="highlight-orange">TP53 R213X</span> — cria STOP no codão 213</td>
+            <td>Proteína truncada, normalmente não funcional → degradada</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-cyan">Sinónima / Silent</span></td>
+            <td>A troca de base NÃO muda o aminoácido (degenerescência do código genético)</td>
+            <td>Aparentemente neutras, mas podem alterar <em>splicing</em></td>
+            <td>Geralmente sem efeito, mas nem sempre!</td>
+          </tr>
+          <tr>
+            <td><span class="pill pill-purple">Splice Site</span></td>
+            <td>Mutação nos sítios GU-AG dos intrões → splicing aberrante</td>
+            <td><span class="highlight-purple">BRCA1/2 splice variants</span></td>
+            <td>mRNA com exões incluídos errados ou exões excluídos</td>
+          </tr>
+        </table>
+
+        <div class="dialogue dialogue-orange" style="margin-top:1rem;">
+          <div class="speaker highlight-orange">🧬 ANALOGIA:</div>
+          <p>Imagina a frase: "O GAT O CO MEU O RAT O". Trocar 1 letra pode dar "O GAT O CO MEU O MAT O" (missense — sentido diferente), ou "O GAT O CO MEU." STOP (nonsense — frase cortada).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" style="border-color:rgba(255,102,0,0.3);">
+      <div class="accordion-header" style="color:var(--neon-orange);" onclick="toggleAccordion(this)">
+        <span>🟠 INSERÇÕES E DELEÇÕES (Indels) — Letras a mais ou a menos</span>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:1rem;"><strong>Indels</strong> (INsertions + DELetions) são a adição ou remoção de uma ou mais bases no DNA. O impacto depende crucialmente de <span class="highlight-orange">quantas bases</span> são inseridas/deletadas.</p>
+
+        <div class="panel-grid panel-2col" style="padding:0;">
+          <div class="panel panel-orange">
+            <div class="panel-tag tag-orange">FRAMESHIFT MUTATION</div>
+            <h3 class="highlight-orange">MUDANÇA DE GRELHA DE LEITURA</h3>
+            <p>Se inserção/deleção NÃO for múltipla de 3, a grelha de leitura (reading frame) muda completamente a partir desse ponto. Tudo o que estava "certo" fica errado.<br><br>
+            <em>Exemplo</em>: "THE CAT SAT" → deletar "C" → "THE ATS AT..." — nonsense completo!<br><br>
+            <span class="highlight-red">Consequência:</span> proteína completamente diferente após o ponto de mutação → geralmente não funcional. Exemplo clássico: <span class="highlight">BRCA1 frameshift</span> em cancro da mama.</p>
+          </div>
+          <div class="panel panel-green">
+            <div class="panel-tag tag-green">IN-FRAME INDEL</div>
+            <h3 class="highlight-green">INSERÇÃO EM QUADRO</h3>
+            <p>Se inserção/deleção for múltipla de 3 (3, 6, 9 bases...), a grelha mantém-se. Apenas 1 ou mais aminoácidos são adicionados ou removidos.<br><br>
+            <em>Exemplo</em>: inserção de 3 bases → +1 aminoácido na proteína.<br><br>
+            <span class="highlight-green">Consequência:</span> proteína ligeiramente alterada. Pode ser funcional ou não. Exemplo: <span class="highlight">Deleção Exão 19 do EGFR</span> em cancro do pulmão (sensível a gefitinib).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" style="border-color:rgba(204,0,255,0.3);">
+      <div class="accordion-header" style="color:var(--neon-purple);" onclick="toggleAccordion(this)">
+        <span>🟣 AMPLIFICAÇÕES E DELEÇÕES GÉNICAS — Mais ou menos cópias</span>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:1rem;">Em vez de mudar a SEQUÊNCIA, estas mutações alteram o <span class="highlight-purple">NÚMERO DE CÓPIAS</span> de um gene. Visualizáveis por FISH (Fluorescence In Situ Hybridization) ou CGH arrays.</p>
+
+        <div class="panel-grid panel-2col" style="padding:0;">
+          <div class="panel panel-purple">
+            <div class="panel-tag tag-purple">AMPLIFICAÇÃO</div>
+            <h3 class="highlight-purple">CÓPIAS A MAIS → HIPEREXPRESSÃO</h3>
+            <p>O gene é duplicado múltiplas vezes. A célula produz <span class="highlight-purple">MUITO MAIS proteína</span> do que deveria. Como ter 100 impressoras a trabalhar em vez de 1.<br><br>
+            <strong>Exemplos clínicos:</strong><br>
+            • <span class="highlight">HER2/ERBB2</span> — amplificado em 20-25% do cancro da mama → trastuzumab (Herceptin®)<br>
+            • <span class="highlight">MYC</span> — amplificado em neuroblastoma<br>
+            • <span class="highlight">EGFR</span> — amplificado em glioblastoma</p>
+          </div>
+          <div class="panel panel-red">
+            <div class="panel-tag tag-red">DELEÇÃO</div>
+            <h3 class="highlight-red">CÓPIAS A MENOS → PERDA DE FUNÇÃO</h3>
+            <p>Segmentos cromossómicos inteiros são perdidos. Se o gene supressor tumoral estava lá — desaparece. <span class="highlight-red">LOH = Loss of Heterozygosity</span> (Perda de Heterozigosidade).<br><br>
+            <strong>Exemplos clínicos:</strong><br>
+            • <span class="highlight">Deleção 9p21</span> → perda de CDKN2A (p16) → melanoma<br>
+            • <span class="highlight">Deleção 17p</span> → perda de TP53<br>
+            • <span class="highlight">Deleção 13q</span> → perda de RB1 → retinoblastoma</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" style="border-color:rgba(0,255,136,0.3);">
+      <div class="accordion-header" style="color:var(--neon-green);" onclick="toggleAccordion(this)">
+        <span>🟢 REARRANJOS CROMOSSÓMICOS — Translações, Inversões, Fusões</span>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:1rem;">Segmentos inteiros de cromossomas mudam de posição, invertem ou fundem com outros genes. Podem criar <span class="highlight-green">GENES DE FUSÃO</span> com funções completamente novas.</p>
+
+        <div class="panel-grid panel-3col" style="padding:0;">
+          <div class="panel panel-green">
+            <div class="panel-tag tag-green">TRANSLOCAÇÃO</div>
+            <h3 class="highlight-green">t(9;22)</h3>
+            <p>Cromossoma Filadélfia! Pedaço do cromossoma 9 (com ABL1) vai para o cromossoma 22 (com BCR). Cria <span class="highlight">BCR-ABL1</span> — tirosina-cinase constitutivamente activa.<br><br>
+            → <span class="highlight-red">Leucemia Mielóide Crónica (LMC)</span><br>
+            → Alvo do <span class="highlight-green">Imatinib (Gleevec®)</span></p>
+          </div>
+          <div class="panel">
+            <div class="panel-tag tag-cyan">INVERSÃO</div>
+            <h3 class="highlight">inv(2p23)</h3>
+            <p>Segmento do cromossoma inverte, colocando ALK sob controlo do promotor de EML4.<br><br>
+            Cria <span class="highlight">EML4-ALK</span> em ~5% dos carcinomas pulmonares de células não-pequenas (NSCLC).<br><br>
+            → Alvo do <span class="highlight-green">Crizotinib, Alectinib</span></p>
+          </div>
+          <div class="panel panel-pink">
+            <div class="panel-tag tag-pink">t(14;18)</div>
+            <h3 class="highlight-pink">BCL2 SUPER-ACTIVO</h3>
+            <p>Gene BCL2 (antiapoptótico) é colocado sob o promotor superactivo da cadeia leve das imunoglobulinas.<br><br>
+            → <span class="highlight-red">Linfoma Folicular</span> (90% dos casos!)<br><br>
+            As células B simplesmente... se recusam a morrer por apoptose.</p>
+          </div>
+        </div>
+
+        <!-- ANIMATED DIAGRAM - Translocation -->
+        <div class="anim-panel" style="margin-top:1rem;">
+          <svg viewBox="0 0 500 160" xmlns="http://www.w3.org/2000/svg" width="100%" max-width="500px">
+            <!-- Chromosome 9 -->
+            <rect x="30" y="30" width="40" height="100" rx="20" fill="rgba(0,245,255,0.15)" stroke="#00f5ff" stroke-width="1.5"/>
+            <rect x="30" y="70" width="40" height="30" rx="4" fill="rgba(0,245,255,0.4)" stroke="#00f5ff" stroke-width="1"/>
+            <text x="50" y="90" fill="#00f5ff" font-size="8" font-family="Share Tech Mono" text-anchor="middle">ABL1</text>
+            <text x="50" y="145" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">Chr 9</text>
+
+            <!-- Chromosome 22 -->
+            <rect x="110" y="40" width="30" height="80" rx="15" fill="rgba(255,0,200,0.15)" stroke="#ff00c8" stroke-width="1.5"/>
+            <rect x="110" y="55" width="30" height="20" rx="4" fill="rgba(255,0,200,0.4)" stroke="#ff00c8" stroke-width="1"/>
+            <text x="125" y="68" fill="#ff00c8" font-size="7" font-family="Share Tech Mono" text-anchor="middle">BCR</text>
+            <text x="125" y="135" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">Chr 22</text>
+
+            <!-- Arrow -->
+            <text x="185" y="85" fill="#ffdd00" font-size="24" text-anchor="middle">⟹</text>
+            <text x="185" y="105" fill="#ffdd00" font-size="8" font-family="Share Tech Mono" text-anchor="middle">t(9;22)</text>
+
+            <!-- Result chromosomes -->
+            <rect x="230" y="30" width="40" height="100" rx="20" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1"/>
+            <rect x="230" y="90" width="40" height="20" rx="4" fill="rgba(255,0,200,0.3)" stroke="#ff00c8" stroke-width="1"/>
+            <text x="250" y="104" fill="#ff00c8" font-size="7" font-family="Share Tech Mono" text-anchor="middle">BCR</text>
+            <text x="250" y="145" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">Chr 9+</text>
+
+            <rect x="290" y="40" width="30" height="80" rx="15" fill="rgba(255,34,68,0.15)" stroke="#ff2244" stroke-width="2"/>
+            <rect x="290" y="50" width="30" height="40" rx="4" fill="rgba(255,34,68,0.4)" stroke="#ff2244" stroke-width="1.5" filter="url(#glow-pink)"/>
+            <text x="305" y="67" fill="#ff2244" font-size="6.5" font-family="Share Tech Mono" text-anchor="middle">BCR-ABL1</text>
+            <text x="305" y="75" fill="#ff2244" font-size="6" font-family="Share Tech Mono" text-anchor="middle">FUSÃO!</text>
+            <text x="305" y="135" fill="#ff2244" font-size="9" font-family="Share Tech Mono" text-anchor="middle" font-weight="bold">Ph+</text>
+
+            <!-- Label BCR-ABL -->
+            <text x="380" y="65" fill="#ff2244" font-size="10" font-family="Share Tech Mono">BCR-ABL1</text>
+            <text x="380" y="80" fill="#ff2244" font-size="8" font-family="Share Tech Mono">→ TK activa</text>
+            <text x="380" y="95" fill="#7090b0" font-size="7" font-family="Share Tech Mono">→ LMC</text>
+            <text x="380" y="108" fill="#00ff88" font-size="7" font-family="Share Tech Mono">→ Imatinib</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item" style="border-color:rgba(255,221,0,0.3);">
+      <div class="accordion-header" style="color:var(--neon-yellow);" onclick="toggleAccordion(this)">
+        <span>🟡 MUTAÇÕES EPIGENÉTICAS — O silêncio sem mudar a sequência</span>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:1rem;"><em>Epi</em> (grego) = "sobre, acima". <span class="highlight-yellow">Epigenética</span> = alterações na expressão génica SEM mudar a sequência de DNA. O gene continua "intacto", mas é silenciado.</p>
+
+        <div class="panel-grid panel-2col" style="padding:0;">
+          <div class="panel panel-yellow">
+            <div class="panel-tag tag-yellow">METILAÇÃO DO DNA</div>
+            <h3 class="highlight-yellow">CH₃ NO PROMOTOR → SILÊNCIO</h3>
+            <p>Enzimas <span class="highlight">DNMT</span> (DNA MethylTransferases) adicionam grupos metilo (-CH₃) às citosinas das ilhas CpG nos promotores génicos.<br><br>
+            <strong>Normal:</strong> silencia genes não necessários.<br>
+            <strong>No cancro:</strong> silencia genes supressores tumorais!<br><br>
+            Exemplos: metilação do promotor de <span class="highlight-red">CDKN2A (p16)</span>, <span class="highlight-red">MLH1</span>, <span class="highlight-red">BRCA1</span>.<br><br>
+            <em>Clinica:</em> agentes hipometilantes como <span class="highlight-green">Azacitidina</span> (5-AZA) revertem este processo → terapia de SMD/LMA.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-tag tag-cyan">MODIFICAÇÃO DE HISTONAS</div>
+            <h3 class="highlight">BOBINES DE DNA MODIFICADAS</h3>
+            <p>O DNA enrola-se em proteínas chamadas <span class="highlight">Histonas</span>. A sua modificação (acetilação, metilação, fosforilação, ubiquitinação) controla o acesso ao DNA.<br><br>
+            • <span class="highlight-green">Acetilação de H3K27</span> → cromatina aberta → gene ACTIVO<br>
+            • <span class="highlight-red">Trimetilação de H3K27</span> → cromatina fechada → gene SILENCIADO<br><br>
+            <em>Enzimas PRC2 (EZH2)</em> são frequentemente amplificadas no cancro → silenciam genes supressores. Alvo de <span class="highlight-green">Tazemetostat</span>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end accordion -->
+
+  <!-- CAUSAS DAS MUTAÇÕES -->
+  <div class="max-w">
+    <div class="chapter-header" style="border-left-color:var(--neon-orange); margin-top:2rem;" data-chapter="">
+      <div class="chapter-num" style="color:var(--neon-orange); font-size:2.5rem;">CAUSAS</div>
+      <div class="chapter-title-wrap">
+        <h2>De onde vêm as mutações?</h2>
+        <p>ENDÓGENAS · EXÓGENAS · IATROGÉNICAS</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-grid panel-3col max-w">
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">ENDÓGENAS</div>
+      <h3 class="highlight">DE DENTRO</h3>
+      <ul>
+        <li><span class="highlight">Erros de replicação</span> — DNA Pol comete ~1 erro/10⁷ bases. Em cada divisão celular, ~1 mutação escapa.</li>
+        <li><span class="highlight">Desaminação</span> — Citosina (C) perde NH₂ espontaneamente → Uracilo (U) → lido como T → transição C→T (a mais comum de todas!)</li>
+        <li><span class="highlight">Radicais Livres</span> — Espécies Reactivas de Oxigénio (ROS) do metabolismo oxidativo lesam o DNA: 8-oxoguanina → pares errados</li>
+        <li><span class="highlight">Apurinização</span> — bases púricas (A,G) perdem-se espontaneamente (~10.000/dia por célula)</li>
+      </ul>
+    </div>
+    <div class="panel panel-orange reveal">
+      <div class="panel-tag tag-orange">EXÓGENAS</div>
+      <h3 class="highlight-orange">DE FORA</h3>
+      <ul>
+        <li><span class="highlight-orange">UV Solar</span> — forma dímeros de pirimidina (T-T, C-T) → melanoma, carcinoma basocelular. Via NER (Nucleotide Excision Repair) corrige.</li>
+        <li><span class="highlight-orange">Tabaco</span> — Benzo[a]pireno forma adutos com G → transversões G→T → TP53 específico do fumador</li>
+        <li><span class="highlight-orange">Aflatoxina B1</span> — fungo Aspergillus → adutos G → TP53 R249S → CHC (Carcinoma HepCelular) em África/Ásia</li>
+        <li><span class="highlight-orange">Radiação ionizante</span> — quebras de dupla cadeia → translocações, deleções</li>
+        <li><span class="highlight-orange">Vírus oncogénicos</span> — HPV (E6 destrói p53, E7 destrói Rb), EBV, HBV, HTLV-1</li>
+      </ul>
+    </div>
+    <div class="panel panel-red reveal">
+      <div class="panel-tag tag-red">IATROGÉNICAS</div>
+      <h3 class="highlight-red">DA MEDICINA</h3>
+      <ul>
+        <li><span class="highlight-red">Agentes alquilantes</span> (quimioterapia): Ciclofosfamida, Melfalano → adutos N7-G → leucemias secundárias</li>
+        <li><span class="highlight-red">Inibidores da Topoisomerase II</span>: Etoposídio → quebras de cadeia dupla → translocações MLL (leucemia)</li>
+        <li><span class="highlight-red">Radioterapia</span> → cancros secundários anos depois</li>
+      </ul>
+      <div class="dialogue dialogue-orange" style="margin-top:0.8rem;">
+        <p style="font-size:0.85rem;">Clinicamente importante: sempre perguntar história de quimioterapia prévia ao avaliar uma nova neoplasia!</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 3 ===================== -->
+<section class="chapter" id="cap3">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="III" style="border-left-color:var(--neon-red);">
+      <div class="chapter-num" style="color:var(--neon-red)">03</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-red">ONCOGENES</span> — OS ACELERADORES PARTIDOS</h2>
+        <p>PROTO-ONCOGENES · ACTIVAÇÃO · CLASSES MOLECULARES</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue dialogue-pink reveal">
+      <div class="speaker highlight-red">🚗 ONCOGENE:</div>
+      <p>"Imagina um carro. O proto-oncogene é o acelerador NORMAL — só funciona quando o condutor pisa. Eu sou o acelerador PARTIDO — fico preso para baixo, a fundo. O carro não para. A célula não para de dividir."</p>
+    </div>
+  </div>
+
+  <div class="info-box info-box-red reveal max-w">
+    <h4 style="color:var(--neon-red)">⚡ REGRA DE OURO DOS ONCOGENES</h4>
+    <p>Os oncogenes têm <span class="highlight-red">efeito dominante</span> — basta <strong>1 alelo mutado</strong> para causar ganho de função. É como ter UMA impressão digital do vilão na cena do crime — chega para incriminar. Contrasta com os genes supressores, que precisam perder AMBOS os alelos (Hipótese dos 2 hits de Knudson).</p>
+  </div>
+
+  <!-- CLASSES DE ONCOGENES -->
+  <div class="max-w" style="padding:0 1rem;">
+    <h3 style="font-family:'Bangers',cursive; font-size:2rem; color:var(--neon-red); margin-bottom:1.5rem; letter-spacing:0.05em;">CLASSIFICAÇÃO POR FUNÇÃO MOLECULAR</h3>
+  </div>
+
+  <!-- FLIP CARDS ROW -->
+  <div class="panel-grid panel-3col max-w" style="padding:0 1rem;">
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-green">CLASSE 1</div>
+          <h3 class="highlight-green" style="font-family:'Bangers',cursive; font-size:1.8rem;">FACTORES DE CRESCIMENTO</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            <span class="highlight-green">Proto-oncogene:</span> PDGFB, FGF, TGF-α<br>
+            <span class="highlight-red">Mecanismo:</span> o cancro produz os seus próprios factores de crescimento → estimulação autócrina<br>
+            <span class="highlight">Exemplo clínico:</span> PDGFB em dermatofibrossarcoma → imatinib<br>
+            <span class="highlight-yellow">Gene fusão:</span> ETV6-PDGFRB em leucemia eosinofílica crónica
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-cyan">CLASSE 2</div>
+          <h3 class="highlight" style="font-family:'Bangers',cursive; font-size:1.8rem;">RECEPTORES TIROSINA-CINASE</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            <span class="highlight">RTK</span> = Receptor Tyrosine Kinase<br>
+            <span class="highlight-red">Mecanismo:</span> mutação → dimerização constitutiva → sinalização sem ligando<br>
+            <span class="highlight">EGFR</span> (HER1) — L858R, Ex19del → gefitinib/erlotinib<br>
+            <span class="highlight">HER2/ERBB2</span> — amplificado → trastuzumab<br>
+            <span class="highlight">KIT</span> — D816V → imatinib em GIST<br>
+            <span class="highlight">FLT3</span> — ITD em LMA → midostaurin
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-orange">CLASSE 3</div>
+          <h3 class="highlight-orange" style="font-family:'Bangers',cursive; font-size:1.8rem;">PROTEÍNAS G PEQUENAS (RAS)</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            RAS = <em>Rat sarcoma</em> (descoberto em vírus de sarcoma de rato)<br>
+            <span class="highlight-orange">Normal:</span> GTPase — hidrolisa GTP→GDP → se desliga<br>
+            <span class="highlight-red">Mutado (G12/G13/Q61):</span> perde actividade GTPase → fica preso com GTP → <strong>sempre LIGADO</strong><br>
+            <span class="highlight">KRAS:</span> 90% pâncreas, 45% cólon<br>
+            <span class="highlight">NRAS:</span> melanoma, leucemia<br>
+            <span class="highlight">HRAS:</span> bexiga, cabeça/pescoço
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel-grid panel-3col max-w" style="padding:0 1rem; margin-top:1rem;">
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-pink">CLASSE 4</div>
+          <h3 class="highlight-pink" style="font-family:'Bangers',cursive; font-size:1.8rem;">TIROSINA-CINASES NÃO-RECEPTORAS</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            Cinases citoplasmáticas sem domínio transmembranar<br>
+            <span class="highlight">BCR-ABL1:</span> t(9;22) → LMC → imatinib<br>
+            <span class="highlight">JAK2 V617F:</span> 95% Policitemia Vera → ruxolitinib<br>
+            <span class="highlight">SRC:</span> proto-oncogene histórico — 1er oncogene descoberto (1976, Nobel a Bishop & Varmus)<br>
+            <span class="highlight">BTK:</span> LCC/linfoma → ibrutinib
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-purple">CLASSE 5</div>
+          <h3 class="highlight-purple" style="font-family:'Bangers',cursive; font-size:1.8rem;">FACTORES DE TRANSCRIÇÃO</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            Controlam a expressão de muitos genes simultaneamente — "mestres reguladores"<br>
+            <span class="highlight">MYC:</span> amplificado em muitos cancros → ativa centenas de genes proliferativos. <em>Dificílimo</em> de inibir directamente.<br>
+            <span class="highlight">MYCN:</span> amplificado em neuroblastoma de alto risco<br>
+            <span class="highlight">ETS/FLI1:</span> fusão EWSR1-FLI1 em sarcoma de Ewing
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card reveal">
+      <div class="flip-inner">
+        <div class="flip-front">
+          <div class="panel-tag tag-yellow">CLASSE 6</div>
+          <h3 class="highlight-yellow" style="font-family:'Bangers',cursive; font-size:1.8rem;">REGULADORES DO CICLO CELULAR</h3>
+          <p style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">👆 Clica para ver exemplos</p>
+        </div>
+        <div class="flip-back">
+          <p style="font-size:0.85rem; line-height:1.7; text-align:left;">
+            <span class="highlight-yellow">CICLINA D1</span> — amplificada em carcinoma do esófago, mama, cabeça/pescoço<br>
+            Activa CDK4/6 → fosforila Rb → liberta E2F → progressão G1→S<br>
+            Alvo de <span class="highlight-green">Palbociclib, Ribociclib, Abemaciclib</span> (inibidores CDK4/6) no cancro da mama HR+/HER2-<br>
+            <span class="highlight-yellow">CDK4:</span> amplificado em liossarcoma bem diferenciado
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ANIMATED RAS CYCLE -->
+  <div class="max-w" style="padding:0 1rem; margin-top:2rem;">
+    <h3 style="font-family:'Bangers',cursive; font-size:1.8rem; color:var(--neon-orange); margin-bottom:1rem; letter-spacing:0.05em;">O CICLO RAS — NORMAL vs MUTADO</h3>
+    <div class="anim-panel">
+      <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <!-- Normal RAS cycle -->
+        <text x="120" y="20" fill="#00f5ff" font-size="11" font-family="Orbitron" text-anchor="middle">RAS NORMAL</text>
+        <!-- RAS-GDP (off) -->
+        <ellipse cx="60" cy="80" rx="45" ry="28" fill="rgba(0,245,255,0.1)" stroke="#00f5ff" stroke-width="1.5"/>
+        <text x="60" y="77" fill="#00f5ff" font-size="10" font-family="Share Tech Mono" text-anchor="middle">RAS</text>
+        <text x="60" y="89" fill="#00ff88" font-size="9" font-family="Share Tech Mono" text-anchor="middle">GDP (OFF)</text>
+
+        <!-- Signal arrow up -->
+        <path d="M105 75 Q135 50 155 75" fill="none" stroke="#ffdd00" stroke-width="1.5" marker-end="url(#arr)"/>
+        <text x="130" y="58" fill="#ffdd00" font-size="8" font-family="Share Tech Mono" text-anchor="middle">GEF→GTP</text>
+
+        <!-- RAS-GTP (on) -->
+        <ellipse cx="190" cy="80" rx="45" ry="28" fill="rgba(255,102,0,0.2)" stroke="#ff6600" stroke-width="2"/>
+        <text x="190" y="77" fill="#ff6600" font-size="10" font-family="Share Tech Mono" text-anchor="middle">RAS</text>
+        <text x="190" y="89" fill="#ffdd00" font-size="9" font-family="Share Tech Mono" text-anchor="middle">GTP (ON)⚡</text>
+
+        <!-- GAP arrow down -->
+        <path d="M190 108 Q190 140 145 140 Q100 140 60 108" fill="none" stroke="#00ff88" stroke-width="1.5" marker-end="url(#arr2)" stroke-dasharray="5 3"/>
+        <text x="120" y="158" fill="#00ff88" font-size="8" font-family="Share Tech Mono" text-anchor="middle">GAP → GTPase → GDP</text>
+
+        <!-- Separator -->
+        <line x1="260" y1="10" x2="260" y2="190" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="5 5"/>
+
+        <!-- Mutant RAS -->
+        <text x="385" y="20" fill="#ff2244" font-size="11" font-family="Orbitron" text-anchor="middle">RAS MUTADO G12V</text>
+        <ellipse cx="385" cy="100" rx="55" ry="35" fill="rgba(255,34,68,0.2)" stroke="#ff2244" stroke-width="2.5" filter="url(#glow-pink)"/>
+        <text x="385" y="95" fill="#ff2244" font-size="11" font-family="Share Tech Mono" text-anchor="middle" font-weight="bold">KRAS G12V</text>
+        <text x="385" y="109" fill="#ffdd00" font-size="9" font-family="Share Tech Mono" text-anchor="middle">GTP — PRESO! ⚠️</text>
+
+        <!-- No GAP circle -->
+        <circle cx="455" cy="60" r="20" fill="rgba(0,0,0,0.3)" stroke="#ff2244" stroke-width="1.5"/>
+        <text x="455" y="56" fill="#ff2244" font-size="8" font-family="Share Tech Mono" text-anchor="middle">GAP</text>
+        <text x="455" y="66" fill="#ff2244" font-size="8" font-family="Share Tech Mono" text-anchor="middle">❌</text>
+        <text x="455" y="76" fill="#7090b0" font-size="7" font-family="Share Tech Mono" text-anchor="middle">BLOQ.</text>
+
+        <!-- Arrow down to RAF/MEK/ERK -->
+        <path d="M385 135 L385 165" fill="none" stroke="#ff6600" stroke-width="2" marker-end="url(#arr3)"/>
+        <text x="395" y="155" fill="#ff6600" font-size="8" font-family="Share Tech Mono">RAF→MEK→ERK</text>
+        <text x="395" y="165" fill="#ff6600" font-size="8" font-family="Share Tech Mono">Proliferação ∞</text>
+
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffdd00"/></marker>
+          <marker id="arr2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#00ff88"/></marker>
+          <marker id="arr3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ff6600"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 4 ===================== -->
+<section class="chapter" id="cap4">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="IV" style="border-left-color:var(--neon-green);">
+      <div class="chapter-num" style="color:var(--neon-green)">04</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-green">GENES SUPRESSORES TUMORAIS</span></h2>
+        <p>OS 2 HITS · RB · TP53 · BRCA · APC · PTEN</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue dialogue-green reveal">
+      <div class="speaker highlight-green">🛡️ GENE SUPRESSOR:</div>
+      <p>"Somos os guardas da célula. Precisamos de PERDER os 2 alelos para deixar de funcionar. É a Hipótese dos 2 Hits de Alfred Knudson (1971) — o estudo mais elegante da oncologia moderna. Um hit herdado, outro adquirido. Ou dois adquiridos. Mas precisam dos dois."</p>
+    </div>
+  </div>
+
+  <!-- KNUDSON 2 HITS -->
+  <div class="anim-panel max-w reveal" style="margin:0 1rem 1rem;">
+    <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" width="100%">
+      <!-- Esporádico -->
+      <text x="125" y="20" fill="#00f5ff" font-size="11" font-family="Orbitron" text-anchor="middle">CASO ESPORÁDICO</text>
+      <!-- Cell 1 -->
+      <ellipse cx="80" cy="80" rx="60" ry="40" fill="rgba(0,245,255,0.05)" stroke="#00f5ff" stroke-width="1"/>
+      <rect x="50" y="68" width="18" height="24" rx="3" fill="#00ff88" stroke="#00ff88" stroke-width="1"/>
+      <rect x="75" y="68" width="18" height="24" rx="3" fill="#00ff88" stroke="#00ff88" stroke-width="1"/>
+      <text x="80" y="115" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">RB1+/+ (Normal)</text>
+
+      <text x="125" y="128" fill="#ffdd00" font-size="16" text-anchor="middle">→</text>
+      <text x="125" y="142" fill="#ffdd00" font-size="8" font-family="Share Tech Mono" text-anchor="middle">1º Hit Somático</text>
+
+      <ellipse cx="170" cy="80" rx="60" ry="40" fill="rgba(255,221,0,0.05)" stroke="#ffdd00" stroke-width="1"/>
+      <rect x="140" y="68" width="18" height="24" rx="3" fill="#ff2244" stroke="#ff2244" stroke-width="1"/>
+      <rect x="165" y="68" width="18" height="24" rx="3" fill="#00ff88" stroke="#00ff88" stroke-width="1"/>
+      <text x="170" y="115" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">RB1-/+ (Portador)</text>
+
+      <text x="215" y="80" fill="#ffdd00" font-size="16" text-anchor="middle">→</text>
+      <text x="215" y="92" fill="#ff2244" font-size="8" font-family="Share Tech Mono" text-anchor="middle">2º Hit!</text>
+
+      <ellipse cx="255" cy="80" rx="60" ry="40" fill="rgba(255,34,68,0.1)" stroke="#ff2244" stroke-width="2"/>
+      <rect x="225" y="68" width="18" height="24" rx="3" fill="#ff2244" stroke="#ff2244" stroke-width="1"/>
+      <rect x="250" y="68" width="18" height="24" rx="3" fill="#ff2244" stroke="#ff2244" stroke-width="1"/>
+      <text x="255" y="115" fill="#ff2244" font-size="9" font-family="Share Tech Mono" text-anchor="middle" font-weight="bold">RB1-/- → CANCRO</text>
+
+      <!-- Hereditário -->
+      <text x="390" y="20" fill="#ff00c8" font-size="11" font-family="Orbitron" text-anchor="middle">CASO HEREDITÁRIO</text>
+      <ellipse cx="390" cy="80" rx="60" ry="40" fill="rgba(255,0,200,0.05)" stroke="#ff00c8" stroke-width="1"/>
+      <rect x="360" y="68" width="18" height="24" rx="3" fill="#ff2244" stroke="#ff2244" stroke-width="1"/>
+      <rect x="385" y="68" width="18" height="24" rx="3" fill="#00ff88" stroke="#00ff88" stroke-width="1"/>
+      <text x="390" y="115" fill="#ff00c8" font-size="9" font-family="Share Tech Mono" text-anchor="middle">Nasce RB1-/+</text>
+      <text x="390" y="128" fill="#ff00c8" font-size="8" font-family="Share Tech Mono" text-anchor="middle">(já com 1 hit)</text>
+      <text x="390" y="155" fill="#7090b0" font-size="8" font-family="Share Tech Mono" text-anchor="middle">1 hit somático → cancro</text>
+      <text x="390" y="168" fill="#7090b0" font-size="8" font-family="Share Tech Mono" text-anchor="middle">+ precoce, bilateral, multifocal</text>
+
+      <text x="250" y="205" fill="#7090b0" font-size="9" font-family="Share Tech Mono" text-anchor="middle">HIPÓTESE DOS 2 HITS — Knudson, 1971 (Nobel implícito)</text>
+    </svg>
+  </div>
+
+  <!-- TP53 GRANDE DESTAQUE -->
+  <div class="max-w" style="padding:0 1rem; margin-bottom:2rem;">
+    <div class="panel panel-red reveal" style="border-width:2px;">
+      <div class="panel-tag tag-red">TP53 — O GUARDIÃO DO GENOMA</div>
+      <h3 class="highlight-red" style="font-size:2.5rem; font-family:'Bangers',cursive; letter-spacing:0.05em;">p53 — O HERÓI MAIS FAMOSO DA ONCOLOGIA</h3>
+
+      <div class="panel-grid panel-2col" style="padding:0; margin-top:1rem; gap:1rem;">
+        <div>
+          <p><strong class="highlight">Etimologia:</strong> <em>Tumor Protein p53</em> — proteína tumoral de 53 kDa (quilodaltons).<br><br>
+          <strong class="highlight-red">Mutado em >50% de TODOS os cancros humanos</strong> — o gene mais frequentemente mutado no cancro.<br><br>
+          <strong class="highlight">Gene:</strong> TP53, cromossoma 17p13.1<br>
+          <strong class="highlight">Proteína:</strong> factor de transcrição com 393 aminoácidos</p>
+
+          <p style="margin-top:1rem;"><strong class="highlight-orange">O que faz normalmente:</strong></p>
+          <ul style="margin-top:0.5rem;">
+            <li>Detecta dano no DNA → para o ciclo celular (via p21/CDKN1A)</li>
+            <li>Activa reparação do DNA</li>
+            <li>Se dano irreparável → activa APOPTOSE (via BAX, PUMA, NOXA)</li>
+            <li>Activa SENESCÊNCIA</li>
+            <li>Inibe angiogénese</li>
+            <li>Suprime metastização</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong class="highlight-red">Mutações de TP53:</strong><br>
+          90% são missense no domínio de ligação ao DNA. Hotspots: R175H, G245S, R248W, R248Q, R249S, R273H, R273C, R282W.</p>
+
+          <div class="info-box info-box-red" style="margin-top:1rem; max-width:100%;">
+            <h4 style="color:var(--neon-red);">SÍNDROME DE LI-FRAUMENI</h4>
+            <p style="font-size:0.85rem;">Mutação germinal de TP53. Risco de cancro > 90% ao longo da vida. Sarcomas, leucemias, carcinoma da mama, tumores cerebrais, ADR-cortical — múltiplos cancros primários, início precoce. Gene de alta penetrância.</p>
+          </div>
+
+          <div class="enzyme-diagram" style="margin-top:1rem;">
+            <div class="enz-box" style="min-width:80px;">Dano DNA</div>
+            <div class="enz-arrow">→</div>
+            <div class="enz-box" style="background:rgba(255,102,0,0.1); border-color:var(--neon-orange); color:var(--neon-orange); min-width:80px;">ATM/ATR activados</div>
+            <div class="enz-arrow">→</div>
+            <div class="enz-box" style="min-width:80px;">p53 estabilizado</div>
+            <div class="enz-arrow">→</div>
+            <div class="enz-box enz-mutated" style="min-width:80px;">p21/BAX/PUMA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTROS SUPRESSORES -->
+  <div class="panel-grid panel-3col max-w">
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">RB1 — RETINOBLASTOMA</div>
+      <h3 class="highlight">pRb — O FREIO DO CICLO</h3>
+      <p>Proteína Rb (105 kDa) controla a transição G1→S do ciclo celular.<br><br>
+      <strong>Normal:</strong> Rb hipofosforilada liga-se a E2F e bloqueia a progressão.<br>
+      <strong>Fisiológico:</strong> CDK4/6-CiclinaD fosforila Rb → liberta E2F → célula progride.<br>
+      <strong>Cancro:</strong> mutação de RB1 → Rb ausente → E2F sempre livre → divisão contínua.<br><br>
+      <span class="highlight-red">Tumores:</span> Retinoblastoma (criança), osteossarcoma, carcinoma pulmão (células pequenas).</p>
+    </div>
+    <div class="panel panel-pink reveal">
+      <div class="panel-tag tag-pink">BRCA1/BRCA2</div>
+      <h3 class="highlight-pink">REPARAÇÃO DO DNA</h3>
+      <p><em>BRCA</em> = BReast CAncer. Genes de reparação de quebras de cadeia dupla (HR = Homologous Recombination).<br><br>
+      Mutações germinais em <span class="highlight">BRCA1</span>: risco 60-80% cancro da mama, 40% ovário.<br>
+      Mutações germinais em <span class="highlight">BRCA2</span>: idem + risco aumentado em pâncreas, próstata, melanoma.<br><br>
+      <strong class="highlight-green">Terapêutica:</strong> inibidores PARP (Olaparib, Niraparib) exploram <em>synthetic lethality</em> — as células BRCA- já têm um sistema de reparação comprometido; bloquear PARP = morte celular seletiva.</p>
+    </div>
+    <div class="panel panel-green reveal">
+      <div class="panel-tag tag-green">APC — CÓLON</div>
+      <h3 class="highlight-green">O PORTEIRO DO CÓLON</h3>
+      <p><em>APC</em> = Adenomatous Polyposis Coli (desde 1991).<br><br>
+      APC é parte do complexo de destruição da β-catenina. Quando APC funciona → β-catenina é fosforilada, ubiquitinada, degradada → via WNT inactiva.<br><br>
+      <strong class="highlight-red">Quando APC muta</strong> → β-catenina acumula → entra no núcleo → activa genes de proliferação (CCND1, MYC).<br><br>
+      <span class="highlight-red">PAF</span> (Polipose Adenomatosa Familiar) — mutação germinal APC → milhares de pólipos → risco 100% de CCR sem colectomia.</p>
+    </div>
+  </div>
+
+  <div class="panel-grid panel-2col max-w">
+    <div class="panel panel-orange reveal">
+      <div class="panel-tag tag-orange">PTEN</div>
+      <h3 class="highlight-orange">FOSFATASE DO PI3K</h3>
+      <p><em>PTEN</em> = Phosphatase and TENsin homolog. É a fosfatase que <strong>desfaz</strong> o PIP3 que o PI3K faz.<br><br>
+      <strong>Normal:</strong> PTEN → PIP3→PIP2 → AKT não activado → mTOR inactivo → sem crescimento excessivo.<br>
+      <strong>Cancro:</strong> perda de PTEN → PIP3 acumula → AKT permanentemente activo → mTOR → crescimento, sobrevivência, síntese proteica.<br><br>
+      <span class="highlight-red">Tumores:</span> glioblastoma, endométrio, próstata, mama.<br>
+      <span class="highlight-green">Alvo:</span> inibidores mTOR (Everolimus), inibidores PI3K (Idelalisib, Alpelisib)</p>
+    </div>
+    <div class="panel panel-purple reveal">
+      <div class="panel-tag tag-purple">VHL — VON HIPPEL-LINDAU</div>
+      <h3 class="highlight-purple">REGULADOR DA HIPÓXIA</h3>
+      <p><em>VHL</em> — proteína que ubiquitina HIF-1α para degradação em condições de normóxia.<br><br>
+      <strong>Normal:</strong> pVHL + HIF-1α → ubiquitinação → proteasoma → HIF degradado.<br>
+      <strong>Cancro (mutação VHL):</strong> HIF-1α acumula mesmo com oxigénio → activa VEGF, EPO, GLUT1, LDHA → angiogénese, eritrocitose.<br><br>
+      <span class="highlight-red">Carcinoma de células renais claras</span> — mutação VHL em >80% dos casos.<br>
+      <span class="highlight-green">Terapêutica:</span> Belzutifan (inibidor HIF-2α) — aprovado FDA 2021 para CHR VHL+.</p>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 5 ===================== -->
+<section class="chapter" id="cap5">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="V" style="border-left-color:var(--neon-yellow);">
+      <div class="chapter-num" style="color:var(--neon-yellow)">05</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-yellow">ENZIMAS TUMORAIS</span> — AS FÁBRICAS DO CAOS</h2>
+        <p>CINASES · FOSFATASES · PROTEASES · TELOMERASE · METABOLISMO</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue dialogue-orange reveal">
+      <div class="speaker highlight-yellow">⚗️ ENZIMA TUMORAL:</div>
+      <p>"Uma enzima é um catalisador biológico — acelera reacções sem se gastar. No cancro, certas enzimas ficam hiperactivas, mal-localizadas, ou expressas onde não devem. São os alvos de muitos dos nossos melhores fármacos modernos."</p>
+    </div>
+  </div>
+
+  <!-- TIMELINE DE ENZIMAS -->
+  <div class="timeline max-w reveal">
+
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-dot" style="background:var(--neon-cyan); box-shadow:0 0 15px var(--neon-cyan);"></div>
+        <div class="panel-tag tag-cyan">CINASES — TIROSINA E SERINA/TREONINA</div>
+        <h3 class="highlight">KINASES — AS INTERRUPTORAS</h3>
+        <p>Uma <span class="highlight">Cinase</span> (do grego <em>kinein</em> = mover) transfere um grupo fosfato (PO₄³⁻) de ATP para uma proteína-alvo → FOSFORILAÇÃO → muda conformação e activa ou inactiva a proteína.</p>
+        <br>
+        <div class="enzyme-diagram" style="flex-direction:column; align-items:flex-start; gap:0.5rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <div class="enz-box">ATP</div>
+            <div class="enz-arrow">+</div>
+            <div class="enz-box">Proteína-OH</div>
+            <div class="enz-arrow" style="font-size:1rem;">→ Cinase →</div>
+            <div class="enz-box" style="background:rgba(0,255,136,0.15); border-color:var(--neon-green); color:var(--neon-green);">Proteína-OPO₃ + ADP</div>
+          </div>
+        </div>
+        <br>
+        <p><strong class="highlight-red">No cancro:</strong> cinases mutadas ficam constitutivamente activas — sempre a adicionar fosfatos, sempre a enviar sinais de proliferação. O genoma humano tem ~538 cinases = o <em>kinome</em>. Cerca de 100 são alvos terapêuticos relevantes.</p>
+        <br>
+        <table class="mut-table">
+          <tr><th>CINASE</th><th>MUTAÇÃO</th><th>TUMOR</th><th>INIBIDOR</th></tr>
+          <tr><td><span class="pill pill-cyan">EGFR</span></td><td>L858R / Ex19del</td><td>NSCLC</td><td>Erlotinib, Osimertinib</td></tr>
+          <tr><td><span class="pill pill-orange">BRAF</span></td><td>V600E</td><td>Melanoma, CCR, papilário tiróide</td><td>Vemurafenib, Dabrafenib</td></tr>
+          <tr><td><span class="pill pill-pink">ALK</span></td><td>Fusão EML4-ALK</td><td>NSCLC 5%</td><td>Crizotinib, Alectinib</td></tr>
+          <tr><td><span class="pill pill-green">BCR-ABL1</span></td><td>Fusão t(9;22)</td><td>LMC</td><td>Imatinib, Nilotinib</td></tr>
+          <tr><td><span class="pill pill-purple">JAK2</span></td><td>V617F</td><td>Policitemia Vera</td><td>Ruxolitinib</td></tr>
+          <tr><td><span class="pill pill-red">FLT3</span></td><td>ITD / TKD</td><td>LMA</td><td>Midostaurin, Gilteritinib</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content" style="border-color:rgba(255,0,200,0.3);">
+        <div class="tl-dot" style="background:var(--neon-pink); box-shadow:0 0 15px var(--neon-pink);"></div>
+        <div class="panel-tag tag-pink">TELOMERASE — hTERT</div>
+        <h3 class="highlight-pink">A ENZIMA DA IMORTALIDADE</h3>
+        <p>Cada vez que o DNA replica, os <span class="highlight">TELÓMEROS</span> (do grego <em>telos</em> = fim + <em>meros</em> = parte) — as "tampas" das extremidades cromossómicas — encurtam um pouco. Ao fim de 50-70 divisões (Limite de Hayflick), os telómeros encurtam demais → SENESCÊNCIA → APOPTOSE.</p>
+        <br>
+        <p>A <span class="highlight-pink">TELOMERASE</span> (= hTERT + hTERC + dyskerin) é uma transcriptase reversa que usa RNA como molde para adicionar repetições TTAGGG aos telómeros → mantém-nos compridos → a célula não entra em senescência → divisão indefinida.</p>
+        <br>
+        <p><strong class="highlight-red">No cancro:</strong> a telomerase está activa em >90% das células tumorais (nas células somáticas normais está silenciada). É o mecanismo de <span class="highlight-red">IMORTALIZAÇÃO</span> das células cancerosas.</p>
+        <br>
+        <div class="info-box info-box-pink" style="max-width:100%; margin:0.5rem 0 0;">
+          <h4 style="color:var(--neon-pink);">PROMOTOR TERT — MUTAÇÃO ESPECIAL</h4>
+          <p style="font-size:0.85rem;">Mutações C228T e C250T no promotor do gene TERT criam um novo sítio de ligação para factores de transcrição ETS → super-activação do hTERT. Encontradas em 80% dos gliomas de baixo grau e 50% dos glioblastomas. Também em melanoma (70%), CHC, cancro da bexiga.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content" style="border-color:rgba(0,255,136,0.3);">
+        <div class="tl-dot" style="background:var(--neon-green); box-shadow:0 0 15px var(--neon-green);"></div>
+        <div class="panel-tag tag-green">PROTEASES — MMPs e CATEPSINAS</div>
+        <h3 class="highlight-green">DEMOLIDORAS DA MATRIX</h3>
+        <p><span class="highlight-green">Metaloproteinases da Matrix (MMPs)</span> — do grego <em>meta</em> (mudança) + <em>protease</em> (clivagem proteica). São endopeptidases dependentes de Zn²⁺ (e Ca²⁺) que degradam componentes da Matriz Extracelular (MEC).<br><br>
+        <strong>Função normal:</strong> remodelação de tecidos (cicatrização, desenvolvimento, angiogénese fisiológica).<br>
+        <strong>No cancro (sobreexpressão):</strong> degradam colágeno IV (membrana basal), laminina, fibronectina → o tumor "escava" o caminho → <span class="highlight-red">INVASÃO</span> e <span class="highlight-red">METASTIZAÇÃO</span>.</p>
+        <br>
+        <table class="mut-table">
+          <tr><th>MMP</th><th>SUBSTRATO CHAVE</th><th>FUNÇÃO NO CANCRO</th></tr>
+          <tr><td>MMP-2, MMP-9</td><td>Colágeno IV (membrana basal)</td><td>Invasão local, extravasamento vascular</td></tr>
+          <tr><td>MMP-1, MMP-8</td><td>Colágeno I, II, III (intersticial)</td><td>Degradação do estroma</td></tr>
+          <tr><td>uPA (uroquinase)</td><td>Plasminogénio → Plasmina</td><td>Activa MMPs, degrada fibronectina</td></tr>
+        </table>
+        <br>
+        <p><span class="highlight">Catepsinas B, D, L</span> — proteases lisossomais que são secretadas pelo cancro no espaço extracelular → degradam MEC → facilitam invasão.</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content" style="border-color:rgba(255,102,0,0.3);">
+        <div class="tl-dot" style="background:var(--neon-orange); box-shadow:0 0 15px var(--neon-orange);"></div>
+        <div class="panel-tag tag-orange">METABOLISMO TUMORAL — IDH E EFEITO WARBURG</div>
+        <h3 class="highlight-orange">AS FÁBRICAS DE ENERGIA TUMORAL</h3>
+        <p>Em 1924, Otto Warburg descobriu que células tumorais usam <span class="highlight-orange">GLICÓLISE AERÓBIA</span> mesmo com oxigénio abundante — o chamado <em>Efeito Warburg</em>. Aparentemente "ineficiente" (2 ATP da glicólise vs 36 ATP da fosforilação oxidativa), mas fornece precursores para biossíntese (ribose, glicerol, aminoácidos) mais rapidamente.</p>
+        <br>
+        <p><strong class="highlight-red">IDH1/IDH2 MUTADOS:</strong><br>
+        <em>IDH</em> = Isocitrato Desidrogenase — converte isocitrato em α-cetoglutarato (α-KG) no ciclo de Krebs.<br>
+        Mutação IDH1 R132H / IDH2 R172K/R140Q → neoactividade: converte α-KG em <span class="highlight-red">2-Hidroxiglutarato (2-HG)</span> — um "oncometabolito".<br><br>
+        2-HG inibe enzimas dependentes de α-KG (TET2, histona-demetilases) → <span class="highlight-red">HIPERMETILAÇÃO</span> do DNA e histonas → bloqueia diferenciação → o célula "fica presa" num estado de progenitor imatura.</p>
+        <br>
+        <p><span class="highlight-red">Tumores:</span> Glioma grau 2/3 (IDH1 R132H em 70-80%), LMA (IDH1/2 mutado em 20%)<br>
+        <span class="highlight-green">Alvo:</span> Ivosidenib (IDH1), Enasidenib (IDH2) — aprovados FDA para LMA IDH+</p>
+      </div>
+    </div>
+
+    <div class="tl-item">
+      <div class="tl-content" style="border-color:rgba(204,0,255,0.3);">
+        <div class="tl-dot" style="background:var(--neon-purple); box-shadow:0 0 15px var(--neon-purple);"></div>
+        <div class="panel-tag tag-purple">PARP — POLY(ADP-RIBOSE) POLYMERASE</div>
+        <h3 class="highlight-purple">REPARADORA QUE VIRA ARMA</h3>
+        <p><span class="highlight-purple">PARP</span> = Poly(ADP-Ribose) Polymerase — enzima nuclear que detecta quebras de cadeia simples no DNA e recrutam a maquinaria de reparação BER (Base Excision Repair).<br><br>
+        <strong>Normal:</strong> PARP 1/2 detectam nick no DNA → PolyADP-ribosilam proteínas nearby → recrutam DNA ligase I → reparado.<br><br>
+        <strong>No cancro BRCA1/2-:</strong> a via HR (Homologous Recombination) já está quebrada. Se inibimos PARP → a reparação BER também falha → quebras de cadeia dupla acumulam → <span class="highlight-red">morte seletiva da célula tumoral</span>.<br><br>
+        Este princípio chama-se <span class="highlight-green">LETALIDADE SINTÉTICA</span> — dois defeitos juntos que individualmente toleram, mas juntos matam.</p>
+        <br>
+        <div class="dialogue dialogue-green">
+          <p style="font-size:0.85rem;"><strong>Analogia da Letalidade Sintética:</strong> Uma pessoa sem perna direita (=BRCA-) usa a muleta (=PARP). Se lhe tirarmos a muleta (=inibidor PARP), cai. Uma pessoa com ambas as pernas (=célula normal) sem muleta — fica de pé na mesma. É o medicamento mais "inteligente" da oncologia moderna.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 6 ===================== -->
+<section class="chapter" id="cap6">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="VI" style="border-left-color:var(--neon-purple);">
+      <div class="chapter-num" style="color:var(--neon-purple)">06</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-purple">VIAS DE SINALIZAÇÃO</span> NO CANCRO</h2>
+        <p>RAS-MAPK · PI3K-AKT-mTOR · WNT · NOTCH · HEDGEHOG</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue reveal">
+      <div class="speaker highlight-purple">🔗 VIA DE SINALIZAÇÃO:</div>
+      <p>"Uma via de sinalização é como uma linha de montagem numa fábrica — cada proteína activa a seguinte numa cascata. No cancro, uma mutação num único ponto desta linha faz toda a fábrica trabalhar em sobrecarga... sem nunca parar."</p>
+    </div>
+  </div>
+
+  <!-- VIA RAS-MAPK -->
+  <div class="max-w" style="padding:0 1rem; margin-bottom:2rem;">
+    <div class="panel reveal" style="border-color:rgba(255,102,0,0.4);">
+      <div class="panel-tag tag-orange">VIA RAS-MAPK / RAF-MEK-ERK</div>
+      <h3 class="highlight-orange" style="font-family:'Bangers',cursive; font-size:2rem; letter-spacing:0.05em;">A VIA DO CRESCIMENTO</h3>
+
+      <div class="enzyme-diagram" style="flex-wrap:wrap; justify-content:flex-start; gap:0.3rem; margin:1rem 0;">
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">Ligando<br>(EGF,FGF...)</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">RTK<br>activo</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="background:rgba(255,102,0,0.2); border-color:var(--neon-orange); color:var(--neon-orange); min-width:70px; font-size:0.75rem;">RAS-GTP<br>⚡</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">RAF<br>(BRAF)</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">MEK1/2</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">ERK1/2</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="background:rgba(255,34,68,0.2); border-color:var(--neon-red); color:var(--neon-red); min-width:100px; font-size:0.75rem;">Proliferação<br>Sobrevivência</div>
+      </div>
+
+      <p><span class="highlight-red">Mutações activadoras:</span> KRAS (codões 12/13/61), NRAS, BRAF V600E, MEK1 mutações raras.<br>
+      <span class="highlight-green">Inibidores:</span><br>
+      • BRAF V600E → <span class="highlight">Vemurafenib, Dabrafenib</span> (mas RAS mutado é resistente!)<br>
+      • MEK1/2 → <span class="highlight">Trametinib, Cobimetinib</span> (combinado com inibidores BRAF para evitar resistência)<br>
+      • KRAS G12C → <span class="highlight">Sotorasib, Adagrasib</span> (aprovados 2021-2022 — 1ª vez que KRAS foi "drogável" em 40 anos!)</p>
+    </div>
+  </div>
+
+  <!-- VIA PI3K-AKT-mTOR -->
+  <div class="max-w" style="padding:0 1rem; margin-bottom:2rem;">
+    <div class="panel panel-purple reveal">
+      <div class="panel-tag tag-purple">VIA PI3K-AKT-mTOR</div>
+      <h3 class="highlight-purple" style="font-family:'Bangers',cursive; font-size:2rem; letter-spacing:0.05em;">A VIA DA SOBREVIVÊNCIA</h3>
+
+      <div class="enzyme-diagram" style="flex-wrap:wrap; justify-content:flex-start; gap:0.3rem; margin:1rem 0;">
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">RTK activo</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem; background:rgba(204,0,255,0.15); border-color:var(--neon-purple); color:var(--neon-purple);">PI3K<br>(p110α)</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">PIP3</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">PDK1</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">AKT<br>(PKB)</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="min-width:70px; font-size:0.75rem;">mTORC1</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box enz-mutated" style="min-width:100px; font-size:0.75rem;">Síntese<br>proteica ∞</div>
+      </div>
+
+      <div class="panel-grid panel-2col" style="padding:0; margin-top:1rem; gap:1rem;">
+        <div>
+          <p><strong class="highlight-red">Mutações:</strong><br>
+          • PIK3CA (catalítico PI3K) E545K, H1047R — mama, endométrio, cólon<br>
+          • PIK3R1 (regulatório PI3K) — glioblastoma<br>
+          • PTEN perda — amplifica toda a via<br>
+          • AKT1 E17K — mama, endométrio<br>
+          • TSC1/TSC2 — inibidores de mTOR; mutação → mTOR sempre activo (Esclerose Tuberosa → hamartomas)</p>
+        </div>
+        <div>
+          <p><strong class="highlight-green">Inibidores aprovados:</strong><br>
+          • PI3Kδ → <span class="highlight">Idelalisib</span> (LCC)<br>
+          • PI3Kα → <span class="highlight">Alpelisib</span> (mama PIK3CA+)<br>
+          • AKT → <span class="highlight">Capivasertib</span> (mama)<br>
+          • mTOR → <span class="highlight">Everolimus</span> (RCC, neuroendócrinos), <span class="highlight">Temsirolimus</span><br>
+          • mTOR duplo → <span class="highlight">Vistusertib</span> (investigação)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTRAS VIAS -->
+  <div class="panel-grid panel-3col max-w">
+    <div class="panel panel-green reveal">
+      <div class="panel-tag tag-green">VIA WNT / β-CATENINA</div>
+      <h3 class="highlight-green">O CONDUTOR DO DESENVOLVIMENTO</h3>
+      <p><em>WNT</em> (Wingless + INT-1) — via essencial no desenvolvimento embrionário. Controla stem cells, polaridade celular, diferenciação.<br><br>
+      <strong class="highlight-red">No cancro:</strong> APC mutado (CCR), β-catenina mutada (exão 3 — impede fosforilação) → acumula → vai ao núcleo → activa MYC, CCND1.<br>
+      <br>
+      <span class="highlight-red">Tumores:</span> CCR, hepatoblastoma, meduloblastoma tipo WNT (bom prognóstico!), carcinoma endometrial.<br>
+      <span class="highlight-green">Alvo emergente:</span> Porcupine inhibitors, β-catenina degraders.</p>
+    </div>
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">VIA NOTCH</div>
+      <h3 class="highlight">O COMUNICADOR CÉLULA-CÉLULA</h3>
+      <p><em>NOTCH</em> — receptor transmembranar que necessita de contacto célula-a-célula para ser activado.<br><br>
+      <strong>Mecanismo:</strong> Jagged/Delta4 (ligando em célula vizinha) → cliva NOTCH (por ADAM + γ-secretase) → NICD (Notch Intracellular Domain) vai ao núcleo → activa HES1, HEY1 → diferenciação.<br><br>
+      <strong class="highlight-red">No cancro:</strong> mutações gain-of-function NOTCH1 em T-ALL (leucemia linfoblástica T) em >50% dos casos, carcinoma espinocelular do pulmão.<br>
+      <span class="highlight-green">Alvo:</span> Inibidores γ-secretase.</p>
+    </div>
+    <div class="panel panel-yellow reveal">
+      <div class="panel-tag tag-yellow">VIA HEDGEHOG</div>
+      <h3 class="highlight-yellow">O ESCULTOR EMBRIONÁRIO</h3>
+      <p><em>Hedgehog</em> — nome do gene de mosca onde foi descoberto (ouriço). Em mamíferos: SHH (Sonic Hedgehog).<br><br>
+      <strong>Normal (sem SHH):</strong> PTCH1 inibe SMO → GLI é degradado.<br>
+      <strong>Normal (com SHH):</strong> SHH inibe PTCH1 → SMO activo → GLI activo → proliferação.<br><br>
+      <strong class="highlight-red">No cancro:</strong> PTCH1 mutado → SMO sempre activo → GLI sempre activo.<br>
+      <span class="highlight-red">Tumores:</span> Carcinoma Basocelular (PTCH1 em 80%!), Meduloblastoma SHH, SD de Gorlin.<br>
+      <span class="highlight-green">Alvo:</span> <strong>Vismodegib, Sonidegib</strong> — inibem SMO.</p>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 7 ===================== -->
+<section class="chapter" id="cap7">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="VII" style="border-left-color:var(--neon-cyan);">
+      <div class="chapter-num" style="color:var(--neon-cyan)">07</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight">DIAGNÓSTICO MOLECULAR</span></h2>
+        <p>BIÓPSIAS · NGS · FISH · IHQ · LIQUID BIOPSY · PET</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-grid panel-2col max-w">
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">NGS — NEXT GENERATION SEQUENCING</div>
+      <h3 class="highlight">SEQUENCIAMENTO DE NOVA GERAÇÃO</h3>
+      <p>Sequencia milhões de fragmentos de DNA em paralelo. Pode identificar mutações, amplificações, fusões, variantes de número de cópias de dezenas ou centenas de genes simultaneamente.<br><br>
+      <strong class="highlight">Painéis oncológicos:</strong> FoundationOne CDx (324 genes), OncoPanel, MSK-IMPACT.<br><br>
+      <strong class="highlight-green">Usos clínicos:</strong><br>
+      • Identificar mutações accionáveis (EGFR, ALK, ROS1, BRAF, KRAS G12C, MET, RET, NTRK) → escolha de terapia-alvo<br>
+      • Determinar MSI (Microsatellite Instability) → elegibilidade para pembrolizumab<br>
+      • TMB (Tumor Mutation Burden) → resposta a imunoterapia<br>
+      • Detecção de mecanismos de resistência (EGFR T790M → osimertinib)</p>
+    </div>
+    <div class="panel panel-pink reveal">
+      <div class="panel-tag tag-pink">LIQUID BIOPSY — BIÓPSIA LÍQUIDA</div>
+      <h3 class="highlight-pink">DNA TUMORAL NO SANGUE</h3>
+      <p><span class="highlight-pink">ctDNA</span> (circulating tumor DNA) — fragmentos de DNA libertados pelas células tumorais em apoptose/necrose → circulam no plasma.<br><br>
+      <strong class="highlight">Vantagens sobre biópsia tecidular:</strong><br>
+      • Não invasivo (colheita de sangue)<br>
+      • Captura heterogeneidade tumoral (todas as metástases contribuem)<br>
+      • Monitorização de resposta em tempo real<br>
+      • Detecção precoce de recidiva (ctDNA sobe antes imagiologia)<br><br>
+      <strong class="highlight-green">Aplicações aprovadas:</strong><br>
+      • EGFR T790M em NSCLC (cobas® EGFR Mutation Test v2 — aprovado FDA 2016)<br>
+      • BRCA em cancro próstata mCRPC (Foundation Medicine)<br>
+      • Cobas KRAS, RAS em CCR metastático</p>
+    </div>
+  </div>
+
+  <div class="panel-grid panel-3col max-w">
+    <div class="panel panel-orange reveal">
+      <div class="panel-tag tag-orange">FISH</div>
+      <h3 class="highlight-orange">FLUORESCENCE IN SITU HYBRIDIZATION</h3>
+      <p>Sondas fluorescentes complementares às sequências de interesse hibridizam directamente no cromossoma (em corte histológico ou células).<br><br>
+      <strong class="highlight">Detecta:</strong> amplificações (HER2, MYC, EGFR), deleções, translocações (BCR-ABL1, ALK).<br><br>
+      <em>Clinicamente:</em> FISH HER2 é o gold standard para confirmar amplificação em cancro da mama e gástrico antes de trastuzumab. ALK FISH confirma fusão EML4-ALK antes de crizotinib.</p>
+    </div>
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">IHQ — IMUNOHISTOQUÍMICA</div>
+      <h3 class="highlight">ANTICORPOS NO TECIDO</h3>
+      <p>Anticorpos específicos ligam-se à proteína de interesse em cortes histológicos → revelados por reacção enzimática (DAB = castanho) ou fluorescência.<br><br>
+      <strong class="highlight">Exemplos cruciais:</strong><br>
+      • HER2 3+ (IHQ) → amplificação → trastuzumab<br>
+      • p53 acumulação → mutação TP53<br>
+      • Perda MLH1/MSH2/MSH6/PMS2 → MSI-H → pembrolizumab<br>
+      • Ki-67 → índice de proliferação<br>
+      • PD-L1 → eligibilidade para anti-PD-1/PD-L1</p>
+    </div>
+    <div class="panel panel-green reveal">
+      <div class="panel-tag tag-green">PET-CT — FDG</div>
+      <h3 class="highlight-green">VISUALIZAR O METABOLISMO TUMORAL</h3>
+      <p><span class="highlight-green">PET</span> = Positron Emission Tomography.<br>
+      <span class="highlight">FDG</span> = 18F-Fluorodesoxiglicose — análogo da glicose marcado com ¹⁸F.<br><br>
+      Células tumorais (efeito Warburg) consomem muito mais glicose → acumulam FDG → emitem positrões → aniquilação → 2 fotões gama a 511 keV → detectados.<br><br>
+      <strong class="highlight-red">Usos:</strong> estadiamento, avaliação de resposta terapêutica, detecção de recidiva, guia de biópsia.<br>
+      <em>Limitação:</em> falsos positivos (inflamação!) e falsos negativos (tumores de baixo grau, <2cm).</p>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== CAPÍTULO 8 ===================== -->
+<section class="chapter" id="cap8">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="VIII" style="border-left-color:var(--neon-green);">
+      <div class="chapter-num" style="color:var(--neon-green)">08</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-green">TERAPÊUTICA MOLECULAR</span></h2>
+        <p>TARGETED THERAPY · IMUNOTERAPIA · SYNTHETIC LETHALITY · CAR-T</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w">
+    <div class="dialogue dialogue-green reveal">
+      <div class="speaker highlight-green">💊 TERAPÊUTICA:</div>
+      <p>"A era moderna da oncologia não é 'matar tudo que divide rapidamente' — é conhecer O TEU tumor, as SUAS mutações, as SUAS vias, e atacar especificamente O QUE o distingue da célula normal. Precisão cirúrgica molecular."</p>
+    </div>
+  </div>
+
+  <!-- INIBIDORES TIROSINA-CINASE -->
+  <div class="max-w" style="padding:0 1rem; margin-bottom:2rem;">
+    <div class="panel reveal">
+      <div class="panel-tag tag-cyan">TKIs — TYROSINE KINASE INHIBITORS (Inibidores de Tirosina-Cinase)</div>
+      <h3 class="highlight" style="font-family:'Bangers',cursive; font-size:2rem; letter-spacing:0.05em;">GERAÇÃO POR GERAÇÃO</h3>
+      <p style="margin-bottom:1rem;">Os TKIs competem com o ATP pelo sítio catalítico das cinases → bloqueiam a fosforilação → desligam o sinal. A resistência emerge por novas mutações no sítio de ligação ou activação de vias alternativas → necessidade de TKIs de geração seguinte.</p>
+      <table class="mut-table">
+        <tr><th>ALVO</th><th>1ª GER.</th><th>2ª GER.</th><th>3ª GER.</th><th>RESISTÊNCIA</th></tr>
+        <tr>
+          <td><span class="pill pill-cyan">EGFR NSCLC</span></td>
+          <td>Gefitinib, Erlotinib</td>
+          <td>Afatinib, Dacomitinib</td>
+          <td>Osimertinib (T790M)</td>
+          <td>T790M → C797S → 4ª ger. investigação</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-orange">BCR-ABL LMC</span></td>
+          <td>Imatinib</td>
+          <td>Nilotinib, Dasatinib, Bosutinib</td>
+          <td>Ponatinib (T315I)</td>
+          <td>T315I "gatekeeper" → asciminib (STAMP)</td>
+        </tr>
+        <tr>
+          <td><span class="pill pill-pink">ALK NSCLC</span></td>
+          <td>Crizotinib</td>
+          <td>Alectinib, Ceritinib, Brigatinib</td>
+          <td>Lorlatinib</td>
+          <td>G1202R, resistência CNS</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- IMUNOTERAPIA -->
+  <div class="panel-grid panel-2col max-w">
+    <div class="panel panel-pink reveal">
+      <div class="panel-tag tag-pink">CHECKPOINT INHIBITORS — ANTI-PD-1/PD-L1/CTLA-4</div>
+      <h3 class="highlight-pink">LIBERTAR O SISTEMA IMUNE</h3>
+      <p>As células tumorais expressam <span class="highlight-pink">PD-L1</span> (Programmed Death Ligand-1) → liga-se a PD-1 no linfócito T → "freio imune" → o linfócito T fica "exausto" e não mata o tumor.<br><br>
+      <strong class="highlight-green">Anti-PD-1:</strong> Pembrolizumab (Keytruda®), Nivolumab (Opdivo®) — bloqueiam o eixo PD-1/PD-L1 → T volta a atacar.<br>
+      <strong class="highlight-green">Anti-PD-L1:</strong> Atezolizumab, Durvalumab, Avelumab.<br>
+      <strong class="highlight-green">Anti-CTLA-4:</strong> Ipilimumab (Yervoy®) — outro checkpoint.<br><br>
+      <strong class="highlight">Biomarcadores de resposta:</strong> PD-L1 ≥50% (NSCLC), MSI-H (pembrolizumab tumor-agnóstico), TMB-H (≥10 mut/Mb), dMMR.</p>
+    </div>
+    <div class="panel panel-purple reveal">
+      <div class="panel-tag tag-purple">CAR-T CELLS</div>
+      <h3 class="highlight-purple">LINFÓCITOS REDESENHADOS</h3>
+      <p><span class="highlight-purple">CAR</span> = Chimeric Antigen Receptor (Receptor Quimérico de Antigénio).<br><br>
+      Processo: extrair T do doente → transduzir com gene do CAR (anticorpo sintético que reconhece antigénio tumoral, ex: CD19, BCMA) → expandir in vitro → reinfundir → CAR-T reconhece e mata célula tumoral com especificidade.<br><br>
+      <strong class="highlight-green">Aprovados:</strong><br>
+      • <span class="highlight">Tisagenlecleucel (Kymriah®)</span> — LLA B CD19+ pediatrica, LDGCB<br>
+      • <span class="highlight">Axicabtagene (Yescarta®)</span> — LDGCB, FL<br>
+      • <span class="highlight">Idecabtagene (Abecma®)</span> — Mieloma múltiplo BCMA+<br><br>
+      <strong class="highlight-red">Toxicidades:</strong> CRS (Síndrome de Libertação de Citocinas) → tocilizumab; neurotoxicidade (ICANS).</p>
+    </div>
+  </div>
+
+  <!-- QUADRO SÍNTESE TERAPÊUTICO -->
+  <div class="max-w" style="padding:0 1rem; margin-bottom:2rem;">
+    <div class="info-box info-box-green reveal">
+      <h4 style="color:var(--neon-green);">🧬 PRINCIPIO DA MEDICINA DE PRECISÃO — O FLUXO COMPLETO</h4>
+      <div class="enzyme-diagram" style="flex-wrap:wrap; gap:0.3rem; margin-top:0.5rem;">
+        <div class="enz-box" style="font-size:0.75rem; min-width:80px;">Biópsia<br>tumoral</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="font-size:0.75rem; min-width:80px;">IHQ +<br>FISH</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="font-size:0.75rem; min-width:80px;">NGS<br>painel</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="background:rgba(0,255,136,0.15); border-color:var(--neon-green); color:var(--neon-green); font-size:0.75rem; min-width:100px;">Mutação<br>accionável?</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="background:rgba(0,255,136,0.3); border-color:var(--neon-green); color:var(--neon-green); font-size:0.75rem; min-width:90px;">Terapia<br>alvo</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box" style="font-size:0.75rem; min-width:80px;">ctDNA<br>monitorização</div>
+        <div class="enz-arrow">→</div>
+        <div class="enz-box enz-mutated" style="font-size:0.75rem; min-width:80px;">Resistência?<br>→ rebiópsia</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-sep"></div>
+
+<!-- ===================== QUIZ ===================== -->
+<section class="chapter" id="quiz">
+  <div class="max-w">
+    <div class="chapter-header" data-chapter="Q" style="border-left-color:var(--neon-yellow);">
+      <div class="chapter-num" style="color:var(--neon-yellow)">Q</div>
+      <div class="chapter-title-wrap">
+        <h2><span class="highlight-yellow">QUIZ INTERACTIVO</span></h2>
+        <p>TESTA O TEU CONHECIMENTO · NÍVEL MEDICINA</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-box max-w reveal">
+    <h4>❓ QUESTÃO 1</h4>
+    <p style="margin-bottom:1rem;">Um doente com cancro do pulmão não-pequenas células (NSCLC) apresenta deleção do exão 19 no gene EGFR. Qual o mecanismo molecular desta mutação e a terapêutica de 1ª linha?</p>
+    <button class="quiz-option" onclick="checkQuiz(this, false)">A) Frameshift → truncação de EGFR → quimioterapia padrão</button>
+    <button class="quiz-option" onclick="checkQuiz(this, true)">B) In-frame deletion → EGFR constitutivamente activo → osimertinib (3ª geração TKI)</button>
+    <button class="quiz-option" onclick="checkQuiz(this, false)">C) Missense → perda de função → immunoterapia com pembrolizumab</button>
+    <button class="quiz-option" onclick="checkQuiz(this, false)">D) Amplificação → super-expressão → trastuzumab</button>
+    <div class="quiz-feedback" id="fb1"></div>
+  </div>
+
+  <div class="quiz-box max-w reveal" style="border-color:var(--neon-cyan);">
+    <h4 style="color:var(--neon-cyan)">❓ QUESTÃO 2</h4>
+    <p style="margin-bottom:1rem;">A Hipótese dos 2 Hits de Knudson explica a diferença entre cancro hereditário e esporádico. Qual das seguintes afirmações é CORRECTA?</p>
+    <button class="quiz-option" onclick="checkQuiz2(this, false)" style="border-color:rgba(0,245,255,0.2);">A) No cancro hereditário, ambos os hits são somáticos; no esporádico, 1 hit é germinal</button>
+    <button class="quiz-option" onclick="checkQuiz2(this, true)" style="border-color:rgba(0,245,255,0.2);">B) No hereditário, 1 hit é germinal (nasce mutado); o 2º hit somático basta para cancro → aparece mais precocemente e é mais frequente que o esporádico</button>
+    <button class="quiz-option" onclick="checkQuiz2(this, false)" style="border-color:rgba(0,245,255,0.2);">C) Os oncogenes precisam dos 2 hits; os supressores só precisam de 1</button>
+    <button class="quiz-option" onclick="checkQuiz2(this, false)" style="border-color:rgba(0,245,255,0.2);">D) Aplica-se a oncogenes, não a genes supressores</button>
+    <div class="quiz-feedback" id="fb2"></div>
+  </div>
+
+  <div class="quiz-box max-w reveal" style="border-color:var(--neon-pink);">
+    <h4 style="color:var(--neon-pink)">❓ QUESTÃO 3</h4>
+    <p style="margin-bottom:1rem;">Uma doente com cancro da mama BRCA1+ é candidata a inibidores de PARP. Qual o princípio molecular desta escolha?</p>
+    <button class="quiz-option" onclick="checkQuiz3(this, false)" style="border-color:rgba(255,0,200,0.2);">A) BRCA1 amplifica PARP → inibir PARP reduz a proliferação directamente</button>
+    <button class="quiz-option" onclick="checkQuiz3(this, false)" style="border-color:rgba(255,0,200,0.2);">B) Os inibidores PARP bloqueiam a telomerase, induzindo senescência</button>
+    <button class="quiz-option" onclick="checkQuiz3(this, true)" style="border-color:rgba(255,0,200,0.2);">C) Letalidade sintética: BRCA1- já perde a reparação HR; inibir PARP bloqueia BER → acumulação letal de quebras de cadeia dupla especificamente nas células tumorais</button>
+    <button class="quiz-option" onclick="checkQuiz3(this, false)" style="border-color:rgba(255,0,200,0.2);">D) PARP activa BRCA1 → inibir PARP inibe a via de reparação tumoral</button>
+    <div class="quiz-feedback" id="fb3"></div>
+  </div>
+
+</section>
+
+<!-- RECAP VISUAL -->
+<section class="chapter" style="padding-top:2rem;">
+  <div class="max-w">
+    <div class="chapter-header" style="border-left-color:var(--neon-cyan);" data-chapter="">
+      <div class="chapter-num" style="font-size:2rem; color:var(--neon-cyan)">∑</div>
+      <div class="chapter-title-wrap">
+        <h2>SUMÁRIO VISUAL — A CRONOLOGIA DO CANCRO</h2>
+        <p>DO GENE NORMAL À CÉLULA MALIGNA</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline max-w">
+    <div class="tl-item reveal">
+      <div class="tl-content">
+        <div class="tl-dot" style="background:var(--neon-cyan);"></div>
+        <span class="pill pill-cyan">PASSO 1</span>
+        <h3 class="highlight" style="margin-top:0.5rem;">MUTAÇÃO INICIADORA</h3>
+        <p>1ª mutação — geralmente em proto-oncogene ou supressor tumoral de alta importância (TP53, APC, KRAS). A célula ainda é controlada pelo resto do genoma.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-content" style="border-color:rgba(255,102,0,0.3);">
+        <div class="tl-dot" style="background:var(--neon-orange);"></div>
+        <span class="pill pill-orange">PASSO 2</span>
+        <h3 class="highlight-orange" style="margin-top:0.5rem;">PROMOÇÃO E EXPANSÃO CLONAL</h3>
+        <p>A célula mutada tem vantagem proliferativa. Divide mais e mais rápido. Acumula mais mutações (instabilidade genómica). Selecção darwiniana a nível celular.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-content" style="border-color:rgba(255,0,200,0.3);">
+        <div class="tl-dot" style="background:var(--neon-pink);"></div>
+        <span class="pill pill-pink">PASSO 3</span>
+        <h3 class="highlight-pink" style="margin-top:0.5rem;">PROGRESSÃO — OS 10 HALLMARKS</h3>
+        <p>Evasão à apoptose, auto-suficiência em sinais de crescimento, insensibilidade a anti-crescimento, invasão, angiogénese (VEGF), metastização, reprogramação metabólica, evasão imune, inflamação tumoral, instabilidade genómica. (Hanahan & Weinberg, 2000 + 2022)</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-content" style="border-color:rgba(255,34,68,0.3);">
+        <div class="tl-dot" style="background:var(--neon-red);"></div>
+        <span class="pill pill-red">PASSO 4</span>
+        <h3 class="highlight-red" style="margin-top:0.5rem;">INVASÃO E METASTIZAÇÃO</h3>
+        <p>EMT (Epithelial-Mesenchymal Transition) → perda de E-caderina → células adquirem fenótipo mesenquimatoso → degradam MEC (MMPs) → intravasam → sobrevivem na circulação → extravasam → colonizam órgão distante.</p>
+      </div>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-content" style="border-color:rgba(0,255,136,0.3);">
+        <div class="tl-dot" style="background:var(--neon-green);"></div>
+        <span class="pill pill-green">DIAGNÓSTICO + TERAPIA</span>
+        <h3 class="highlight-green" style="margin-top:0.5rem;">MEDICINA DE PRECISÃO</h3>
+        <p>Identificar as mutações específicas → escolher a arma certa → monitorizar com ctDNA → adaptar à resistência. A oncologia nunca mais será a mesma.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">UNIVERSIDADE LICUNGO · 2º ANO DE MEDICINA · 2026</div>
+  <div class="footer-divider"></div>
+  <p class="footer-copy">Genes, Mutações e Enzimas em Tumores · Biologia Molecular do Cancro<br>
+  <span style="color:var(--neon-cyan); font-family:'Share Tech Mono',monospace; font-size:0.7rem;">Criado com rigor científico e paixão pela medicina · DemilMed-UL © 2026</span></p>
+  <div style="margin-top:1.5rem; font-family:'Share Tech Mono',monospace; font-size:0.65rem; color:#334455; letter-spacing:0.1em;">
+    REFERÊNCIAS: Hanahan & Weinberg, Cell 2000/2011/2022 · Vogelstein et al., Science 2013 · Knudson, PNAS 1971 · WHO Classification of Tumours · UpToDate® · ESMO Clinical Practice Guidelines · FDA Approved Oncology Drugs · ClinicalTrials.gov
+  </div>
+</footer>
+
+<script>
+// ============ DNA CANVAS ============
+const canvas = document.getElementById('dna-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+
+let t = 0;
+const nodes = [];
+const colors = ['#00f5ff','#ff00c8','#00ff88','#ff6600','#ffdd00','#cc00ff'];
+
+for(let i = 0; i < 80; i++) {
+  nodes.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    vx: (Math.random()-0.5)*0.4,
+    vy: (Math.random()-0.5)*0.4,
+    r: Math.random()*2+1,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    phase: Math.random()*Math.PI*2
+  });
+}
+
+function drawDNA() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  t += 0.008;
+
+  // DNA helices
+  const cx = canvas.width/2;
+  for(let i = 0; i < canvas.height; i += 3) {
+    const x1 = cx + Math.sin(i/60 + t)*80;
+    const x2 = cx - Math.sin(i/60 + t)*80;
+    const alpha = 0.15 + 0.1*Math.sin(i/30);
+
+    ctx.beginPath();
+    ctx.arc(x1, i, 2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,245,255,${alpha})`;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x2, i, 2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,0,200,${alpha})`;
+    ctx.fill();
+
+    if(i % 30 < 3) {
+      ctx.beginPath();
+      ctx.moveTo(x1, i);
+      ctx.lineTo(x2, i);
+      ctx.strokeStyle = `rgba(255,221,0,${alpha*0.8})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+    }
+  }
+
+  // Floating nodes
+  nodes.forEach(n => {
+    n.x += n.vx;
+    n.y += n.vy;
+    if(n.x<0||n.x>canvas.width) n.vx*=-1;
+    if(n.y<0||n.y>canvas.height) n.vy*=-1;
+    const glow = (Math.sin(t*2+n.phase)+1)*0.5;
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r*(1+glow*0.5), 0, Math.PI*2);
+    ctx.fillStyle = n.color;
+    ctx.globalAlpha = 0.3+glow*0.3;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  requestAnimationFrame(drawDNA);
+}
+drawDNA();
+
+// ============ PARTICLES ============
+const pc = document.getElementById('particles');
+for(let i=0;i<20;i++){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const s = Math.random()*3+1;
+  const c = colors[Math.floor(Math.random()*colors.length)];
+  p.style.cssText = `width:${s}px;height:${s}px;background:${c};left:${Math.random()*100}%;animation-duration:${10+Math.random()*20}s;animation-delay:${Math.random()*15}s;`;
+  pc.appendChild(p);
+}
+
+// ============ PROGRESS BAR ============
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const p = (window.scrollY/h)*100;
+  document.getElementById('progress-bar').style.width = p+'%';
+});
+
+// ============ SCROLL REVEAL ============
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// ============ NAV ACTIVE ============
+const sections = document.querySelectorAll('section[id]');
+const navItems = document.querySelectorAll('.nav-item');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if(window.scrollY >= s.offsetTop - 200) cur = s.id; });
+  navItems.forEach(n => { n.classList.toggle('active', n.getAttribute('href')==='#'+cur); });
+});
+
+// ============ ACCORDION ============
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('open');
+  document.querySelectorAll('.accordion-header.open').forEach(h => {
+    h.classList.remove('open');
+    h.nextElementSibling.classList.remove('open');
+  });
+  if(!isOpen) {
+    header.classList.add('open');
+    body.classList.add('open');
+  }
+}
+
+// ============ QUIZ ============
+function checkQuiz(btn, correct) {
+  const parent = btn.closest('.quiz-box');
+  const fb = parent.querySelector('.quiz-feedback');
+  parent.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+  if(correct) {
+    btn.classList.add('correct');
+    fb.style.cssText = 'display:block;background:rgba(0,255,136,0.1);border:1px solid #00ff88;color:#00ff88;';
+    fb.textContent = '✅ CORRECTO! A deleção do exão 19 é uma in-frame deletion de 15-45pb → domínio cinase com conformação activa constitutiva → osimertinib (3ª geração, cruza BHE) é a 1ª linha preferida em 2026.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.cssText = 'display:block;background:rgba(255,34,68,0.1);border:1px solid #ff2244;color:#ff2244;';
+    fb.textContent = '❌ Incorrecto. Revê o Capítulo 2 (Indels) e o Capítulo 8 (TKIs de 3ª geração). A resposta correcta é B.';
+  }
+}
+function checkQuiz2(btn, correct) {
+  const parent = btn.closest('.quiz-box');
+  const fb = parent.querySelector('.quiz-feedback');
+  parent.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+  if(correct) {
+    btn.classList.add('correct');
+    fb.style.cssText = 'display:block;background:rgba(0,255,136,0.1);border:1px solid #00ff88;color:#00ff88;';
+    fb.textContent = '✅ CORRECTO! No cancro hereditário (ex: retinoblastoma), o 1º hit é germinal → todas as células já nascem com 1 alelo RB1 mutado. Basta um evento somático no 2º alelo para desenvolver tumor. Por isso o cancro aparece mais cedo, é bilateral e multifocal.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.cssText = 'display:block;background:rgba(255,34,68,0.1);border:1px solid #ff2244;color:#ff2244;';
+    fb.textContent = '❌ Incorrecto. Lembra: a hipótese dos 2 hits aplica-se a GENES SUPRESSORES TUMORAIS (efeito recessivo). Os oncogenes funcionam com apenas 1 hit (efeito dominante).';
+  }
+}
+function checkQuiz3(btn, correct) {
+  const parent = btn.closest('.quiz-box');
+  const fb = parent.querySelector('.quiz-feedback');
+  parent.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+  if(correct) {
+    btn.classList.add('correct');
+    fb.style.cssText = 'display:block;background:rgba(0,255,136,0.1);border:1px solid #00ff88;color:#00ff88;';
+    fb.textContent = '✅ CORRECTO! Letalidade Sintética: BRCA1- → via HR comprometida. PARP inibido → via BER comprometida. Dois sistemas de reparação em falta simultaneamente = acumulação catastrófica de quebras de cadeia dupla → apoptose seletiva da célula tumoral. As células normais (BRCA1+) sobrevivem com HR intacto.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.cssText = 'display:block;background:rgba(255,34,68,0.1);border:1px solid #ff2244;color:#ff2244;';
+    fb.textContent = '❌ Incorrecto. Revê o conceito de Letalidade Sintética no Capítulo 5. É um dos conceitos mais elegantes e importantes da farmacologia oncológica moderna.';
+  }
+}
+
+// ============ FLIP CARDS TOUCH ============
+document.querySelectorAll('.flip-card').forEach(card => {
+  card.addEventListener('click', () => card.classList.toggle('flipped'));
+});
+</script>
+</body>
+</html>

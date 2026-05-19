@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DISPLASIA — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --panel: #12121e;
+    --panel2: #1a1a2e;
+    --accent1: #ff3c6e;
+    --accent2: #00e5ff;
+    --accent3: #ffe066;
+    --accent4: #a259ff;
+    --green: #39ff14;
+    --text: #e8e8f0;
+    --muted: #7a7a99;
+    --border: #2a2a44;
+    --glow1: 0 0 20px #ff3c6e88;
+    --glow2: 0 0 20px #00e5ff88;
+    --glow3: 0 0 20px #ffe06688;
+    --glow4: 0 0 20px #a259ff88;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent4); border-radius: 3px; }
+
+  /* CANVAS FUNDO */
+  #starCanvas {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 0; opacity: 0.3;
+  }
+
+  /* WRAPPER GERAL */
+  .wrapper { position: relative; z-index: 1; }
+
+  /* =================== HERO =================== */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 30%, #1a003388 0%, transparent 70%);
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    letter-spacing: 4px;
+    border: 1px solid var(--accent2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 30px;
+    margin-bottom: 1.5rem;
+    animation: pulse-border 2s infinite;
+    display: inline-block;
+  }
+  @keyframes pulse-border {
+    0%,100%{ box-shadow: 0 0 8px #00e5ff44; }
+    50%{ box-shadow: 0 0 24px #00e5ffaa; }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    letter-spacing: 6px;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent1), var(--accent4), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px #ff3c6e44);
+    animation: title-float 3s ease-in-out infinite;
+  }
+  @keyframes title-float {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-10px); }
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--accent3);
+    margin: 0.8rem 0 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .hero-dna {
+    margin: 1.5rem auto;
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    height: 120px;
+  }
+
+  .scroll-down {
+    margin-top: 2rem;
+    color: var(--accent2);
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    animation: bounce 1.5s infinite;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  @keyframes bounce {
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(8px); }
+  }
+
+  /* =================== CAPÍTULO =================== */
+  .chapter-header {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1.5rem 2rem 0.5rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .chapter-num {
+    font-family: 'Bangers', cursive;
+    font-size: 4rem;
+    line-height: 1;
+    opacity: 0.15;
+    color: var(--accent1);
+  }
+  .chapter-title-block { flex:1; }
+  .chapter-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    display: block;
+  }
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  /* =================== MANGA PANEL GRID =================== */
+  .manga-grid {
+    display: grid;
+    gap: 1.2rem;
+    padding: 1.5rem 1.5rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .manga-grid-2 { grid-template-columns: 1fr 1fr; }
+  .manga-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .manga-grid-asym { grid-template-columns: 2fr 1fr; }
+  .manga-grid-asym-r { grid-template-columns: 1fr 2fr; }
+  .manga-grid-1 { grid-template-columns: 1fr; }
+
+  @media(max-width: 700px){
+    .manga-grid-2, .manga-grid-3, .manga-grid-asym, .manga-grid-asym-r {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 1.4rem 1.6rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .panel:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px #00000066;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute; top:0; left:0; right:0; height:3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent4), var(--accent2));
+  }
+
+  .panel.red::before { background: var(--accent1); }
+  .panel.blue::before { background: var(--accent2); }
+  .panel.yellow::before { background: var(--accent3); }
+  .panel.purple::before { background: var(--accent4); }
+  .panel.green::before { background: var(--green); }
+
+  .panel-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+
+  .panel h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.7rem;
+    color: var(--accent2);
+  }
+  .panel.red h3 { color: var(--accent1); }
+  .panel.yellow h3 { color: var(--accent3); }
+  .panel.purple h3 { color: var(--accent4); }
+  .panel.green h3 { color: var(--green); }
+
+  .panel p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .highlight {
+    color: var(--accent3);
+    font-weight: 800;
+  }
+  .highlight-r { color: var(--accent1); font-weight: 800; }
+  .highlight-b { color: var(--accent2); font-weight: 800; }
+  .highlight-p { color: var(--accent4); font-weight: 800; }
+  .highlight-g { color: var(--green); font-weight: 800; }
+
+  .speech-bubble {
+    background: var(--panel2);
+    border: 2px solid var(--accent3);
+    border-radius: 16px 16px 16px 0;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    position: relative;
+    font-style: italic;
+    color: var(--accent3);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute; bottom:-14px; left:20px;
+    border: 7px solid transparent;
+    border-top-color: var(--accent3);
+  }
+  .speech-bubble.right {
+    border-radius: 16px 16px 0 16px;
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+  .speech-bubble.right::after {
+    left:auto; right:20px;
+    border-top-color: var(--accent2);
+  }
+
+  /* =================== MOLECULA SVG =================== */
+  .cell-canvas {
+    width: 100%; height: 200px;
+    display: block;
+    margin: 1rem 0;
+  }
+
+  /* =================== TIMELINE =================== */
+  .timeline {
+    position: relative;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .timeline::before {
+    content:'';
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    top:0; bottom:0; width: 3px;
+    background: linear-gradient(180deg, var(--accent1), var(--accent4), var(--accent2));
+  }
+  @media(max-width:600px){
+    .timeline::before { left: 24px; }
+  }
+
+  .tl-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+  .tl-item:nth-child(odd) { flex-direction: row; }
+  .tl-item:nth-child(even) { flex-direction: row-reverse; }
+  @media(max-width:600px){
+    .tl-item, .tl-item:nth-child(even) { flex-direction: row; padding-left: 60px; }
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--panel2);
+    border: 3px solid var(--accent1);
+    display: flex; align-items:center; justify-content:center;
+    font-family:'Bangers',cursive;
+    font-size: 1.1rem;
+    color: var(--accent1);
+    z-index: 2;
+    box-shadow: var(--glow1);
+  }
+  .tl-item:nth-child(2) .tl-dot { border-color: var(--accent3); color: var(--accent3); box-shadow: var(--glow3); }
+  .tl-item:nth-child(3) .tl-dot { border-color: var(--accent4); color: var(--accent4); box-shadow: var(--glow4); }
+  .tl-item:nth-child(4) .tl-dot { border-color: var(--accent2); color: var(--accent2); box-shadow: var(--glow2); }
+  .tl-item:nth-child(5) .tl-dot { border-color: var(--green); color: var(--green); box-shadow: 0 0 20px #39ff1488; }
+
+  @media(max-width:600px){
+    .tl-dot { left:24px; }
+  }
+
+  .tl-content {
+    width: calc(50% - 40px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    position: relative;
+  }
+  .tl-item:nth-child(odd) .tl-content { margin-right: auto; }
+  .tl-item:nth-child(even) .tl-content { margin-left: auto; }
+  @media(max-width:600px){
+    .tl-content { width: 100%; }
+    .tl-item:nth-child(even) .tl-content { margin-left:0; }
+  }
+
+  .tl-content h4 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+    color: var(--accent2);
+  }
+  .tl-content p { font-size: 0.88rem; line-height: 1.6; color: var(--muted); }
+
+  /* =================== INTERACTIVE SLIDER =================== */
+  .interactive-section {
+    padding: 2rem 1.5rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .slider-card {
+    background: var(--panel);
+    border: 2px solid var(--accent4);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--glow4);
+  }
+
+  .slider-card h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: var(--accent4);
+    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+  }
+
+  .slider-group { margin: 1.5rem 0; }
+  .slider-group label {
+    display: flex; justify-content: space-between;
+    font-size: 0.85rem; font-weight: 700;
+    color: var(--text); margin-bottom: 0.5rem;
+  }
+  .slider-group label span {
+    color: var(--accent3);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%; height: 6px;
+    border-radius: 3px;
+    background: var(--border);
+    outline: none;
+    margin-bottom: 0.5rem;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--accent4);
+    cursor: pointer;
+    box-shadow: var(--glow4);
+    transition: background 0.2s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { background: var(--accent1); }
+
+  .cell-status {
+    background: var(--panel2);
+    border-radius: 10px;
+    padding: 1rem 1.4rem;
+    margin-top: 1rem;
+    border-left: 4px solid var(--accent1);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin: 0.3rem 0.3rem 0.3rem 0;
+  }
+  .badge-normal { background: #39ff1422; color: var(--green); border: 1px solid var(--green); }
+  .badge-mild { background: #ffe06622; color: var(--accent3); border: 1px solid var(--accent3); }
+  .badge-moderate { background: #a259ff22; color: var(--accent4); border: 1px solid var(--accent4); }
+  .badge-severe { background: #ff3c6e22; color: var(--accent1); border: 1px solid var(--accent1); }
+  .badge-carcinoma { background: #ff3c6e44; color: #fff; border: 1px solid var(--accent1); animation: blink-badge 1s infinite; }
+  @keyframes blink-badge { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+  /* =================== QUIZ =================== */
+  .quiz-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem 3rem;
+  }
+
+  .quiz-card {
+    background: var(--panel);
+    border: 2px solid var(--accent3);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--glow3);
+  }
+
+  .quiz-card h4 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    color: var(--accent3);
+    margin-bottom: 1.2rem;
+  }
+
+  .quiz-options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .quiz-btn {
+    background: var(--panel2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1.2rem;
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    font-weight: 600;
+  }
+  .quiz-btn:hover { border-color: var(--accent3); color: var(--accent3); transform: translateX(4px); }
+  .quiz-btn.correct { background: #39ff1422; border-color: var(--green); color: var(--green); }
+  .quiz-btn.wrong { background: #ff3c6e22; border-color: var(--accent1); color: var(--accent1); }
+
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background:#39ff1422; color:var(--green); border:1px solid var(--green); }
+  .quiz-feedback.fail { background:#ff3c6e22; color:var(--accent1); border:1px solid var(--accent1); }
+
+  /* =================== TABELA =================== */
+  .table-wrap { overflow-x:auto; padding: 0.5rem 0; }
+  table { width:100%; border-collapse: collapse; font-size:0.88rem; }
+  th {
+    background: var(--panel2);
+    color: var(--accent2);
+    font-family:'Bangers',cursive;
+    font-size:1rem;
+    letter-spacing:1px;
+    padding: 0.8rem 1rem;
+    text-align:left;
+    border-bottom:2px solid var(--accent2);
+  }
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+    vertical-align:middle;
+  }
+  tr:hover td { background: #ffffff08; }
+  .dot-grade {
+    display:inline-block;
+    width:12px; height:12px;
+    border-radius:50%;
+    margin-right:6px;
+    vertical-align:middle;
+  }
+
+  /* =================== DIVISOR =================== */
+  .divider {
+    text-align:center;
+    padding: 1.5rem;
+    font-family:'Bangers',cursive;
+    font-size:1.5rem;
+    letter-spacing:8px;
+    color:var(--border);
+    position:relative;
+  }
+  .divider::before, .divider::after {
+    content:'';
+    position:absolute;
+    top:50%; height:1px;
+    width:calc(50% - 120px);
+    background: var(--border);
+  }
+  .divider::before { left:0; }
+  .divider::after { right:0; }
+
+  /* =================== CHAVE INFORMATIVA =================== */
+  .info-key {
+    display: flex; flex-wrap:wrap; gap:0.6rem;
+    padding: 1rem 1.5rem;
+    max-width:1100px; margin:0 auto;
+    justify-content:center;
+  }
+  .key-item {
+    display:flex; align-items:center; gap:0.4rem;
+    font-size:0.8rem; color:var(--muted);
+  }
+  .key-dot { width:10px; height:10px; border-radius:50%; }
+
+  /* =================== PERSONAGEM =================== */
+  .char-row {
+    display:flex; align-items:flex-start; gap:1.5rem;
+    flex-wrap:wrap;
+    padding:0 0 1rem;
+  }
+  .char-avatar {
+    flex-shrink:0;
+    width:90px; height:90px;
+    border-radius:50%;
+    border:3px solid var(--accent4);
+    display:flex; align-items:center; justify-content:center;
+    font-size:2.8rem;
+    background: var(--panel2);
+    box-shadow: var(--glow4);
+    animation: char-float 3s ease-in-out infinite;
+  }
+  @keyframes char-float {
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-6px);}
+  }
+  .char-text { flex:1; min-width:200px; }
+  .char-name {
+    font-family:'Bangers',cursive;
+    font-size:1.4rem;
+    color:var(--accent4);
+    margin-bottom:0.3rem;
+  }
+
+  /* =================== SECÇÃO FINAL =================== */
+  .footer {
+    background: var(--panel);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    margin-top: 4rem;
+  }
+  .footer-logo {
+    font-family:'Bangers',cursive;
+    font-size:2rem;
+    letter-spacing:4px;
+    background: linear-gradient(135deg,var(--accent1),var(--accent4));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:0.5rem;
+  }
+  .footer p { color:var(--muted); font-size:0.85rem; line-height:1.8; }
+  .footer-year {
+    font-family:'Share Tech Mono',monospace;
+    color:var(--accent2);
+    font-size:0.9rem;
+    margin-top:0.5rem;
+  }
+
+  /* =================== NAV =================== */
+  .topnav {
+    position: fixed; top:0; left:0; right:0;
+    background: #0a0a12cc;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    display: flex; align-items:center; justify-content:space-between;
+    padding: 0.6rem 1.5rem;
+  }
+  .nav-logo {
+    font-family:'Bangers',cursive;
+    font-size:1.2rem;
+    color:var(--accent1);
+    letter-spacing:2px;
+  }
+  .nav-links {
+    display:flex; gap:1.2rem; list-style:none;
+  }
+  .nav-links a {
+    font-size:0.78rem; letter-spacing:1px;
+    color:var(--muted); text-decoration:none;
+    font-family:'Share Tech Mono',monospace;
+    transition:color 0.2s;
+  }
+  .nav-links a:hover { color:var(--accent2); }
+
+  @media(max-width:500px){
+    .nav-links { display:none; }
+  }
+
+  /* =================== PROGRESSO =================== */
+  .progress-bar {
+    position:fixed; top:0; left:0; height:3px;
+    background:linear-gradient(90deg,var(--accent1),var(--accent4),var(--accent2));
+    z-index:200;
+    transition: width 0.1s;
+    width:0%;
+  }
+
+  /* =================== MOLECULAS =================== */
+  .molecule-canvas-wrapper {
+    width:100%; overflow:hidden;
+    border-radius:10px;
+    background:var(--panel2);
+    margin:0.5rem 0;
+    position:relative;
+    height:220px;
+  }
+
+  /* =================== TIPO BOXES =================== */
+  .type-grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:1rem;
+    padding:0.5rem 0;
+  }
+  .type-box {
+    background:var(--panel2);
+    border-radius:12px;
+    padding:1.2rem;
+    border:1px solid var(--border);
+    transition:all 0.2s;
+    cursor:pointer;
+  }
+  .type-box:hover {
+    transform:scale(1.03);
+    border-color:var(--accent4);
+    box-shadow:var(--glow4);
+  }
+  .type-box .type-icon { font-size:2rem; margin-bottom:0.5rem; display:block; }
+  .type-box h4 {
+    font-family:'Bangers',cursive;
+    font-size:1.1rem;
+    color:var(--accent4);
+    margin-bottom:0.3rem;
+  }
+  .type-box p { font-size:0.82rem; color:var(--muted); line-height:1.5; }
+
+  /* =================== EXPAND CARD =================== */
+  .expand-card {
+    background:var(--panel2);
+    border-radius:12px;
+    border:1px solid var(--border);
+    margin-bottom:0.8rem;
+    overflow:hidden;
+    transition:border-color 0.2s;
+  }
+  .expand-card.open { border-color:var(--accent2); }
+  .expand-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1rem 1.3rem;
+    cursor:pointer;
+    user-select:none;
+  }
+  .expand-header:hover { background:#ffffff06; }
+  .expand-header h4 {
+    font-family:'Bangers',cursive;
+    font-size:1.2rem;
+    color:var(--accent2);
+    letter-spacing:1px;
+  }
+  .expand-arrow {
+    font-size:1.4rem;
+    color:var(--accent2);
+    transition:transform 0.3s;
+  }
+  .expand-card.open .expand-arrow { transform:rotate(180deg); }
+  .expand-body {
+    max-height:0; overflow:hidden;
+    transition:max-height 0.4s ease;
+    padding:0 1.3rem;
+  }
+  .expand-card.open .expand-body { max-height:600px; padding:0 1.3rem 1.2rem; }
+
+  /* =================== SCORE =================== */
+  #score-display {
+    text-align:center;
+    font-family:'Bangers',cursive;
+    font-size:2rem;
+    color:var(--accent3);
+    padding:1rem;
+  }
+
+  /* =================== SCROLL REVEAL =================== */
+  .reveal {
+    opacity:0; transform:translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Canvas Fundo -->
+<canvas id="starCanvas"></canvas>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-logo">DISPLASIA</div>
+  <ul class="nav-links">
+    <li><a href="#intro">INÍCIO</a></li>
+    <li><a href="#conceito">CONCEITO</a></li>
+    <li><a href="#tipos">TIPOS</a></li>
+    <li><a href="#cronologia">CRONOLOGIA</a></li>
+    <li><a href="#interativo">LABORATÓRIO</a></li>
+    <li><a href="#quiz">QUIZ</a></li>
+  </ul>
+</nav>
+
+<div class="wrapper" style="padding-top:56px;">
+
+<!-- =================== HERO =================== -->
+<section class="hero" id="intro">
+  <span class="hero-badge">▶ CAPÍTULO ZERO — DemilMed-UL 2026</span>
+  <h1 class="hero-title">DISPLASIA</h1>
+  <div class="hero-sub">A CÉLULA QUE PERDEU O RUMO</div>
+  <p class="hero-desc">
+    Uma viagem visual ao coração do crescimento celular anormal. 
+    Aprende o que é, por que acontece, e quando se torna perigoso — 
+    numa história contada através das próprias células.
+  </p>
+
+  <!-- DNA SVG animado -->
+  <div class="hero-dna">
+    <svg width="100%" height="120" viewBox="0 0 500 120">
+      <!-- Hélice DNA animada -->
+      <g id="dna-group">
+        <!-- Strand 1 -->
+        <path id="s1" d="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C475,40 490,50 500,60"
+              fill="none" stroke="#ff3c6e" stroke-width="3" opacity="0.8">
+          <animate attributeName="d" dur="3s" repeatCount="indefinite"
+            values="M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C475,40 490,50 500,60;
+                    M0,60 C50,100 100,20 150,60 C200,100 250,20 300,60 C350,100 400,20 450,60 C475,80 490,70 500,60;
+                    M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C475,40 490,50 500,60"/>
+        </path>
+        <!-- Strand 2 -->
+        <path d="M0,60 C50,100 100,20 150,60 C200,100 250,20 300,60 C350,100 400,20 450,60 C475,80 490,70 500,60"
+              fill="none" stroke="#00e5ff" stroke-width="3" opacity="0.8">
+          <animate attributeName="d" dur="3s" repeatCount="indefinite"
+            values="M0,60 C50,100 100,20 150,60 C200,100 250,20 300,60 C350,100 400,20 450,60 C475,80 490,70 500,60;
+                    M0,60 C50,20 100,100 150,60 C200,20 250,100 300,60 C350,20 400,100 450,60 C475,40 490,50 500,60;
+                    M0,60 C50,100 100,20 150,60 C200,100 250,20 300,60 C350,100 400,20 450,60 C475,80 490,70 500,60"/>
+        </path>
+        <!-- Bases (pontes) -->
+        <g opacity="0.5">
+          <line x1="37" y1="50" x2="37" y2="70" stroke="#ffe066" stroke-width="2"/>
+          <line x1="112" y1="50" x2="112" y2="70" stroke="#ffe066" stroke-width="2"/>
+          <line x1="187" y1="50" x2="187" y2="70" stroke="#ffe066" stroke-width="2"/>
+          <line x1="262" y1="50" x2="262" y2="70" stroke="#ffe066" stroke-width="2"/>
+          <line x1="337" y1="50" x2="337" y2="70" stroke="#ffe066" stroke-width="2"/>
+          <line x1="412" y1="50" x2="412" y2="70" stroke="#ffe066" stroke-width="2"/>
+        </g>
+        <!-- Células displásicas flutuantes -->
+        <circle cx="80" cy="25" r="6" fill="#a259ff" opacity="0.7">
+          <animate attributeName="cy" values="25;15;25" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="6;8;6" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="220" cy="95" r="8" fill="#ff3c6e" opacity="0.7">
+          <animate attributeName="cy" values="95;105;95" dur="2.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="8;5;8" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="380" cy="20" r="5" fill="#00e5ff" opacity="0.7">
+          <animate attributeName="cy" values="20;30;20" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <text x="245" y="14" text-anchor="middle" fill="#ffe066" font-size="10" font-family="Bangers,cursive" opacity="0.6">DISPLASIA?</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="scroll-down" onclick="document.getElementById('conceito').scrollIntoView({behavior:'smooth'})">
+    ↓ COMEÇA A JORNADA ↓
+  </div>
+</section>
+
+<!-- =================== CAPÍTULO 1 =================== -->
+<div class="chapter-header reveal" id="conceito">
+  <div class="chapter-num">01</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO UM</span>
+    <div class="chapter-title">O QUE É A DISPLASIA?</div>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-asym reveal">
+  <div class="panel">
+    <span class="panel-label">DEFINIÇÃO BASE</span>
+    <h3>A Célula Rebelde</h3>
+    <p>
+      A palavra <span class="highlight">DIS-PLASIA</span> vem do grego:<br>
+      <span class="highlight-b">DYS</span> = anormal / errado &nbsp;|&nbsp; 
+      <span class="highlight-b">PLASIA</span> = formação / crescimento.<br><br>
+      Displasia é, portanto, um <span class="highlight">crescimento celular anormal</span> —
+      as células mudam de tamanho, forma e organização, mas ainda <em>não invadiram</em> tecidos vizinhos.
+      É como uma cidade onde as casas começam a ser construídas sem regras de urbanismo.
+    </p>
+    <div class="speech-bubble" style="margin-top:1rem;">
+      "Eu ainda estou aqui dentro… mas já não me comporto como as minhas vizinhas."
+      <br><small style="opacity:0.7;display:block;margin-top:0.5rem;">— Célula Displásica 🦠</small>
+    </div>
+  </div>
+  <div class="panel purple" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+    <span class="panel-label">POSIÇÃO NO ESPECTRO</span>
+    <svg width="100%" height="160" viewBox="0 0 220 160">
+      <!-- Seta espectro -->
+      <defs>
+        <linearGradient id="specGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#39ff14"/>
+          <stop offset="40%" style="stop-color:#ffe066"/>
+          <stop offset="70%" style="stop-color:#a259ff"/>
+          <stop offset="100%" style="stop-color:#ff3c6e"/>
+        </linearGradient>
+      </defs>
+      <rect x="10" y="60" width="200" height="14" rx="7" fill="url(#specGrad)" opacity="0.9"/>
+      <polygon points="210,60 220,67 210,74" fill="#ff3c6e"/>
+      <!-- Labels -->
+      <text x="10" y="50" fill="#39ff14" font-size="9" font-family="Bangers,cursive">NORMAL</text>
+      <text x="65" y="50" fill="#ffe066" font-size="9" font-family="Bangers,cursive">DISPLASIA</text>
+      <text x="160" y="50" fill="#ff3c6e" font-size="9" font-family="Bangers,cursive">CANCRO</text>
+      <!-- Indicador displasia -->
+      <circle cx="110" cy="67" r="10" fill="#a259ff" stroke="#fff" stroke-width="2">
+        <animate attributeName="r" values="10;13;10" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="110" y="72" text-anchor="middle" fill="#fff" font-size="8" font-family="Bangers,cursive">DIS</text>
+      <!-- Sub-labels -->
+      <text x="10" y="90" fill="#7a7a99" font-size="7">tecido saudável</text>
+      <text x="70" y="90" fill="#7a7a99" font-size="7">pré-maligno</text>
+      <text x="160" y="90" fill="#7a7a99" font-size="7">invasão</text>
+
+      <!-- Células representação -->
+      <!-- Normal -->
+      <circle cx="25" cy="125" r="14" fill="#39ff1433" stroke="#39ff14" stroke-width="1.5"/>
+      <circle cx="25" cy="125" r="5" fill="#39ff14" opacity="0.7"/>
+      <!-- Displásica -->
+      <ellipse cx="110" cy="125" rx="20" ry="12" fill="#a259ff33" stroke="#a259ff" stroke-width="1.5"/>
+      <ellipse cx="110" cy="127" rx="9" ry="6" fill="#a259ff" opacity="0.7"/>
+      <!-- Cancro -->
+      <circle cx="195" cy="125" r="18" fill="#ff3c6e22" stroke="#ff3c6e" stroke-width="1.5"/>
+      <circle cx="195" cy="125" r="7" fill="#ff3c6e" opacity="0.7"/>
+      <circle cx="188" cy="115" r="4" fill="#ff3c6e" opacity="0.5"/>
+      <circle cx="203" cy="118" r="3" fill="#ff3c6e" opacity="0.5"/>
+      <text x="110" y="150" text-anchor="middle" fill="#a259ff" font-size="8" font-family="Bangers,cursive">ESTAMOS AQUI</text>
+    </svg>
+  </div>
+</div>
+
+<!-- Comparação visual células -->
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel blue">
+    <span class="panel-label">VISUALIZAÇÃO CELULAR COMPARADA</span>
+    <h3>Normal vs Displásica — A Diferença Visual</h3>
+    <div class="molecule-canvas-wrapper">
+      <canvas id="cellCompareCanvas"></canvas>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem;text-align:center;">
+      🟢 Células normais (esquerda) &nbsp;|&nbsp; 🟣 Células displásicas (direita) — tamanho, forma e núcleo alterados
+    </p>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 2 =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal" id="tipos">
+  <div class="chapter-num">02</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO DOIS</span>
+    <div class="chapter-title">CARACTERÍSTICAS & TIPOS</div>
+  </div>
+</div>
+
+<div class="interactive-section reveal">
+  <div class="char-row">
+    <div class="char-avatar">🔬</div>
+    <div class="char-text">
+      <div class="char-name">Dr. Núcleo</div>
+      <p style="font-size:0.9rem;color:var(--muted);line-height:1.6;">
+        "Olá! Sou o Dr. Núcleo, o teu guia dentro da célula. 
+        Deixa-me mostrar-te como identificamos uma célula displásica — 
+        há sinais claros que não mentem!"
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Características -->
+<div class="manga-grid manga-grid-3 reveal">
+  <div class="panel red">
+    <span class="panel-label">CARACTERÍSTICA #1</span>
+    <h3>Hipercromasia</h3>
+    <svg width="100%" height="100" viewBox="0 0 150 100">
+      <!-- Núcleo normal -->
+      <circle cx="40" cy="50" r="25" fill="#1a1a2e" stroke="#39ff14" stroke-width="2"/>
+      <circle cx="40" cy="50" r="10" fill="#39ff1466"/>
+      <text x="40" y="88" text-anchor="middle" fill="#39ff14" font-size="9" font-family="Bangers,cursive">NORMAL</text>
+      <!-- Núcleo displásico -->
+      <circle cx="110" cy="50" r="28" fill="#1a1a2e" stroke="#ff3c6e" stroke-width="2"/>
+      <circle cx="110" cy="50" r="22" fill="#ff3c6e44"/>
+      <circle cx="110" cy="50" r="14" fill="#ff3c6e88"/>
+      <circle cx="110" cy="50" r="7" fill="#ff3c6e"/>
+      <text x="110" y="88" text-anchor="middle" fill="#ff3c6e" font-size="9" font-family="Bangers,cursive">HIPERCROMÁTICO</text>
+    </svg>
+    <p>O núcleo fica <span class="highlight-r">mais escuro</span> porque tem mais DNA condensado. 
+    Como uma tinta que se concentra!</p>
+  </div>
+
+  <div class="panel yellow">
+    <span class="panel-label">CARACTERÍSTICA #2</span>
+    <h3>Pleomorfismo</h3>
+    <svg width="100%" height="100" viewBox="0 0 150 100">
+      <!-- Formas variadas -->
+      <circle cx="30" cy="50" r="18" fill="#ffe06622" stroke="#ffe066" stroke-width="1.5"/>
+      <ellipse cx="75" cy="55" rx="22" ry="14" fill="#ffe06622" stroke="#ffe066" stroke-width="1.5"/>
+      <rect x="100" y="32" width="30" height="36" rx="5" fill="#ffe06622" stroke="#ffe066" stroke-width="1.5"/>
+      <text x="75" y="88" text-anchor="middle" fill="#ffe066" font-size="9" font-family="Bangers,cursive">FORMAS VARIADAS</text>
+    </svg>
+    <p>Células com <span class="highlight">tamanhos e formas diferentes</span> entre si — 
+    nenhuma parece igual à vizinha.</p>
+  </div>
+
+  <div class="panel purple">
+    <span class="panel-label">CARACTERÍSTICA #3</span>
+    <h3>Mitoses Atípicas</h3>
+    <svg width="100%" height="100" viewBox="0 0 150 100">
+      <!-- Divisão normal -->
+      <circle cx="35" cy="40" r="12" fill="#a259ff33" stroke="#39ff14" stroke-width="1.5"/>
+      <circle cx="35" cy="65" r="12" fill="#a259ff33" stroke="#39ff14" stroke-width="1.5"/>
+      <line x1="35" y1="52" x2="35" y2="53" stroke="#39ff14" stroke-width="2"/>
+      <text x="35" y="88" text-anchor="middle" fill="#39ff14" font-size="8" font-family="Bangers,cursive">NORMAL</text>
+      <!-- Divisão atípica -->
+      <circle cx="100" cy="30" r="10" fill="#ff3c6e22" stroke="#ff3c6e" stroke-width="1.5"/>
+      <circle cx="85" cy="65" r="10" fill="#ff3c6e22" stroke="#ff3c6e" stroke-width="1.5"/>
+      <circle cx="115" cy="68" r="8" fill="#ff3c6e22" stroke="#ff3c6e" stroke-width="1.5"/>
+      <line x1="100" y1="40" x2="90" y2="55" stroke="#ff3c6e" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <line x1="100" y1="40" x2="112" y2="58" stroke="#ff3c6e" stroke-width="1.5" stroke-dasharray="3,2"/>
+      <text x="100" y="88" text-anchor="middle" fill="#ff3c6e" font-size="8" font-family="Bangers,cursive">ATÍPICA ⚠️</text>
+    </svg>
+    <p>A divisão celular ocorre de forma <span class="highlight-p">desordenada</span> — 
+    3 células em vez de 2, cromossomas embaralhados.</p>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-3 reveal">
+  <div class="panel blue">
+    <span class="panel-label">CARACTERÍSTICA #4</span>
+    <h3>Relação N/C Aumentada</h3>
+    <svg width="100%" height="90" viewBox="0 0 150 90">
+      <!-- Normal N/C -->
+      <circle cx="38" cy="45" r="22" fill="#39ff1411" stroke="#39ff14" stroke-width="1.5"/>
+      <circle cx="38" cy="45" r="8" fill="#39ff1466"/>
+      <text x="38" y="75" text-anchor="middle" fill="#39ff14" font-size="7" font-family="Bangers,cursive">N/C NORMAL</text>
+      <!-- Aumentada N/C -->
+      <circle cx="112" cy="45" r="22" fill="#00e5ff11" stroke="#00e5ff" stroke-width="1.5"/>
+      <circle cx="112" cy="45" r="18" fill="#00e5ff44"/>
+      <text x="112" y="75" text-anchor="middle" fill="#00e5ff" font-size="7" font-family="Bangers,cursive">N/C AUMENTADA</text>
+    </svg>
+    <p>O <span class="highlight-b">núcleo ocupa mais espaço</span> em relação ao citoplasma. 
+    Inversão da proporção normal.</p>
+  </div>
+
+  <div class="panel green">
+    <span class="panel-label">CARACTERÍSTICA #5</span>
+    <h3>Perda de Polaridade</h3>
+    <svg width="100%" height="90" viewBox="0 0 150 90">
+      <!-- Normal polaridade -->
+      <rect x="5" y="20" width="55" height="50" rx="4" fill="none" stroke="#7a7a99" stroke-width="1"/>
+      <rect x="8" y="23" width="49" height="14" rx="2" fill="#39ff1433"/>
+      <rect x="8" y="38" width="49" height="14" rx="2" fill="#39ff1422"/>
+      <rect x="8" y="53" width="49" height="14" rx="2" fill="#39ff1411"/>
+      <text x="32" y="80" text-anchor="middle" fill="#39ff14" font-size="7" font-family="Bangers,cursive">ORGANIZADO</text>
+      <!-- Displásico -->
+      <rect x="90" y="20" width="55" height="50" rx="4" fill="none" stroke="#7a7a99" stroke-width="1"/>
+      <circle cx="108" cy="35" r="8" fill="#39ff1433" stroke="#39ff14" stroke-width="1"/>
+      <circle cx="128" cy="50" r="10" fill="#39ff1433" stroke="#39ff14" stroke-width="1"/>
+      <circle cx="112" cy="58" r="7" fill="#39ff1433" stroke="#39ff14" stroke-width="1"/>
+      <circle cx="135" cy="30" r="6" fill="#39ff1433" stroke="#39ff14" stroke-width="1"/>
+      <text x="117" y="80" text-anchor="middle" fill="#ffe066" font-size="7" font-family="Bangers,cursive">CAÓTICO</text>
+    </svg>
+    <p>As células perdem a <span class="highlight-g">organização em camadas</span>. 
+    Imagine peças de puzzle misturadas aleatoriamente.</p>
+  </div>
+
+  <div class="panel">
+    <span class="panel-label">CARACTERÍSTICA #6</span>
+    <h3>Maturação ↓</h3>
+    <svg width="100%" height="90" viewBox="0 0 150 90">
+      <!-- Escada de maturação -->
+      <line x1="75" y1="10" x2="75" y2="80" stroke="#2a2a44" stroke-width="1" stroke-dasharray="3,3"/>
+      <!-- Normal -->
+      <circle cx="30" cy="70" r="8" fill="#a259ff88"/>
+      <circle cx="30" cy="50" r="10" fill="#a259ffaa"/>
+      <circle cx="30" cy="28" r="12" fill="#a259ff"/>
+      <text x="30" y="85" text-anchor="middle" fill="#a259ff" font-size="7" font-family="Bangers,cursive">NORMAL</text>
+      <!-- Displásico (não matura) -->
+      <circle cx="120" cy="70" r="11" fill="#ff3c6eaa"/>
+      <circle cx="120" cy="50" r="11" fill="#ff3c6e88"/>
+      <circle cx="120" cy="28" r="11" fill="#ff3c6e66"/>
+      <text x="120" y="85" text-anchor="middle" fill="#ff3c6e" font-size="7" font-family="Bangers,cursive">SEM MATURAÇÃO</text>
+    </svg>
+    <p>Células displásicas <span class="highlight-r">não amadurecem</span> corretamente — 
+    ficam presas numa fase imatura.</p>
+  </div>
+</div>
+
+<!-- Tipos de Displasia -->
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel">
+    <span class="panel-label">CLASSIFICAÇÃO — PRINCIPAIS TIPOS</span>
+    <h3>A Família Displasia</h3>
+    <div class="type-grid" style="margin-top:1rem;">
+      <div class="type-box" onclick="showTypeInfo('cervical')">
+        <span class="type-icon">🔴</span>
+        <h4>Displasia Cervical</h4>
+        <p>Colo do útero. Causada principalmente pelo HPV. Graus I, II e III.</p>
+      </div>
+      <div class="type-box" onclick="showTypeInfo('bronco')">
+        <span class="type-icon">🫁</span>
+        <h4>Displasia Brônquica</h4>
+        <p>Epitélio respiratório. Fortemente associada ao tabagismo.</p>
+      </div>
+      <div class="type-box" onclick="showTypeInfo('ossea')">
+        <span class="type-icon">🦴</span>
+        <h4>Displasia Óssea</h4>
+        <p>Osso e cartilagem. Ex: displasia fibrosa, osteogénese imperfeita.</p>
+      </div>
+      <div class="type-box" onclick="showTypeInfo('colon')">
+        <span class="type-icon">🟠</span>
+        <h4>Displasia do Cólon</h4>
+        <p>Epitélio intestinal. Frequente em doenças inflamatórias crónicas.</p>
+      </div>
+      <div class="type-box" onclick="showTypeInfo('ectodermica')">
+        <span class="type-icon">🧬</span>
+        <h4>Displasia Ectodérmica</h4>
+        <p>Geneticamente determinada. Afeta pele, cabelo, dentes e unhas.</p>
+      </div>
+      <div class="type-box" onclick="showTypeInfo('esofagica')">
+        <span class="type-icon">🟡</span>
+        <h4>Displasia Esofágica</h4>
+        <p>Esófago de Barrett. Associada ao refluxo gastroesofágico.</p>
+      </div>
+    </div>
+    <div id="typeInfoBox" style="display:none;margin-top:1.2rem;padding:1rem 1.3rem;background:var(--panel2);border-radius:10px;border-left:4px solid var(--accent4);">
+      <div id="typeInfoContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 3 — CAUSAS =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal">
+  <div class="chapter-num">03</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO TRÊS</span>
+    <div class="chapter-title">POR QUE ACONTECE?</div>
+  </div>
+</div>
+
+<div class="interactive-section reveal">
+  <div class="char-row">
+    <div class="char-avatar" style="border-color:var(--accent1);box-shadow:var(--glow1);">⚠️</div>
+    <div class="char-text">
+      <div class="char-name" style="color:var(--accent1);">Agente X — O Agressor</div>
+      <p style="font-size:0.9rem;color:var(--muted);line-height:1.6;">
+        "Não apareço do nada. Sempre há um motivo. Às vezes sou um vírus, 
+        outras vezes um produto químico, ou até um gene com falha de fábrica…"
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel">
+    <span class="panel-label">CAUSAS PRINCIPAIS — CLICA PARA EXPANDIR</span>
+    <h3 style="color:var(--accent1);">Os Vilões da História</h3>
+
+    <div class="expand-card" id="ec1">
+      <div class="expand-header" onclick="toggleExpand('ec1')">
+        <h4>🦠 Agentes Infeciosos</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.9rem;line-height:1.7;">
+          <span class="highlight-b">HPV (Papilomavírus Humano)</span> — principal causa de displasia cervical. 
+          Os tipos 16 e 18 são os mais oncogénicos: as proteínas E6 e E7 inativam o p53 e pRb 
+          (guardiões do ciclo celular).<br><br>
+          <span class="highlight-b">H. pylori</span> — causa displasia gástrica através de inflamação crónica.<br><br>
+          <span class="highlight-b">EBV, HBV, HCV</span> — associados a displasias em diferentes órgãos.
+        </p>
+        <div class="speech-bubble" style="margin-top:0.8rem;">
+          "O HPV insere o seu DNA no meu genoma e corrompe os meus guardiões celulares. Isso é traição!" — Célula do Colo do Útero
+        </div>
+      </div>
+    </div>
+
+    <div class="expand-card" id="ec2">
+      <div class="expand-header" onclick="toggleExpand('ec2')">
+        <h4>🚬 Agentes Químicos e Físicos</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.9rem;line-height:1.7;">
+          <span class="highlight-r">Tabaco</span> — contém mais de 70 carcinogéneos conhecidos. Causa displasia brônquica e oral.<br><br>
+          <span class="highlight-r">Radiação UV</span> — danos ao DNA das células da pele, promovendo displasia actínica.<br><br>
+          <span class="highlight-r">Radiação ionizante</span> — raios X, gama. Quebra dupla hélice de DNA.<br><br>
+          <span class="highlight-r">Aflatoxinas, benzeno, amianto</span> — carcinogéneos ambientais e ocupacionais.
+        </p>
+      </div>
+    </div>
+
+    <div class="expand-card" id="ec3">
+      <div class="expand-header" onclick="toggleExpand('ec3')">
+        <h4>🧬 Fatores Genéticos</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.9rem;line-height:1.7;">
+          Mutações em <span class="highlight-p">genes supressores tumorais</span> (TP53, RB1, BRCA1/2) 
+          ou em <span class="highlight-p">proto-oncogenes</span> (KRAS, MYC).<br><br>
+          Algumas displasias são <strong>hereditárias</strong>, como a displasia ectodérmica ligada ao cromossoma X 
+          (gene EDA) ou a osteogénese imperfeita (gene COL1A1/2).<br><br>
+          <span class="highlight-p">Instabilidade cromossómica</span> — células com número anormal de cromossomas (aneuploidia).
+        </p>
+      </div>
+    </div>
+
+    <div class="expand-card" id="ec4">
+      <div class="expand-header" onclick="toggleExpand('ec4')">
+        <h4>🔥 Inflamação Crónica</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.9rem;line-height:1.7;">
+          Inflamação prolongada = radicais livres = danos ao DNA = mutações.<br><br>
+          Exemplos: <span class="highlight">Doença de Crohn</span> e <span class="highlight">Colite Ulcerosa</span> → displasia do cólon.
+          <span class="highlight">Refluxo gastroesofágico crónico</span> → Esófago de Barrett → displasia esofágica.<br><br>
+          A inflamação cria um microambiente que <em>favorece</em> o crescimento celular descontrolado.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 4 — CRONOLOGIA =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal" id="cronologia">
+  <div class="chapter-num">04</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO QUATRO</span>
+    <div class="chapter-title">DA CÉLULA NORMAL AO CANCRO</div>
+  </div>
+</div>
+
+<div style="max-width:1100px;margin:0 auto;padding:0 1.5rem 1rem;">
+  <div class="speech-bubble right reveal" style="max-width:600px;margin-left:auto;">
+    "Não acontece de um dia para o outro. É uma viagem lenta, com paragens — 
+    e em cada paragem há uma oportunidade de reverter o rumo."
+    <br><small style="opacity:0.7;display:block;margin-top:0.3rem;">— Dr. Núcleo 🔬</small>
+  </div>
+</div>
+
+<div class="timeline reveal">
+  <!-- Linha lateral no mobile -->
+  <div class="tl-item">
+    <div class="tl-dot">1</div>
+    <div class="tl-content">
+      <h4>🟢 Tecido Normal</h4>
+      <p>Células com morfologia regular, proliferação controlada, maturação adequada. 
+      Ciclo celular regulado por checkpoints. Tudo em equilíbrio.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">2</div>
+    <div class="tl-content">
+      <h4>🟡 Hiperplasia</h4>
+      <p>Aumento do número de células, mas ainda morfologia NORMAL. 
+      É uma resposta adaptativa — ex: hiperplasia endometrial. 
+      Pode preceder a displasia mas não é obrigatório.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">3</div>
+    <div class="tl-content">
+      <h4>🔵 Displasia Leve (Grau I)</h4>
+      <p>Alterações morfológicas no 1/3 inferior do epitélio. 
+      Células basais afetadas. Potencialmente reversível (60-80% regridem espontaneamente).</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">4</div>
+    <div class="tl-content">
+      <h4>🟠 Displasia Moderada (Grau II)</h4>
+      <p>Alterações nos 2/3 do epitélio. Maior atipia celular. 
+      Reversão menos frequente. Vigilância clínica intensiva necessária.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot">5</div>
+    <div class="tl-content">
+      <h4>🔴 Displasia Grave / Carcinoma in situ (Grau III)</h4>
+      <p>Todo o espessura do epitélio afetada. Sem invasão da membrana basal. 
+      Alto risco de progressão. Tratamento geralmente necessário.</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-dot" style="border-color:#ff3c6e;color:#ff3c6e;background:var(--panel2);animation:blink-badge 1s infinite;">!</div>
+    <div class="tl-content" style="border-color:var(--accent1);">
+      <h4 style="color:var(--accent1);">🔴 Carcinoma Invasivo</h4>
+      <p>Rutura da membrana basal. Células invadem tecido conjuntivo subjacente. 
+      Capacidade de metastização. <strong style="color:var(--accent1);">Ponto sem retorno.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Tabela graus -->
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel">
+    <span class="panel-label">TABELA COMPARATIVA — GRAUS DE DISPLASIA CERVICAL (NIC)</span>
+    <h3>Nomenclatura: NIC vs Bethesda vs CIN</h3>
+    <div class="table-wrap" style="margin-top:1rem;">
+      <table>
+        <thead>
+          <tr>
+            <th>Grau</th>
+            <th>NIC / CIN</th>
+            <th>Sistema Bethesda</th>
+            <th>% Epitélio</th>
+            <th>Reversão</th>
+            <th>Progressão</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dot-grade" style="background:#39ff14"></span>Leve</td>
+            <td>NIC I / CIN 1</td>
+            <td>LSIL</td>
+            <td>1/3 inferior</td>
+            <td><span class="highlight-g">~60%</span></td>
+            <td>~1%</td>
+          </tr>
+          <tr>
+            <td><span class="dot-grade" style="background:#ffe066"></span>Moderada</td>
+            <td>NIC II / CIN 2</td>
+            <td>HSIL</td>
+            <td>2/3</td>
+            <td><span class="highlight">~40%</span></td>
+            <td>~5%</td>
+          </tr>
+          <tr>
+            <td><span class="dot-grade" style="background:#a259ff"></span>Grave</td>
+            <td>NIC III / CIN 3</td>
+            <td>HSIL</td>
+            <td>Todo</td>
+            <td><span class="highlight-r">~33%</span></td>
+            <td>~12%</td>
+          </tr>
+          <tr>
+            <td><span class="dot-grade" style="background:#ff3c6e"></span>In Situ</td>
+            <td>NIC III / CIS</td>
+            <td>HSIL</td>
+            <td>Total + atipia</td>
+            <td><span class="highlight-r">Baixa</span></td>
+            <td>~30%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:0.8rem;color:var(--muted);margin-top:0.8rem;">
+      NIC = Neoplasia Intraepitelial Cervical | CIN = Cervical Intraepithelial Neoplasia | LSIL = Low-grade Squamous Intraepithelial Lesion | HSIL = High-grade
+    </p>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 5 — DIAGNÓSTICO =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal">
+  <div class="chapter-num">05</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO CINCO</span>
+    <div class="chapter-title">COMO SE DIAGNOSTICA?</div>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-asym-r reveal">
+  <div class="panel blue">
+    <span class="panel-label">ABORDAGEM DIAGNÓSTICA</span>
+    <h3>O Olhar do Patologista</h3>
+    <div class="expand-card" id="ed1">
+      <div class="expand-header" onclick="toggleExpand('ed1')">
+        <h4>🔬 Histopatologia (padrão ouro)</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.88rem;line-height:1.7;color:var(--muted);">
+          Biópsia do tecido → fixação em formol → inclusão em parafina → cortes de 3-5μm → 
+          coloração H&E → análise microscópica. O patologista avalia a arquitetura e citologia. 
+          <span class="highlight-b">É o método definitivo.</span>
+        </p>
+      </div>
+    </div>
+    <div class="expand-card" id="ed2">
+      <div class="expand-header" onclick="toggleExpand('ed2')">
+        <h4>🧫 Citologia (rastreio)</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.88rem;line-height:1.7;color:var(--muted);">
+          <span class="highlight-b">Papanicolau (Pap smear)</span> — raspagem do colo do útero. 
+          Células esfoliadas analisadas individualmente. Alta sensibilidade para rastreio. 
+          Reportado pelo sistema Bethesda.
+        </p>
+      </div>
+    </div>
+    <div class="expand-card" id="ed3">
+      <div class="expand-header" onclick="toggleExpand('ed3')">
+        <h4>🧬 Biologia Molecular</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.88rem;line-height:1.7;color:var(--muted);">
+          Pesquisa de <span class="highlight-b">HPV de alto risco</span> por PCR ou genotipagem. 
+          Imunohistoquímica para p16 (marcador de displasia de alto grau), Ki-67. 
+          FISH para aneuploidia.
+        </p>
+      </div>
+    </div>
+    <div class="expand-card" id="ed4">
+      <div class="expand-header" onclick="toggleExpand('ed4')">
+        <h4>🔎 Colposcopia / Endoscopia</h4>
+        <span class="expand-arrow">▼</span>
+      </div>
+      <div class="expand-body">
+        <p style="font-size:0.88rem;line-height:1.7;color:var(--muted);">
+          Visualização direta com amplificação. Aplicação de ácido acético (áreas brancas = suspeitas). 
+          Lugol (Schiller). Guia a biópsia dirigida a áreas suspeitas.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="panel" style="display:flex;flex-direction:column;gap:1rem;">
+    <span class="panel-label">MICROSCOPIA COMPARADA</span>
+    <h3>O que vê o patologista?</h3>
+    <div class="molecule-canvas-wrapper" style="height:240px;">
+      <canvas id="histoCanvas"></canvas>
+    </div>
+    <p style="font-size:0.82rem;color:var(--muted);text-align:center;">
+      Epitélio normal (esq.) vs Displasia grave (dir.) — visualização histológica esquemática
+    </p>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 6 — LABORATÓRIO INTERATIVO =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal" id="interativo">
+  <div class="chapter-num">06</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO SEIS — INTERATIVO</span>
+    <div class="chapter-title">O LABORATÓRIO DA DISPLASIA</div>
+  </div>
+</div>
+
+<div class="interactive-section reveal">
+  <div class="slider-card">
+    <h3>🧪 SIMULA A DISPLASIA</h3>
+    <p style="color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;">
+      Ajusta os parâmetros abaixo e observa como as células respondem em tempo real.
+      O simulador mostra a progressão da displasia baseado nos fatores de risco.
+    </p>
+
+    <div class="manga-grid manga-grid-2" style="gap:1.5rem;padding:0;">
+      <div>
+        <div class="slider-group">
+          <label>Exposição ao HPV <span id="hpvVal">50%</span></label>
+          <input type="range" min="0" max="100" value="50" id="hpvSlider" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <label>Tabagismo <span id="smokeVal">0%</span></label>
+          <input type="range" min="0" max="100" value="0" id="smokeSlider" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <label>Inflamação Crónica <span id="inflamVal">20%</span></label>
+          <input type="range" min="0" max="100" value="20" id="inflamSlider" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <label>Predisposição Genética <span id="geneticVal">10%</span></label>
+          <input type="range" min="0" max="100" value="10" id="geneticSlider" oninput="updateSim()">
+        </div>
+        <div class="slider-group">
+          <label>Imunidade <span id="immuneVal">70%</span></label>
+          <input type="range" min="0" max="100" value="70" id="immuneSlider" oninput="updateSim()">
+        </div>
+      </div>
+
+      <div>
+        <div style="background:var(--panel2);border-radius:12px;padding:1.2rem;margin-bottom:1rem;">
+          <div style="font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem;">NÍVEL DE RISCO</div>
+          <div style="height:24px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:0.5rem;">
+            <div id="riskBar" style="height:100%;width:30%;background:linear-gradient(90deg,#39ff14,#ffe066,#ff3c6e);border-radius:12px;transition:width 0.5s;"></div>
+          </div>
+          <div id="riskPercent" style="font-family:'Bangers',cursive;font-size:1.8rem;color:var(--accent3);">30%</div>
+        </div>
+        <div class="cell-status" id="simStatus">
+          <strong id="simGrade">Sem Displasia</strong><br>
+          <span id="simDesc" style="color:var(--muted);font-size:0.85rem;">Ajusta os parâmetros para simular diferentes cenários clínicos.</span>
+        </div>
+        <div style="margin-top:0.8rem;" id="simBadges">
+          <span class="status-badge badge-normal">NORMAL</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canvas célula viva -->
+    <div class="molecule-canvas-wrapper" style="height:160px;margin-top:1rem;">
+      <canvas id="liveCell"></canvas>
+    </div>
+    <p style="font-size:0.8rem;color:var(--muted);text-align:center;margin-top:0.3rem;">
+      Visualização dinâmica — células reagindo em tempo real aos parâmetros
+    </p>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 7 — TRATAMENTO =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal">
+  <div class="chapter-num">07</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO SETE</span>
+    <div class="chapter-title">TRATAMENTO & VIGILÂNCIA</div>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-3 reveal">
+  <div class="panel green">
+    <span class="panel-label">GRAU I — ABORDAGEM</span>
+    <h3>Vigiar & Esperar</h3>
+    <svg width="100%" height="80" viewBox="0 0 150 80">
+      <circle cx="75" cy="40" r="30" fill="#39ff1411" stroke="#39ff14" stroke-width="2"/>
+      <text x="75" y="35" text-anchor="middle" fill="#39ff14" font-family="Bangers,cursive" font-size="14">NIC I</text>
+      <text x="75" y="52" text-anchor="middle" fill="#39ff14" font-family="Bangers,cursive" font-size="10">VIGIAR</text>
+    </svg>
+    <p>60-80% regridem espontaneamente. 
+    Citologia + HPV teste a cada <span class="highlight-g">6-12 meses</span>. 
+    Vacina HPV se não vacinada.</p>
+  </div>
+
+  <div class="panel yellow">
+    <span class="panel-label">GRAU II — ABORDAGEM</span>
+    <h3>Tratamento Considerado</h3>
+    <svg width="100%" height="80" viewBox="0 0 150 80">
+      <rect x="45" y="15" width="60" height="50" rx="8" fill="#ffe06611" stroke="#ffe066" stroke-width="2"/>
+      <text x="75" y="35" text-anchor="middle" fill="#ffe066" font-family="Bangers,cursive" font-size="14">NIC II</text>
+      <text x="75" y="52" text-anchor="middle" fill="#ffe066" font-family="Bangers,cursive" font-size="10">CUIDADO</text>
+    </svg>
+    <p>Avaliação individualizada. 
+    LLETZ/LEEP (excisão com ansa diatérmica) ou vigilância reforçada. 
+    Repetir biópsia se discordância.</p>
+  </div>
+
+  <div class="panel red">
+    <span class="panel-label">GRAU III — ABORDAGEM</span>
+    <h3>Tratamento Imediato</h3>
+    <svg width="100%" height="80" viewBox="0 0 150 80">
+      <polygon points="75,10 130,70 20,70" fill="#ff3c6e11" stroke="#ff3c6e" stroke-width="2"/>
+      <text x="75" y="48" text-anchor="middle" fill="#ff3c6e" font-family="Bangers,cursive" font-size="14">NIC III</text>
+      <text x="75" y="63" text-anchor="middle" fill="#ff3c6e" font-family="Bangers,cursive" font-size="9">TRATAR</text>
+    </svg>
+    <p>LLETZ/LEEP, conização a frio, ou histerectomia (casos selecionados). 
+    Follow-up rigoroso pós-tratamento com citologia + colposcopia.</p>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel purple">
+    <span class="panel-label">PREVENÇÃO — A MELHOR ARMA</span>
+    <h3>Evitar Antes de Tratar</h3>
+    <div class="manga-grid manga-grid-3" style="gap:0.8rem;padding:0;margin-top:1rem;">
+      <div style="background:var(--panel);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.4rem;">💉</div>
+        <div style="font-family:'Bangers',cursive;color:var(--accent4);font-size:1rem;margin-bottom:0.3rem;">VACINA HPV</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Gardasil/Cervarix. Antes do 1º contacto sexual. 90% eficácia contra NIC.</div>
+      </div>
+      <div style="background:var(--panel);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.4rem;">🔍</div>
+        <div style="font-family:'Bangers',cursive;color:var(--accent4);font-size:1rem;margin-bottom:0.3rem;">RASTREIO</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Papanicolau regular. Cada 3 anos (25-65 anos). Deteção precoce = cura.</div>
+      </div>
+      <div style="background:var(--panel);border-radius:10px;padding:1rem;text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.4rem;">🚭</div>
+        <div style="font-family:'Bangers',cursive;color:var(--accent4);font-size:1rem;margin-bottom:0.3rem;">ESTILO DE VIDA</div>
+        <div style="font-size:0.8rem;color:var(--muted);">Não fumar. Preservativo. Dieta rica em antioxidantes. Imunidade forte.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================== CAPÍTULO 8 — QUIZ =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal" id="quiz">
+  <div class="chapter-num">08</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ CAPÍTULO OITO</span>
+    <div class="chapter-title">TESTA O TEU CONHECIMENTO!</div>
+  </div>
+</div>
+
+<div class="quiz-section reveal">
+  <div style="text-align:center;margin-bottom:1.5rem;">
+    <div id="score-display">Pontuação: <span id="scoreNum">0</span> / 5</div>
+    <p style="color:var(--muted);font-size:0.85rem;">Clica numa opção para responder. Não há tempo limite!</p>
+  </div>
+
+  <!-- Q1 -->
+  <div class="quiz-card">
+    <h4>❓ Pergunta 1 — O que é displasia?</h4>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="answer(this,'A',1,'A')">A) Crescimento celular anormal sem invasão de tecidos vizinhos</button>
+      <button class="quiz-btn" onclick="answer(this,'B',1,'A')">B) Morte celular programada</button>
+      <button class="quiz-btn" onclick="answer(this,'C',1,'A')">C) Inflamação aguda do tecido epitelial</button>
+      <button class="quiz-btn" onclick="answer(this,'D',1,'A')">D) Tumour maligno com metástases</button>
+    </div>
+    <div class="quiz-feedback" id="qf1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="quiz-card">
+    <h4>❓ Pergunta 2 — Qual a principal causa de displasia cervical?</h4>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="answer(this,'A',2,'B')">A) Bactéria Staphylococcus aureus</button>
+      <button class="quiz-btn" onclick="answer(this,'B',2,'B')">B) Vírus HPV de alto risco (tipos 16 e 18)</button>
+      <button class="quiz-btn" onclick="answer(this,'C',2,'B')">C) Défice de vitamina C</button>
+      <button class="quiz-btn" onclick="answer(this,'D',2,'B')">D) Radioterapia pélvica</button>
+    </div>
+    <div class="quiz-feedback" id="qf2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="quiz-card">
+    <h4>❓ Pergunta 3 — O que significa NIC III?</h4>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="answer(this,'A',3,'C')">A) Displasia leve no terço inferior</button>
+      <button class="quiz-btn" onclick="answer(this,'B',3,'C')">B) Carcinoma invasivo com metástases ganglionares</button>
+      <button class="quiz-btn" onclick="answer(this,'C',3,'C')">C) Displasia grave/carcinoma in situ em toda a espessura epitelial</button>
+      <button class="quiz-btn" onclick="answer(this,'D',3,'C')">D) Neoplasia intraepitelial de grau I</button>
+    </div>
+    <div class="quiz-feedback" id="qf3"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="quiz-card">
+    <h4>❓ Pergunta 4 — O que é hipercromasia nuclear?</h4>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="answer(this,'A',4,'D')">A) Diminuição do tamanho do núcleo celular</button>
+      <button class="quiz-btn" onclick="answer(this,'B',4,'D')">B) Fragmentação do citoplasma</button>
+      <button class="quiz-btn" onclick="answer(this,'C',4,'D')">C) Aumento de mitocôndrias no núcleo</button>
+      <button class="quiz-btn" onclick="answer(this,'D',4,'D')">D) Núcleo com coloração mais intensa por aumento de DNA condensado</button>
+    </div>
+    <div class="quiz-feedback" id="qf4"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="quiz-card">
+    <h4>❓ Pergunta 5 — Qual a diferença fundamental entre displasia e carcinoma invasivo?</h4>
+    <div class="quiz-options">
+      <button class="quiz-btn" onclick="answer(this,'A',5,'A')">A) Na displasia, a membrana basal está INTACTA; no carcinoma invasivo, está rompida</button>
+      <button class="quiz-btn" onclick="answer(this,'B',5,'A')">B) A displasia apresenta sempre metástases à distância</button>
+      <button class="quiz-btn" onclick="answer(this,'C',5,'A')">C) O carcinoma invasivo tem células com morfologia normal</button>
+      <button class="quiz-btn" onclick="answer(this,'D',5,'A')">D) A displasia afeta apenas órgãos reprodutores</button>
+    </div>
+    <div class="quiz-feedback" id="qf5"></div>
+  </div>
+
+  <div style="text-align:center;margin-top:2rem;">
+    <button onclick="resetQuiz()" style="background:var(--accent4);color:#fff;border:none;padding:0.9rem 2.5rem;border-radius:30px;font-family:'Bangers',cursive;font-size:1.2rem;letter-spacing:2px;cursor:pointer;box-shadow:var(--glow4);transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+      🔄 REINICIAR QUIZ
+    </button>
+  </div>
+</div>
+
+<!-- =================== RESUMO FINAL =================== -->
+<div class="divider reveal">✦ ✦ ✦</div>
+
+<div class="chapter-header reveal">
+  <div class="chapter-num">FIM</div>
+  <div class="chapter-title-block">
+    <span class="chapter-tag">◆ RESUMO FINAL</span>
+    <div class="chapter-title">TUDO EM 60 SEGUNDOS</div>
+  </div>
+</div>
+
+<div class="manga-grid manga-grid-1 reveal">
+  <div class="panel" style="border:2px solid var(--accent3);box-shadow:var(--glow3);">
+    <span class="panel-label">MAPA MENTAL — DISPLASIA</span>
+    <h3 style="color:var(--accent3);">📌 Os 7 Pontos Essenciais</h3>
+    <div style="margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0.8rem;">
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent1);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent1);margin-bottom:0.3rem;">1. DEFINIÇÃO</div>
+        <div style="font-size:0.85rem;color:var(--muted);">Crescimento celular anormal (tamanho, forma, organização) sem invasão — pré-maligno e potencialmente reversível.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent3);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent3);margin-bottom:0.3rem;">2. CARACTERÍSTICAS</div>
+        <div style="font-size:0.85rem;color:var(--muted);">Hipercromasia, pleomorfismo, mitoses atípicas, aumento relação N/C, perda de polaridade, maturação reduzida.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent4);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent4);margin-bottom:0.3rem;">3. CAUSAS</div>
+        <div style="font-size:0.85rem;color:var(--muted);">HPV, tabaco, radiação, inflamação crónica, mutações genéticas.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent2);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent2);margin-bottom:0.3rem;">4. GRAUS (NIC)</div>
+        <div style="font-size:0.85rem;color:var(--muted);">I (1/3 epitélio), II (2/3), III (total) → Carcinoma in situ → Invasivo.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--green);">
+        <div style="font-family:'Bangers',cursive;color:var(--green);margin-bottom:0.3rem;">5. DIAGNÓSTICO</div>
+        <div style="font-size:0.85rem;color:var(--muted);">Histopatologia (padrão ouro), Papanicolau, colposcopia, biologia molecular (PCR HPV, p16).</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent1);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent1);margin-bottom:0.3rem;">6. TRATAMENTO</div>
+        <div style="font-size:0.85rem;color:var(--muted);">NIC I: vigiar. NIC II: individualizar. NIC III: LLETZ/conização. Prevenção: vacina HPV + rastreio.</div>
+      </div>
+      <div style="background:var(--panel2);border-radius:10px;padding:0.9rem;border-left:3px solid var(--accent3);">
+        <div style="font-family:'Bangers',cursive;color:var(--accent3);margin-bottom:0.3rem;">7. CHAVE CLÍNICA</div>
+        <div style="font-size:0.85rem;color:var(--muted);">Membrana basal INTACTA = displasia (reversível). Membrana ROMPIDA = invasão (maligno).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-logo">DemilMed-UL</div>
+  <p>
+    <strong style="color:var(--text);">UNIVERSIDADE LICUNGO</strong><br>
+    Faculdade de Medicina · 2.º Ano de Medicina<br>
+    Unidade Curricular: Patologia Geral
+  </p>
+  <div class="footer-year">◆ ANO 2026 ◆</div>
+  <p style="margin-top:1.5rem;font-size:0.75rem;opacity:0.5;">
+    Material educativo desenvolvido para fins académicos.<br>
+    Conteúdo baseado em literatura médica de referência.
+  </p>
+</footer>
+
+</div><!-- /wrapper -->
+
+<script>
+// =================== STARS ===================
+const sc = document.getElementById('starCanvas');
+const sctx = sc.getContext('2d');
+let stars = [];
+function initStars() {
+  sc.width = window.innerWidth;
+  sc.height = window.innerHeight;
+  stars = [];
+  for(let i=0;i<120;i++){
+    stars.push({
+      x: Math.random()*sc.width,
+      y: Math.random()*sc.height,
+      r: Math.random()*1.5+0.3,
+      a: Math.random(),
+      speed: Math.random()*0.5+0.1
+    });
+  }
+}
+function drawStars(){
+  sctx.clearRect(0,0,sc.width,sc.height);
+  stars.forEach(s=>{
+    s.a += s.speed * 0.01;
+    sctx.beginPath();
+    sctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    sctx.fillStyle=`rgba(200,200,255,${0.3+0.3*Math.sin(s.a)})`;
+    sctx.fill();
+  });
+  requestAnimationFrame(drawStars);
+}
+initStars();
+drawStars();
+window.addEventListener('resize',initStars);
+
+// =================== PROGRESS BAR ===================
+window.addEventListener('scroll',()=>{
+  const el = document.getElementById('progressBar');
+  const scrollTop = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  el.style.width = (scrollTop/docH*100)+'%';
+});
+
+// =================== SCROLL REVEAL ===================
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// =================== CELL COMPARE CANVAS ===================
+function drawCellCompare(){
+  const canvas = document.getElementById('cellCompareCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = 200;
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  // DIVISOR
+  ctx.strokeStyle='#2a2a44';
+  ctx.lineWidth=1;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // LABEL
+  ctx.font='bold 11px Share Tech Mono'; ctx.fillStyle='#39ff14'; ctx.textAlign='center';
+  ctx.fillText('NORMAL', w/4, 18);
+  ctx.fillStyle='#a259ff';
+  ctx.fillText('DISPLÁSICA', 3*w/4, 18);
+
+  // Células normais (esquerda)
+  const normals = [{x:w/4-50,y:80,r:22},{x:w/4,y:100,r:24},{x:w/4+50,y:75,r:20},{x:w/4-30,y:140,r:23},{x:w/4+30,y:150,r:22}];
+  normals.forEach(c=>{
+    ctx.beginPath(); ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+    ctx.fillStyle='#39ff1415'; ctx.fill();
+    ctx.strokeStyle='#39ff14'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(c.x,c.y,c.r*0.38,0,Math.PI*2);
+    ctx.fillStyle='#39ff1466'; ctx.fill();
+  });
+
+  // Células displásicas (direita) - variadas
+  const dysp = [
+    {x:3*w/4-50,y:70,rx:35,ry:22},
+    {x:3*w/4+10,y:100,rx:18,ry:28},
+    {x:3*w/4+50,y:80,rx:28,ry:20},
+    {x:3*w/4-20,y:150,rx:32,ry:18},
+    {x:3*w/4+40,y:155,rx:15,ry:25},
+  ];
+  dysp.forEach((c,i)=>{
+    ctx.save(); ctx.translate(c.x,c.y);
+    ctx.beginPath(); ctx.ellipse(0,0,c.rx,c.ry,i*0.4,0,Math.PI*2);
+    ctx.fillStyle='#a259ff15'; ctx.fill();
+    ctx.strokeStyle='#a259ff'; ctx.lineWidth=1.5; ctx.stroke();
+    // Núcleo grande e irregular
+    ctx.beginPath(); ctx.ellipse(0,0,c.rx*0.65,c.ry*0.7,0.2,0,Math.PI*2);
+    ctx.fillStyle='#a259ff55'; ctx.fill();
+    ctx.strokeStyle='#a259ff88'; ctx.lineWidth=1; ctx.stroke();
+    ctx.restore();
+  });
+}
+drawCellCompare();
+window.addEventListener('resize', drawCellCompare);
+
+// =================== HISTO CANVAS ===================
+function drawHistoCanvas(){
+  const canvas = document.getElementById('histoCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = 240;
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+
+  // Labels
+  ctx.font='bold 11px Share Tech Mono'; ctx.fillStyle='#39ff14'; ctx.textAlign='center';
+  ctx.fillText('NORMAL', w/4, 18);
+  ctx.fillStyle='#ff3c6e';
+  ctx.fillText('DISPLASIA GRAVE', 3*w/4, 18);
+
+  // Normal epitélio — camadas organizadas
+  const layerColors = ['#39ff1411','#39ff1422','#39ff1433','#39ff1444'];
+  for(let l=0;l<4;l++){
+    for(let i=0;i<6;i++){
+      const baseX = 20 + i*(w/2-30)/6 + 10;
+      const baseY = 40 + l*44;
+      ctx.beginPath(); ctx.ellipse(baseX, baseY, 14, 10, 0, 0, Math.PI*2);
+      ctx.fillStyle=layerColors[l]; ctx.fill();
+      ctx.strokeStyle='#39ff14'; ctx.lineWidth=1; ctx.stroke();
+      ctx.beginPath(); ctx.arc(baseX, baseY, 4, 0, Math.PI*2);
+      ctx.fillStyle='#39ff1488'; ctx.fill();
+    }
+  }
+  // Membrana basal normal
+  ctx.strokeStyle='#ffe066'; ctx.lineWidth=2.5; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(10, 220); ctx.lineTo(w/2-10, 220); ctx.stroke();
+  ctx.font='9px Share Tech Mono'; ctx.fillStyle='#ffe066'; ctx.textAlign='center';
+  ctx.fillText('MEMBRANA BASAL INTACTA', w/4, 235);
+
+  // Displásica — células caóticas
+  for(let i=0;i<20;i++){
+    const rx = Math.random()*20+8;
+    const ry = Math.random()*16+8;
+    const cx = w/2+30 + Math.random()*(w/2-60);
+    const cy = 35 + Math.random()*170;
+    ctx.save(); ctx.translate(cx,cy);
+    ctx.beginPath(); ctx.ellipse(0,0,rx,ry, Math.random()*Math.PI,0,Math.PI*2);
+    ctx.fillStyle='#ff3c6e15'; ctx.fill();
+    ctx.strokeStyle='#ff3c6e'; ctx.lineWidth=1; ctx.stroke();
+    // Núcleo grande
+    ctx.beginPath(); ctx.ellipse(0,0,rx*0.7,ry*0.75, Math.random()*0.5, 0, Math.PI*2);
+    ctx.fillStyle='#ff3c6e44'; ctx.fill();
+    ctx.restore();
+  }
+  ctx.strokeStyle='#ffe066'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(w/2+10, 220); ctx.lineTo(w-10, 220); ctx.stroke();
+  ctx.fillStyle='#ffe066';
+  ctx.fillText('MEMBRANA BASAL INTACTA', 3*w/4, 235);
+
+  // Divisor
+  ctx.strokeStyle='#2a2a44'; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(w/2,0); ctx.lineTo(w/2,h); ctx.stroke();
+  ctx.setLineDash([]);
+}
+drawHistoCanvas();
+window.addEventListener('resize', drawHistoCanvas);
+
+// =================== LIVE CELL CANVAS ===================
+let liveCellAnim = null;
+let riskLevel = 30;
+
+function drawLiveCell(){
+  const canvas = document.getElementById('liveCell');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = 160;
+  const w = canvas.width, h = canvas.height;
+
+  let t = 0;
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    t += 0.03;
+    const risk = riskLevel;
+    const numCells = Math.max(5, Math.round(5 + risk/10));
+    const irregularity = risk/100;
+
+    for(let i=0;i<numCells;i++){
+      const baseX = (i+0.5)*(w/numCells);
+      const baseY = h/2 + Math.sin(t+i)*8;
+      const baseR = 20 + Math.sin(t*0.7+i)*4;
+      const wiggle = irregularity * 15;
+      const deform = irregularity;
+
+      // Cor baseada em risco
+      const r = Math.round(57 + risk*1.98);
+      const g = Math.round(255 - risk*2.2);
+      const b = Math.round(20 + risk*1.6);
+      const cellColor = `rgb(${r},${g},${b})`;
+
+      ctx.save(); ctx.translate(baseX + (Math.random()-0.5)*wiggle*0.3, baseY);
+      // Corpo célula
+      ctx.beginPath();
+      if(deform < 0.3){
+        ctx.arc(0,0,baseR,0,Math.PI*2);
+      } else {
+        ctx.ellipse(0,0, baseR*(1+deform*0.5*Math.sin(t+i)), baseR*(1+deform*0.3*Math.cos(t+i*0.7)), t*0.2*deform, 0, Math.PI*2);
+      }
+      ctx.fillStyle = cellColor+'22';
+      ctx.fill();
+      ctx.strokeStyle = cellColor;
+      ctx.lineWidth = 1.5; ctx.stroke();
+
+      // Núcleo
+      const nucR = baseR * (0.3 + deform*0.5);
+      ctx.beginPath();
+      ctx.ellipse(0,0, nucR*(1+deform*0.4), nucR, t*0.1*deform, 0, Math.PI*2);
+      ctx.fillStyle = cellColor+'66'; ctx.fill();
+      ctx.restore();
+    }
+
+    // Legenda risco
+    ctx.font='bold 10px Share Tech Mono'; ctx.fillStyle='#7a7a99'; ctx.textAlign='center';
+    const grades = ['NORMAL','LEVE','MODERADA','GRAVE','CRÍTICO'];
+    const gi = Math.min(4, Math.floor(risk/22));
+    ctx.fillStyle = ['#39ff14','#ffe066','#a259ff','#ff3c6e','#ff3c6e'][gi];
+    ctx.fillText('DISPLASIA ' + grades[gi], w/2, h-6);
+
+    liveCellAnim = requestAnimationFrame(frame);
+  }
+  if(liveCellAnim) cancelAnimationFrame(liveCellAnim);
+  frame();
+}
+drawLiveCell();
+window.addEventListener('resize', drawLiveCell);
+
+// =================== SIMULADOR ===================
+function updateSim(){
+  const hpv = +document.getElementById('hpvSlider').value;
+  const smoke = +document.getElementById('smokeSlider').value;
+  const inflam = +document.getElementById('inflamSlider').value;
+  const genetic = +document.getElementById('geneticSlider').value;
+  const immune = +document.getElementById('immuneSlider').value;
+
+  document.getElementById('hpvVal').textContent = hpv+'%';
+  document.getElementById('smokeVal').textContent = smoke+'%';
+  document.getElementById('inflamVal').textContent = inflam+'%';
+  document.getElementById('geneticVal').textContent = genetic+'%';
+  document.getElementById('immuneVal').textContent = immune+'%';
+
+  // Calcular risco
+  let risk = (hpv*0.4 + smoke*0.25 + inflam*0.2 + genetic*0.15) * (1 - immune*0.006);
+  risk = Math.max(0, Math.min(100, Math.round(risk)));
+  riskLevel = risk;
+
+  document.getElementById('riskBar').style.width = risk+'%';
+  document.getElementById('riskPercent').textContent = risk+'%';
+
+  const statusEl = document.getElementById('simStatus');
+  const gradeEl = document.getElementById('simGrade');
+  const descEl = document.getElementById('simDesc');
+  const badgesEl = document.getElementById('simBadges');
+
+  if(risk < 15){
+    gradeEl.textContent = '✅ Sem Displasia';
+    gradeEl.style.color = 'var(--green)';
+    descEl.textContent = 'Risco muito baixo. Células com comportamento normal esperado.';
+    statusEl.style.borderColor = 'var(--green)';
+    badgesEl.innerHTML = '<span class="status-badge badge-normal">NORMAL</span>';
+  } else if(risk < 35){
+    gradeEl.textContent = '🟡 Risco Baixo — Vigilância';
+    gradeEl.style.color = 'var(--accent3)';
+    descEl.textContent = 'Fatores de risco presentes mas controlados. Rastreio regular recomendado.';
+    statusEl.style.borderColor = 'var(--accent3)';
+    badgesEl.innerHTML = '<span class="status-badge badge-mild">VIGILÂNCIA</span>';
+  } else if(risk < 60){
+    gradeEl.textContent = '🔵 Displasia Leve a Moderada (NIC I-II)';
+    gradeEl.style.color = 'var(--accent4)';
+    descEl.textContent = 'Alterações celulares moderadas. Biópsia e acompanhamento especializado necessários.';
+    statusEl.style.borderColor = 'var(--accent4)';
+    badgesEl.innerHTML = '<span class="status-badge badge-mild">NIC I</span><span class="status-badge badge-moderate">NIC II</span>';
+  } else if(risk < 82){
+    gradeEl.textContent = '🔴 Displasia Grave (NIC III)';
+    gradeEl.style.color = 'var(--accent1)';
+    descEl.textContent = 'Alto risco! Todo o epitélio afetado. Tratamento urgente recomendado (LLETZ/conização).';
+    statusEl.style.borderColor = 'var(--accent1)';
+    badgesEl.innerHTML = '<span class="status-badge badge-severe">NIC III</span><span class="status-badge badge-severe">TRATAMENTO URGENTE</span>';
+  } else {
+    gradeEl.textContent = '⚠️ RISCO MÁXIMO — Carcinoma in Situ';
+    gradeEl.style.color = '#fff';
+    descEl.textContent = 'Risco crítico de progressão para carcinoma invasivo. Intervenção imediata necessária.';
+    statusEl.style.borderColor = 'var(--accent1)';
+    badgesEl.innerHTML = '<span class="status-badge badge-carcinoma">CARCINOMA IN SITU</span><span class="status-badge badge-carcinoma">INTERVENÇÃO IMEDIATA</span>';
+  }
+}
+updateSim();
+
+// =================== EXPAND ===================
+function toggleExpand(id){
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// =================== TYPE INFO ===================
+const typeData = {
+  cervical:{
+    title:'🔴 Displasia Cervical',
+    html:`Localização: <strong>colo do útero</strong> (zona de transformação). Causa principal: <strong>HPV 16/18</strong>.<br>
+    Classificação: NIC I, II, III → Carcinoma in Situ → Carcinoma Invasivo.<br>
+    Rastreio: Papanicolau + teste HPV. Prevenção: Vacina Gardasil/Cervarix.<br>
+    <em>É a displasia mais estudada e a 2.ª causa de morte por cancro ginecológico a nível mundial.</em>`
+  },
+  bronco:{
+    title:'🫁 Displasia Brônquica',
+    html:`Localização: <strong>epitélio respiratório</strong> (brônquios). Causa principal: <strong>tabagismo</strong> (80% dos casos).<br>
+    Graus: leve, moderada, grave → Carcinoma in Situ → Carcinoma epidermóide.<br>
+    Diagnóstico: broncoscopia com biópsia, citologia de expectoração, TC torácico.<br>
+    <em>A cessação tabágica pode levar à regressão das lesões leves.</em>`
+  },
+  ossea:{
+    title:'🦴 Displasia Óssea',
+    html:`Grupo heterogéneo de doenças que afetam o <strong>esqueleto e cartilagem</strong>.<br>
+    Exemplos: Displasia Fibrosa (gene GNAS), Acondroplasia (gene FGFR3), Osteogénese Imperfeita (COL1A1/2).<br>
+    Maioritariamente <strong>genéticas</strong> — mutações somáticas ou germinativas.<br>
+    <em>Diagnóstico: imagiologia (Rx, RM), genética molecular, histopatologia.</em>`
+  },
+  colon:{
+    title:'🟠 Displasia do Cólon',
+    html:`Associada a <strong>doenças inflamatórias intestinais crónicas</strong> (CU, Crohn).<br>
+    Também ocorre em adenomas (pólipos) do cólon como lesões precursoras do CCR.<br>
+    Classificação: displasia de baixo grau (DBG) e displasia de alto grau (DAG).<br>
+    Diagnóstico: colonoscopia com biópsia aleatória e dirigida.<br>
+    <em>Risco aumenta com duração e extensão da doença inflamatória.</em>`
+  },
+  ectodermica:{
+    title:'🧬 Displasia Ectodérmica',
+    html:`Grupo de mais de <strong>200 síndromes hereditárias</strong> raras.<br>
+    Afeta tecidos de origem ectodérmica: pele, cabelo, unhas, dentes, glândulas sudoríparas.<br>
+    Forma mais comum: <strong>hipoidrótica ligada ao X</strong> (gene EDA) — oligodontia, hipotricose, anidrose.<br>
+    <em>Tratamento sintomático: implantes dentários, gestão da temperatura, próteses.</em>`
+  },
+  esofagica:{
+    title:'🟡 Displasia Esofágica',
+    html:`Ocorre no contexto do <strong>Esófago de Barrett</strong> — metaplasia intestinal por RGE crónico.<br>
+    Progressão: Barrett → DBG → DAG → Adenocarcinoma esofágico.<br>
+    Diagnóstico: endoscopia com biópsia em 4 quadrantes (protocolo Seattle).<br>
+    <em>Tratamento: ablação por radiofrequência (RFA) ou ressecção endoscópica das lesões de alto grau.</em>`
+  }
+};
+
+function showTypeInfo(type){
+  const box = document.getElementById('typeInfoBox');
+  const content = document.getElementById('typeInfoContent');
+  const data = typeData[type];
+  if(!data) return;
+  content.innerHTML = `<strong style="font-family:Bangers,cursive;font-size:1.2rem;color:var(--accent4);">${data.title}</strong><br><br><span style="font-size:0.88rem;line-height:1.7;">${data.html}</span>`;
+  box.style.display='block';
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// =================== QUIZ ===================
+let score = 0;
+let answered = {};
+
+function answer(btn, choice, qNum, correct){
+  if(answered[qNum]) return;
+  answered[qNum] = true;
+  const fb = document.getElementById('qf'+qNum);
+  const allBtns = btn.parentElement.querySelectorAll('.quiz-btn');
+  allBtns.forEach(b=>b.style.pointerEvents='none');
+
+  if(choice === correct){
+    btn.classList.add('correct');
+    score++;
+    document.getElementById('scoreNum').textContent = score;
+    fb.className = 'quiz-feedback show ok';
+    fb.textContent = '✅ Correto! Excelente raciocínio clínico!';
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b=>{ if(b.textContent.startsWith(correct+')')) b.classList.add('correct'); });
+    fb.className = 'quiz-feedback show fail';
+    const explanations = {
+      1: 'Displasia é crescimento anormal SEM invasão — pré-maligno e potencialmente reversível.',
+      2: 'O HPV (tipos 16 e 18) é responsável por ~70% dos cancros cervicais. Infecta a zona de transformação e inativa p53/pRb.',
+      3: 'NIC III = displasia grave com toda a espessura do epitélio afetada, mas membrana basal ainda intacta.',
+      4: 'Hipercromasia = núcleo escuro por aumento de cromatina condensada (mais DNA). É uma das características diagnósticas da displasia.',
+      5: 'A membrana basal INTACTA é o critério que separa displasia de carcinoma invasivo — é a fronteira mais importante da histopatologia!'
+    };
+    fb.textContent = '❌ Incorreto. ' + (explanations[qNum]||'Revê o material!');
+  }
+}
+
+function resetQuiz(){
+  score=0; answered={};
+  document.getElementById('scoreNum').textContent='0';
+  document.querySelectorAll('.quiz-btn').forEach(b=>{
+    b.classList.remove('correct','wrong');
+    b.style.pointerEvents='';
+  });
+  document.querySelectorAll('.quiz-feedback').forEach(f=>{
+    f.className='quiz-feedback';
+    f.textContent='';
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,2187 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>METÁSTASE — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090f;
+    --bg2: #0d1117;
+    --bg3: #111820;
+    --panel: #131c28;
+    --cyan: #00ffe7;
+    --magenta: #ff2d78;
+    --yellow: #ffe200;
+    --purple: #a855f7;
+    --orange: #ff6b35;
+    --green: #39ff14;
+    --blue: #3b82f6;
+    --text: #e8f4fd;
+    --muted: #8baab8;
+    --border: rgba(0,255,231,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.75;
+  }
+
+  /* ─── SCANLINES overlay ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 40%, #0a1a2e 0%, #07090f 70%);
+    overflow: hidden;
+  }
+
+  #hero::after {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,45,120,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    animation: pulse-bg 4s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes pulse-bg {
+    0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.7; }
+    50% { transform: translate(-50%,-50%) scale(1.3); opacity: 1; }
+  }
+
+  .hero-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    border: 1px solid var(--cyan);
+    padding: 0.3rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    animation: fadeDown 1s ease both;
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff 0%, var(--cyan) 40%, var(--magenta) 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeDown 1s 0.2s ease both;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-sub {
+    font-size: clamp(1rem, 3vw, 1.35rem);
+    color: var(--muted);
+    max-width: 680px;
+    animation: fadeDown 1s 0.4s ease both;
+    position: relative; z-index: 1;
+  }
+
+  .hero-sub span { color: var(--yellow); font-weight: 700; }
+
+  .hero-scroll {
+    margin-top: 3rem;
+    animation: fadeDown 1s 0.7s ease both, bounce 2s 2s infinite;
+    font-size: 2rem;
+    color: var(--cyan);
+    cursor: pointer;
+  }
+
+  @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(8px); } }
+  @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* floating particles in hero */
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: float-p linear infinite;
+  }
+  @keyframes float-p {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+  }
+
+  /* ─── NAV PROGRESS ─── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--magenta));
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  #chapter-nav {
+    position: fixed;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid transparent;
+  }
+  .nav-dot.active, .nav-dot:hover {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    transform: scale(1.4);
+  }
+  .nav-dot[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    right: 1.5rem;
+    background: var(--panel);
+    color: var(--cyan);
+    font-size: 0.7rem;
+    white-space: nowrap;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ─── CHAPTER WRAPPER ─── */
+  .chapter {
+    padding: 5rem 1.5rem;
+    max-width: 960px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .chapter.visible { opacity: 1; transform: translateY(0); }
+
+  .chapter-number {
+    font-family: 'Bangers', cursive;
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    color: var(--magenta);
+    margin-bottom: 0.5rem;
+  }
+
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    line-height: 1.05;
+    margin-bottom: 2rem;
+    color: var(--cyan);
+  }
+
+  /* ─── MANGA PANELS ─── */
+  .manga-panel {
+    border: 3px solid;
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .manga-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    opacity: 0.05;
+  }
+  .panel-cyan { border-color: var(--cyan); background: rgba(0,255,231,0.04); }
+  .panel-magenta { border-color: var(--magenta); background: rgba(255,45,120,0.04); }
+  .panel-yellow { border-color: var(--yellow); background: rgba(255,226,0,0.04); }
+  .panel-purple { border-color: var(--purple); background: rgba(168,85,247,0.04); }
+  .panel-orange { border-color: var(--orange); background: rgba(255,107,53,0.04); }
+  .panel-green { border-color: var(--green); background: rgba(57,255,20,0.04); }
+
+  .panel-label {
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+    position: absolute;
+    top: -0.65rem;
+    left: 1rem;
+    padding: 0 0.5rem;
+    background: var(--bg);
+  }
+  .panel-cyan .panel-label { color: var(--cyan); }
+  .panel-magenta .panel-label { color: var(--magenta); }
+  .panel-yellow .panel-label { color: var(--yellow); }
+  .panel-purple .panel-label { color: var(--purple); }
+  .panel-orange .panel-label { color: var(--orange); }
+  .panel-green .panel-label { color: var(--green); }
+
+  /* ─── SPEECH BUBBLE ─── */
+  .bubble {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 1.5rem 1.5rem 1.5rem 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  .bubble.right { border-radius: 1.5rem 1.5rem 0 1.5rem; text-align: right; }
+  .bubble-char {
+    font-family: 'Bangers', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    color: var(--yellow);
+    display: block;
+    margin-bottom: 0.4rem;
+    font-style: normal;
+  }
+
+  /* ─── SVG MOLECULES ─── */
+  .molecule-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 0;
+    overflow: hidden;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position: relative;
+    padding-left: 2.5rem;
+    margin: 2rem 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.6rem;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--magenta), var(--purple));
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .tl-item.visible { opacity: 1; transform: translateX(0); }
+  .tl-dot {
+    position: absolute;
+    left: -2.1rem;
+    top: 0.3rem;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    background: var(--bg);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  .tl-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: var(--cyan);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ─── CARDS GRID ─── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+    overflow: hidden;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,255,231,0.12);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--accent, var(--cyan));
+  }
+  .card-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+  .card h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+    color: var(--accent, var(--cyan));
+    margin-bottom: 0.5rem;
+  }
+  .card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  /* ─── INTERACTIVE SIMULATOR ─── */
+  .simulator {
+    background: var(--panel);
+    border: 2px solid var(--purple);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2.5rem 0;
+  }
+  .sim-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    color: var(--purple);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+  .slider-group { margin-bottom: 1.5rem; }
+  .slider-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .slider-group label span {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--cyan);
+    font-size: 1rem;
+  }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--bg);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    cursor: pointer;
+  }
+  .sim-result {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 1.2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    margin-top: 1rem;
+    border: 1px solid rgba(57,255,20,0.2);
+    min-height: 80px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .risk-bar-wrap { height: 16px; background: var(--bg); border-radius: 8px; overflow: hidden; margin-top: 0.8rem; }
+  .risk-bar { height: 100%; border-radius: 8px; transition: width 0.5s, background 0.5s; }
+
+  /* ─── ACCORDION ─── */
+  .accordion { margin: 1.5rem 0; }
+  .acc-item { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 0.8rem; overflow: hidden; }
+  .acc-header {
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+    background: var(--panel);
+    transition: background 0.2s;
+  }
+  .acc-header:hover { background: rgba(0,255,231,0.05); }
+  .acc-icon { font-size: 1.2rem; transition: transform 0.3s; color: var(--cyan); }
+  .acc-item.open .acc-icon { transform: rotate(45deg); }
+  .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background: var(--bg2); }
+  .acc-body-inner { padding: 1.2rem 1.4rem; font-size: 0.92rem; color: var(--muted); line-height: 1.8; }
+
+  /* ─── HIGHLIGHT TERMS ─── */
+  .term {
+    color: var(--yellow);
+    font-weight: 700;
+    cursor: help;
+    border-bottom: 1px dashed var(--yellow);
+    position: relative;
+  }
+  .term:hover::after {
+    content: attr(data-def);
+    position: absolute;
+    bottom: 120%;
+    left: 0;
+    background: var(--panel);
+    border: 1px solid var(--yellow);
+    color: var(--text);
+    font-size: 0.78rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 8px;
+    width: 260px;
+    z-index: 100;
+    font-weight: 400;
+    line-height: 1.5;
+    pointer-events: none;
+    white-space: normal;
+  }
+
+  .highlight { color: var(--cyan); font-weight: 700; }
+  .highlight-m { color: var(--magenta); font-weight: 700; }
+  .highlight-y { color: var(--yellow); font-weight: 700; }
+  .highlight-p { color: var(--purple); font-weight: 700; }
+  .highlight-o { color: var(--orange); font-weight: 700; }
+  .highlight-g { color: var(--green); font-weight: 700; }
+
+  /* ─── QUIZ ─── */
+  .quiz-wrap { margin: 2rem 0; }
+  .quiz-q {
+    background: var(--panel);
+    border-left: 4px solid var(--magenta);
+    padding: 1.2rem 1.5rem;
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+  }
+  .quiz-options { display: grid; gap: 0.6rem; margin-bottom: 1rem; }
+  .quiz-opt {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1.2rem;
+    cursor: pointer;
+    font-size: 0.92rem;
+    transition: all 0.2s;
+    text-align: left;
+    color: var(--text);
+  }
+  .quiz-opt:hover { border-color: var(--cyan); color: var(--cyan); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(57,255,20,0.08); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--magenta); background: rgba(255,45,120,0.08); color: var(--magenta); }
+  .quiz-feedback { font-size: 0.88rem; padding: 0.8rem; border-radius: 8px; margin-top: 0.5rem; display: none; }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(57,255,20,0.1); color: var(--green); border: 1px solid rgba(57,255,20,0.3); }
+  .quiz-feedback.err { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.3); }
+  .quiz-score { font-family: 'Bangers', cursive; font-size: 1.4rem; letter-spacing: 0.05em; color: var(--yellow); text-align: center; margin-top: 1rem; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    margin: 4rem 0;
+  }
+
+  /* ─── SECTION SEPARATOR ─── */
+  .section-sep {
+    text-align: center;
+    font-family: 'Bangers', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    padding: 1rem 0;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: #050709;
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem;
+    text-align: center;
+    margin-top: 5rem;
+  }
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 0.15em;
+    background: linear-gradient(135deg, var(--cyan), var(--magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+  }
+  footer p { font-size: 0.82rem; color: var(--muted); line-height: 2; }
+
+  /* ─── STEP ARROWS ─── */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 2rem 0;
+  }
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.2rem 1.4rem;
+    background: var(--panel);
+    border-radius: 10px;
+    margin-bottom: 0.3rem;
+    position: relative;
+    border: 1px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .step-item:hover { border-color: var(--cyan); }
+  .step-num {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: var(--cyan);
+    min-width: 2.5rem;
+    line-height: 1;
+    opacity: 0.5;
+  }
+  .step-content h4 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.15rem;
+    letter-spacing: 0.05em;
+    color: var(--yellow);
+    margin-bottom: 0.3rem;
+  }
+  .step-content p { font-size: 0.88rem; color: var(--muted); }
+
+  /* ─── CELL SVG ANIMATION ─── */
+  .cell-canvas { width: 100%; height: 260px; }
+
+  /* ─── TAG PILLS ─── */
+  .pill {
+    display: inline-block;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0.2rem;
+    letter-spacing: 0.05em;
+  }
+  .pill-c { background: rgba(0,255,231,0.1); color: var(--cyan); border: 1px solid rgba(0,255,231,0.25); }
+  .pill-m { background: rgba(255,45,120,0.1); color: var(--magenta); border: 1px solid rgba(255,45,120,0.25); }
+  .pill-y { background: rgba(255,226,0,0.1); color: var(--yellow); border: 1px solid rgba(255,226,0,0.25); }
+
+  /* ─── MOBILE FIXES ─── */
+  @media (max-width: 640px) {
+    #chapter-nav { display: none; }
+    .scroll-top { bottom: 1rem; right: 1rem; }
+
+    /* Chapter layout */
+    .chapter {
+      padding: 3rem 1rem;
+      max-width: 100%;
+    }
+
+    /* Cards */
+    .cards-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Bubble */
+    .bubble { font-size: 0.9rem; padding: 1rem 1.1rem; }
+
+    /* Tables: allow horizontal scroll and prevent overflow */
+    table {
+      min-width: 500px;
+    }
+    .manga-panel > div[style*="overflow-x"] {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Pathway nodes: stack vertically */
+    .pathway {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3rem;
+    }
+    .pw-arrow {
+      transform: rotate(90deg);
+      margin: 0 0 0 0.8rem;
+    }
+    .pw-node {
+      min-width: 80%;
+    }
+
+    /* Steps */
+    .step-item {
+      gap: 0.8rem;
+      padding: 1rem;
+    }
+    .step-num { font-size: 1.5rem; min-width: 2rem; }
+    .step-content p { font-size: 0.82rem; }
+
+    /* Simulator */
+    .simulator { padding: 1.2rem; }
+
+    /* Term tooltips */
+    .term:hover::after { width: 200px; left: auto; right: 0; font-size: 0.72rem; }
+
+    /* Accordion */
+    .acc-header { padding: 0.9rem 1rem; font-size: 0.88rem; }
+    .acc-body-inner { padding: 1rem; font-size: 0.85rem; }
+
+    /* Quiz options */
+    .quiz-opt { padding: 0.7rem 1rem; font-size: 0.85rem; }
+    .quiz-q { padding: 1rem; }
+
+    /* Manga panels */
+    .manga-panel { padding: 1.2rem 1rem; }
+
+    /* Hero */
+    #hero { padding: 1.5rem 1rem; }
+    .hero-sub { font-size: 0.95rem; }
+
+    /* SVGs: allow scroll on small screens */
+    .molecule-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
+    .molecule-wrap svg { min-width: 320px; }
+
+    /* Info box */
+    .info-box { padding: 1rem; }
+    .info-box p { font-size: 0.85rem; }
+
+    /* Footer */
+    footer { padding: 2rem 1rem; }
+
+    /* Text body */
+    p.reveal, p { font-size: 0.92rem; }
+  }
+
+  /* ─── GLITCH EFFECT ─── */
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    color: inherit;
+    width: 100%;
+  }
+  .glitch::before {
+    color: var(--cyan);
+    animation: glitch1 3s infinite;
+    clip-path: polygon(0 20%,100% 20%,100% 40%,0 40%);
+  }
+  .glitch::after {
+    color: var(--magenta);
+    animation: glitch2 3s infinite;
+    clip-path: polygon(0 60%,100% 60%,100% 80%,0 80%);
+  }
+  @keyframes glitch1 {
+    0%,94%,100% { transform: translateX(0); }
+    95% { transform: translateX(-2px); }
+    97% { transform: translateX(2px); }
+  }
+  @keyframes glitch2 {
+    0%,94%,100% { transform: translateX(0); }
+    95% { transform: translateX(2px); }
+    97% { transform: translateX(-2px); }
+  }
+
+  /* scroll reveal */
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+  .reveal.on { opacity: 1; transform: translateY(0); }
+
+  /* ─── PATHWAY DIAGRAM ─── */
+  .pathway {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 1.5rem 0;
+  }
+  .pw-node {
+    background: var(--panel);
+    border: 2px solid var(--cyan);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--cyan);
+    text-align: center;
+    min-width: 100px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .pw-node:hover { background: rgba(0,255,231,0.1); box-shadow: 0 0 15px rgba(0,255,231,0.3); }
+  .pw-node.red { border-color: var(--magenta); color: var(--magenta); }
+  .pw-node.red:hover { background: rgba(255,45,120,0.1); }
+  .pw-node.yellow { border-color: var(--yellow); color: var(--yellow); }
+  .pw-arrow {
+    font-size: 1.5rem;
+    color: var(--muted);
+    margin: 0 0.3rem;
+    flex-shrink: 0;
+  }
+
+  /* ─── INFO BOX ─── */
+  .info-box {
+    background: rgba(168,85,247,0.06);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .info-box::before {
+    content: 'ⓘ';
+    position: absolute;
+    top: 1rem; right: 1rem;
+    color: var(--purple);
+    font-size: 1.2rem;
+  }
+  .info-box p { font-size: 0.9rem; color: var(--text); line-height: 1.8; }
+
+  /* SECTION divider with chapter color */
+  .chapter-sep {
+    width: 60px;
+    height: 4px;
+    border-radius: 2px;
+    margin: 0.8rem 0 2rem 0;
+  }
+
+  .scroll-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px; height: 44px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--cyan);
+    z-index: 800;
+    transition: all 0.3s;
+    opacity: 0;
+  }
+  .scroll-top.show { opacity: 1; }
+  .scroll-top:hover { background: rgba(0,255,231,0.1); box-shadow: 0 0 15px rgba(0,255,231,0.3); }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- NAV DOTS -->
+<nav id="chapter-nav">
+  <div class="nav-dot active" data-target="hero" title="Início"></div>
+  <div class="nav-dot" data-target="ch0" title="O que é o Cancro?"></div>
+  <div class="nav-dot" data-target="ch1" title="A Fuga"></div>
+  <div class="nav-dot" data-target="ch2" title="Invasão"></div>
+  <div class="nav-dot" data-target="ch3" title="Intravasamento"></div>
+  <div class="nav-dot" data-target="ch4" title="Circulação"></div>
+  <div class="nav-dot" data-target="ch5" title="Extravasamento"></div>
+  <div class="nav-dot" data-target="ch6" title="Colonização"></div>
+  <div class="nav-dot" data-target="ch7" title="Angiogénese"></div>
+  <div class="nav-dot" data-target="ch8" title="Clínica"></div>
+  <div class="nav-dot" data-target="ch9" title="Quiz"></div>
+</nav>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- ══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section id="hero">
+  <!-- Floating particles -->
+  <div id="particles"></div>
+
+  <div class="hero-badge">DemilMed-UL · 2026 · 2.º Ano de Medicina</div>
+  <h1 class="hero-title glitch" data-text="METÁSTASE">METÁSTASE</h1>
+  <p class="hero-sub">A história de uma célula que aprendeu a <span>escapar</span>, a <span>viajar</span> e a <span>conquistar</span> novos territórios — narrada como nunca foi antes.</p>
+
+  <!-- HERO SVG – simplified cell villain -->
+  <div style="margin-top:2rem; position:relative; z-index:1;">
+    <svg width="160" height="160" viewBox="0 0 160 160" style="animation: rotate-cell 12s linear infinite;">
+      <defs>
+        <radialGradient id="cellGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff2d78" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#7b0030" stop-opacity="0.3"/>
+        </radialGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Membrane irregular -->
+      <path d="M80,20 C105,15 135,35 145,60 C158,90 145,125 120,138 C95,152 55,148 35,130 C12,110 15,75 28,52 C42,28 60,25 80,20 Z" fill="url(#cellGrad)" filter="url(#glow)" style="animation: morph-cell 5s ease-in-out infinite;"/>
+      <!-- Nucleus -->
+      <ellipse cx="80" cy="80" rx="28" ry="24" fill="#ff2d78" opacity="0.5"/>
+      <ellipse cx="80" cy="80" rx="18" ry="15" fill="#ff2d78" opacity="0.8"/>
+      <!-- DNA strands suggestion -->
+      <path d="M72,75 C76,70 84,85 88,80" stroke="#ffe200" stroke-width="2" fill="none" opacity="0.8"/>
+      <path d="M72,82 C76,77 84,92 88,87" stroke="#ffe200" stroke-width="2" fill="none" opacity="0.6"/>
+      <!-- Pseudopods -->
+      <path d="M145,60 L162,45" stroke="#ff2d78" stroke-width="2" stroke-linecap="round" opacity="0.6" style="animation: pseudopod 3s ease-in-out infinite;"/>
+      <path d="M120,138 L130,158" stroke="#ff2d78" stroke-width="2" stroke-linecap="round" opacity="0.6" style="animation: pseudopod 4s 1s ease-in-out infinite;"/>
+      <path d="M35,130 L15,145" stroke="#ff2d78" stroke-width="2" stroke-linecap="round" opacity="0.6" style="animation: pseudopod 3.5s 0.5s ease-in-out infinite;"/>
+    </svg>
+  </div>
+  <style>
+    @keyframes rotate-cell { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes morph-cell {
+      0%,100% { d: path("M80,20 C105,15 135,35 145,60 C158,90 145,125 120,138 C95,152 55,148 35,130 C12,110 15,75 28,52 C42,28 60,25 80,20 Z"); }
+      33% { d: path("M80,18 C108,20 138,40 143,65 C150,95 138,128 112,142 C88,155 52,150 32,132 C10,113 18,72 30,50 C44,26 56,16 80,18 Z"); }
+      66% { d: path("M80,22 C102,12 132,32 148,58 C162,88 148,122 122,136 C98,150 58,146 38,128 C14,108 12,78 26,54 C40,30 62,28 80,22 Z"); }
+    }
+    @keyframes pseudopod { 0%,100%{ opacity:0.3; } 50%{ opacity:1; } }
+  </style>
+
+  <div class="hero-scroll" onclick="document.getElementById('ch0').scrollIntoView({behavior:'smooth'})">▼</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     CH 0 — O QUE É O CANCRO
+════════════════════════════════════════════ -->
+<section id="ch0">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 00</div>
+  <h2 class="chapter-title">A Origem do Vilão</h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--cyan), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    Para entender a metástase, primeiro precisas de conhecer a célula cancerosa. Não como um monstro sem sentido — mas como uma célula que aprendeu a ignorar as regras que mantêm o nosso corpo em harmonia.
+  </div>
+
+  <p class="reveal">No teu corpo existem cerca de <span class="highlight">37 triliões de células</span>. Todas elas seguem um conjunto rígido de regras: divide-te quando o corpo precisa, para quando não és necessária, e morre graciosamente quando chegares ao fim da tua vida útil. Este equilíbrio é a base da saúde.</p>
+
+  <p class="reveal" style="margin-top:1.2rem;">Mas imagine que uma única célula sofre uma mutação no seu <span class="term" data-def="DNA = Ácido Desoxirribonucleico. A molécula que contém as instruções genéticas de toda a vida. Deriva do grego 'desoxyribose' + nucleós (núcleo).">DNA</span>. Depois outra mutação. Depois mais. Com o tempo, esta célula acumula dano suficiente para <span class="highlight-m">ignorar os sinais de paragem</span>, para <span class="highlight-y">dividir-se sem controlo</span>, e para <span class="highlight-o">resistir à morte programada</span>.</p>
+
+  <div class="manga-panel panel-cyan" style="margin-top:2rem;">
+    <span class="panel-label">DEFINIÇÃO MOLECULAR</span>
+    <p style="margin-top:0.3rem;">O <span class="term" data-def="Cancro: do latim 'cancer' (caranguejo), pela forma como os tumores se agarram e estendem pelos tecidos, como as patas de um caranguejo.">cancro</span> resulta da acumulação progressiva de <strong>mutações somáticas</strong> em genes reguladores do ciclo celular:</p>
+    <div class="cards-grid" style="margin-top:1.2rem;">
+      <div class="card" style="--accent: var(--magenta);">
+        <div class="card-icon">⚡</div>
+        <h3>Oncogenes</h3>
+        <p>Genes que promovem a divisão celular. Quando mutados (activados demais), comportam-se como um acelerador preso. Ex: <strong>RAS, MYC, EGFR</strong>.</p>
+      </div>
+      <div class="card" style="--accent: var(--cyan);">
+        <div class="card-icon">🛑</div>
+        <h3>Genes Supressores</h3>
+        <p>O travão do ciclo celular. Quando inactivados, a célula perde o controlo da divisão. Ex: <strong>TP53, RB1, BRCA1/2</strong>.</p>
+      </div>
+      <div class="card" style="--accent: var(--yellow);">
+        <div class="card-icon">☠️</div>
+        <h3>Genes de Apoptose</h3>
+        <p>Controlam a morte celular programada. Quando perturbados, a célula torna-se imortal. Ex: <strong>BCL-2, BAX, CASP3</strong>.</p>
+      </div>
+      <div class="card" style="--accent: var(--purple);">
+        <div class="card-icon">🔧</div>
+        <h3>Genes de Reparação</h3>
+        <p>Corrigem erros no DNA. Quando falham, as mutações acumulam-se sem controlo. Ex: <strong>MLH1, MSH2, BRCA1</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bubble right" style="margin-top:2rem;">
+    <span class="bubble-char" style="text-align:right;">💬 ESTUDANTE</span>
+    Mas se uma célula se divide sem controlo, ela forma um tumor. A metástase é diferente?
+  </div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    Exactamente! Um tumor <strong>benigno</strong> cresce localmente e fica contido. A metástase é quando células cancerosas adquirem a capacidade de <strong>viajar para outros órgãos</strong> e criar novos tumores lá. Isso é o que torna o cancro verdadeiramente perigoso — e é sobre isso que vamos falar agora.
+  </div>
+
+  <div class="info-box">
+    <p>📊 <strong>Facto clínico:</strong> Aproximadamente <strong>90% das mortes por cancro</strong> são causadas pela metástase — não pelo tumor primário em si. Compreender este processo é, portanto, a chave para combater o cancro. (Hanahan & Weinberg, <em>Cell</em>, 2011)</p>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 1 — A FUGA (EMT)
+════════════════════════════════════════════ -->
+<section id="ch1">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 01</div>
+  <h2 class="chapter-title">A Grande Fuga<br><small style="font-size:0.5em; color:var(--muted);">Transição Epitelial-Mesenquimal</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--magenta), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA (interior)</span>
+    Estou presa. As minhas vizinhas agarram-me com proteínas de adesão. As membranas que me rodeiam bloqueiam o meu caminho. Mas... sinto que posso mudar. Posso transformar-me em algo que consegue escapar.
+  </div>
+
+  <p class="reveal">O primeiro passo da metástase chama-se <span class="term" data-def="EMT = Epithelial-Mesenchymal Transition / Transição Epitelial-Mesenquimal. 'Epithelial' do grego 'epi' (sobre) + 'thele' (mamilo), referindo-se às células que cobrem superfícies. 'Mesenchymal' do grego 'mesos' (meio) + 'enchyma' (infusão), referindo-se a células do tecido conjuntivo mais soltas e móveis.">EMT — Transição Epitelial-Mesenquimal</span>. É uma transformação molecular dramática: a célula muda de personalidade, de um tipo fixo e organizado para um tipo livre e invasivo.</p>
+
+  <!-- SVG: EMT visualizado -->
+  <div class="molecule-wrap" style="flex-direction:column; gap:1rem; padding: 2rem 0;">
+    <svg viewBox="0 0 600 180" style="width:100%; max-width:600px;" id="emt-svg">
+      <!-- Left: epithelial cell cluster -->
+      <g id="epi-group">
+        <rect x="20" y="40" width="70" height="70" rx="8" fill="#1a2a3a" stroke="#3b82f6" stroke-width="2"/>
+        <rect x="95" y="40" width="70" height="70" rx="8" fill="#1a2a3a" stroke="#3b82f6" stroke-width="2"/>
+        <rect x="57" y="40" width="35" height="70" rx="0" fill="#1a3050" opacity="0.5"/>
+        <!-- E-cadherin bridges -->
+        <line x1="90" y1="70" x2="95" y2="70" stroke="#3b82f6" stroke-width="3" stroke-dasharray="4,2"/>
+        <circle cx="90" cy="70" r="4" fill="#3b82f6"/>
+        <circle cx="95" cy="70" r="4" fill="#3b82f6"/>
+        <line x1="90" y1="85" x2="95" y2="85" stroke="#3b82f6" stroke-width="3" stroke-dasharray="4,2"/>
+        <circle cx="90" cy="85" r="4" fill="#3b82f6"/>
+        <circle cx="95" cy="85" r="4" fill="#3b82f6"/>
+        <!-- Nuclei -->
+        <ellipse cx="55" cy="75" rx="15" ry="12" fill="#0d2040" stroke="#3b82f6" stroke-width="1" opacity="0.8"/>
+        <ellipse cx="130" cy="75" rx="15" ry="12" fill="#0d2040" stroke="#3b82f6" stroke-width="1" opacity="0.8"/>
+        <!-- Label -->
+        <text x="82" y="135" font-family="Bangers,cursive" font-size="13" fill="#3b82f6" text-anchor="middle">CÉLULA EPITELIAL</text>
+        <text x="82" y="150" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8" text-anchor="middle">fixa · organizada · adesiva</text>
+      </g>
+
+      <!-- Arrow with label -->
+      <g>
+        <path d="M185,75 L285,75" stroke="#ffe200" stroke-width="2" marker-end="url(#arr)"/>
+        <text x="235" y="65" font-family="Bangers,cursive" font-size="12" fill="#ffe200" text-anchor="middle">EMT</text>
+        <text x="235" y="100" font-family="Share Tech Mono,monospace" font-size="8" fill="#8baab8" text-anchor="middle">SNAIL · TWIST · ZEB</text>
+      </g>
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6" fill="none" stroke="#ffe200" stroke-width="1.5"/>
+        </marker>
+      </defs>
+
+      <!-- Right: mesenchymal cell -->
+      <g id="mes-group">
+        <path d="M330,75 C340,40 370,30 400,50 C430,65 440,90 430,115 C420,140 390,148 365,138 C340,128 320,108 330,75 Z" fill="#1a1028" stroke="#ff2d78" stroke-width="2">
+          <animateTransform attributeName="transform" type="rotate" values="0 385 90;3 385 90;-3 385 90;0 385 90" dur="4s" repeatCount="indefinite"/>
+        </path>
+        <!-- Pseudopods -->
+        <path d="M430,85 L460,70" stroke="#ff2d78" stroke-width="2" stroke-linecap="round" opacity="0.8">
+          <animate attributeName="d" values="M430,85 L460,70;M430,85 L465,60;M430,85 L460,70" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M365,138 L350,165" stroke="#ff2d78" stroke-width="2" stroke-linecap="round" opacity="0.8">
+          <animate attributeName="d" values="M365,138 L350,165;M365,138 L345,170;M365,138 L350,165" dur="2.5s" repeatCount="indefinite"/>
+        </path>
+        <!-- Nucleus -->
+        <ellipse cx="385" cy="90" rx="22" ry="18" fill="#3d0020" stroke="#ff2d78" stroke-width="1.5"/>
+        <text x="385" y="165" font-family="Bangers,cursive" font-size="13" fill="#ff2d78" text-anchor="middle">CÉLULA MESENQUIMAL</text>
+        <text x="385" y="180" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8" text-anchor="middle">móvel · invasiva · solitária</text>
+        <!-- Vimentin label -->
+        <line x1="430" y1="75" x2="480" y2="55" stroke="#a855f7" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="485" y="52" font-family="Share Tech Mono,monospace" font-size="9" fill="#a855f7">Vimentina ↑</text>
+        <text x="485" y="63" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8">E-cad ↓</text>
+        <text x="485" y="74" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8">N-cad ↑</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-magenta">
+    <span class="panel-label">O QUE MUDA NA EMT — MOLÉCULA A MOLÉCULA</span>
+    <div class="accordion" style="margin-top:1.2rem;">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>❌ E-Caderina perde-se (a cola desaparece)</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            A <strong>E-Caderina</strong> (E de <em>Epitelial</em>) é a proteína de adesão que mantém as células epiteliais unidas como tijolos numa parede. Ela liga-se ao citoesqueleto através das <strong>cateninas</strong> (α, β, γ). Quando os factores de transcrição <span class="highlight-m">SNAIL, SLUG, TWIST e ZEB1/2</span> são activados (por TGF-β, Wnt, Notch), eles <em>reprimem directamente</em> o gene CDH1 que codifica a E-Caderina. O resultado: as células perdem a coesão e ficam livres para se mover.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>✅ N-Caderina e Vimentina sobem (o motor acende)</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            A <strong>N-Caderina</strong> (N de <em>Neural</em>) substitui a E-Caderina, mas com propriedades diferentes: em vez de manter a célula presa, permite-lhe interagir com fibroblastos e células endoteliais — facilitando o movimento. A <strong>Vimentina</strong> é uma proteína de filamentos intermediários que confere flexibilidade estrutural, permitindo que a célula mude de forma enquanto se desloca pelos tecidos.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🔥 MMPs: as serras moleculares</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            As <strong>MMPs</strong> (Matrix Metalloproteinases — Metaloproteinases da Matriz) são enzimas que degradam os componentes da <span class="term" data-def="Matriz Extracelular (MEC): rede de proteínas (colagénio, fibronectina, laminina, proteoglicanos) que preenche o espaço entre as células, servindo como andaime estrutural e meio de sinalização.">Matriz Extracelular (MEC)</span> — como colagénio, laminina e fibronectina. As células cancerosas sobre-expressam MMP-2, MMP-9, MT1-MMP entre outras, abrindo literalmente caminho através do tecido. Pensa nelas como máquinas de cortar a floresta à frente da célula invasora.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🧭 Integrina: os pés que agarram o chão</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            As <strong>integrinas</strong> são receptores transmembranares que ligam o interior da célula à MEC. Formam complexos focais de adesão (com talina, vinculina, FAK) que funcionam como âncoras temporárias — a célula agarra, puxa, solta, agarra mais à frente. É a locomoção celular. Na EMT, há uma mudança nos subtipos de integrina expressos: de α6β4 (adesão estável) para αvβ3 e α5β1 (adesão dinâmica e migratória).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA</span>
+    Sinto-me... diferente. As minhas ligações às vizinhas partiram-se. As minhas enzimas estão a cortar o caminho. Tenho pseudópodos a explorar o terreno. Estou pronta para partir.
+  </div>
+
+  <div class="info-box">
+    <p>🔬 <strong>Referência:</strong> Thiery JP et al., <em>"Epithelial-mesenchymal transitions in development and disease"</em>, Cell, 2009. DOI: 10.1016/j.cell.2009.11.007</p>
+  </div>
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 2 — INVASÃO LOCAL
+════════════════════════════════════════════ -->
+<section id="ch2">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 02</div>
+  <h2 class="chapter-title">Rasgar o Terreno<br><small style="font-size:0.5em; color:var(--muted);">Invasão Local e Degradação da MEC</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--orange), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    A célula cancerosa transformou-se. Agora enfrenta o seu primeiro obstáculo real: a Matriz Extracelular e a Membrana Basal — uma barreira densa de proteínas que separa o epitélio do tecido conjuntivo subjacente.
+  </div>
+
+  <!-- SVG: Invasão -->
+  <div class="molecule-wrap" style="padding: 2.5rem 0;">
+    <svg viewBox="0 0 580 220" style="width:100%; max-width:580px;">
+      <!-- Epithelial layer -->
+      <rect x="0" y="0" width="580" height="60" fill="#0d1a2a" rx="0"/>
+      <text x="290" y="35" font-family="Bangers,cursive" font-size="14" fill="#3b82f6" text-anchor="middle">EPITÉLIO TUMORAL</text>
+
+      <!-- Basement membrane -->
+      <rect x="0" y="60" width="580" height="18" fill="#1a2a10" rx="0"/>
+      <text x="290" y="73" font-family="Share Tech Mono,monospace" font-size="9" fill="#39ff14" text-anchor="middle">MEMBRANA BASAL (Colagénio IV · Laminina · Fibronectina)</text>
+
+      <!-- Break in basement membrane -->
+      <rect x="230" y="60" width="120" height="18" fill="#0a0f07" rx="0"/>
+      <path d="M230,60 L260,78 L290,60 L320,78 L350,60" stroke="#ff2d78" stroke-width="2" fill="none" stroke-dasharray="0"/>
+      <text x="290" y="72" font-family="Share Tech Mono,monospace" font-size="9" fill="#ff2d78" text-anchor="middle">MMP-2/9 ⚡</text>
+
+      <!-- Stroma below -->
+      <rect x="0" y="78" width="580" height="142" fill="#070d15" rx="0"/>
+      <text x="80" y="100" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8">Estroma</text>
+
+      <!-- Collagen fibres (wavy lines) -->
+      <path d="M20,110 C40,105 50,115 70,110 C90,105 100,115 120,110" stroke="#2a4a2a" stroke-width="1.5" fill="none"/>
+      <path d="M20,130 C40,125 50,135 70,130 C90,125 100,135 120,130 C140,125 160,135 180,130" stroke="#2a4a2a" stroke-width="1.5" fill="none"/>
+      <path d="M400,115 C420,110 430,120 450,115 C470,110 490,120 520,115" stroke="#2a4a2a" stroke-width="1.5" fill="none"/>
+      <path d="M380,140 C400,135 420,145 450,140 C480,135 510,145 540,140" stroke="#2a4a2a" stroke-width="1.5" fill="none"/>
+      <path d="M20,170 C60,160 100,180 140,165 C180,150 220,175 260,165" stroke="#2a4a2a" stroke-width="1.5" fill="none"/>
+
+      <!-- Cancer cell invading -->
+      <g>
+        <ellipse cx="290" cy="110" rx="30" ry="22" fill="#2a0515" stroke="#ff2d78" stroke-width="2"/>
+        <ellipse cx="290" cy="110" rx="15" ry="11" fill="#ff2d78" opacity="0.5"/>
+        <!-- Pseudopods -->
+        <path d="M320,110 L355,105" stroke="#ff2d78" stroke-width="2" stroke-linecap="round">
+          <animate attributeName="d" values="M320,110 L355,105;M320,112 L358,100;M320,110 L355,105" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <path d="M290,132 L285,160" stroke="#ff2d78" stroke-width="2" stroke-linecap="round">
+          <animate attributeName="d" values="M290,132 L285,160;M292,132 L290,162;M290,132 L285,160" dur="2.5s" repeatCount="indefinite"/>
+        </path>
+        <path d="M260,110 L230,118" stroke="#ff2d78" stroke-width="2" stroke-linecap="round">
+          <animate attributeName="d" values="M260,110 L230,118;M260,108 L228,120;M260,110 L230,118" dur="1.8s" repeatCount="indefinite"/>
+        </path>
+        <!-- MMP spray indicator -->
+        <circle cx="355" cy="105" r="3" fill="#ffe200" opacity="0.8">
+          <animate attributeName="r" values="3;6;3" dur="1s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1s" repeatCount="indefinite"/>
+        </circle>
+        <text x="365" y="95" font-family="Share Tech Mono,monospace" font-size="8" fill="#ffe200">MMP ↑</text>
+        <circle cx="285" cy="160" r="3" fill="#ffe200" opacity="0.8">
+          <animate attributeName="r" values="3;6;3" dur="1.2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.8;0.2;0.8" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Lymphatic vessel -->
+      <ellipse cx="480" cy="150" rx="55" ry="20" fill="#0a1520" stroke="#00ffe7" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="480" y="154" font-family="Share Tech Mono,monospace" font-size="9" fill="#00ffe7" text-anchor="middle">Vaso Linfático</text>
+
+      <!-- Blood vessel -->
+      <ellipse cx="100" cy="175" rx="60" ry="18" fill="#1a0505" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="100" y="179" font-family="Share Tech Mono,monospace" font-size="9" fill="#ff2d78" text-anchor="middle">Vaso Sanguíneo</text>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-orange">
+    <span class="panel-label">OS 3 PASSOS DA INVASÃO LOCAL</span>
+    <div class="steps" style="margin-top:1.2rem;">
+      <div class="step-item reveal">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Degradação da Membrana Basal</h4>
+          <p>As MMPs (especialmente MMP-2 e MMP-9) cortam o <span class="term" data-def="Colagénio IV: proteína estrutural que forma a espinha dorsal da membrana basal. 'Cola' do grego 'kolla' (cola) + '-gen' (produtor).">Colagénio IV</span>, a laminina e a fibronectina. Também libertam factores de crescimento aprisionados na matriz (VEGF, FGF, TGF-β), criando um ambiente ainda mais favorável à invasão.</p>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Migração Activa pelo Estroma</h4>
+          <p>A célula estende <span class="term" data-def="Pseudópodo: do grego 'pseudo' (falso) + 'podos' (pé). Extensões temporárias da membrana celular usadas para locomoção.">pseudópodos</span>, agarra à MEC via integrinas, contrai o citoesqueleto de actina/miosina e avança. Gradientes químicos (quimiotaxia) guiam o movimento — particularmente <strong>SDF-1/CXCL12</strong> ligando ao receptor <strong>CXCR4</strong> expresso nas células tumorais.</p>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Reconfiguração Contínua do Microambiente</h4>
+          <p>As células cancerosas recrutam <span class="term" data-def="Fibroblasto Associado ao Cancro (CAF): fibroblasto activado pelo tumor, que produz factores de crescimento, modifica a MEC e cria um 'ninho' favorável à invasão e metástase.">Fibroblastos Associados ao Cancro (CAFs)</span> e macrófagos M2, que segregam mais MMPs, mais factores de crescimento e remodelam o estroma — criando uma "estrada" para a invasão progressiva.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULATOR 1 -->
+  <div class="simulator">
+    <div class="sim-title">⚗️ SIMULADOR: Velocidade de Invasão</div>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1.5rem;">Ajusta os parâmetros e observa como afectam a velocidade de invasão tumoral.</p>
+
+    <div class="slider-group">
+      <label>Actividade das MMPs <span id="mmp-val">50</span>%</label>
+      <input type="range" min="0" max="100" value="50" id="mmp-slider" oninput="updateSim()">
+    </div>
+    <div class="slider-group">
+      <label>Expressão de CXCR4 (quimiotaxia) <span id="cxcr-val">40</span>%</label>
+      <input type="range" min="0" max="100" value="40" id="cxcr-slider" oninput="updateSim()">
+    </div>
+    <div class="slider-group">
+      <label>Perda de E-Caderina <span id="ecad-val">60</span>%</label>
+      <input type="range" min="0" max="100" value="60" id="ecad-slider" oninput="updateSim()">
+    </div>
+
+    <div class="risk-bar-wrap">
+      <div class="risk-bar" id="inv-bar" style="width:50%; background: var(--orange);"></div>
+    </div>
+    <div class="sim-result" id="sim-result1">A carregar...</div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 3 — INTRAVASAMENTO
+════════════════════════════════════════════ -->
+<section id="ch3">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 03</div>
+  <h2 class="chapter-title">Entrar no Rio<br><small style="font-size:0.5em; color:var(--muted);">Intravasamento Vascular</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--cyan), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA</span>
+    Cheguei à parede de um vaso sanguíneo. É a minha porta de saída para o resto do corpo. Mas como entro sem que as células endoteliais me bloqueiem?
+  </div>
+
+  <p class="reveal">O <span class="term" data-def="Intravasamento: do latim 'intra' (dentro) + 'vas' (vaso). O processo pelo qual células tumorais penetram a parede de um vaso sanguíneo ou linfático para entrar na corrente circulatória.">intravasamento</span> é o processo pelo qual a célula tumoral penetra a parede de um vaso — sanguíneo ou linfático. Isto envolve:</p>
+
+  <!-- Pathway diagram -->
+  <div class="pathway reveal" style="margin-top:2rem;">
+    <div class="pw-node">Célula Tumoral<br>+MMPs</div>
+    <span class="pw-arrow">→</span>
+    <div class="pw-node">Contacto com<br>Endotélio</div>
+    <span class="pw-arrow">→</span>
+    <div class="pw-node red">Abertura das<br>Junções Tight</div>
+    <span class="pw-arrow">→</span>
+    <div class="pw-node yellow">Transendotelial<br>Migration</div>
+    <span class="pw-arrow">→</span>
+    <div class="pw-node red">Célula no<br>Lúmen Vascular</div>
+  </div>
+
+  <!-- SVG: Intravasamento -->
+  <div class="molecule-wrap" style="padding:2rem 0;">
+    <svg viewBox="0 0 560 200" style="width:100%; max-width:560px;">
+      <defs>
+        <linearGradient id="bloodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#3d0010"/>
+          <stop offset="100%" stop-color="#1a0008"/>
+        </linearGradient>
+      </defs>
+      <!-- Vessel walls -->
+      <rect x="0" y="0" width="560" height="30" fill="#0a1520" stroke="#00ffe7" stroke-width="1.5"/>
+      <text x="280" y="20" font-family="Share Tech Mono,monospace" font-size="9" fill="#8baab8" text-anchor="middle">Endotélio (células endoteliais)</text>
+      <rect x="0" y="160" width="560" height="30" fill="#0a1520" stroke="#00ffe7" stroke-width="1.5"/>
+      <!-- Blood lumen -->
+      <rect x="0" y="30" width="560" height="130" fill="url(#bloodGrad)"/>
+      <!-- RBCs floating -->
+      <ellipse cx="60" cy="95" rx="18" ry="10" fill="#8b0000" opacity="0.7">
+        <animateTransform attributeName="transform" type="translate" values="0,0;10,0;0,0" dur="3s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="160" cy="80" rx="18" ry="10" fill="#8b0000" opacity="0.7">
+        <animateTransform attributeName="transform" type="translate" values="0,0;12,0;0,0" dur="2.5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="450" cy="100" rx="18" ry="10" fill="#8b0000" opacity="0.7">
+        <animateTransform attributeName="transform" type="translate" values="0,0;8,0;0,0" dur="3.5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="380" cy="75" rx="18" ry="10" fill="#8b0000" opacity="0.7">
+        <animateTransform attributeName="transform" type="translate" values="0,0;15,0;0,0" dur="2s" repeatCount="indefinite"/>
+      </ellipse>
+
+      <!-- Cancer cell intravasating -->
+      <g>
+        <!-- Cell deforming through endothelium -->
+        <path d="M250,0 C260,-5 280,-5 295,0 L300,35 C295,50 290,65 280,75 C270,65 262,50 250,35 Z" fill="#2a0515" stroke="#ff2d78" stroke-width="2" opacity="0.9">
+          <animate attributeName="d" values="M255,0 C265,-5 285,-5 295,0 L298,35 C293,50 288,65 278,75 C268,65 262,50 253,35 Z;M250,0 C262,-5 282,-5 298,0 L302,40 C296,55 290,70 278,80 C266,70 260,55 248,40 Z;M255,0 C265,-5 285,-5 295,0 L298,35 C293,50 288,65 278,75 C268,65 262,50 253,35 Z" dur="2s" repeatCount="indefinite"/>
+        </path>
+        <!-- Nucleus -->
+        <ellipse cx="278" cy="50" rx="16" ry="12" fill="#ff2d78" opacity="0.5">
+          <animate attributeName="cy" values="50;55;50" dur="2s" repeatCount="indefinite"/>
+        </ellipse>
+        <!-- Gap in endothelium -->
+        <rect x="248" y="25" width="60" height="10" fill="#0a1520"/>
+        <text x="278" y="34" font-family="Share Tech Mono,monospace" font-size="7" fill="#ff2d78" text-anchor="middle">MMP-9 ⚡</text>
+        <!-- Labels -->
+        <text x="278" y="-8" font-family="Bangers,cursive" font-size="12" fill="#ff2d78" text-anchor="middle">CTC</text>
+        <line x1="278" y1="-2" x2="278" y2="0" stroke="#ff2d78" stroke-width="1"/>
+      </g>
+
+      <!-- Platelets gathering around CTC -->
+      <g opacity="0.7">
+        <ellipse cx="310" cy="90" rx="8" ry="5" fill="#a0522d">
+          <animate attributeName="cx" values="310;305;310" dur="1.5s" repeatCount="indefinite"/>
+        </ellipse>
+        <ellipse cx="250" cy="88" rx="7" ry="4" fill="#a0522d">
+          <animate attributeName="cx" values="250;256;250" dur="1.8s" repeatCount="indefinite"/>
+        </ellipse>
+        <text x="320" y="110" font-family="Share Tech Mono,monospace" font-size="8" fill="#a0522d">Plaquetas</text>
+        <text x="320" y="120" font-family="Share Tech Mono,monospace" font-size="8" fill="#8baab8">(protecção)</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-cyan">
+    <span class="panel-label">MECANISMOS MOLECULARES DO INTRAVASAMENTO</span>
+    <div class="accordion" style="margin-top:1.2rem;">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🔓 Abertura das Junções Intercelulares</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            As células tumorais secretam <strong>VEGF</strong> (Vascular Endothelial Growth Factor — Factor de Crescimento Endotelial Vascular), <strong>angiopoietina-2</strong> e outras moléculas que perturbam as junções <em>tight</em> e <em>adherens</em> entre células endoteliais. As proteínas VE-Caderina e ocludina são internalizadas ou fosforiladas, abrindo gaps temporários na parede vascular por onde a célula tumoral consegue esgueirar-se.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🤝 Macrophage-Assisted Intravasation</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            Um mecanismo fascinante: macrófagos associados ao tumor <strong>TAMs</strong> (Tumour-Associated Macrophages) criam uma estrutura tripla chamada <em>"TMEM" (Tumour MicroEnvironment of Metastasis)</em> — composta por uma célula tumoral + um macrófago + uma célula endotelial. O macrófago produz <strong>VEGF-A</strong> que abre transitoriamente o endotélio para que a célula tumoral entre. Este é um ponto-chave para intervenção terapêutica. (Condeelis & Bhatt-Bhatt, <em>Nature Rev Cancer</em>, 2022)
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🛡️ Formação do Embolus Tumoral com Plaquetas</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            Mal a célula tumoral entra no sangue, as plaquetas agregam à sua volta, formando um <em>embolus tumoral</em>. Este manto plaquetário: (1) protege a célula das forças de shear hemodinâmico; (2) esconde-a do sistema imune (NK cells e CTLs); (3) liberta <strong>TGF-β e PDGF</strong> que promovem a sobrevivência celular. Pensa nas plaquetas como um escudo protetor que a célula cancerosa recruta para a viagem.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA</span>
+    Entrei. Estou na corrente sanguínea. Sou agora uma <span class="highlight">CTC — Célula Tumoral Circulante</span>. Mas o ambiente aqui é hostil. As forças são brutais. E o sistema imune está à espreita. A maioria das minhas irmãs vai morrer aqui. Mas eu não.
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 4 — CIRCULAÇÃO E SOBREVIVÊNCIA
+════════════════════════════════════════════ -->
+<section id="ch4">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 04</div>
+  <h2 class="chapter-title">Sobreviver ao Oceano<br><small style="font-size:0.5em; color:var(--muted);">CTCs na Corrente Sanguínea</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--purple), transparent);"></div>
+
+  <div class="manga-panel panel-purple">
+    <span class="panel-label">POR QUE É TÃO DIFÍCIL SOBREVIVER NO SANGUE?</span>
+    <div class="cards-grid" style="margin-top:1.2rem;">
+      <div class="card" style="--accent: var(--magenta);">
+        <div class="card-icon">💥</div>
+        <h3>Shear Stress</h3>
+        <p>A pressão hidráulica e as forças de cisalhamento do fluxo sanguíneo destroem mecanicamente células frágeis. As células epiteliais (forma esférica rígida) são muito vulneráveis — por isso a EMT é essencial antes da invasão.</p>
+      </div>
+      <div class="card" style="--accent: var(--cyan);">
+        <div class="card-icon">⚔️</div>
+        <h3>NK Cells</h3>
+        <p>As células Natural Killer patrulham o sangue e reconhecem células tumorais por ausência de MHC-I e presença de ligandos de stress. Matam por libertação de perforinas e granzimas. 99%+ das CTCs morrem aqui.</p>
+      </div>
+      <div class="card" style="--accent: var(--yellow);">
+        <div class="card-icon">⏱️</div>
+        <h3>Anoikis</h3>
+        <p><em>Anoikis</em> (do grego "sem lar"): morte por apoptose induzida pela falta de adesão à MEC. Células epiteliais normais morrem se perderem contacto com a sua matriz. As CTCs desenvolvem resistência ao anoikis como adaptação crítica.</p>
+      </div>
+      <div class="card" style="--accent: var(--purple);">
+        <div class="card-icon">🔋</div>
+        <h3>Stress Oxidativo</h3>
+        <p>O sangue arterial tem alta tensão de O₂. As EROs (Espécies Reactivas de Oxigénio) danificam lípidos, proteínas e DNA. As CTCs sobreviventes sobre-expressam sistemas antioxidantes: NRF2, NADPH oxidase, glutationa.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    A estatística é brutal: estima-se que apenas <strong>1 em cada 10.000 a 1.000.000 CTCs</strong> chega a formar uma metástase detectável. A viagem é um filtro evolutivo implacável — só as mais adaptadas sobrevivem.
+  </div>
+
+  <!-- SVG: CTC viagem -->
+  <div class="molecule-wrap" style="padding: 1.5rem 0;">
+    <svg viewBox="0 0 580 140" style="width:100%; max-width:580px;">
+      <!-- Blood vessel tube -->
+      <rect x="0" y="30" width="580" height="80" rx="40" fill="#1a0808" stroke="#ff2d78" stroke-width="1.5"/>
+      <!-- Flow arrows -->
+      <path d="M20,70 L80,70" stroke="#8b2020" stroke-width="2" marker-end="url(#arr2)" opacity="0.5"/>
+      <path d="M100,70 L160,70" stroke="#8b2020" stroke-width="2" marker-end="url(#arr2)" opacity="0.5"/>
+      <path d="M180,70 L240,70" stroke="#8b2020" stroke-width="2" marker-end="url(#arr2)" opacity="0.5"/>
+      <defs>
+        <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L5,3 L0,6" fill="none" stroke="#8b2020" stroke-width="1"/>
+        </marker>
+      </defs>
+
+      <!-- RBCs -->
+      <ellipse cx="50" cy="70" rx="14" ry="8" fill="#8b0000" opacity="0.5">
+        <animateTransform attributeName="transform" type="translate" values="0,0;480,0" dur="4s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="110" cy="60" rx="14" ry="8" fill="#8b0000" opacity="0.5">
+        <animateTransform attributeName="transform" type="translate" values="0,0;420,0" dur="3.5s" repeatCount="indefinite"/>
+      </ellipse>
+      <ellipse cx="150" cy="80" rx="14" ry="8" fill="#8b0000" opacity="0.5">
+        <animateTransform attributeName="transform" type="translate" values="0,0;380,0" dur="5s" repeatCount="indefinite"/>
+      </ellipse>
+
+      <!-- Platelet shield CTC -->
+      <g>
+        <circle cx="300" cy="70" r="20" fill="#2a0515" stroke="#ff2d78" stroke-width="2"/>
+        <circle cx="300" cy="70" r="10" fill="#ff2d78" opacity="0.5"/>
+        <!-- Platelets around -->
+        <circle cx="320" cy="60" r="5" fill="#a0522d" opacity="0.8"/>
+        <circle cx="316" cy="80" r="4" fill="#a0522d" opacity="0.8"/>
+        <circle cx="280" cy="58" r="5" fill="#a0522d" opacity="0.8"/>
+        <circle cx="283" cy="83" r="4" fill="#a0522d" opacity="0.8"/>
+        <text x="300" y="105" font-family="Bangers,cursive" font-size="11" fill="#ff2d78" text-anchor="middle">CTC + Plaquetas</text>
+        <animateTransform attributeName="transform" type="translate" values="0,0;20,0;0,0;-15,0;0,0" dur="8s" repeatCount="indefinite" additive="sum"/>
+      </g>
+
+      <!-- NK cell attacking -->
+      <g opacity="0.9">
+        <circle cx="420" cy="55" r="14" fill="#0d2a0d" stroke="#39ff14" stroke-width="1.5"/>
+        <text x="420" y="59" font-family="Bangers,cursive" font-size="9" fill="#39ff14" text-anchor="middle">NK</text>
+        <path d="M418,69 L410,80" stroke="#39ff14" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="400" y="92" font-family="Share Tech Mono,monospace" font-size="7" fill="#39ff14">Perforina</text>
+      </g>
+
+      <!-- Dead CTC -->
+      <g>
+        <circle cx="480" cy="70" r="12" fill="#1a1a1a" stroke="#8baab8" stroke-width="1" opacity="0.5"/>
+        <text x="480" y="74" font-family="Bangers,cursive" font-size="10" fill="#8baab8" text-anchor="middle">☠</text>
+        <text x="480" y="98" font-family="Share Tech Mono,monospace" font-size="7" fill="#8baab8" text-anchor="middle">Anoikis</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-purple">
+    <span class="panel-label">COMO AS CTCs SOBREVIVEM — ADAPTAÇÕES MOLECULARES</span>
+    <p style="margin-top:0.8rem;">As raras CTCs que sobrevivem desenvolvem múltiplas adaptações:</p>
+    <div style="margin-top:1rem; display:flex; flex-wrap:wrap; gap:0.5rem;">
+      <span class="pill pill-m">Resistência ao Anoikis via BCL-2↑</span>
+      <span class="pill pill-c">Manto plaquetário (TGF-β)</span>
+      <span class="pill pill-y">PD-L1 ↑ (escapa às NK cells)</span>
+      <span class="pill pill-m">Escudo de fibrina</span>
+      <span class="pill pill-c">NRF2 antioxidante ↑</span>
+      <span class="pill pill-y">Dormência celular (G0)</span>
+      <span class="pill pill-m">Clusters CTCs (maior resistência)</span>
+      <span class="pill pill-c">Exossomas como mensageiros</span>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <p>🔬 Os <strong>clusters de CTCs</strong> (grupos de 2-50 células) têm 23-50 vezes maior capacidade metastática do que CTCs individuais. Mantêm junções intercelulares que inibem o anoikis cooperativamente. (Aceto N et al., <em>Cell</em>, 2014)</p>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 5 — EXTRAVASAMENTO
+════════════════════════════════════════════ -->
+<section id="ch5">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 05</div>
+  <h2 class="chapter-title">Desembarcar em Terra Estranha<br><small style="font-size:0.5em; color:var(--muted);">Extravasamento e Órgão-Alvo</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--green), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA</span>
+    Sobrevivi à viagem. Agora preciso de sair do vaso e entrar num novo órgão. Não posso ir para qualquer lugar — preciso de encontrar um solo fértil onde possa crescer.
+  </div>
+
+  <p class="reveal">O <span class="term" data-def="Extravasamento: do latim 'extra' (fora) + 'vas' (vaso). O processo inverso ao intravasamento — a célula sai do vaso e entra no tecido do órgão-alvo.">extravasamento</span> segue passos semelhantes ao intravasamento, mas em sentido inverso. A selectividade do órgão-alvo não é aleatória — obedece a dois grandes modelos:</p>
+
+  <!-- Two-column layout for seed & soil vs hemodynamic -->
+  <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); margin:2rem 0;">
+    <div class="card" style="--accent: var(--yellow);">
+      <div class="card-icon">🌱</div>
+      <h3>"Seed & Soil"</h3>
+      <p style="font-size:0.85rem;"><strong>Stephen Paget, 1889.</strong> A metástase prefere órgãos com microambiente compatível ("solo fértil"). As células tumorais (sementes) só crescem onde o microambiente local (solo) for favorável. Explica por que certos cancros têm preferências específicas.</p>
+    </div>
+    <div class="card" style="--accent: var(--blue);">
+      <div class="card-icon">🌊</div>
+      <h3>Fluxo Hemodinâmico</h3>
+      <p style="font-size:0.85rem;"><strong>Ewing, 1928.</strong> As metástases ocorrem nos órgãos que recebem o primeiro leito capilar após o tumor primário — determinismo anatómico pela drenagem venosa. Explica parcialmente metástases pulmonares de tumores viscerais e hepáticas de tumores GI.</p>
+    </div>
+  </div>
+
+  <!-- Organ tropism table -->
+  <div class="manga-panel panel-green">
+    <span class="panel-label">TROPISMO ORGÂNICO — PADRÕES CLÍNICOS CLÁSSICOS</span>
+    <div style="margin-top:1.2rem; overflow-x:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+        <thead>
+          <tr style="border-bottom:2px solid var(--green);">
+            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--green); font-family:'Bangers',cursive; letter-spacing:0.05em;">Tumor Primário</th>
+            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--green); font-family:'Bangers',cursive; letter-spacing:0.05em;">Metástases Frequentes</th>
+            <th style="text-align:left; padding:0.6rem 0.8rem; color:var(--green); font-family:'Bangers',cursive; letter-spacing:0.05em;">Moléculas-Chave</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🍒 Mama</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Osso, Pulmão, Fígado, Cérebro</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">CXCR4/CXCL12, CD44</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border); background:rgba(255,255,255,0.02);">
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🫁 Pulmão</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Cérebro, Osso, Fígado, Supra-renais</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">EGFR, ALK, MET</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🫀 Cólon</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Fígado (1.º), Pulmão (2.º)</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">KRAS, VEGF, CXCR4</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border); background:rgba(255,255,255,0.02);">
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🫐 Próstata</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Osso (osteoblástica)</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">CXCR4, RANKL, ET-1</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🖤 Melanoma</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Pulmão, Cérebro, Fígado, Pele</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">BRAF V600E, MET</td>
+          </tr>
+          <tr>
+            <td style="padding:0.6rem 0.8rem; color:var(--text);">🧠 Rim (CCR)</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--muted);">Pulmão, Osso, Fígado, Cérebro</td>
+            <td style="padding:0.6rem 0.8rem; color:var(--cyan); font-size:0.78rem; font-family:'Share Tech Mono',monospace;">VHL/HIF-1α, VEGF</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="manga-panel panel-cyan" style="margin-top:2rem;">
+    <span class="panel-label">PASSOS DO EXTRAVASAMENTO</span>
+    <div class="steps" style="margin-top:1rem;">
+      <div class="step-item reveal">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Rolling e Captura (Selectinas)</h4>
+          <p>As <span class="term" data-def="Selectinas: proteínas de adesão que medeiam a interacção inicial ('rolling') entre células e o endotélio. Do latim 'selectus' (seleccionado), pois são selectivas para certas estruturas glucídicas.">selectinas</span> endoteliais (E-selectina, P-selectina) capturam a CTC que rola ao longo da parede vascular, como um barco a atracar lentamente.</p>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Adesão Firme (Integrinas + ICAMs)</h4>
+          <p>Integrinas tumorais (αvβ3) ligam-se às moléculas <strong>ICAM-1 e VCAM-1</strong> do endotélio. A célula para completamente e fica firmemente ancorada ao endotélio do órgão-alvo.</p>
+        </div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Diapedese Transendotelial</h4>
+          <p>A célula espreme-se entre (paracelular) ou através de (transcelular) células endoteliais, assistida por MMPs que rompem a membrana basal do lado abluminal. Processo idêntico ao usado pelos leucócitos na inflamação.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 6 — COLONIZAÇÃO E NICHO PRÉ-METASTÁTICO
+════════════════════════════════════════════ -->
+<section id="ch6">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 06</div>
+  <h2 class="chapter-title">Preparar o Terreno<br><small style="font-size:0.5em; color:var(--muted);">Nicho Pré-Metastático e Colonização</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--yellow), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    O tumor primário não espera passivamente. Muito antes de qualquer célula chegar ao novo órgão, ele já enviou mensageiros moleculares — os <strong>exossomas</strong> — para preparar o terreno. É uma conspiração silenciosa.
+  </div>
+
+  <div class="manga-panel panel-yellow">
+    <span class="panel-label">O NICHO PRÉ-METASTÁTICO (PMN)</span>
+    <p style="margin-top:0.8rem;">O tumor primário secreta <span class="term" data-def="Exossoma: vesícula extracelular de 30-150nm libertada por células, contendo proteínas, mRNA, microRNA e DNA. Do grego 'exo' (fora) + 'soma' (corpo).">exossomas</span> e factores solúveis (VEGF, PlGF, TGF-β, LOX) que chegam ao órgão-alvo <em>antes</em> das próprias células tumorais e remodelem o microambiente local:</p>
+    <div class="steps" style="margin-top:1.2rem;">
+      <div class="step-item">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <h4>Recrutamento de BMDCs</h4>
+          <p>Células derivadas da medula óssea (BMDCs — Bone Marrow-Derived Cells), especialmente células mieloides VEGFR1+, migram para o órgão-alvo e formam um nicho inflamatório permissivo.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <h4>Remodelação da MEC por LOX</h4>
+          <p>A <strong>LOX</strong> (Lisil-Oxidase), secretada pelo tumor, reticulacolágeno no órgão-alvo, tornando a MEC mais rígida — o que activa integrinas e promove a adesão das CTCs quando chegarem.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">→</div>
+        <div class="step-content">
+          <h4>Imunossupressão Local</h4>
+          <p>Os exossomas tumorais carregam microRNAs e PD-L1 que reprogramam macrófagos para fenótipo M2 (pró-tumoral) e suprimem células T CD8+, criando uma zona de tolerância imune.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SVG: Colonisation / dormancy / proliferation -->
+  <div class="molecule-wrap" style="flex-direction:column; gap:0.5rem; padding:1.5rem 0;">
+    <p style="font-size:0.8rem; color:var(--muted); text-align:center; font-family:'Share Tech Mono',monospace; letter-spacing:0.05em;">FASES PÓS-EXTRAVASAMENTO</p>
+    <svg viewBox="0 0 560 130" style="width:100%; max-width:560px;">
+      <!-- Phase 1: Arrival -->
+      <rect x="10" y="20" width="130" height="90" rx="10" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.5"/>
+      <text x="75" y="45" font-family="Bangers,cursive" font-size="13" fill="var(--cyan)" text-anchor="middle">CHEGADA</text>
+      <circle cx="75" cy="78" r="14" fill="#2a0515" stroke="#ff2d78" stroke-width="1.5"/>
+      <circle cx="75" cy="78" r="7" fill="#ff2d78" opacity="0.5"/>
+      <text x="75" y="110" font-family="Share Tech Mono,monospace" font-size="7" fill="var(--muted)" text-anchor="middle">CTC sozinha</text>
+
+      <text x="165" y="75" font-size="20" fill="var(--muted)" text-anchor="middle">→</text>
+
+      <!-- Phase 2: Dormancy -->
+      <rect x="190" y="20" width="130" height="90" rx="10" fill="var(--panel)" stroke="var(--purple)" stroke-width="1.5"/>
+      <text x="255" y="45" font-family="Bangers,cursive" font-size="13" fill="var(--purple)" text-anchor="middle">DORMÊNCIA</text>
+      <circle cx="255" cy="75" r="16" fill="#1a0830" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="255" y="79" font-family="Share Tech Mono,monospace" font-size="8" fill="#a855f7" text-anchor="middle">G0</text>
+      <text x="255" y="110" font-family="Share Tech Mono,monospace" font-size="7" fill="var(--muted)" text-anchor="middle">Meses a Anos</text>
+
+      <text x="345" y="75" font-size="20" fill="var(--muted)" text-anchor="middle">→</text>
+
+      <!-- Phase 3: Proliferation -->
+      <rect x="370" y="20" width="175" height="90" rx="10" fill="var(--panel)" stroke="var(--magenta)" stroke-width="1.5"/>
+      <text x="457" y="45" font-family="Bangers,cursive" font-size="13" fill="var(--magenta)" text-anchor="middle">COLONIZAÇÃO</text>
+      <!-- Small cluster of cells growing -->
+      <circle cx="430" cy="78" r="12" fill="#2a0515" stroke="#ff2d78" stroke-width="1.5"/>
+      <circle cx="452" cy="72" r="10" fill="#2a0515" stroke="#ff2d78" stroke-width="1.5"/>
+      <circle cx="468" cy="84" r="10" fill="#2a0515" stroke="#ff2d78" stroke-width="1.5"/>
+      <circle cx="448" cy="90" r="8" fill="#2a0515" stroke="#ff2d78" stroke-width="1.5"/>
+      <text x="457" y="110" font-family="Share Tech Mono,monospace" font-size="7" fill="var(--muted)" text-anchor="middle">Micrometástase → Tumor</text>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-purple">
+    <span class="panel-label">DORMÊNCIA TUMORAL — O INIMIGO INVISÍVEL</span>
+    <p style="margin-top:0.8rem;">Uma das descobertas mais importantes da oncologia moderna é que as células tumorais podem entrar em <strong>dormência</strong> durante anos ou décadas no órgão-alvo, sem proliferar nem causar sintomas. Os mecanismos incluem:</p>
+    <div class="accordion" style="margin-top:1rem;">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>😴 Dormência Celular (G0)</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            As células param na fase G0 do ciclo celular (quiescência). O sinal p38-MAPK de stress está activo, enquanto ERK1/2 (proliferação) está inibido. A célula sobrevive mas não divide. Pode ser activada anos depois por inflamação, stress, alteração hormonal ou imunosenescência.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>⚖️ Dormência de Massa Tumoral</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            O micrometástase cresce até um determinado tamanho mas estabiliza porque a proliferação e a morte celular são equivalentes. Frequentemente pela falha em recrutar novos vasos (angiogénese inadequada) ou por pressão imunológica contínua. A ruptura deste equilíbrio desencadeia o crescimento activo.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:1.2rem;">
+      <p>⚠️ <strong>Implicação clínica:</strong> Doentes com cancro da mama podem ter recidivas 20-30 anos após a cirurgia inicial por reactivação de células dormentes. Isto justifica a terapêutica adjuvante prolongada (ex: tamoxifeno 10 anos).</p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 7 — ANGIOGÉNESE TUMORAL
+════════════════════════════════════════════ -->
+<section id="ch7">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 07</div>
+  <h2 class="chapter-title">Construir o Abastecimento<br><small style="font-size:0.5em; color:var(--muted);">Angiogénese Tumoral</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--red, #ff2d78), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🦠 CÉLULA CANCEROSA (agora um micrometástase)</span>
+    Crescemos. Somos agora dezenas de células. Mas estamos a morrer de fome — o oxigénio e os nutrientes não chegam até nós. Precisamos de construir os nossos próprios vasos. Precisamos de angiogénese.
+  </div>
+
+  <!-- SVG: Angiogenesis -->
+  <div class="molecule-wrap" style="padding: 2rem 0;">
+    <svg viewBox="0 0 560 200" style="width:100%; max-width:560px;" id="angio-svg">
+      <defs>
+        <radialGradient id="hypoxGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ffe200" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <!-- Tumour mass -->
+      <ellipse cx="280" cy="100" rx="80" ry="60" fill="#1a0408" stroke="#ff2d78" stroke-width="2"/>
+      <!-- Hypoxia zone -->
+      <ellipse cx="280" cy="100" rx="40" ry="30" fill="#1a1008" stroke="#ffe200" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="280" y="97" font-family="Share Tech Mono,monospace" font-size="9" fill="#ffe200" text-anchor="middle">HIF-1α ↑</text>
+      <text x="280" y="108" font-family="Share Tech Mono,monospace" font-size="8" fill="var(--muted)" text-anchor="middle">Hipóxia</text>
+
+      <!-- VEGF molecules floating out -->
+      <circle cx="360" cy="70" r="5" fill="#3b82f6" opacity="0.8">
+        <animate attributeName="cx" values="360;390;420" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="70;55;40" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.5;0" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="350" cy="90" r="4" fill="#3b82f6" opacity="0.8">
+        <animate attributeName="cx" values="350;385;420" dur="3.5s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="90;75;60" dur="3.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0.5;0" dur="3.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="390" y="45" font-family="Share Tech Mono,monospace" font-size="9" fill="#3b82f6">VEGF →</text>
+
+      <!-- Existing vessel -->
+      <path d="M450,20 L450,180" stroke="#00ffe7" stroke-width="6" fill="none" opacity="0.4"/>
+      <text x="510" y="105" font-family="Share Tech Mono,monospace" font-size="9" fill="#00ffe7" text-anchor="middle">Vaso</text>
+      <text x="510" y="116" font-family="Share Tech Mono,monospace" font-size="9" fill="#00ffe7" text-anchor="middle">Existente</text>
+
+      <!-- Sprouting vessel -->
+      <path d="M450,80 Q420,80 395,100 Q370,115 360,140" stroke="#00ffe7" stroke-width="3" fill="none" stroke-dasharray="8,4">
+        <animate attributeName="stroke-dashoffset" values="0;-100" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <text x="395" y="150" font-family="Bangers,cursive" font-size="12" fill="#39ff14">Novo Broto!</text>
+
+      <!-- Tip cell -->
+      <circle cx="360" cy="140" r="8" fill="#0a2010" stroke="#39ff14" stroke-width="2"/>
+      <path d="M355,148 L345,162" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M360,150 L355,165" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="330" y="175" font-family="Share Tech Mono,monospace" font-size="8" fill="#39ff14">Tip Cell</text>
+
+      <!-- Necrotic core label -->
+      <text x="240" y="155" font-family="Share Tech Mono,monospace" font-size="8" fill="#8baab8">Core Necrótico</text>
+      <line x1="260" y1="150" x2="280" y2="140" stroke="#8baab8" stroke-width="1" stroke-dasharray="2,2"/>
+
+      <!-- Stalk cells indication -->
+      <text x="90" y="100" font-family="Share Tech Mono,monospace" font-size="9" fill="var(--muted)" text-anchor="middle">Células Tumorais</text>
+      <text x="90" y="112" font-family="Share Tech Mono,monospace" font-size="9" fill="#ff2d78" text-anchor="middle">(periféricas)</text>
+    </svg>
+  </div>
+
+  <div class="manga-panel panel-magenta">
+    <span class="panel-label">A CASCATA MOLECULAR DA ANGIOGÉNESE</span>
+    <div class="pathway reveal" style="flex-direction:column; align-items:flex-start; gap:0.8rem; margin-top:1rem;">
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+        <div class="pw-node" style="min-width:80px;">Hipóxia<br><small>O₂ &lt; 2%</small></div>
+        <span class="pw-arrow">→</span>
+        <div class="pw-node" style="min-width:100px;">HIF-1α estabiliza<br><small>(não degradado por VHL)</small></div>
+        <span class="pw-arrow">→</span>
+        <div class="pw-node red" style="min-width:80px;">VEGF ↑<br><small>+ PDGF + FGF</small></div>
+      </div>
+      <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding-left:2rem;">
+        <span class="pw-arrow">↓</span>
+        <div class="pw-node yellow" style="min-width:120px;">Activação VEGFR2<br><small>em células endoteliais</small></div>
+        <span class="pw-arrow">→</span>
+        <div class="pw-node" style="min-width:100px;">Tip cell → Stalk cells<br><small>(Notch/DLL4)</small></div>
+        <span class="pw-arrow">→</span>
+        <div class="pw-node red" style="min-width:80px;">Neovaso<br><small>anómalo</small></div>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:1.2rem;">
+      <p>💊 <strong>Target terapêutico:</strong> O bloqueio do VEGF/VEGFR é a base de múltiplas terapias anti-angiogénicas: <strong>Bevacizumab</strong> (anti-VEGF-A), <strong>Sorafenib, Sunitinib</strong> (inibidores de VEGFR). Contudo, os vasos tumorais são estruturalmente anómalos — irregulares, permeáveis e hipóxicos — o que complica a entrega de fármacos quimioterápicos.</p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 8 — PERSPECTIVA CLÍNICA
+════════════════════════════════════════════ -->
+<section id="ch8">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO 08</div>
+  <h2 class="chapter-title">No Leito do Doente<br><small style="font-size:0.5em; color:var(--muted);">Clínica, Diagnóstico e Tratamento</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--orange), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">👨‍⚕️ MÉDICO INTERNO — UCI</span>
+    Doente, 58 anos, sexo masculino, com antecedentes de adenocarcinoma do cólon operado há 3 anos. Apresenta agora dor no hipocôndrio direito, icterícia e elevação das transaminases. TC revelou múltiplas lesões hepáticas hipodensas.
+  </div>
+
+  <div class="manga-panel panel-orange">
+    <span class="panel-label">SINAIS E SINTOMAS POR ÓRGÃO AFECTADO</span>
+    <div class="accordion" style="margin-top:1rem;">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🫀 Metástases Hepáticas</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <strong>Semiologia:</strong> Hepatomegalia (fígado palpável, por vezes nodular), dor em HD, icterícia obstrutiva (compressão biliar), ascite, anorexia, perda ponderal. <strong>Lab:</strong> ↑ FA, ↑ GGT, ↑ bilirrubina, ↑ LDH, ↑ CEA (adenocarcinoma CRC). <strong>Imagem:</strong> TC trifásico (lesões hipodensas na fase portal), PET-CT (captação de FDG). Principais origens: CRC (via porta), mama, pulmão, pâncreas, melanoma.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🦴 Metástases Ósseas</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <strong>Tipos:</strong> Osteolíticas (mama, pulmão, rim, melanoma — via RANKL/OPG), Osteoblásticas (próstata — via ET-1, BMP), Mistas. <strong>Clínica:</strong> Dor óssea progressiva, fractura patológica, hipercalcémia maligna (↑PTHrP), compressão medular (emergência!). <strong>Lab:</strong> ↑ ALP, ↑ cálcio, ↑ β-CTX (osteoporose), ↓ hemoglobina (invasão medular). <strong>Imagem:</strong> Cintigrafia óssea (sensível), TC, RM (superior para medula e compressão). <strong>Terapia:</strong> Bifosfonatos (ácido zoledrónico), Denosumab (anti-RANKL), radioterapia.
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🧠 Metástases Cerebrais</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <strong>Clínica:</strong> Cefaleias (matinais, piorando com Valsalva — ↑ PIC), défices focais neurológicos, convulsões, alteração do estado mental, síndrome de hipertensão intracraniana. <strong>Imagem:</strong> RM com gadolínio (gold standard — lesões em "anel" com edema vasogénico envolvente). <strong>Terapia:</strong> Corticosteróides (dexametasona — reduz edema peritumoral), cirurgia (se lesão única acessível), radiocirurgia estereotáxica (Gamma Knife), radioterapia holocraneana, imunoterapia (anti-PD-1 penetra BHE em lesões activas).
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <span>🫁 Metástases Pulmonares</span>
+          <span class="acc-icon">+</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <strong>Clínica:</strong> Muitas vezes assintomáticas no início (achado incidental). Tosse seca, dispneia, hemoptise (invasão brônquica), derrame pleural (pleurite carcinomatosa — exsudado com citologia positiva). <strong>Imagem:</strong> Rx (nódulos múltiplos "bola de canhão"), TC torácica (padrão em "cannonball", linfangite carcinomatosa — padrão reticular/nodular peribroncovascular).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagnostic/Treatment approach -->
+  <div class="manga-panel panel-cyan" style="margin-top:2rem;">
+    <span class="panel-label">ABORDAGEM DIAGNÓSTICA MODERNA</span>
+    <div class="cards-grid" style="margin-top:1.2rem;">
+      <div class="card" style="--accent: var(--cyan);">
+        <div class="card-icon">🩸</div>
+        <h3>Biópsia Líquida</h3>
+        <p>Detecção de CTCs e ctDNA (DNA tumoral circulante) no sangue. Não invasivo, permite monitorizar resposta ao tratamento e detectar resistências em tempo real. Sensibilidade ainda limitada para metástases iniciais.</p>
+      </div>
+      <div class="card" style="--accent: var(--yellow);">
+        <div class="card-icon">☢️</div>
+        <h3>PET-CT (FDG)</h3>
+        <p>Detecção de metástases com base no hipermetabolismo de glucose tumoral. Estadiamento sistémico completo numa única sessão. Limitações: lesões &lt;6mm, tumores de baixa avidez (CCR mucinoso, hepatocarcinoma).</p>
+      </div>
+      <div class="card" style="--accent: var(--magenta);">
+        <div class="card-icon">🧬</div>
+        <h3>Perfil Molecular</h3>
+        <p>NGS (Next Generation Sequencing) da biópsia tumoral. Identifica mutações accionáveis: KRAS, EGFR, ALK, BRAF, HER2, MSI-H. Orienta terapia-alvo e imunoterapia. Obrigatório em doença metastática.</p>
+      </div>
+      <div class="card" style="--accent: var(--purple);">
+        <div class="card-icon">🎯</div>
+        <h3>Imunoterapia</h3>
+        <p>Anti-PD-1/PD-L1 (Pembrolizumab, Nivolumab) e anti-CTLA-4 (Ipilimumab) reactivam a resposta imune contra as metástases. Mais eficazes em tumores MSI-H, alto TMB, PD-L1+. Resposta durável em subgrupo de doentes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULATOR 2: Risk/Stage -->
+  <div class="simulator" style="margin-top:2.5rem;">
+    <div class="sim-title">🏥 SIMULADOR: Estadiamento Metastático (M)</div>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1.5rem;">Sistema TNM — avalia o componente M (metástase à distância).</p>
+    <div class="slider-group">
+      <label>Número de Órgãos Afectados <span id="organ-val">1</span></label>
+      <input type="range" min="0" max="5" value="1" id="organ-slider" oninput="updateSim2()">
+    </div>
+    <div class="slider-group">
+      <label>Carga Tumoral Estimada (lesões) <span id="lesion-val">3</span></label>
+      <input type="range" min="1" max="20" value="3" id="lesion-slider" oninput="updateSim2()">
+    </div>
+    <div class="slider-group">
+      <label>Performance Status ECOG <span id="ecog-val">1</span></label>
+      <input type="range" min="0" max="4" value="1" id="ecog-slider" oninput="updateSim2()">
+    </div>
+    <div class="risk-bar-wrap">
+      <div class="risk-bar" id="stage-bar" style="width:30%;"></div>
+    </div>
+    <div class="sim-result" id="sim-result2">A carregar...</div>
+  </div>
+
+</div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════
+     CH 9 — QUIZ
+════════════════════════════════════════════ -->
+<section id="ch9">
+<div class="chapter">
+  <div class="chapter-number">CAPÍTULO FINAL</div>
+  <h2 class="chapter-title">O Grande Teste<br><small style="font-size:0.5em; color:var(--muted);">Quanto aprendeste?</small></h2>
+  <div class="chapter-sep" style="background: linear-gradient(90deg, var(--yellow), transparent);"></div>
+
+  <div class="bubble">
+    <span class="bubble-char">🧬 NARRADOR</span>
+    Chegaste ao fim da jornada. Acompanhaste a célula cancerosa desde a EMT até à colonização do órgão-alvo. Agora é o momento de testar o teu conhecimento!
+  </div>
+
+  <div class="quiz-wrap" id="quiz-container">
+    <!-- Questions rendered by JS -->
+  </div>
+
+  <div class="quiz-score" id="quiz-score" style="display:none;"></div>
+  <div style="text-align:center; margin-top:1.5rem;">
+    <button onclick="resetQuiz()" style="background:var(--panel); border:1px solid var(--cyan); color:var(--cyan); padding:0.8rem 2rem; border-radius:8px; cursor:pointer; font-family:'Bangers',cursive; font-size:1.1rem; letter-spacing:0.1em; transition:all 0.2s;" onmouseover="this.style.background='rgba(0,255,231,0.1)'" onmouseout="this.style.background='var(--panel)'">↺ REINICIAR QUIZ</button>
+  </div>
+
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <p>
+    <strong style="color:var(--cyan);">UNIVERSIDADE LICUNGO (UL)</strong><br>
+    Faculdade de Ciências de Saúde · Medicina<br>
+    2.º Ano · 2026<br><br>
+    <span style="color:var(--muted); font-size:0.75rem;">Feito por DemilMed-UL · Conteúdo educativo baseado em Robbins &amp; Cotran, Hanahan &amp; Weinberg (Cell 2011), e literatura PubMed actualizada.<br>
+    Este material destina-se exclusivamente à educação médica.</span>
+  </p>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════ -->
+<script>
+// ── PARTICLES ──
+(function(){
+  const container = document.getElementById('particles');
+  for(let i=0;i<30;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*4+2;
+    const colors = ['#00ffe7','#ff2d78','#ffe200','#a855f7','#39ff14'];
+    p.style.cssText = `
+      width:${size}px;height:${size}px;
+      left:${Math.random()*100}%;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${Math.random()*10+8}s;
+      animation-delay:${Math.random()*10}s;
+      opacity:0;
+    `;
+    container.appendChild(p);
+  }
+})();
+
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll',()=>{
+  const d = document.documentElement;
+  const pct = (d.scrollTop/(d.scrollHeight-d.clientHeight))*100;
+  document.getElementById('progress-bar').style.width = pct+'%';
+  document.getElementById('scrollTop').classList.toggle('show', d.scrollTop > 400);
+  updateNavDots();
+});
+
+// ── NAV DOTS ──
+const sections = ['hero','ch0','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8','ch9'];
+const dots = document.querySelectorAll('.nav-dot');
+dots.forEach((d,i)=>{
+  d.addEventListener('click',()=>{
+    document.getElementById(sections[i]).scrollIntoView({behavior:'smooth'});
+  });
+});
+function updateNavDots(){
+  let active=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el && el.getBoundingClientRect().top < window.innerHeight/2) active=i;
+  });
+  dots.forEach((d,i)=>d.classList.toggle('active',i===active));
+}
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible','on');
+      if(e.target.closest('.timeline') || e.target.classList.contains('tl-item')){
+        const items = document.querySelectorAll('.tl-item');
+        items.forEach((it,i)=>setTimeout(()=>it.classList.add('visible'),i*150));
+      }
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.chapter,.reveal,.tl-item,.step-item').forEach(el=>observer.observe(el));
+
+// ── ACCORDION ──
+function toggleAcc(header){
+  const item=header.parentElement;
+  const body=item.querySelector('.acc-body');
+  const isOpen=item.classList.contains('open');
+  // close all
+  document.querySelectorAll('.acc-item.open').forEach(i=>{
+    i.classList.remove('open');
+    i.querySelector('.acc-body').style.maxHeight='0';
+  });
+  if(!isOpen){
+    item.classList.add('open');
+    body.style.maxHeight = body.scrollHeight+'px';
+  }
+}
+
+// ── SIMULATOR 1: Invasion ──
+function updateSim(){
+  const mmp = parseInt(document.getElementById('mmp-slider').value);
+  const cxcr = parseInt(document.getElementById('cxcr-slider').value);
+  const ecad = parseInt(document.getElementById('ecad-slider').value);
+  document.getElementById('mmp-val').textContent = mmp;
+  document.getElementById('cxcr-val').textContent = cxcr;
+  document.getElementById('ecad-val').textContent = ecad;
+  const score = Math.round((mmp*0.4 + cxcr*0.3 + ecad*0.3));
+  const bar = document.getElementById('inv-bar');
+  bar.style.width = score+'%';
+  bar.style.background = score > 70 ? 'var(--magenta)' : score > 40 ? 'var(--orange)' : 'var(--green)';
+  let msg = '';
+  if(score < 30) msg = `✅ BAIXO POTENCIAL INVASIVO\n> MMPs fracas → MEC intacta\n> Quimiotaxia mínima → sem direcção\n> E-Caderina mantida → adesão celular preservada\n> Cenário: tumor benigno localmente contido`;
+  else if(score < 60) msg = `⚠️ POTENCIAL INVASIVO MODERADO\n> MMPs activas → degradação parcial da MEC\n> Sinalização CXCR4/CXCL12 emergente\n> EMT em curso → perda progressiva de E-Caderina\n> Cenário: invasão local, metástase regional possível`;
+  else msg = `🚨 ALTO POTENCIAL INVASIVO\n> MMPs sobreactivas → MEC destruída\n> CXCR4 alto → migração dirigida activa\n> E-Caderina perdida → EMT completa\n> Cenário: metástase à distância provável\n> Intervenção urgente necessária`;
+  document.getElementById('sim-result1').textContent = msg;
+}
+updateSim();
+
+// ── SIMULATOR 2: Stage ──
+function updateSim2(){
+  const organs = parseInt(document.getElementById('organ-slider').value);
+  const lesions = parseInt(document.getElementById('lesion-slider').value);
+  const ecog = parseInt(document.getElementById('ecog-slider').value);
+  document.getElementById('organ-val').textContent = organs;
+  document.getElementById('lesion-val').textContent = lesions;
+  document.getElementById('ecog-val').textContent = ecog;
+  const score = Math.min(100, organs*18 + lesions*3 + ecog*8);
+  const bar = document.getElementById('stage-bar');
+  bar.style.width = score+'%';
+  bar.style.background = score > 65 ? 'var(--magenta)' : score > 35 ? 'var(--orange)' : 'var(--green)';
+  const ecogDesc = ['Totalmente activo','Limitação actividade intensa','Ambulatório, autocuidado, >50% do tempo','Limitado autocuidado, >50% cama','Completamente dependente'];
+  let stage='', prognosis='', therapy='';
+  if(organs===0){ stage='M0 (Sem metástase)'; prognosis='Intenção curativa possível'; therapy='Cirurgia ± quimioterapia adjuvante'; }
+  else if(organs===1 && lesions<=3){ stage='M1a (Metástase única/oligometástase)'; prognosis='Mediana de SG: 12-36 meses (variável)'; therapy='Cirurgia/ablação metástase + sistémica'; }
+  else if(organs<=2){ stage='M1b (Metástase em 1-2 órgãos)'; prognosis='Mediana de SG: 8-18 meses'; therapy='Quimioterapia sistémica ± biológicos ± imunoterapia'; }
+  else{ stage='M1c (Metástase múltiplos órgãos)'; prognosis='Mediana de SG: 3-12 meses (context-dep.)'; therapy='Cuidados paliativos + sistémica se PS permitir'; }
+  const result = `📊 ESTADIO TNM: ${stage}\n⏳ PROGNÓSTICO: ${prognosis}\n💊 ABORDAGEM: ${therapy}\n👤 ECOG ${ecog}: ${ecogDesc[ecog]}\n🧮 Score de carga tumoral estimado: ${score}/100`;
+  document.getElementById('sim-result2').textContent = result;
+}
+updateSim2();
+
+// ── QUIZ ──
+const questions = [
+  {
+    q: "Qual proteína é perdida durante a EMT (Transição Epitelial-Mesenquimal), permitindo que a célula tumoral se solte das vizinhas?",
+    opts: ["Vimentina","E-Caderina","MMP-9","VEGF"],
+    correct: 1,
+    explain: "A E-Caderina (Caderina Epitelial) é a proteína de adesão que mantém as células epiteliais unidas. A sua perda, mediada por SNAIL/TWIST/ZEB, é o evento central da EMT que liberta a célula para iniciar a invasão."
+  },
+  {
+    q: "As MMPs (Metaloproteinases da Matriz) têm um papel central na metástase. Qual é a sua função principal?",
+    opts: ["Promover a apoptose celular","Inibir a angiogénese","Degradar componentes da Matriz Extracelular","Bloquear receptores de quimiocinas"],
+    correct: 2,
+    explain: "As MMPs são enzimas proteolíticas que degradam colagénio, laminina, fibronectina e outros componentes da MEC, abrindo caminho para a invasão tumoral e libertando factores de crescimento aprisionados."
+  },
+  {
+    q: "O conceito 'Seed and Soil' de Stephen Paget (1889) explica:",
+    opts: ["Por que as células cancerosas preferem ambientes ricos em oxigénio","Por que o tropismo orgânico das metástases é determinado pela compatibilidade entre célula tumoral e microambiente do órgão-alvo","Por que a angiogénese é necessária para o crescimento tumoral","Por que as CTCs morrem por anoikis"],
+    correct: 1,
+    explain: "'Seed and Soil': as células tumorais (sementes) só crescem em órgãos com microambiente compatível (solo fértil). Isto explica por que certos cancros metastizam preferencialmente para órgãos específicos (mama → osso, próstata → osso, CRC → fígado)."
+  },
+  {
+    q: "O anoikis é a principal ameaça às CTCs na corrente sanguínea. O que é o anoikis?",
+    opts: ["Destruição mecânica pelo shear stress hemodinâmico","Apoptose induzida pela ausência de contacto com a Matriz Extracelular","Ataque das células NK ao detectar ausência de MHC-I","Hipóxia por baixo O₂ arterial"],
+    correct: 1,
+    explain: "Anoikis (do grego 'sem lar'): morte celular por apoptose desencadeada pela perda de adesão à MEC. Células epiteliais normais morrem se perderem contacto com a sua matriz. As CTCs sobreviventes desenvolvem resistência ao anoikis (via BCL-2 e outros mecanismos)."
+  },
+  {
+    q: "Qual molécula do tumor primário prepara o nicho pré-metastático no órgão-alvo antes da chegada das células tumorais?",
+    opts: ["MMP-9 directamente secretada para a circulação","Exossomas tumorais carregando microRNAs e proteínas","E-Caderina solúvel","CXCL12 secretado pelo tumor"],
+    correct: 1,
+    explain: "Os exossomas tumorais (vesículas de 30-150nm) transportam microRNAs, proteínas e outros sinalizadores que remodelam o órgão-alvo antes da chegada das CTCs — recrutando BMDCs, remodelando a MEC via LOX e criando imunossupressão local."
+  },
+  {
+    q: "Um doente com adenocarcinoma do pulmão apresenta cefaleia matinal que piora com esforço, vómitos em jato e défice motor do membro superior direito. Qual a principal hipótese diagnóstica?",
+    opts: ["Meningite bacteriana","Metástase cerebral com hipertensão intracraniana","AVC isquémico","Abcesso epidural"],
+    correct: 1,
+    explain: "Cefaleia matinal (pior ao acordar, pela acumulação nocturna de CO₂ e ↑PIC), vómitos em jato (hipertensão intracraniana) e défice focal motor são clássicos de lesão expansiva intracraniana — metástase cerebral no contexto de neoplasia pulmonar conhecida."
+  },
+  {
+    q: "O factor VEGF é central na angiogénese tumoral. Qual sinal celular principal activa a produção de VEGF?",
+    opts: ["Hiperglicemia intratumoral","Hipóxia intratumoral via estabilização do HIF-1α","Inflamação crónica via NFkB","Mutação do gene TP53"],
+    correct: 1,
+    explain: "A hipóxia intratumoral impede a degradação do HIF-1α (normalmente degradado pela via VHL/prolil-hidroxilase). O HIF-1α estabilizado activa a transcrição do VEGF e outros factores angiogénicos, desencadeando a neo-vascularização tumoral."
+  },
+  {
+    q: "Na classificação TNM, o que representa a categoria 'M1c'?",
+    opts: ["Metástase num único órgão não regional","Metástase em múltiplos órgãos à distância","Micrometástases apenas detectáveis histologicamente","Metástase ganglionar regional"],
+    correct: 1,
+    explain: "Na 8.ª edição do TNM (UICC/AJCC), M1c corresponde a metástases em múltiplos órgãos à distância — a categoria de maior extensão de doença metastática, associada ao pior prognóstico."
+  }
+];
+
+let answered = [];
+let score = 0;
+
+function renderQuiz(){
+  const c = document.getElementById('quiz-container');
+  c.innerHTML = '';
+  answered = new Array(questions.length).fill(false);
+  score = 0;
+  document.getElementById('quiz-score').style.display = 'none';
+
+  questions.forEach((q,qi)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'quiz-wrap';
+    wrap.style.marginBottom='2rem';
+    wrap.innerHTML = `
+      <div class="quiz-q">${qi+1}. ${q.q}</div>
+      <div class="quiz-options" id="opts-${qi}">
+        ${q.opts.map((o,oi)=>`<button class="quiz-opt" onclick="answerQ(${qi},${oi})">${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="fb-${qi}"></div>
+    `;
+    c.appendChild(wrap);
+  });
+}
+
+function answerQ(qi,oi){
+  if(answered[qi]) return;
+  answered[qi]=true;
+  const opts = document.querySelectorAll(`#opts-${qi} .quiz-opt`);
+  const fb = document.getElementById(`fb-${qi}`);
+  opts.forEach((o,i)=>{
+    o.disabled=true;
+    if(i===questions[qi].correct) o.classList.add('correct');
+    else if(i===oi) o.classList.add('wrong');
+  });
+  const isCorrect = oi===questions[qi].correct;
+  if(isCorrect) score++;
+  fb.className = 'quiz-feedback show '+(isCorrect?'ok':'err');
+  fb.textContent = (isCorrect?'✅ Correcto! ':'❌ Incorrecto. ')+questions[qi].explain;
+
+  if(answered.every(Boolean)){
+    setTimeout(()=>{
+      const s = document.getElementById('quiz-score');
+      s.style.display='block';
+      const pct = Math.round((score/questions.length)*100);
+      let emoji = pct>=80?'🏆':pct>=60?'⭐':'💪';
+      s.textContent = `${emoji} Resultado: ${score}/${questions.length} (${pct}%)`;
+    },600);
+  }
+}
+
+function resetQuiz(){ renderQuiz(); }
+
+renderQuiz();
+
+// init sims on load
+window.addEventListener('load', ()=>{ updateSim(); updateSim2(); });
+</script>
+</body>
+</html>

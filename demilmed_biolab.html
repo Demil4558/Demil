@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioLab Chronicles — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a14;
+  --bg2: #0f0f20;
+  --bg3: #13132a;
+  --panel: #16163a;
+  --panel2: #1c1c4a;
+  --accent1: #00f5ff;
+  --accent2: #ff2d78;
+  --accent3: #7fff00;
+  --accent4: #ffba00;
+  --accent5: #bf5fff;
+  --text: #e8eaf6;
+  --text2: #9fa8da;
+  --text3: #616794;
+  --glow1: 0 0 20px #00f5ff55;
+  --glow2: 0 0 20px #ff2d7855;
+  --glow3: 0 0 20px #7fff0055;
+  --r: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════ SCANLINES & BG ══════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,245,255,0.015) 2px, rgba(0,245,255,0.015) 4px);
+  pointer-events: none; z-index: 0;
+}
+
+/* ══════════════ FLOATING PARTICLES ══════════════ */
+#particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float-particle linear infinite;
+  opacity: 0;
+}
+@keyframes float-particle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ══════════════ HEADER ══════════════ */
+header {
+  position: relative; z-index: 10;
+  background: linear-gradient(180deg, #0a0a20 0%, transparent 100%);
+  padding: 20px 24px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(0,245,255,0.15);
+}
+.logo-block { display: flex; align-items: center; gap: 14px; }
+.logo-icon {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent5));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  box-shadow: var(--glow1);
+  animation: pulse-logo 3s ease-in-out infinite;
+}
+@keyframes pulse-logo {
+  0%,100% { box-shadow: 0 0 20px #00f5ff55; }
+  50% { box-shadow: 0 0 40px #00f5ffaa, 0 0 60px #00f5ff33; }
+}
+.logo-text { font-family: 'Orbitron', monospace; }
+.logo-text h1 { font-size: 1.1rem; color: var(--accent1); letter-spacing: 2px; }
+.logo-text p { font-size: 0.65rem; color: var(--text3); letter-spacing: 1px; margin-top: 1px; }
+
+/* ══════════════ HAMBURGER NAV ══════════════ */
+.hamburger {
+  cursor: pointer; padding: 8px;
+  display: flex; flex-direction: column; gap: 5px;
+  background: none; border: none;
+  z-index: 1000;
+}
+.hamburger span {
+  display: block; width: 24px; height: 2px;
+  background: var(--accent1);
+  transition: all 0.3s;
+  border-radius: 2px;
+  box-shadow: var(--glow1);
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: translateX(-10px); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.chapter-menu {
+  position: fixed; top: 0; right: -320px;
+  width: 300px; height: 100vh;
+  background: rgba(10,10,30,0.97);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(0,245,255,0.2);
+  z-index: 999;
+  transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
+  padding: 80px 24px 24px;
+  overflow-y: auto;
+}
+.chapter-menu.open { right: 0; }
+.chapter-menu h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.75rem; letter-spacing: 3px;
+  color: var(--accent1); margin-bottom: 24px;
+}
+.menu-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; margin-bottom: 6px;
+  border-radius: var(--r);
+  cursor: pointer; transition: all 0.3s;
+  border: 1px solid transparent;
+  text-decoration: none; color: var(--text2);
+  font-size: 0.9rem; font-weight: 600;
+}
+.menu-item:hover, .menu-item.active {
+  background: rgba(0,245,255,0.08);
+  border-color: rgba(0,245,255,0.3);
+  color: var(--accent1);
+  box-shadow: var(--glow1);
+}
+.menu-item .mi-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem; color: var(--text3);
+  min-width: 28px;
+}
+.menu-badge {
+  margin-left: auto; font-size: 0.6rem;
+  padding: 2px 8px; border-radius: 20px;
+}
+.badge-pcr { background: rgba(0,245,255,0.2); color: var(--accent1); }
+.badge-elisa { background: rgba(255,45,120,0.2); color: var(--accent2); }
+.badge-soro { background: rgba(127,255,0,0.2); color: var(--accent3); }
+
+/* ══════════════ OVERLAY ══════════════ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 998; opacity: 0;
+  pointer-events: none; transition: opacity 0.3s;
+}
+.overlay.active { opacity: 1; pointer-events: all; }
+
+/* ══════════════ MAIN ══════════════ */
+main { position: relative; z-index: 1; }
+
+/* ══════════════ HERO ══════════════ */
+.hero {
+  min-height: 90vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 60px 20px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, rgba(0,245,255,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse at 80% 20%, rgba(191,95,255,0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 20% 80%, rgba(255,45,120,0.06) 0%, transparent 50%);
+}
+.hero-tag {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem; letter-spacing: 4px;
+  color: var(--accent1); margin-bottom: 20px;
+  padding: 6px 18px; border: 1px solid rgba(0,245,255,0.3);
+  border-radius: 20px; display: inline-block;
+  animation: fadeInDown 0.8s ease forwards;
+}
+.hero h2 {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1.1;
+  margin-bottom: 16px;
+  animation: fadeInUp 0.8s 0.2s ease both;
+}
+.hero h2 span { color: var(--accent1); }
+.hero h2 em { color: var(--accent2); font-style: normal; }
+.hero p {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  color: var(--text2); max-width: 600px;
+  line-height: 1.7; margin-bottom: 40px;
+  animation: fadeInUp 0.8s 0.4s ease both;
+}
+.hero-chars {
+  display: flex; gap: 24px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 40px;
+  animation: fadeInUp 0.8s 0.5s ease both;
+}
+.char-card {
+  width: 90px;
+  cursor: pointer; transition: transform 0.3s;
+}
+.char-card:hover { transform: translateY(-8px) scale(1.05); }
+.char-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%; margin: 0 auto 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  border: 2px solid;
+  position: relative;
+  overflow: hidden;
+}
+.char-avatar::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.15), transparent 60%);
+}
+.char-name { font-size: 0.7rem; letter-spacing: 1px; text-align: center; color: var(--text2); }
+.char-pcr .char-avatar { border-color: var(--accent1); background: rgba(0,245,255,0.1); box-shadow: 0 0 20px rgba(0,245,255,0.3); }
+.char-elisa .char-avatar { border-color: var(--accent2); background: rgba(255,45,120,0.1); box-shadow: 0 0 20px rgba(255,45,120,0.3); }
+.char-soro .char-avatar { border-color: var(--accent3); background: rgba(127,255,0,0.1); box-shadow: 0 0 20px rgba(127,255,0,0.3); }
+
+.start-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 16px 40px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent5));
+  color: #000; font-weight: 700; font-size: 1rem;
+  border: none; border-radius: 30px; cursor: pointer;
+  letter-spacing: 2px; font-family: 'Orbitron', monospace;
+  transition: all 0.3s;
+  animation: fadeInUp 0.8s 0.6s ease both;
+  text-decoration: none;
+}
+.start-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,245,255,0.5); }
+
+@keyframes fadeInDown { from { opacity:0; transform: translateY(-20px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(30px); } to { opacity:1; transform: translateY(0); } }
+
+/* ══════════════ CHAPTER DIVIDER ══════════════ */
+.chapter-divider {
+  display: flex; align-items: center; gap: 16px;
+  padding: 60px 24px 24px;
+  max-width: 1100px; margin: 0 auto;
+}
+.ch-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, currentColor, transparent); opacity: 0.3; }
+.ch-badge {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem; letter-spacing: 3px;
+  padding: 6px 18px; border-radius: 20px;
+  border: 1px solid;
+}
+.ch-pcr { color: var(--accent1); border-color: rgba(0,245,255,0.4); }
+.ch-elisa { color: var(--accent2); border-color: rgba(255,45,120,0.4); }
+.ch-soro { color: var(--accent3); border-color: rgba(127,255,0,0.4); }
+
+/* ══════════════ SECTION ══════════════ */
+.section {
+  max-width: 1100px; margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* ══════════════ MANGA PANEL ══════════════ */
+.manga-intro {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; margin-bottom: 40px;
+}
+@media(max-width:640px){ .manga-intro { grid-template-columns: 1fr; } }
+
+.speech-panel {
+  background: var(--panel);
+  border-radius: var(--r);
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.07);
+  position: relative; overflow: hidden;
+}
+.speech-panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.pcr-panel::before { background: linear-gradient(90deg, var(--accent1), var(--accent5)); }
+.elisa-panel::before { background: linear-gradient(90deg, var(--accent2), var(--accent4)); }
+.soro-panel::before { background: linear-gradient(90deg, var(--accent3), var(--accent1)); }
+
+.char-speak {
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.speak-avatar {
+  width: 52px; height: 52px; min-width: 52px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; border: 2px solid;
+}
+.speak-bubble {
+  background: rgba(255,255,255,0.04);
+  border-radius: 0 14px 14px 14px;
+  padding: 12px 16px;
+  font-size: 0.95rem; line-height: 1.6;
+  color: var(--text2);
+  position: relative;
+}
+.speak-bubble::before {
+  content: '';
+  position: absolute; left: -8px; top: 12px;
+  border: 8px solid transparent;
+  border-right-color: rgba(255,255,255,0.04);
+}
+.speak-name {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.6rem; letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+/* ══════════════ TIMELINE ══════════════ */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin: 32px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute; left: 12px; top: 0; bottom: 0;
+  width: 2px;
+}
+.tl-pcr .timeline::before { background: linear-gradient(180deg, var(--accent1), var(--accent5)); }
+.tl-elisa .timeline::before { background: linear-gradient(180deg, var(--accent2), var(--accent4)); }
+.tl-soro .timeline::before { background: linear-gradient(180deg, var(--accent3), var(--accent1)); }
+
+.tl-item {
+  position: relative; margin-bottom: 28px;
+  opacity: 0; transform: translateX(-20px);
+  transition: all 0.5s ease;
+}
+.tl-item.visible { opacity: 1; transform: translateX(0); }
+.tl-dot {
+  position: absolute; left: -34px; top: 8px;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-dot::after {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.5); }
+}
+.tl-pcr .tl-dot { border-color: var(--accent1); }
+.tl-pcr .tl-dot::after { background: var(--accent1); }
+.tl-elisa .tl-dot { border-color: var(--accent2); }
+.tl-elisa .tl-dot::after { background: var(--accent2); }
+.tl-soro .tl-dot { border-color: var(--accent3); }
+.tl-soro .tl-dot::after { background: var(--accent3); }
+
+.tl-step {
+  font-family: 'Orbitron', monospace; font-size: 0.6rem;
+  letter-spacing: 2px; margin-bottom: 4px;
+}
+.tl-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+.tl-desc { font-size: 0.9rem; color: var(--text2); line-height: 1.6; }
+
+/* ══════════════ INFO CARDS ══════════════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px; margin: 32px 0;
+}
+.info-card {
+  background: var(--panel);
+  border-radius: var(--r); padding: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.3s;
+  cursor: default;
+}
+.info-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0,245,255,0.2);
+  box-shadow: var(--glow1);
+}
+.ic-icon { font-size: 2rem; margin-bottom: 12px; }
+.ic-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+.ic-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.6; }
+
+/* ══════════════ MOLECULE CANVAS ══════════════ */
+.mol-scene {
+  background: var(--panel);
+  border-radius: var(--r);
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden; position: relative;
+  margin: 32px 0;
+}
+.mol-scene canvas { display: block; width: 100%; }
+.mol-label {
+  position: absolute; top: 16px; left: 16px;
+  font-family: 'Orbitron', monospace; font-size: 0.65rem;
+  letter-spacing: 2px; color: var(--text3);
+}
+
+/* ══════════════ INTERACTIVE CONTROLS ══════════════ */
+.lab-panel {
+  background: var(--panel);
+  border-radius: var(--r); padding: 28px;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin: 32px 0;
+}
+.lab-title {
+  font-family: 'Orbitron', monospace; font-size: 0.75rem;
+  letter-spacing: 2px; margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.lab-title::after {
+  content: ''; flex: 1; height: 1px;
+  background: rgba(255,255,255,0.08);
+}
+
+.control-group { margin-bottom: 22px; }
+.ctrl-label {
+  display: flex; justify-content: space-between;
+  font-size: 0.85rem; color: var(--text2); margin-bottom: 10px;
+}
+.ctrl-value {
+  font-family: 'Orbitron', monospace; font-size: 0.9rem;
+}
+input[type="range"] {
+  width: 100%; -webkit-appearance: none;
+  height: 4px; border-radius: 4px;
+  background: rgba(255,255,255,0.1);
+  outline: none; cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  cursor: pointer; border: 2px solid;
+  background: var(--bg);
+  transition: transform 0.2s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+.r-pcr { accent-color: var(--accent1); }
+.r-pcr::-webkit-slider-thumb { border-color: var(--accent1); box-shadow: 0 0 10px rgba(0,245,255,0.5); }
+.r-elisa { accent-color: var(--accent2); }
+.r-elisa::-webkit-slider-thumb { border-color: var(--accent2); box-shadow: 0 0 10px rgba(255,45,120,0.5); }
+.r-soro { accent-color: var(--accent3); }
+.r-soro::-webkit-slider-thumb { border-color: var(--accent3); box-shadow: 0 0 10px rgba(127,255,0,0.5); }
+
+.result-bar {
+  height: 36px; border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  margin-top: 16px; overflow: hidden;
+  position: relative;
+}
+.result-fill {
+  height: 100%; border-radius: 8px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  display: flex; align-items: center; padding: 0 14px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+  white-space: nowrap;
+}
+.fill-pcr { background: linear-gradient(90deg, rgba(0,245,255,0.3), rgba(0,245,255,0.7)); color: var(--accent1); }
+.fill-elisa { background: linear-gradient(90deg, rgba(255,45,120,0.3), rgba(255,45,120,0.7)); color: #fff; }
+.fill-soro { background: linear-gradient(90deg, rgba(127,255,0,0.3), rgba(127,255,0,0.7)); color: #000; }
+
+/* ══════════════ PCR CYCLE ANIMATION ══════════════ */
+.pcr-viz {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 24px;
+}
+.pcr-phase {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.4s;
+  cursor: pointer;
+}
+.pcr-phase.active {
+  background: rgba(0,245,255,0.08);
+  border-color: rgba(0,245,255,0.3);
+  box-shadow: var(--glow1);
+}
+.phase-icon { font-size: 1.6rem; width: 40px; text-align: center; }
+.phase-info { flex: 1; }
+.phase-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
+.phase-temp { font-family: 'Orbitron', monospace; font-size: 0.75rem; color: var(--accent1); }
+.phase-desc { font-size: 0.82rem; color: var(--text2); line-height: 1.5; margin-top: 4px; }
+.phase-status {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text3); transition: all 0.3s;
+}
+.pcr-phase.active .phase-status { background: var(--accent1); box-shadow: var(--glow1); }
+
+/* ══════════════ DNA ANIMATION ══════════════ */
+.dna-scene {
+  height: 180px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+  background: var(--bg);
+  border-radius: 10px; margin-bottom: 16px;
+}
+.dna-helix {
+  display: flex; gap: 6px; align-items: center;
+}
+.dna-strand {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.dna-base {
+  width: 12px; height: 12px; border-radius: 50%;
+  animation: dna-pulse 1.5s ease-in-out infinite;
+}
+.dna-connector {
+  width: 60px; height: 2px; border-radius: 2px;
+  animation: dna-conn 1.5s ease-in-out infinite;
+}
+@keyframes dna-pulse {
+  0%,100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+@keyframes dna-conn {
+  0%,100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ══════════════ ELISA DIAGRAM ══════════════ */
+.elisa-well {
+  display: flex; flex-direction: column-reverse;
+  align-items: center; width: 80px;
+}
+.well-container {
+  display: flex; gap: 12px; justify-content: center;
+  padding: 20px; flex-wrap: wrap;
+}
+.well-layer {
+  width: 70px; height: 18px;
+  border-radius: 4px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-weight: 700;
+  transition: all 0.4s;
+  cursor: default;
+}
+.well-cup {
+  width: 80px; height: 60px;
+  border-radius: 0 0 16px 16px;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-top: none;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  align-items: center;
+}
+
+/* ══════════════ ANTIBODY SVG ══════════════ */
+.antibody-field {
+  background: var(--bg);
+  border-radius: 10px; padding: 20px;
+  height: 200px; position: relative; overflow: hidden;
+  margin-bottom: 16px;
+}
+.ab-svg { position: absolute; }
+
+/* ══════════════ QUIZ / CHALLENGE ══════════════ */
+.quiz-panel {
+  background: var(--panel2);
+  border-radius: var(--r); padding: 28px;
+  border: 1px solid rgba(255,255,255,0.08);
+  margin: 32px 0;
+}
+.quiz-q {
+  font-size: 1rem; font-weight: 700;
+  margin-bottom: 20px; line-height: 1.5;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-opt {
+  padding: 14px 20px; border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer; transition: all 0.3s;
+  font-size: 0.9rem; color: var(--text2);
+}
+.quiz-opt:hover { background: rgba(0,245,255,0.06); border-color: rgba(0,245,255,0.2); color: var(--text); }
+.quiz-opt.correct { background: rgba(127,255,0,0.1); border-color: var(--accent3); color: var(--accent3); }
+.quiz-opt.wrong { background: rgba(255,45,120,0.1); border-color: var(--accent2); color: var(--accent2); }
+.quiz-feedback {
+  margin-top: 16px; padding: 14px;
+  border-radius: 10px; font-size: 0.88rem; line-height: 1.6;
+  display: none;
+}
+.quiz-next {
+  margin-top: 16px; padding: 12px 28px;
+  background: rgba(0,245,255,0.15); border: 1px solid rgba(0,245,255,0.3);
+  color: var(--accent1); border-radius: 8px; cursor: pointer;
+  font-weight: 700; letter-spacing: 1px; transition: all 0.3s;
+  display: none;
+}
+.quiz-next:hover { background: rgba(0,245,255,0.25); }
+
+/* ══════════════ COMPARISON TABLE ══════════════ */
+.comp-table { width: 100%; border-collapse: collapse; margin: 32px 0; font-size: 0.88rem; }
+.comp-table th {
+  padding: 14px 16px; text-align: left;
+  font-family: 'Orbitron', monospace; font-size: 0.65rem;
+  letter-spacing: 2px; background: rgba(255,255,255,0.04);
+}
+.comp-table td { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--text2); }
+.comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+.tag-chip {
+  display: inline-block; padding: 2px 10px;
+  border-radius: 20px; font-size: 0.7rem; font-weight: 700;
+}
+
+/* ══════════════ FOOTER ══════════════ */
+footer {
+  position: relative; z-index: 1;
+  background: var(--bg2);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 40px 24px;
+  text-align: center;
+}
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.2rem; color: var(--accent1);
+  margin-bottom: 8px; letter-spacing: 3px;
+}
+.footer-sub { font-size: 0.8rem; color: var(--text3); line-height: 2; }
+.footer-line {
+  width: 80px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent1), transparent);
+  margin: 16px auto;
+}
+
+/* ══════════════ SCROLL REVEAL ══════════════ */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: all 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ══════════════ TEMPERATURE SLIDER RESULT ══════════════ */
+.temp-display {
+  text-align: center; padding: 16px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  margin-top: 16px;
+}
+.temp-big {
+  font-family: 'Orbitron', monospace;
+  font-size: 2.5rem; font-weight: 900;
+  background: linear-gradient(135deg, var(--accent1), var(--accent5));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.temp-state { font-size: 0.85rem; color: var(--text2); margin-top: 4px; }
+
+/* ══════════════ CYCLE COUNTER ══════════════ */
+.cycle-display {
+  display: flex; align-items: center; gap: 16px;
+  background: rgba(255,255,255,0.03); border-radius: 10px;
+  padding: 16px 20px; margin-top: 16px;
+}
+.cycle-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 2.5rem; font-weight: 900; color: var(--accent1);
+  min-width: 80px; text-align: center;
+}
+.cycle-copies {
+  flex: 1;
+  font-size: 0.85rem; color: var(--text2); line-height: 1.6;
+}
+.cycle-copies strong { color: var(--accent4); font-family: 'Orbitron', monospace; }
+
+/* ══════════════ ELISA STEPS INTERACTIVE ══════════════ */
+.elisa-steps { display: flex; flex-direction: column; gap: 0; }
+.elisa-step-btn {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; cursor: pointer;
+  border: none; background: none; color: var(--text2);
+  text-align: left; font-family: inherit;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: all 0.3s;
+  width: 100%;
+}
+.elisa-step-btn:hover { background: rgba(255,45,120,0.05); color: var(--text); }
+.elisa-step-btn.active { background: rgba(255,45,120,0.08); color: var(--accent2); }
+.esb-num {
+  font-family: 'Orbitron', monospace; font-size: 0.65rem;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid; display: flex; align-items: center; justify-content: center;
+  min-width: 28px;
+  border-color: var(--text3);
+}
+.elisa-step-btn.active .esb-num { border-color: var(--accent2); color: var(--accent2); }
+.esb-text { font-size: 0.9rem; font-weight: 600; }
+.elisa-detail {
+  background: rgba(255,45,120,0.06);
+  padding: 16px 20px 16px 62px;
+  font-size: 0.85rem; color: var(--text2); line-height: 1.7;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: none;
+  border-left: 3px solid var(--accent2);
+}
+.elisa-detail.open { display: block; }
+
+/* ══════════════ ABSORBANCE METER ══════════════ */
+.abs-meter {
+  background: var(--bg); border-radius: 10px;
+  padding: 20px; text-align: center;
+}
+.abs-circle {
+  width: 120px; height: 120px; border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  border: 3px solid;
+  transition: all 0.5s;
+  position: relative;
+}
+.abs-val { font-family: 'Orbitron', monospace; font-size: 1.4rem; font-weight: 900; }
+.abs-unit { font-size: 0.65rem; color: var(--text3); }
+.abs-interp { font-size: 0.85rem; margin-top: 6px; }
+
+/* ══════════════ ANTIBODY TYPES ══════════════ */
+.ab-type-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px; margin: 20px 0;
+}
+.ab-card {
+  background: var(--panel); border-radius: var(--r);
+  padding: 18px; border: 1px solid rgba(255,255,255,0.06);
+  text-align: center; transition: all 0.3s;
+}
+.ab-card:hover { transform: translateY(-4px); border-color: rgba(127,255,0,0.3); }
+.ab-emoji { font-size: 2.2rem; margin-bottom: 10px; }
+.ab-name { font-family: 'Orbitron', monospace; font-size: 0.7rem; letter-spacing: 2px; color: var(--accent3); margin-bottom: 6px; }
+.ab-role { font-size: 0.8rem; color: var(--text2); line-height: 1.5; }
+
+/* ══════════════ WINDOW TABS ══════════════ */
+.tab-bar {
+  display: flex; gap: 4px; padding: 4px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px 10px 0 0;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-bottom: none;
+}
+.tab-btn {
+  padding: 8px 18px; border-radius: 8px;
+  border: none; background: none;
+  color: var(--text3); cursor: pointer;
+  font-family: inherit; font-size: 0.85rem; font-weight: 600;
+  transition: all 0.3s;
+}
+.tab-btn.active { background: var(--panel); color: var(--text); }
+.tab-content {
+  background: var(--panel); border-radius: 0 10px 10px 10px;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 24px; display: none;
+}
+.tab-content.active { display: block; }
+
+/* ══════════════ MINI LEGEND ══════════════ */
+.legend { display: flex; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
+.legend-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--text2);
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* ══════════════ ELISA VISUAL PLATE ══════════════ */
+.plate-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 8px; padding: 20px;
+  background: var(--bg); border-radius: 10px; margin: 16px 0;
+}
+.plate-well {
+  aspect-ratio: 1; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; color: transparent;
+  cursor: pointer; transition: all 0.4s;
+  position: relative; overflow: hidden;
+}
+.plate-well::after {
+  content: '';
+  position: absolute; inset: 20%;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(4px);
+  opacity: 0.6;
+}
+.plate-well:hover { transform: scale(1.1); }
+
+/* ══════════════ PROGRESS BAR ══════════════ */
+.progress-strip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0; margin-bottom: 24px;
+}
+.prog-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  transition: all 0.4s;
+}
+.prog-dot.done { background: var(--accent1); box-shadow: var(--glow1); }
+.prog-line { flex: 1; height: 2px; background: rgba(255,255,255,0.07); border-radius: 2px; }
+
+/* Responsive */
+@media(max-width:768px){
+  header { padding: 16px 16px 0; }
+  .section { padding: 0 16px 60px; }
+  .chapter-divider { padding: 40px 16px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Particles -->
+<div id="particles"></div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+<!-- Chapter Menu -->
+<nav class="chapter-menu" id="chapterMenu">
+  <h3>CAPÍTULOS</h3>
+  <a class="menu-item" href="#intro" onclick="closeMenu()">
+    <span class="mi-num">00</span> Introdução
+    <span class="menu-badge" style="background:rgba(255,255,255,0.08);color:var(--text3)">INÍCIO</span>
+  </a>
+  <a class="menu-item" href="#pcr" onclick="closeMenu()">
+    <span class="mi-num">01</span> PCR
+    <span class="menu-badge badge-pcr">PCR</span>
+  </a>
+  <a class="menu-item" href="#pcr-types" onclick="closeMenu()">
+    <span class="mi-num">01.2</span> Tipos de PCR
+    <span class="menu-badge badge-pcr">PCR</span>
+  </a>
+  <a class="menu-item" href="#elisa" onclick="closeMenu()">
+    <span class="mi-num">02</span> ELISA
+    <span class="menu-badge badge-elisa">ELISA</span>
+  </a>
+  <a class="menu-item" href="#elisa-types" onclick="closeMenu()">
+    <span class="mi-num">02.2</span> Tipos de ELISA
+    <span class="menu-badge badge-elisa">ELISA</span>
+  </a>
+  <a class="menu-item" href="#sorologia" onclick="closeMenu()">
+    <span class="mi-num">03</span> Sorologia
+    <span class="menu-badge badge-soro">SORO</span>
+  </a>
+  <a class="menu-item" href="#anticorpos" onclick="closeMenu()">
+    <span class="mi-num">03.2</span> Anticorpos
+    <span class="menu-badge badge-soro">SORO</span>
+  </a>
+  <a class="menu-item" href="#comparacao" onclick="closeMenu()">
+    <span class="mi-num">04</span> Comparação
+    <span class="menu-badge" style="background:rgba(255,186,0,0.2);color:var(--accent4)">FINAL</span>
+  </a>
+  <a class="menu-item" href="#quiz" onclick="closeMenu()">
+    <span class="mi-num">05</span> Quiz
+    <span class="menu-badge" style="background:rgba(191,95,255,0.2);color:var(--accent5)">TREINO</span>
+  </a>
+</nav>
+
+<!-- Header -->
+<header>
+  <div class="logo-block">
+    <div class="logo-icon">🧬</div>
+    <div class="logo-text">
+      <h1>BIOLAB CHRONICLES</h1>
+      <p>DemilMed-UL • 2026</p>
+    </div>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<main>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero" id="intro">
+  <div class="hero-bg"></div>
+  <div class="hero-tag">CAPÍTULO ZERO — MISSÃO INICIADA</div>
+  <h2>A <span>Batalha</span> dos<br><em>Diagnósticos</em></h2>
+  <p>Três técnicas. Três heróis. Um inimigo invisível — a doença. Aprende como a ciência detecta o que os olhos não vêem, de forma simples e épica.</p>
+  <div class="hero-chars">
+    <div class="char-card char-pcr" onclick="scrollTo('pcr')">
+      <div class="char-avatar">🔬</div>
+      <div class="char-name">PCR</div>
+    </div>
+    <div class="char-card char-elisa" onclick="scrollTo('elisa')">
+      <div class="char-avatar">🧪</div>
+      <div class="char-name">ELISA</div>
+    </div>
+    <div class="char-card char-soro" onclick="scrollTo('sorologia')">
+      <div class="char-avatar">🛡️</div>
+      <div class="char-name">SOROLOGIA</div>
+    </div>
+  </div>
+  <a class="start-btn" href="#pcr">▶ INICIAR JORNADA</a>
+</section>
+
+<!-- ══════════════ CAPÍTULO 1 — PCR ══════════════ -->
+<div class="chapter-divider" id="pcr">
+  <div class="ch-line ch-pcr"></div>
+  <div class="ch-badge ch-pcr">CAPÍTULO 01 — PCR</div>
+  <div class="ch-line ch-pcr"></div>
+</div>
+
+<section class="section tl-pcr">
+  <!-- Intro manga -->
+  <div class="manga-intro reveal">
+    <div class="speech-panel pcr-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent1); background:rgba(0,245,255,0.1);">🔬</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent1)">PROFESSOR KARY</div>
+          "Imagina que tens um livro de receitas, mas só tens uma página rasgada. O PCR é a máquina que consegue <em>fotocopiar</em> essa página <strong>um bilhão de vezes</strong>!"
+        </div>
+      </div>
+    </div>
+    <div class="speech-panel pcr-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent5); background:rgba(191,95,255,0.1);">🧑‍🎓</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent5)">ESTUDANTE</div>
+          "Mas... fotocopiar DNA? Como isso é possível?! É igual a ter um exército clonado a partir de um único soldado?"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- O que é PCR -->
+  <div class="reveal">
+    <h3 style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--accent1);margin-bottom:16px;letter-spacing:2px;">O QUE É O PCR?</h3>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;margin-bottom:16px;">
+      <strong style="color:var(--text)">PCR</strong> significa <strong style="color:var(--accent1)">Polymerase Chain Reaction</strong> — em português, <em>Reacção em Cadeia da Polimerase</em>. É uma técnica laboratorial que permite amplificar (copiar) uma sequência específica de DNA, tornando-a detectável mesmo quando existe em quantidades ínfimas.
+    </p>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;">
+      Inventada em 1983 por <strong style="color:var(--accent4)">Kary Mullis</strong>, que ganhou o Prémio Nobel em 1993, o PCR é hoje uma das ferramentas mais poderosas da biologia molecular — usada no diagnóstico de doenças, medicina forense, paternidade, pesquisa de cancro, e muito mais.
+    </p>
+  </div>
+
+  <!-- DNA scene animado -->
+  <div class="mol-scene reveal">
+    <div class="mol-label">DNA DOUBLE HELIX — ANIMAÇÃO AO VIVO</div>
+    <canvas id="dnaCanvas" height="200"></canvas>
+  </div>
+
+  <!-- Timeline PCR -->
+  <h3 style="font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--accent1);margin:32px 0 8px;letter-spacing:2px;" class="reveal">COMO FUNCIONA — CICLO POR CICLO</h3>
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 01</div>
+      <div class="tl-title">🧬 Extracção do DNA</div>
+      <div class="tl-desc">Primeiro, o DNA é extraído da amostra do paciente (sangue, saliva, swab nasal...). É como abrir o livro antes de o fotocopiar — precisamos do material original.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 02</div>
+      <div class="tl-title">🔥 Desnaturação — 94–96°C</div>
+      <div class="tl-desc">O DNA é aquecido até ~95°C. O calor extremo quebra as ligações entre as duas fitas do DNA, separando-as como um fecho éclair que se abre. As duas fitas ficam livres e disponíveis para cópia.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 03</div>
+      <div class="tl-title">❄️ Hibridação (Annealing) — 50–65°C</div>
+      <div class="tl-desc">A temperatura baixa para ~60°C. Pequenas peças de DNA chamadas <strong>primers</strong> (iniciadores) encaixam nas extremidades da região alvo — como marcar exatamente a página certa do livro para fotocopiar.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 04</div>
+      <div class="tl-title">⚡ Extensão — 72°C</div>
+      <div class="tl-desc">A enzima <strong>Taq Polimerase</strong> (uma proteína termorresistente) "lê" o DNA e constrói uma nova cópia, adicionando bases uma a uma. A 72°C ela trabalha na velocidade máxima — como uma impressora em modo turbo.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 05</div>
+      <div class="tl-title">🔁 Repetição — 25 a 40 ciclos</div>
+      <div class="tl-desc">Os três passos repetem-se 25 a 40 vezes. Cada ciclo duplica as cópias. 1 → 2 → 4 → 8 → 16... Em 30 ciclos: mais de <strong>1 bilhão de cópias</strong>! É amplificação exponencial.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent1)">PASSO 06</div>
+      <div class="tl-title">📊 Detecção do Resultado</div>
+      <div class="tl-desc">O produto final é analisado em gel de electroforese, por fluorescência (PCR em Tempo Real), ou por sequenciamento — revelando se o DNA alvo estava presente na amostra.</div>
+    </div>
+  </div>
+
+  <!-- PCR Phases Interactive -->
+  <div class="lab-panel reveal">
+    <div class="lab-title" style="color:var(--accent1)">⚗️ SIMULADOR DE CICLO PCR</div>
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:20px;">Clica em cada fase para ver o que acontece:</p>
+    <div class="pcr-viz">
+      <div class="pcr-phase active" onclick="selectPhase(0)" id="phase0">
+        <div class="phase-icon">🔥</div>
+        <div class="phase-info">
+          <div class="phase-name">Desnaturação</div>
+          <div class="phase-temp">94 – 96 °C</div>
+          <div class="phase-desc" id="pdesc0">O calor separa as duas fitas de DNA. A dupla hélice "abre-se". ❌ Ligações de hidrogénio são quebradas.</div>
+        </div>
+        <div class="phase-status"></div>
+      </div>
+      <div class="pcr-phase" onclick="selectPhase(1)" id="phase1">
+        <div class="phase-icon">❄️</div>
+        <div class="phase-info">
+          <div class="phase-name">Hibridação (Annealing)</div>
+          <div class="phase-temp">50 – 65 °C</div>
+          <div class="phase-desc" id="pdesc1" style="display:none">Os primers ligam-se às fitas molde nas extremidades da sequência alvo. É a fase de "marcação" do que vai ser copiado.</div>
+        </div>
+        <div class="phase-status"></div>
+      </div>
+      <div class="pcr-phase" onclick="selectPhase(2)" id="phase2">
+        <div class="phase-icon">⚡</div>
+        <div class="phase-info">
+          <div class="phase-name">Extensão</div>
+          <div class="phase-temp">72 °C</div>
+          <div class="phase-desc" id="pdesc2" style="display:none">A Taq Polimerase sintetiza novas fitas de DNA, adicionando nucleótidos na direcção 5'→3'. Cada fita molde gera uma nova cópia completa.</div>
+        </div>
+        <div class="phase-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ciclos interactivos -->
+  <div class="lab-panel reveal">
+    <div class="lab-title" style="color:var(--accent1)">📈 CALCULADORA DE AMPLIFICAÇÃO</div>
+    <div class="control-group">
+      <div class="ctrl-label">
+        <span>Número de Ciclos</span>
+        <span class="ctrl-value" id="cycleVal" style="color:var(--accent1)">30</span>
+      </div>
+      <input type="range" class="r-pcr" min="1" max="40" value="30" oninput="updateCycles(this.value)">
+    </div>
+    <div class="cycle-display">
+      <div class="cycle-num" id="cycleNum">30</div>
+      <div class="cycle-copies">
+        Ciclos completos produzem<br>
+        <strong id="copiesNum">1,073,741,824</strong>
+        <br><span style="font-size:0.78rem;color:var(--text3)">cópias do fragmento alvo</span>
+      </div>
+    </div>
+    <div class="result-bar">
+      <div class="result-fill fill-pcr" id="cycleBar" style="width:75%">🔬 AMPLIFICAÇÃO MÁXIMA</div>
+    </div>
+  </div>
+
+  <!-- Temperatura interactiva -->
+  <div class="lab-panel reveal">
+    <div class="lab-title" style="color:var(--accent1)">🌡️ CONTROLO DE TEMPERATURA</div>
+    <div class="control-group">
+      <div class="ctrl-label">
+        <span>Temperatura do Termociclador</span>
+        <span class="ctrl-value" id="tempVal" style="color:var(--accent1)">72°C</span>
+      </div>
+      <input type="range" class="r-pcr" min="40" max="100" value="72" oninput="updateTemp(this.value)">
+    </div>
+    <div class="temp-display">
+      <div class="temp-big" id="tempBig">72°C</div>
+      <div class="temp-state" id="tempState">⚡ EXTENSÃO — Taq Polimerase activa e a construir novas fitas de DNA</div>
+    </div>
+  </div>
+
+  <!-- Componentes do PCR -->
+  <h3 style="font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--accent1);margin:32px 0 12px;letter-spacing:2px;" class="reveal">🧰 COMPONENTES DA MISTURA PCR</h3>
+  <div class="card-grid reveal">
+    <div class="info-card">
+      <div class="ic-icon">🧬</div>
+      <div class="ic-title" style="color:var(--accent1)">DNA Molde (Template)</div>
+      <div class="ic-desc">O DNA original da amostra — a sequência que queremos copiar. É o "original" que vai ser fotocopiado. Presente em quantidade muito pequena.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">📌</div>
+      <div class="ic-title" style="color:var(--accent1)">Primers (Iniciadores)</div>
+      <div class="ic-desc">Pequenas sequências de DNA (~20 pares de bases) que flanqueiam a região alvo. Funcionam como "marcadores de início e fim" para a polimerase.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">⚙️</div>
+      <div class="ic-title" style="color:var(--accent1)">Taq Polimerase</div>
+      <div class="ic-desc">Enzima extraída da bactéria <em>Thermus aquaticus</em> (que vive em fontes hidrotermais!). Resiste a altas temperaturas — essencial para o PCR funcionar.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">🔡</div>
+      <div class="ic-title" style="color:var(--accent1)">dNTPs</div>
+      <div class="ic-desc">Desoxinucleótidos trifosfato — as "letras" do DNA (A, T, G, C). São os "tijolos" que a Taq Polimerase usa para construir as novas fitas.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">💧</div>
+      <div class="ic-title" style="color:var(--accent1)">Tampão (Buffer)</div>
+      <div class="ic-desc">Solução que mantém o pH estável e o ambiente químico ideal para a polimerase funcionar correctamente durante toda a reacção.</div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon">🔩</div>
+      <div class="ic-title" style="color:var(--accent1)">Iões Mg²⁺</div>
+      <div class="ic-desc">Magnésio é o cofactor da Taq Polimerase — sem ele a enzima não consegue catalisar a síntese de DNA. Actua como "combustível" da máquina.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ TIPOS DE PCR ══════════════ -->
+<div class="chapter-divider" id="pcr-types">
+  <div class="ch-line ch-pcr"></div>
+  <div class="ch-badge ch-pcr">CAPÍTULO 01.2 — TIPOS DE PCR</div>
+  <div class="ch-line ch-pcr"></div>
+</div>
+
+<section class="section">
+  <div class="speech-panel pcr-panel reveal" style="margin-bottom:28px;">
+    <div class="char-speak">
+      <div class="speak-avatar" style="border-color:var(--accent1);background:rgba(0,245,255,0.1);">🔬</div>
+      <div class="speak-bubble">
+        <div class="speak-name" style="color:var(--accent1)">PROFESSOR KARY</div>
+        "O PCR evoluiu! Hoje existem várias versões especializadas. Cada uma tem um superpoder diferente para situações específicas."
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar reveal">
+    <button class="tab-btn active" onclick="openTab('t1','tabs1')">RT-PCR</button>
+    <button class="tab-btn" onclick="openTab('t2','tabs1')">PCR em Tempo Real</button>
+    <button class="tab-btn" onclick="openTab('t3','tabs1')">PCR Multiplex</button>
+    <button class="tab-btn" onclick="openTab('t4','tabs1')">Nested PCR</button>
+  </div>
+  <div id="tabs1">
+    <div class="tab-content active" id="t1">
+      <h4 style="color:var(--accent1);margin-bottom:12px;">🔄 RT-PCR — Transcrição Reversa</h4>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.9rem;margin-bottom:12px;">Usado quando o material genético do patogénio é <strong style="color:var(--text)">RNA</strong> (como o SARS-CoV-2). Uma enzima chamada <strong>Transcriptase Reversa</strong> converte o RNA em cDNA (DNA complementar) antes da amplificação normal do PCR.</p>
+      <div style="background:rgba(0,245,255,0.06);border-left:3px solid var(--accent1);padding:12px 16px;border-radius:0 8px 8px 0;font-size:0.85rem;color:var(--text2);">
+        <strong style="color:var(--accent1)">Exemplo clínico:</strong> Diagnóstico da COVID-19, gripe, VIH, dengue. Os testes PCR usados durante a pandemia eram RT-PCRs!
+      </div>
+    </div>
+    <div class="tab-content" id="t2">
+      <h4 style="color:var(--accent1);margin-bottom:12px;">📊 PCR em Tempo Real (qPCR)</h4>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.9rem;margin-bottom:12px;">Usa <strong>corantes fluorescentes</strong> para monitorizar a amplificação em tempo real, durante o próprio ciclo. Permite quantificar exactamente quantas cópias do DNA existem na amostra — não só detectar presença/ausência.</p>
+      <div style="background:rgba(0,245,255,0.06);border-left:3px solid var(--accent1);padding:12px 16px;border-radius:0 8px 8px 0;font-size:0.85rem;color:var(--text2);">
+        <strong style="color:var(--accent1)">Exemplo clínico:</strong> Monitorização da carga viral do VIH, quantidade de vírus da hepatite B no sangue, expresão génica em tumores.
+      </div>
+    </div>
+    <div class="tab-content" id="t3">
+      <h4 style="color:var(--accent1);margin-bottom:12px;">🎯 PCR Multiplex</h4>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.9rem;margin-bottom:12px;">Utiliza <strong>múltiplos pares de primers</strong> numa só reacção, detectando simultaneamente vários alvos (diferentes vírus ou bactérias) numa única amostra. Poupa tempo e recursos — um exame em vez de cinco!</p>
+      <div style="background:rgba(0,245,255,0.06);border-left:3px solid var(--accent1);padding:12px 16px;border-radius:0 8px 8px 0;font-size:0.85rem;color:var(--text2);">
+        <strong style="color:var(--accent1)">Exemplo clínico:</strong> Painel respiratório detectando gripe A, gripe B, COVID-19 e RSV em simultâneo.
+      </div>
+    </div>
+    <div class="tab-content" id="t4">
+      <h4 style="color:var(--accent1);margin-bottom:12px;">🪺 Nested PCR</h4>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.9rem;margin-bottom:12px;">Faz-se <strong>dois rounds de PCR</strong>: o primeiro amplifica uma região grande, e o segundo amplifica uma região ainda mais específica dentro da primeira — aumentando drasticamente a sensibilidade e especificidade, eliminando resultados falsos.</p>
+      <div style="background:rgba(0,245,255,0.06);border-left:3px solid var(--accent1);padding:12px 16px;border-radius:0 8px 8px 0;font-size:0.85rem;color:var(--text2);">
+        <strong style="color:var(--accent1)">Exemplo clínico:</strong> Diagnóstico de Malária, tuberculose com cargas bacterianas muito baixas.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CAPÍTULO 2 — ELISA ══════════════ -->
+<div class="chapter-divider" id="elisa">
+  <div class="ch-line ch-elisa"></div>
+  <div class="ch-badge ch-elisa">CAPÍTULO 02 — ELISA</div>
+  <div class="ch-line ch-elisa"></div>
+</div>
+
+<section class="section tl-elisa">
+  <div class="manga-intro reveal">
+    <div class="speech-panel elisa-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent2);background:rgba(255,45,120,0.1);">🧪</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent2)">DETETIVE ELISA</div>
+          "O meu método é diferente. Eu não procuro o DNA do inimigo — eu procuro as <em>impressões digitais</em> que o teu sistema imunitário deixou depois de o combater. Anticorpos ou proteínas específicas."
+        </div>
+      </div>
+    </div>
+    <div class="speech-panel elisa-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent4);background:rgba(255,186,0,0.1);">🧑‍🎓</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent4)">ESTUDANTE</div>
+          "Então é como encontrar os rastos de uma batalha que já aconteceu, mesmo que o inimigo já tenha fugido?"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h3 style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--accent2);margin-bottom:16px;letter-spacing:2px;">O QUE É O ELISA?</h3>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;margin-bottom:16px;">
+      <strong style="color:var(--text)">ELISA</strong> significa <strong style="color:var(--accent2)">Enzyme-Linked Immunosorbent Assay</strong> — em português, <em>Ensaio de Imunoabsorção Enzimática</em>. É uma técnica que usa <strong>anticorpos marcados com enzimas</strong> para detectar a presença de proteínas específicas (antigénios ou anticorpos) numa amostra.
+    </p>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;">
+      A detecção baseia-se numa reacção colorimétrica — uma mudança de cor visível. Quanto mais intensa a cor, maior a concentração da substância detectada. É rápido, sensível, e pode analisar centenas de amostras em simultâneo numa placa de 96 poços.
+    </p>
+  </div>
+
+  <!-- ELISA plate visual -->
+  <div class="lab-panel reveal" style="border-color:rgba(255,45,120,0.2);">
+    <div class="lab-title" style="color:var(--accent2)">🧫 PLACA DE ELISA — SIMULADOR</div>
+    <p style="font-size:0.82rem;color:var(--text2);margin-bottom:16px;">Clica nos poços para simular a reacção! A intensidade da cor indica a quantidade de antigénio.</p>
+    <div class="plate-grid" id="elisaPlate"></div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#fff0"></div><span>Negativo</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ffba0044;border:1px solid #ffba0088"></div><span>Fraco</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff6600aa"></div><span>Moderado</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#ff2d78ee"></div><span>Forte</span></div>
+    </div>
+  </div>
+
+  <!-- ELISA Steps accordion -->
+  <h3 style="font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--accent2);margin:32px 0 12px;letter-spacing:2px;" class="reveal">PROTOCOLO PASSO A PASSO</h3>
+  <div class="lab-panel reveal" style="padding:0;overflow:hidden;border-color:rgba(255,45,120,0.2);">
+    <div class="elisa-steps" id="elisaSteps">
+      <button class="elisa-step-btn" onclick="toggleElisaStep(0)">
+        <span class="esb-num">01</span>
+        <span class="esb-text">Sensibilização — Revestir o poço com Antigénio</span>
+      </button>
+      <div class="elisa-detail">
+        O antigénio (proteína do patogénio que queremos detectar) é adsorvido (fixado) à superfície do poço da placa. A placa é incubada overnight a 4°C. É como "colar a impressão digital do inimigo" na superfície para usar como isca.
+      </div>
+      <button class="elisa-step-btn" onclick="toggleElisaStep(1)">
+        <span class="esb-num">02</span>
+        <span class="esb-text">Bloqueio — Eliminar Ligações Inespecíficas</span>
+      </button>
+      <div class="elisa-detail">
+        Proteínas bloqueantes (BSA ou leite desnatado) preenchem os espaços vazios da placa que não têm antigénio. Isto evita que anticorpos se liguem de forma inespecífica, reduzindo resultados falsos positivos. É como "cobrir as áreas que não interessam com um bloqueador".
+      </div>
+      <button class="elisa-step-btn" onclick="toggleElisaStep(2)">
+        <span class="esb-num">03</span>
+        <span class="esb-text">Adição da Amostra — Anticorpos Primários</span>
+      </button>
+      <div class="elisa-detail">
+        O soro do paciente é adicionado ao poço. Se o paciente tem anticorpos contra o antigénio, eles ligam-se especificamente ao antigénio fixado. Lava-se para remover o que não se ligou. É o momento da "identificação" — o anticorpo encontra o seu alvo.
+      </div>
+      <button class="elisa-step-btn" onclick="toggleElisaStep(3)">
+        <span class="esb-num">04</span>
+        <span class="esb-text">Anticorpo Secundário — Marcado com Enzima</span>
+      </button>
+      <div class="elisa-detail">
+        Um segundo anticorpo, conjugado com uma enzima (ex: Peroxidase de Rábano — HRP), liga-se ao anticorpo primário. Este anticorpo é o "amplificador do sinal" — é ele que permitirá a detecção visual. Lava-se novamente para remover o excesso.
+      </div>
+      <button class="elisa-step-btn" onclick="toggleElisaStep(4)">
+        <span class="esb-num">05</span>
+        <span class="esb-text">Substrato — A Reacção Colorimétrica</span>
+      </button>
+      <div class="elisa-detail">
+        Adiciona-se um substrato cromogénico (ex: TMB — tetrametilbenzidina). A enzima converte o substrato incolor numa cor intensa (azul → amarelo após paragem com ácido). A intensidade da cor é proporcional à quantidade de anticorpos presentes!
+      </div>
+      <button class="elisa-step-btn" onclick="toggleElisaStep(5)">
+        <span class="esb-num">06</span>
+        <span class="esb-text">Leitura — Espectrofotometria</span>
+      </button>
+      <div class="elisa-detail">
+        Um aparelho chamado leitor de ELISA (espectrofotômetro) mede a absorbância (OD) de cada poço a um comprimento de onda específico (geralmente 450 nm). Valores altos = positivo. Compara-se com controlos positivos e negativos para interpretar o resultado.
+      </div>
+    </div>
+  </div>
+
+  <!-- Absorbância slider -->
+  <div class="lab-panel reveal" style="border-color:rgba(255,45,120,0.2);">
+    <div class="lab-title" style="color:var(--accent2)">📊 SIMULADOR DE ABSORBÂNCIA (OD)</div>
+    <div class="control-group">
+      <div class="ctrl-label">
+        <span>Concentração de Anticorpos (UA)</span>
+        <span class="ctrl-value" id="abVal" style="color:var(--accent2)">50</span>
+      </div>
+      <input type="range" class="r-elisa" min="0" max="100" value="50" oninput="updateAbs(this.value)">
+    </div>
+    <div class="abs-meter">
+      <div class="abs-circle" id="absCircle" style="border-color:var(--accent2)">
+        <div class="abs-val" id="absVal" style="color:var(--accent2)">0.85</div>
+        <div class="abs-unit">OD 450nm</div>
+      </div>
+      <div class="abs-interp" id="absInterp" style="color:var(--accent2)">⚠️ POSITIVO FRACO</div>
+      <div style="margin-top:12px;font-size:0.8rem;color:var(--text3)">Cutoff típico: OD ≥ 0.2 = Positivo</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════ TIPOS DE ELISA ══════════════ -->
+<div class="chapter-divider" id="elisa-types">
+  <div class="ch-line ch-elisa"></div>
+  <div class="ch-badge ch-elisa">CAPÍTULO 02.2 — TIPOS DE ELISA</div>
+  <div class="ch-line ch-elisa"></div>
+</div>
+
+<section class="section">
+  <div class="card-grid reveal">
+    <div class="info-card" style="border-color:rgba(255,45,120,0.2);">
+      <div class="ic-icon">🎯</div>
+      <div class="ic-title" style="color:var(--accent2)">ELISA Directo</div>
+      <div class="ic-desc">O anticorpo primário é directamente conjugado com a enzima. Simples e rápido, mas menos sensível. Detecta directamente o antigénio na placa sem anticorpo secundário.</div>
+    </div>
+    <div class="info-card" style="border-color:rgba(255,45,120,0.2);">
+      <div class="ic-icon">🔗</div>
+      <div class="ic-title" style="color:var(--accent2)">ELISA Indirecto</div>
+      <div class="ic-desc">O mais comum! Usa anticorpo primário + anticorpo secundário conjugado com enzima. Muito mais sensível — permite amplificação do sinal. Ideal para detectar anticorpos em soros de pacientes.</div>
+    </div>
+    <div class="info-card" style="border-color:rgba(255,45,120,0.2);">
+      <div class="ic-icon">🥪</div>
+      <div class="ic-title" style="color:var(--accent2)">ELISA Sandwich</div>
+      <div class="ic-desc">O antigénio fica "sanduichado" entre dois anticorpos específicos. Extremamente sensível e específico. Ideal para detectar proteínas em baixas concentrações (ex: citocinas, hormonas, vírus).</div>
+    </div>
+    <div class="info-card" style="border-color:rgba(255,45,120,0.2);">
+      <div class="ic-icon">🏆</div>
+      <div class="ic-title" style="color:var(--accent2)">ELISA Competitivo</div>
+      <div class="ic-desc">O antigénio da amostra compete com um antigénio marcado pela ligação ao anticorpo. Quanto mais antigénio na amostra, menos sinal! A curva é inversa — útil para pequeníssimas moléculas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ CAPÍTULO 3 — SOROLOGIA ══════════════ -->
+<div class="chapter-divider" id="sorologia">
+  <div class="ch-line ch-soro"></div>
+  <div class="ch-badge ch-soro">CAPÍTULO 03 — SOROLOGIA</div>
+  <div class="ch-line ch-soro"></div>
+</div>
+
+<section class="section tl-soro">
+  <div class="manga-intro reveal">
+    <div class="speech-panel soro-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent3);background:rgba(127,255,0,0.1);">🛡️</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent3)">GUARDIÃ SORO</div>
+          "O meu campo de batalha é o <em>soro</em> do sangue. Analiso os anticorpos para saber se o teu corpo já travou guerra com um inimigo — e se ficou imune ou ainda está a lutar."
+        </div>
+      </div>
+    </div>
+    <div class="speech-panel soro-panel">
+      <div class="char-speak">
+        <div class="speak-avatar" style="border-color:var(--accent4);background:rgba(255,186,0,0.1);">🧑‍🎓</div>
+        <div class="speak-bubble">
+          <div class="speak-name" style="color:var(--accent4)">ESTUDANTE</div>
+          "Então a Sorologia é como ler o histórico de batalhas do sistema imunitário? Um registo de todos os inimigos que já enfrentou?"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <h3 style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--accent3);margin-bottom:16px;letter-spacing:2px;">O QUE É A SOROLOGIA?</h3>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;margin-bottom:16px;">
+      <strong style="color:var(--text)">Sorologia</strong> é o estudo e análise do <strong style="color:var(--accent3)">soro sanguíneo</strong> — a parte líquida do sangue após remoção das células e dos factores de coagulação. O soro contém anticorpos produzidos pelo sistema imunitário em resposta a infecções ou vacinação.
+    </p>
+    <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;">
+      Os testes sorológicos detectam e quantificam estes anticorpos, permitindo saber se uma pessoa foi exposta a um agente infeccioso, se está imune, em que fase da doença se encontra, ou se uma vacina foi eficaz. É o "arquivo histórico" das batalhas do sistema imune.
+    </p>
+  </div>
+
+  <!-- Timeline sorologia -->
+  <h3 style="font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--accent3);margin:32px 0 8px;letter-spacing:2px;" class="reveal">COMO FUNCIONA — DO SANGUE AO RESULTADO</h3>
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent3)">PASSO 01</div>
+      <div class="tl-title">🩸 Colheita e Preparação do Soro</div>
+      <div class="tl-desc">Recolhe-se sangue venoso do paciente. O sangue é centrifugado para separar as células (sedimentam) do soro (sobrenadante amarelado claro). Este soro contém os anticorpos a analisar.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent3)">PASSO 02</div>
+      <div class="tl-title">🔍 Escolha do Teste</div>
+      <div class="tl-desc">Dependendo da suspeita clínica, escolhe-se o teste adequado: ELISA (mais comum), Western Blot (confirmatório), Imunofluorescência, Aglutinação, ou Neutralização. Cada um tem sensibilidade e especificidade diferentes.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent3)">PASSO 03</div>
+      <div class="tl-title">🧲 Reacção Antigénio-Anticorpo</div>
+      <div class="tl-desc">O soro é exposto a antigénios específicos. Se os anticorpos correspondentes estão presentes, eles ligam-se — formando complexos imunes detectáveis. É o momento do "reconhecimento".</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent3)">PASSO 04</div>
+      <div class="tl-title">📊 Leitura e Titulação</div>
+      <div class="tl-desc">O resultado é quantificado como <strong>título</strong> — a maior diluição do soro que ainda dá resultado positivo. Um título alto (ex: 1:1024) indica forte resposta imune. Resultados são comparados com valores de referência.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-step" style="color:var(--accent3)">PASSO 05</div>
+      <div class="tl-title">🏥 Interpretação Clínica</div>
+      <div class="tl-desc">IgM positivo = infecção activa recente (sistema imune em alerta máximo). IgG positivo = infecção passada ou vacinação (memória imunológica). Ambos positivos = fase de transição. Ambos negativos = nunca foi exposto.</div>
+    </div>
+  </div>
+
+  <!-- IgM vs IgG interactivo -->
+  <div class="lab-panel reveal" style="border-color:rgba(127,255,0,0.2);">
+    <div class="lab-title" style="color:var(--accent3)">⏱️ SIMULADOR DA RESPOSTA IMUNE NO TEMPO</div>
+    <p style="font-size:0.85rem;color:var(--text2);margin-bottom:20px;">Arrasta o slider para simular os dias após a infecção e ver como IgM e IgG evoluem:</p>
+    <div class="control-group">
+      <div class="ctrl-label">
+        <span>Dias após exposição ao patogénio</span>
+        <span class="ctrl-value" id="dayVal" style="color:var(--accent3)">14</span>
+      </div>
+      <input type="range" class="r-soro" min="0" max="90" value="14" oninput="updateDays(this.value)">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+      <div>
+        <div style="font-size:0.8rem;color:var(--text3);margin-bottom:8px;">IgM (infecção aguda)</div>
+        <div class="result-bar">
+          <div class="result-fill fill-soro" id="igmBar" style="width:60%">🛡️ IgM</div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:6px;" id="igmLabel">Fase aguda activa</div>
+      </div>
+      <div>
+        <div style="font-size:0.8rem;color:var(--text3);margin-bottom:8px;">IgG (memória imune)</div>
+        <div class="result-bar">
+          <div class="result-fill" id="iggBar" style="width:20%;background:linear-gradient(90deg,rgba(0,245,255,0.3),rgba(0,245,255,0.7));color:var(--accent1)">🏆 IgG</div>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:6px;" id="iggLabel">Início de síntese</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:rgba(127,255,0,0.06);border-radius:10px;padding:14px;font-size:0.85rem;color:var(--text2);line-height:1.6;" id="dayInterpret">
+      <strong style="color:var(--accent3)">Diagnóstico:</strong> IgM elevado, IgG em ascensão. Infecção activa recente — paciente ainda na fase aguda da doença.
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ ANTICORPOS ══════════════ -->
+<div class="chapter-divider" id="anticorpos">
+  <div class="ch-line ch-soro"></div>
+  <div class="ch-badge ch-soro">CAPÍTULO 03.2 — ANTICORPOS</div>
+  <div class="ch-line ch-soro"></div>
+</div>
+
+<section class="section">
+  <div class="speech-panel soro-panel reveal" style="margin-bottom:28px;">
+    <div class="char-speak">
+      <div class="speak-avatar" style="border-color:var(--accent3);background:rgba(127,255,0,0.1);">🛡️</div>
+      <div class="speak-bubble">
+        <div class="speak-name" style="color:var(--accent3)">GUARDIÃ SORO</div>
+        "Os anticorpos são as armas do teu sistema imunitário. Cada classe tem uma missão diferente. Deixa-me apresentar-te os meus soldados!"
+      </div>
+    </div>
+  </div>
+
+  <!-- Anticorpos canvas -->
+  <div class="mol-scene reveal">
+    <div class="mol-label">ANTICORPOS — MOLÉCULAS EM MOVIMENTO</div>
+    <canvas id="abCanvas" height="220"></canvas>
+  </div>
+
+  <div class="ab-type-grid reveal">
+    <div class="ab-card">
+      <div class="ab-emoji">🚨</div>
+      <div class="ab-name">IgM</div>
+      <div class="ab-role">Primeira linha de defesa. Produzido nos primeiros dias de infecção. Estrutura pentamérica — 5 unidades ligadas. Indica infecção aguda activa.</div>
+    </div>
+    <div class="ab-card">
+      <div class="ab-emoji">🏆</div>
+      <div class="ab-name">IgG</div>
+      <div class="ab-role">O mais abundante no soro. Produzido tardiamente. Confere memória imunológica a longo prazo. Positivo após infecção ou vacinação. 4 subclasses (IgG1-4).</div>
+    </div>
+    <div class="ab-card">
+      <div class="ab-emoji">🌬️</div>
+      <div class="ab-name">IgA</div>
+      <div class="ab-role">Presente em secreções mucosas (saliva, lágrimas, leite materno). Protege as superfícies internas do corpo. Primeira barreira contra patogénios respiratórios e digestivos.</div>
+    </div>
+    <div class="ab-card">
+      <div class="ab-emoji">🎯</div>
+      <div class="ab-name">IgE</div>
+      <div class="ab-role">Associado a reacções alérgicas e defesa contra parasitas. Nível elevado indica alergia activa ou infestação parasitária. Liga-se a mastócitos e basófilos.</div>
+    </div>
+    <div class="ab-card">
+      <div class="ab-emoji">💊</div>
+      <div class="ab-name">IgD</div>
+      <div class="ab-role">Presente na superfície de linfócitos B naïve. Regula a activação das células B. Papel menos compreendido — mas essencial para o desenvolvimento da resposta imune adaptativa.</div>
+    </div>
+  </div>
+
+  <!-- Western Blot -->
+  <div class="lab-panel reveal" style="border-color:rgba(127,255,0,0.2);">
+    <div class="lab-title" style="color:var(--accent3)">🔬 WESTERN BLOT — O TESTE CONFIRMATÓRIO</div>
+    <p style="font-size:0.88rem;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+      Quando o ELISA dá positivo para VIH, usa-se o <strong style="color:var(--text)">Western Blot</strong> para confirmar. As proteínas virais são separadas por electroforese em gel, transferidas para uma membrana, e expostas ao soro do paciente. Bandas específicas = confirmação positiva.
+    </p>
+    <div style="background:var(--bg);border-radius:10px;padding:20px;display:flex;gap:12px;overflow-x:auto;">
+      <div style="text-align:center;min-width:60px;">
+        <div style="font-size:0.65rem;color:var(--text3);margin-bottom:8px;letter-spacing:1px;">CONTROLO<br>+</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.9"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.7;margin-top:8px"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.8;margin-top:12px"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.6;margin-top:6px"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.85;margin-top:10px"></div>
+        </div>
+      </div>
+      <div style="text-align:center;min-width:60px;">
+        <div style="font-size:0.65rem;color:var(--text3);margin-bottom:8px;letter-spacing:1px;">PACIENTE<br>A</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.8"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;margin-top:8px"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.7;margin-top:12px"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;margin-top:6px"></div>
+          <div style="height:6px;background:var(--accent3);border-radius:3px;width:50px;opacity:0.75;margin-top:10px"></div>
+        </div>
+      </div>
+      <div style="text-align:center;min-width:60px;">
+        <div style="font-size:0.65rem;color:var(--text3);margin-bottom:8px;letter-spacing:1px;">PACIENTE<br>B</div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;opacity:0.9"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;opacity:0.7;margin-top:8px"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;opacity:0.8;margin-top:12px"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;opacity:0.6;margin-top:6px"></div>
+          <div style="height:6px;background:transparent;border-radius:3px;width:50px;opacity:0.85;margin-top:10px"></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding-left:8px;font-size:0.65rem;color:var(--text3);">
+        <div>gp160</div>
+        <div style="margin-top:8px">gp120</div>
+        <div style="margin-top:12px">p51</div>
+        <div style="margin-top:6px">gp41</div>
+        <div style="margin-top:10px">p24</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px;margin-top:12px;font-size:0.78rem;flex-wrap:wrap;">
+      <span style="color:var(--accent3)">✅ Controlo+ = Positivo confirmado</span>
+      <span style="color:var(--accent2)">⚠️ Paciente A = Bandas positivas (3+ bandas)</span>
+      <span style="color:var(--text3)">❌ Paciente B = Negativo (sem bandas)</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ COMPARAÇÃO ══════════════ -->
+<div class="chapter-divider" id="comparacao">
+  <div class="ch-line" style="background:linear-gradient(90deg,transparent,var(--accent4),transparent);opacity:0.3;flex:1;height:1px;"></div>
+  <div class="ch-badge" style="color:var(--accent4);border-color:rgba(255,186,0,0.4);">CAPÍTULO 04 — COMPARAÇÃO FINAL</div>
+  <div class="ch-line" style="background:linear-gradient(90deg,transparent,var(--accent4),transparent);opacity:0.3;flex:1;height:1px;"></div>
+</div>
+
+<section class="section">
+  <div class="speech-panel reveal" style="background:var(--panel);border:1px solid rgba(255,186,0,0.2);margin-bottom:28px;">
+    <div class="char-speak">
+      <div class="speak-avatar" style="border-color:var(--accent4);background:rgba(255,186,0,0.1);font-size:1.5rem">⚖️</div>
+      <div class="speak-bubble">
+        <div class="speak-name" style="color:var(--accent4)">ÁRBITRO DO LABORATÓRIO</div>
+        "Cada técnica tem os seus pontos fortes. Nenhuma é superior — cada uma brilha em cenários diferentes. Conhecer as diferenças é ser um bom clínico!"
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="overflow-x:auto;">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th style="color:var(--text2)">Critério</th>
+          <th style="color:var(--accent1)">PCR 🔬</th>
+          <th style="color:var(--accent2)">ELISA 🧪</th>
+          <th style="color:var(--accent3)">SOROLOGIA 🛡️</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--text);font-weight:600">O que detecta?</td>
+          <td>DNA/RNA do patogénio</td>
+          <td>Proteínas (Ag ou Ac)</td>
+          <td>Anticorpos no soro</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Fase da infecção</td>
+          <td><span class="tag-chip" style="background:rgba(0,245,255,0.15);color:var(--accent1)">Aguda</span></td>
+          <td><span class="tag-chip" style="background:rgba(255,45,120,0.15);color:var(--accent2)">Aguda/Crónica</span></td>
+          <td><span class="tag-chip" style="background:rgba(127,255,0,0.15);color:var(--accent3)">Pós-infecção</span></td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Sensibilidade</td>
+          <td>⭐⭐⭐⭐⭐ Muito alta</td>
+          <td>⭐⭐⭐⭐ Alta</td>
+          <td>⭐⭐⭐ Moderada/Alta</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Especificidade</td>
+          <td>⭐⭐⭐⭐⭐ Muito alta</td>
+          <td>⭐⭐⭐⭐ Alta</td>
+          <td>⭐⭐⭐ Variável</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Custo</td>
+          <td>💰💰💰 Elevado</td>
+          <td>💰💰 Moderado</td>
+          <td>💰 Baixo/Moderado</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Tempo de resultado</td>
+          <td>2–6 horas</td>
+          <td>3–5 horas</td>
+          <td>1–4 horas</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Janela imunológica</td>
+          <td>Não afectado</td>
+          <td>Pode afectar</td>
+          <td>Crítico (falso neg.)</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Uso diagnóstico</td>
+          <td>COVID, HIV, TB, Hepatite</td>
+          <td>HIV, Hepatite B/C, alergias</td>
+          <td>Sífilis, Rubéola, Toxoplasma</td>
+        </tr>
+        <tr>
+          <td style="color:var(--text);font-weight:600">Equipamento</td>
+          <td>Termociclador</td>
+          <td>Leitor de placa ELISA</td>
+          <td>Variável por método</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Resumo visual -->
+  <div class="card-grid reveal" style="margin-top:32px;">
+    <div class="info-card" style="border-color:rgba(0,245,255,0.2);background:rgba(0,245,255,0.04);">
+      <div class="ic-icon">🦠</div>
+      <div class="ic-title" style="color:var(--accent1)">Quando usar PCR?</div>
+      <div class="ic-desc">Suspeita de infecção activa aguda. Quando precisas de certeza absoluta. Detecção de vírus de RNA. Carga viral. Identificação de estirpes. Epidemiologia (variantes).</div>
+    </div>
+    <div class="info-card" style="border-color:rgba(255,45,120,0.2);background:rgba(255,45,120,0.04);">
+      <div class="ic-icon">🏥</div>
+      <div class="ic-title" style="color:var(--accent2)">Quando usar ELISA?</div>
+      <div class="ic-desc">Rastreio em grande escala. Monitorização de tratamentos. Detecção de proteínas específicas. Estudos de seroprevalência. Diagnóstico de alergias e doenças autoimunes.</div>
+    </div>
+    <div class="info-card" style="border-color:rgba(127,255,0,0.2);background:rgba(127,255,0,0.04);">
+      <div class="ic-icon">🌍</div>
+      <div class="ic-title" style="color:var(--accent3)">Quando usar Sorologia?</div>
+      <div class="ic-desc">Verificar imunidade pós-vacinação. Confirmar infecção passada. Estudo de anticorpos maternos em recém-nascidos. Diagnóstico tardio de doenças crónicas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="chapter-divider" id="quiz">
+  <div class="ch-line" style="background:linear-gradient(90deg,transparent,var(--accent5),transparent);opacity:0.3;flex:1;height:1px;"></div>
+  <div class="ch-badge" style="color:var(--accent5);border-color:rgba(191,95,255,0.4);">CAPÍTULO 05 — QUIZ DO GUERREIRO</div>
+  <div class="ch-line" style="background:linear-gradient(90deg,transparent,var(--accent5),transparent);opacity:0.3;flex:1;height:1px;"></div>
+</div>
+
+<section class="section">
+  <div class="speech-panel reveal" style="background:var(--panel);border:1px solid rgba(191,95,255,0.2);margin-bottom:28px;">
+    <div class="char-speak">
+      <div class="speak-avatar" style="border-color:var(--accent5);background:rgba(191,95,255,0.1);font-size:1.5rem">⚔️</div>
+      <div class="speak-bubble">
+        <div class="speak-name" style="color:var(--accent5)">MESTRE DO QUIZ</div>
+        "Tens a teoria? Agora prova o teu valor em combate! 5 questões épicas à tua espera. Cada erro é uma lição. Cada acerto, um troféu!"
+      </div>
+    </div>
+  </div>
+
+  <div id="quizContainer">
+    <div class="progress-strip">
+      <div class="prog-dot done" id="pd0"></div>
+      <div class="prog-line"></div>
+      <div class="prog-dot" id="pd1"></div>
+      <div class="prog-line"></div>
+      <div class="prog-dot" id="pd2"></div>
+      <div class="prog-line"></div>
+      <div class="prog-dot" id="pd3"></div>
+      <div class="prog-line"></div>
+      <div class="prog-dot" id="pd4"></div>
+    </div>
+
+    <div class="quiz-panel reveal" id="quizPanel">
+      <div style="font-family:'Orbitron',monospace;font-size:0.65rem;letter-spacing:2px;color:var(--accent5);margin-bottom:12px;" id="quizMeta">QUESTÃO 1 DE 5 — PCR</div>
+      <div class="quiz-q" id="quizQ">Qual é a enzima essencial no PCR que suporta altas temperaturas?</div>
+      <div class="quiz-options" id="quizOpts">
+        <div class="quiz-opt" onclick="answerQ(0)">DNA Ligase</div>
+        <div class="quiz-opt" onclick="answerQ(1)">Taq Polimerase</div>
+        <div class="quiz-opt" onclick="answerQ(2)">RNA Polimerase</div>
+        <div class="quiz-opt" onclick="answerQ(3)">Transcriptase Reversa</div>
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <button class="quiz-next" id="quizNext" onclick="nextQ()">PRÓXIMA QUESTÃO ▶</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="footer-logo">🧬 DemilMed-UL</div>
+  <div class="footer-line"></div>
+  <div class="footer-sub">
+    UNIVERSIDADE LICUNGO — UL<br>
+    2º Ano de Medicina · 2026<br>
+    BioLab Chronicles — PCR · ELISA · Sorologia
+  </div>
+  <div style="margin-top:20px;font-size:0.7rem;color:var(--text3);">
+    Feito com 🔬 para estudantes que querem aprender de forma épica
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════
+// PARTICLES
+// ══════════════════════════════════════
+const colors = ['#00f5ff','#ff2d78','#7fff00','#ffba00','#bf5fff'];
+const pContainer = document.getElementById('particles');
+for(let i=0;i<40;i++){
+  const p = document.createElement('div');
+  p.className = 'particle';
+  const size = Math.random()*4+2;
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  p.style.cssText = `
+    width:${size}px;height:${size}px;
+    background:${color};
+    left:${Math.random()*100}%;
+    animation-duration:${Math.random()*15+8}s;
+    animation-delay:${Math.random()*15}s;
+    box-shadow:0 0 6px ${color};
+  `;
+  pContainer.appendChild(p);
+}
+
+// ══════════════════════════════════════
+// MENU
+// ══════════════════════════════════════
+function toggleMenu(){
+  const m=document.getElementById('chapterMenu');
+  const h=document.getElementById('hamburger');
+  const o=document.getElementById('overlay');
+  m.classList.toggle('open');
+  h.classList.toggle('open');
+  o.classList.toggle('active');
+}
+function closeMenu(){
+  document.getElementById('chapterMenu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+function scrollTo(id){ document.getElementById(id).scrollIntoView({behavior:'smooth'}); }
+
+// ══════════════════════════════════════
+// SCROLL REVEAL
+// ══════════════════════════════════════
+const revealEls = document.querySelectorAll('.reveal, .tl-item');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+},{threshold:0.1});
+revealEls.forEach(el=>io.observe(el));
+
+// ══════════════════════════════════════
+// DNA CANVAS
+// ══════════════════════════════════════
+const dnaCanvas = document.getElementById('dnaCanvas');
+const dnaCtx = dnaCanvas.getContext('2d');
+function resizeDNA(){
+  dnaCanvas.width = dnaCanvas.offsetWidth;
+}
+resizeDNA();
+window.addEventListener('resize', resizeDNA);
+
+let dnaT = 0;
+function drawDNA(){
+  const w=dnaCanvas.width, h=dnaCanvas.height;
+  dnaCtx.clearRect(0,0,w,h);
+  const cx=w/2, amp=50, freq=0.04, step=18;
+  const pairs = Math.floor(w/step)+4;
+  const startX = -step*2;
+
+  for(let i=0;i<pairs;i++){
+    const x = startX + i*step;
+    const y1 = h/2 + Math.sin((x*freq)+dnaT)*amp;
+    const y2 = h/2 + Math.sin((x*freq)+dnaT+Math.PI)*amp;
+    const progress = (i/pairs);
+    const hue1 = 180+progress*60;
+    const hue2 = 300+progress*60;
+
+    // connector
+    dnaCtx.beginPath();
+    dnaCtx.moveTo(x,y1); dnaCtx.lineTo(x,y2);
+    dnaCtx.strokeStyle = `hsla(${(hue1+hue2)/2},80%,60%,0.2)`;
+    dnaCtx.lineWidth = 1.5;
+    dnaCtx.stroke();
+
+    // strand 1 dot
+    dnaCtx.beginPath();
+    dnaCtx.arc(x,y1,4,0,Math.PI*2);
+    dnaCtx.fillStyle = `hsla(${hue1},100%,65%,0.9)`;
+    dnaCtx.shadowColor = `hsla(${hue1},100%,65%,1)`;
+    dnaCtx.shadowBlur = 8;
+    dnaCtx.fill();
+    dnaCtx.shadowBlur = 0;
+
+    // strand 2 dot
+    dnaCtx.beginPath();
+    dnaCtx.arc(x,y2,4,0,Math.PI*2);
+    dnaCtx.fillStyle = `hsla(${hue2},100%,65%,0.9)`;
+    dnaCtx.shadowColor = `hsla(${hue2},100%,65%,1)`;
+    dnaCtx.shadowBlur = 8;
+    dnaCtx.fill();
+    dnaCtx.shadowBlur = 0;
+  }
+
+  // backbone curves
+  dnaCtx.beginPath();
+  for(let x=startX;x<w+step;x+=2){
+    const y = h/2 + Math.sin((x*freq)+dnaT)*amp;
+    x===startX ? dnaCtx.moveTo(x,y) : dnaCtx.lineTo(x,y);
+  }
+  dnaCtx.strokeStyle = 'rgba(0,245,255,0.4)';
+  dnaCtx.lineWidth = 2; dnaCtx.stroke();
+
+  dnaCtx.beginPath();
+  for(let x=startX;x<w+step;x+=2){
+    const y = h/2 + Math.sin((x*freq)+dnaT+Math.PI)*amp;
+    x===startX ? dnaCtx.moveTo(x,y) : dnaCtx.lineTo(x,y);
+  }
+  dnaCtx.strokeStyle = 'rgba(191,95,255,0.4)';
+  dnaCtx.lineWidth = 2; dnaCtx.stroke();
+
+  dnaT += 0.025;
+  requestAnimationFrame(drawDNA);
+}
+drawDNA();
+
+// ══════════════════════════════════════
+// ANTIBODY CANVAS
+// ══════════════════════════════════════
+const abCanvas = document.getElementById('abCanvas');
+const abCtx = abCanvas.getContext('2d');
+function resizeAb(){abCanvas.width=abCanvas.offsetWidth;}
+resizeAb();
+window.addEventListener('resize',resizeAb);
+
+const antibodies = [];
+for(let i=0;i<8;i++){
+  antibodies.push({
+    x: Math.random()*800, y: 60+Math.random()*120,
+    vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.5,
+    angle: Math.random()*Math.PI*2, rot: (Math.random()-0.5)*0.02,
+    size: 18+Math.random()*12, color: ['#7fff00','#00f5ff','#bf5fff'][Math.floor(Math.random()*3)]
+  });
+}
+
+function drawAb(ctx,ab){
+  ctx.save();
+  ctx.translate(ab.x,ab.y);
+  ctx.rotate(ab.angle);
+  ctx.strokeStyle = ab.color;
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = ab.color;
+  ctx.shadowBlur = 10;
+  const s=ab.size;
+  // Y-shape antibody
+  ctx.beginPath();
+  ctx.moveTo(0,-s); ctx.lineTo(-s/1.5,s); ctx.moveTo(0,-s); ctx.lineTo(s/1.5,s);
+  ctx.moveTo(0,-s); ctx.lineTo(0,0);
+  ctx.stroke();
+  // arm endpoints
+  [[-s/1.5,s],[s/1.5,s],[0,-s],[0,0]].forEach(([px,py])=>{
+    ctx.beginPath(); ctx.arc(px,py,3.5,0,Math.PI*2);
+    ctx.fillStyle=ab.color; ctx.fill();
+  });
+  ctx.restore();
+}
+
+function animateAbs(){
+  abCtx.clearRect(0,0,abCanvas.width,abCanvas.height);
+  antibodies.forEach(ab=>{
+    ab.x+=ab.vx; ab.y+=ab.vy; ab.angle+=ab.rot;
+    if(ab.x<-30) ab.x=abCanvas.width+30;
+    if(ab.x>abCanvas.width+30) ab.x=-30;
+    if(ab.y<20||ab.y>abCanvas.height-20) ab.vy*=-1;
+    drawAb(abCtx,ab);
+  });
+  requestAnimationFrame(animateAbs);
+}
+animateAbs();
+
+// ══════════════════════════════════════
+// PCR PHASE SELECTOR
+// ══════════════════════════════════════
+let activePhase = 0;
+function selectPhase(n){
+  for(let i=0;i<3;i++){
+    const ph=document.getElementById(`phase${i}`);
+    const desc=document.getElementById(`pdesc${i}`);
+    if(i===n){ ph.classList.add('active'); desc.style.display='block'; }
+    else { ph.classList.remove('active'); desc.style.display='none'; }
+  }
+  activePhase=n;
+}
+
+// ══════════════════════════════════════
+// CYCLES
+// ══════════════════════════════════════
+function updateCycles(v){
+  document.getElementById('cycleVal').textContent=v;
+  document.getElementById('cycleNum').textContent=v;
+  const copies = Math.pow(2,parseInt(v));
+  document.getElementById('copiesNum').textContent=copies.toLocaleString('pt-PT');
+  const pct = Math.min((parseInt(v)/40)*100,100);
+  document.getElementById('cycleBar').style.width=pct+'%';
+}
+updateCycles(30);
+
+// ══════════════════════════════════════
+// TEMPERATURE
+// ══════════════════════════════════════
+function updateTemp(v){
+  v=parseInt(v);
+  document.getElementById('tempVal').textContent=v+'°C';
+  document.getElementById('tempBig').textContent=v+'°C';
+  let state='';
+  if(v<50) state='🧊 MUITO FRIO — Sem actividade enzimática. Taq inactiva.';
+  else if(v<57) state='❄️ ANNEALING BAIXO — Primers a tentar ligar-se ao DNA.';
+  else if(v<68) state='❄️ ANNEALING — Primers a hibridar correctamente com o molde.';
+  else if(v<75) state='⚡ EXTENSÃO — Taq Polimerase activa e a construir novas fitas de DNA.';
+  else if(v<90) state='🌡️ PRÉ-DESNATURAÇÃO — DNA a começar a separar fitas.';
+  else state='🔥 DESNATURAÇÃO — Fitas de DNA completamente separadas!';
+  document.getElementById('tempState').textContent=state;
+}
+
+// ══════════════════════════════════════
+// ELISA PLATE
+// ══════════════════════════════════════
+const plate = document.getElementById('elisaPlate');
+const wellStates = ['empty','weak','moderate','strong'];
+const wellColors = ['transparent','rgba(255,186,0,0.25)','rgba(255,102,0,0.6)','rgba(255,45,120,0.85)'];
+const wellLabels = ['Negativo','Fraco+','Moderado++','Forte+++'];
+
+for(let i=0;i<24;i++){
+  const w=document.createElement('div');
+  w.className='plate-well';
+  let state=0;
+  if(i<6) state=Math.floor(Math.random()*4);
+  else if(i<12) state=Math.floor(Math.random()*3);
+  else if(i<18) state=Math.floor(Math.random()*2);
+  w.style.background=wellColors[state];
+  w.dataset.state=state;
+  w.title=wellLabels[state];
+  w.onclick=function(){
+    let s=(parseInt(this.dataset.state)+1)%4;
+    this.dataset.state=s;
+    this.style.background=wellColors[s];
+    this.title=wellLabels[s];
+  };
+  plate.appendChild(w);
+}
+
+// ══════════════════════════════════════
+// ABSORBANCE
+// ══════════════════════════════════════
+function updateAbs(v){
+  v=parseInt(v);
+  document.getElementById('abVal').textContent=v;
+  const od=(v/100*2.5).toFixed(2);
+  document.getElementById('absVal').textContent=od;
+  const circle=document.getElementById('absCircle');
+  const interp=document.getElementById('absInterp');
+  if(v<20){
+    circle.style.borderColor='var(--text3)';
+    circle.style.background='rgba(255,255,255,0.02)';
+    document.getElementById('absVal').style.color='var(--text3)';
+    interp.style.color='var(--text3)';
+    interp.textContent='❌ NEGATIVO — OD abaixo do cutoff';
+  } else if(v<50){
+    circle.style.borderColor='var(--accent4)';
+    circle.style.background='rgba(255,186,0,0.06)';
+    document.getElementById('absVal').style.color='var(--accent4)';
+    interp.style.color='var(--accent4)';
+    interp.textContent='⚠️ POSITIVO FRACO — Repetir teste';
+  } else if(v<80){
+    circle.style.borderColor='var(--accent2)';
+    circle.style.background='rgba(255,45,120,0.08)';
+    document.getElementById('absVal').style.color='var(--accent2)';
+    interp.style.color='var(--accent2)';
+    interp.textContent='✅ POSITIVO — Resultado confirmado';
+  } else {
+    circle.style.borderColor='var(--accent2)';
+    circle.style.background='rgba(255,45,120,0.15)';
+    document.getElementById('absVal').style.color='var(--accent2)';
+    interp.style.color='var(--accent2)';
+    interp.textContent='🔥 POSITIVO FORTE — Alta concentração de anticorpos!';
+  }
+}
+updateAbs(50);
+
+// ══════════════════════════════════════
+// ELISA STEPS ACCORDION
+// ══════════════════════════════════════
+function toggleElisaStep(n){
+  const btns=document.querySelectorAll('.elisa-step-btn');
+  const details=document.querySelectorAll('.elisa-detail');
+  btns.forEach((b,i)=>{
+    const d=details[i];
+    if(i===n){
+      const isOpen=d.classList.contains('open');
+      d.classList.toggle('open',!isOpen);
+      b.classList.toggle('active',!isOpen);
+    } else {
+      d.classList.remove('open');
+      b.classList.remove('active');
+    }
+  });
+}
+
+// ══════════════════════════════════════
+// IgM / IgG TIMELINE
+// ══════════════════════════════════════
+function updateDays(v){
+  v=parseInt(v);
+  document.getElementById('dayVal').textContent=v;
+  let igm,igg,interp;
+
+  if(v===0){ igm=0;igg=0;interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> Sem exposição ainda. Sistema imune em estado basal — sem anticorpos específicos presentes.'; }
+  else if(v<5){ igm=v*8;igg=0;interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> Infecção muito recente. IgM começa a elevar-se. IgG ainda indetectável. <strong>Janela imunológica</strong> — teste pode ser negativo!'; }
+  else if(v<14){ igm=40+v*3;igg=v*2;interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> Infecção aguda activa. IgM em ascensão rápida. IgG começa a aparecer. Sintomas geralmente presentes nesta fase.'; }
+  else if(v<21){ igm=82+v*0.5;igg=15+v*4;interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> Pico da resposta IgM. IgG em crescimento acelerado. Fase aguda estabelecida — ambos positivos.'; }
+  else if(v<35){ igm=100-(v-21)*3;igg=Math.min(50+v*2,95);interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> IgM a declinar, IgG a ascender. Fase de transição — corpo a controlar a infecção. Convalescença em curso.'; }
+  else if(v<60){ igm=Math.max(100-(v*2),5);igg=Math.min(60+v,95);interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> IgM quase indetectável, IgG estabelecida. Infecção passada ou em resolução. Memória imune a consolidar-se.'; }
+  else { igm=0;igg=90;interp='<strong style="color:var(--accent3)">Diagnóstico:</strong> IgM negativo, IgG persistentemente positivo. Imunidade adquirida estabelecida — memória imunológica a longo prazo. Possível protecção futura.'; }
+
+  igm=Math.min(Math.max(igm,0),100);
+  igg=Math.min(Math.max(igg,0),100);
+
+  document.getElementById('igmBar').style.width=igm+'%';
+  document.getElementById('iggBar').style.width=igg+'%';
+  document.getElementById('igmLabel').textContent=igm>50?'Alta':'igm<10?'Indetectável':'Presente';
+  document.getElementById('iggLabel').textContent=igg>70?'Memória estabelecida':igg>30?'Em ascensão':'Baixo/Ausente';
+  document.getElementById('dayInterpret').innerHTML=interp;
+}
+updateDays(14);
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function openTab(id,containerId){
+  const container=document.getElementById(containerId)||document;
+  container.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  container.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ══════════════════════════════════════
+// QUIZ
+// ══════════════════════════════════════
+const questions=[
+  {
+    q:'Qual é a enzima essencial no PCR que suporta altas temperaturas?',
+    opts:['DNA Ligase','Taq Polimerase','RNA Polimerase','Transcriptase Reversa'],
+    ans:1,cat:'PCR',
+    fb:'A <strong>Taq Polimerase</strong> foi isolada da bactéria <em>Thermus aquaticus</em>, que vive em fontes hidrotermais. É termoestável — resiste às altas temperaturas da desnaturação (95°C) sem perder actividade!'
+  },
+  {
+    q:'Na fase de Annealing do PCR, qual a temperatura aproximada usada?',
+    opts:['94–96°C','72°C','50–65°C','37°C'],
+    ans:2,cat:'PCR',
+    fb:'<strong>50–65°C</strong> é a temperatura de hibridação. A esta temperatura, os primers conseguem ligar-se especificamente às sequências complementares no DNA molde, sem se ligarem de forma inespecífica.'
+  },
+  {
+    q:'O ELISA baseia-se em qual princípio de detecção?',
+    opts:['Amplificação de DNA','Reacção colorimétrica enzimática','Separação por centrifugação','Marcação radioactiva'],
+    ans:1,cat:'ELISA',
+    fb:'O ELISA usa <strong>enzimas conjugadas</strong> a anticorpos que, ao reagirem com um substrato específico (ex: TMB), produzem uma mudança de cor mensurável. A intensidade da cor é proporcional à quantidade do analito!'
+  },
+  {
+    q:'IgM positivo e IgG negativo em Sorologia indica:',
+    opts:['Imunidade a longo prazo','Infecção passada','Infecção aguda recente','Resultado indeterminado'],
+    ans:2,cat:'SOROLOGIA',
+    fb:'<strong>IgM</strong> é o primeiro anticorpo produzido na resposta imune — aparece nos primeiros dias de infecção. Um IgM positivo com IgG ainda negativo indica que a infecção é muito recente (fase aguda inicial).'
+  },
+  {
+    q:'Qual técnica é mais indicada para detectar o vírus SARS-CoV-2 durante a infecção activa?',
+    opts:['ELISA para IgG','Sorologia convencional','RT-PCR','Western Blot'],
+    ans:2,cat:'PCR',
+    fb:'O <strong>RT-PCR</strong> (PCR de Transcrição Reversa) é o gold standard para diagnóstico da COVID-19 porque detecta directamente o RNA viral — mesmo antes do sistema imune produzir anticorpos. É o mais sensível na fase aguda!'
+  }
+];
+
+let currentQ=0, score=0, answered=false;
+function renderQ(){
+  const q=questions[currentQ];
+  document.getElementById('quizMeta').textContent=`QUESTÃO ${currentQ+1} DE ${questions.length} — ${q.cat}`;
+  document.getElementById('quizQ').textContent=q.q;
+  const optsDiv=document.getElementById('quizOpts');
+  optsDiv.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const d=document.createElement('div');
+    d.className='quiz-opt';
+    d.textContent=o;
+    d.onclick=()=>answerQ(i);
+    optsDiv.appendChild(d);
+  });
+  document.getElementById('quizFeedback').style.display='none';
+  document.getElementById('quizNext').style.display='none';
+  answered=false;
+  for(let i=0;i<questions.length;i++){
+    const pd=document.getElementById('pd'+i);
+    if(pd) pd.classList.toggle('done',i<=currentQ);
+  }
+}
+
+function answerQ(i){
+  if(answered) return;
+  answered=true;
+  const q=questions[currentQ];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach((o,idx)=>{
+    if(idx===q.ans) o.classList.add('correct');
+    else if(idx===i&&i!==q.ans) o.classList.add('wrong');
+    o.onclick=null;
+  });
+  const fb=document.getElementById('quizFeedback');
+  if(i===q.ans){
+    score++;
+    fb.style.background='rgba(127,255,0,0.08)';
+    fb.style.borderLeft='3px solid var(--accent3)';
+    fb.style.color='var(--text2)';
+    fb.innerHTML='✅ <strong style="color:var(--accent3)">CORRECTO!</strong> '+q.fb;
+  } else {
+    fb.style.background='rgba(255,45,120,0.08)';
+    fb.style.borderLeft='3px solid var(--accent2)';
+    fb.style.color='var(--text2)';
+    fb.innerHTML='❌ <strong style="color:var(--accent2)">ERRADO.</strong> '+q.fb;
+  }
+  fb.style.display='block';
+  fb.style.borderRadius='0 8px 8px 8px';
+  fb.style.padding='14px';
+  fb.style.marginTop='16px';
+  fb.style.lineHeight='1.7';
+  fb.style.fontSize='0.88rem';
+  document.getElementById('quizNext').style.display=currentQ<questions.length-1?'block':'none';
+  if(currentQ===questions.length-1) showFinal();
+}
+
+function nextQ(){
+  currentQ++;
+  renderQ();
+}
+
+function showFinal(){
+  setTimeout(()=>{
+    const container=document.getElementById('quizContainer');
+    const pct=Math.round((score/questions.length)*100);
+    let msg='',color='';
+    if(pct>=80){ msg='🏆 ÉPICO! Estás pronto para o campo clínico!'; color='var(--accent3)'; }
+    else if(pct>=60){ msg='⚡ Bom trabalho! Revisita os capítulos mais fracos.'; color='var(--accent4)'; }
+    else { msg='📚 Ainda há caminho! Relê os capítulos com atenção.'; color='var(--accent2)'; }
+    const finalDiv=document.createElement('div');
+    finalDiv.className='quiz-panel';
+    finalDiv.style.cssText='text-align:center;border-color:rgba(191,95,255,0.3);margin-top:16px;';
+    finalDiv.innerHTML=`
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--accent5);margin-bottom:16px;">RESULTADO FINAL</div>
+      <div style="font-size:3.5rem;font-family:'Orbitron',monospace;font-weight:900;color:${color};margin-bottom:8px;">${pct}%</div>
+      <div style="font-size:1rem;color:var(--text2);margin-bottom:16px;">${score} de ${questions.length} correctas</div>
+      <div style="font-size:1rem;color:${color};font-weight:700;margin-bottom:24px;">${msg}</div>
+      <button onclick="restartQuiz()" style="padding:12px 32px;background:rgba(191,95,255,0.15);border:1px solid rgba(191,95,255,0.4);color:var(--accent5);border-radius:8px;cursor:pointer;font-weight:700;font-size:0.9rem;letter-spacing:1px;">🔄 TENTAR NOVAMENTE</button>
+    `;
+    container.appendChild(finalDiv);
+  },800);
+}
+
+function restartQuiz(){
+  currentQ=0; score=0; answered=false;
+  const extra=document.querySelector('#quizContainer .quiz-panel:last-child');
+  if(extra&&extra!==document.getElementById('quizPanel')) extra.remove();
+  renderQ();
+}
+
+renderQ();
+</script>
+</body>
+</html>

@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | PCR · ELISA · Sorologia</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg-deep: #030810;
+  --bg-card: #0a1628;
+  --bg-panel: #0d1f3c;
+  --neon-cyan: #00f5ff;
+  --neon-green: #00ff88;
+  --neon-pink: #ff006e;
+  --neon-yellow: #ffe600;
+  --neon-purple: #b400ff;
+  --neon-orange: #ff6a00;
+  --text-bright: #e8f4fd;
+  --text-dim: #7a9cbf;
+  --glow-cyan: 0 0 20px #00f5ff55, 0 0 40px #00f5ff22;
+  --glow-green: 0 0 20px #00ff8855, 0 0 40px #00ff8822;
+  --glow-pink: 0 0 20px #ff006e55, 0 0 40px #ff006e22;
+  --border-glow: 1px solid #00f5ff33;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-bright);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── PARTICLE CANVAS ── */
+#particle-bg {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+#nav-toggle {
+  position: fixed;
+  top: 18px; right: 18px;
+  z-index: 1000;
+  background: #0a1628cc;
+  border: 1px solid var(--neon-cyan);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+#nav-toggle:hover { box-shadow: var(--glow-cyan); }
+#nav-toggle span {
+  display: block;
+  width: 22px; height: 2px;
+  background: var(--neon-cyan);
+  margin: 5px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+#nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+#nav-toggle.open span:nth-child(2) { opacity:0; }
+#nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+#side-nav {
+  position: fixed;
+  top:0; right: -320px;
+  width: 300px;
+  height: 100vh;
+  background: #030810f5;
+  border-left: 1px solid var(--neon-cyan);
+  z-index: 999;
+  transition: right 0.4s cubic-bezier(.77,0,.18,1);
+  backdrop-filter: blur(20px);
+  padding: 70px 20px 20px;
+  overflow-y: auto;
+}
+#side-nav.open { right: 0; }
+
+#side-nav h3 {
+  font-family: 'Orbitron', monospace;
+  color: var(--neon-cyan);
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.nav-chapter {
+  margin-bottom: 8px;
+}
+.nav-chapter-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.7rem;
+  color: var(--neon-yellow);
+  letter-spacing: 2px;
+  padding: 8px 12px;
+  background: #ffffff08;
+  border-radius: 6px;
+  cursor: pointer;
+  display: block;
+  transition: 0.2s;
+}
+.nav-chapter-title:hover { background: #00f5ff15; }
+.nav-sub { padding-left: 12px; display: none; }
+.nav-sub.open { display: block; }
+.nav-sub a {
+  display: block;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  border-left: 2px solid #ffffff15;
+  margin: 3px 0;
+  transition: 0.2s;
+}
+.nav-sub a:hover { color: var(--neon-cyan); border-color: var(--neon-cyan); }
+
+/* ── HERO ── */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.hero-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--neon-green);
+  letter-spacing: 4px;
+  border: 1px solid var(--neon-green);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  animation: pulse-border 2s infinite;
+}
+@keyframes pulse-border {
+  0%,100% { box-shadow: 0 0 0 0 #00ff8833; }
+  50% { box-shadow: 0 0 0 8px #00ff8800; }
+}
+
+.hero-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(2rem, 8vw, 5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+.hero-title .t-cyan { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+.hero-title .t-pink { color: var(--neon-pink); text-shadow: var(--glow-pink); }
+.hero-title .t-green { color: var(--neon-green); text-shadow: var(--glow-green); }
+
+.hero-subtitle {
+  font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+  color: var(--text-dim);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.hero-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+.hero-card {
+  background: #0a162888;
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 18px 24px;
+  cursor: pointer;
+  transition: 0.3s;
+  min-width: 120px;
+  backdrop-filter: blur(10px);
+}
+.hero-card:nth-child(1) { border-color: var(--neon-cyan); }
+.hero-card:nth-child(2) { border-color: var(--neon-pink); }
+.hero-card:nth-child(3) { border-color: var(--neon-green); }
+.hero-card:hover { transform: translateY(-4px); }
+.hero-card:nth-child(1):hover { box-shadow: var(--glow-cyan); }
+.hero-card:nth-child(2):hover { box-shadow: var(--glow-pink); }
+.hero-card:nth-child(3):hover { box-shadow: var(--glow-green); }
+.hero-card .card-icon { font-size: 2rem; margin-bottom: 8px; }
+.hero-card .card-label {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+.scroll-hint {
+  animation: bounce 2s infinite;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ── MAIN CONTENT ── */
+main { position: relative; z-index: 1; }
+
+/* ── CHAPTER HEADER ── */
+.chapter-header {
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 20px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter-header::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  z-index: 0;
+}
+.ch-pcr::before { background: var(--neon-cyan); top:-200px; }
+.ch-elisa::before { background: var(--neon-pink); top:-200px; }
+.ch-soro::before { background: var(--neon-green); top:-200px; }
+
+.chapter-number {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 5px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  position: relative;
+}
+.chapter-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  font-weight: 900;
+  position: relative;
+  margin-bottom: 16px;
+}
+.ch-pcr .chapter-title { color: var(--neon-cyan); text-shadow: var(--glow-cyan); }
+.ch-elisa .chapter-title { color: var(--neon-pink); text-shadow: var(--glow-pink); }
+.ch-soro .chapter-title { color: var(--neon-green); text-shadow: var(--glow-green); }
+
+.chapter-tagline {
+  font-size: 1rem;
+  color: var(--text-dim);
+  font-style: italic;
+  max-width: 500px;
+  position: relative;
+}
+
+/* ── STORY PANEL ── */
+.section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.story-intro {
+  background: linear-gradient(135deg, #0a162888, #0d1f3c88);
+  border: var(--border-glow);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 40px;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+.story-intro::before {
+  content: '💬';
+  position: absolute;
+  top: -16px; left: 30px;
+  font-size: 1.5rem;
+  background: var(--bg-deep);
+  padding: 0 8px;
+}
+
+.story-text {
+  font-size: 1.05rem;
+  line-height: 1.9;
+  color: var(--text-bright);
+}
+.story-text em { color: var(--neon-yellow); font-style: normal; font-weight: 600; }
+.story-text strong { color: var(--neon-cyan); }
+.story-text .pink { color: var(--neon-pink); font-weight: 600; }
+.story-text .green { color: var(--neon-green); font-weight: 600; }
+.story-text .orange { color: var(--neon-orange); font-weight: 600; }
+.story-text .purple { color: var(--neon-purple); font-weight: 600; }
+
+/* ── CONCEPT CARDS ── */
+.concept-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+.concept-card {
+  background: #0a162888;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #ffffff15;
+  transition: 0.3s;
+  backdrop-filter: blur(5px);
+}
+.concept-card:hover { transform: translateY(-3px); border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); }
+.concept-card .cc-icon { font-size: 2rem; margin-bottom: 12px; }
+.concept-card h4 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  color: var(--neon-cyan);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+.concept-card p { font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }
+
+/* ── TIMELINE ── */
+.timeline {
+  position: relative;
+  margin: 40px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 30px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+}
+.tl-item {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 32px;
+  padding-left: 10px;
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: 0.5s;
+}
+.tl-item.visible { opacity: 1; transform: translateX(0); }
+.tl-dot {
+  min-width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.tl-dot.cyan { background: #00f5ff22; border: 2px solid var(--neon-cyan); box-shadow: var(--glow-cyan); }
+.tl-dot.pink { background: #ff006e22; border: 2px solid var(--neon-pink); box-shadow: var(--glow-pink); }
+.tl-dot.green { background: #00ff8822; border: 2px solid var(--neon-green); box-shadow: var(--glow-green); }
+.tl-dot.yellow { background: #ffe60022; border: 2px solid var(--neon-yellow); }
+.tl-dot.orange { background: #ff6a0022; border: 2px solid var(--neon-orange); }
+.tl-dot.purple { background: #b400ff22; border: 2px solid var(--neon-purple); }
+
+.tl-content {
+  background: #0a162877;
+  border-radius: 12px;
+  padding: 18px 20px;
+  flex: 1;
+  border: 1px solid #ffffff10;
+}
+.tl-step {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-bottom: 4px;
+}
+.tl-content h4 { color: var(--neon-yellow); font-size: 1rem; margin-bottom: 8px; }
+.tl-content p { font-size: 0.88rem; line-height: 1.7; color: var(--text-bright); }
+
+/* ── MOLECULE VIEWER ── */
+.molecule-stage {
+  background: #030810;
+  border: 1px solid #00f5ff33;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 30px 0;
+  position: relative;
+}
+.molecule-stage canvas {
+  display: block;
+  width: 100%;
+}
+.molecule-caption {
+  padding: 16px 20px;
+  background: #0a1628;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── INTERACTIVE SLIDERS ── */
+.lab-panel {
+  background: linear-gradient(135deg, #0d1f3c, #0a1628);
+  border: 1px solid var(--neon-cyan);
+  border-radius: 20px;
+  padding: 32px;
+  margin: 30px 0;
+  box-shadow: var(--glow-cyan);
+}
+.lab-panel h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  color: var(--neon-cyan);
+  letter-spacing: 3px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lab-panel h3::before { content: '⚗️'; }
+
+.slider-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.slider-item label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.slider-item .val {
+  color: var(--neon-yellow);
+  font-weight: 700;
+}
+input[type=range] {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background: #ffffff20;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--neon-cyan);
+  box-shadow: var(--glow-cyan);
+  cursor: pointer;
+}
+.lab-result {
+  background: #030810;
+  border-radius: 12px;
+  padding: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  border: 1px solid #ffffff10;
+}
+.lab-result .r-label { color: var(--text-dim); }
+.lab-result .r-value { color: var(--neon-green); font-weight: 700; }
+.lab-result .r-warn { color: var(--neon-pink); }
+
+/* ── PCR ANIMATION ── */
+#pcr-anim {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  background: #030810;
+  border-radius: 16px;
+  border: 1px solid #00f5ff22;
+  margin: 20px 0;
+}
+
+/* ── ELISA PLATE ── */
+.elisa-plate {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 4px;
+  padding: 20px;
+  background: #030810;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+.well {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #1a1a2e;
+  border: 1px solid #ffffff15;
+  transition: 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+.well.positive { background: radial-gradient(circle, #ff8800, #ff4400); box-shadow: 0 0 8px #ff880066; }
+.well.negative { background: radial-gradient(circle, #003344, #001122); }
+.well.blank { background: #0a0a1a; }
+.well:hover { transform: scale(1.2); z-index: 5; }
+
+/* ── INFO BOXES ── */
+.info-box {
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin: 20px 0;
+  position: relative;
+}
+.info-box.etymology {
+  background: #1a0a2e;
+  border-left: 3px solid var(--neon-purple);
+}
+.info-box.etymology::before { content: '📚 ETIMOLOGIA'; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--neon-purple); letter-spacing: 3px; display: block; margin-bottom: 10px; }
+.info-box.clinical {
+  background: #0a2015;
+  border-left: 3px solid var(--neon-green);
+}
+.info-box.clinical::before { content: '🏥 APLICAÇÃO CLÍNICA'; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--neon-green); letter-spacing: 3px; display: block; margin-bottom: 10px; }
+.info-box.warning {
+  background: #2a0a0a;
+  border-left: 3px solid var(--neon-pink);
+}
+.info-box.warning::before { content: '⚠️ ATENÇÃO CLÍNICA'; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--neon-pink); letter-spacing: 3px; display: block; margin-bottom: 10px; }
+.info-box.formula {
+  background: #0a1a2a;
+  border-left: 3px solid var(--neon-cyan);
+  font-family: 'JetBrains Mono', monospace;
+}
+.info-box.formula::before { content: '🔬 FÓRMULA'; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--neon-cyan); letter-spacing: 3px; display: block; margin-bottom: 10px; }
+.info-box p { font-size: 0.9rem; line-height: 1.8; color: var(--text-bright); }
+
+/* ── COMPARISON TABLE ── */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.82rem;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.compare-table th {
+  background: #0d1f3c;
+  padding: 12px 16px;
+  font-family: 'Orbitron', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  color: var(--neon-cyan);
+  text-align: left;
+}
+.compare-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid #ffffff08;
+  color: var(--text-bright);
+  background: #0a1628;
+}
+.compare-table tr:hover td { background: #0d1f3c; }
+.compare-table td.good { color: var(--neon-green); }
+.compare-table td.bad { color: var(--neon-pink); }
+.compare-table td.mid { color: var(--neon-yellow); }
+
+/* ── CHAPTER DIVIDER ── */
+.chapter-divider {
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--neon-cyan), transparent);
+  margin: 80px 0 0;
+}
+
+/* ── QUIZ ── */
+.quiz-box {
+  background: #0a1628;
+  border: 1px solid var(--neon-yellow);
+  border-radius: 16px;
+  padding: 28px;
+  margin: 30px 0;
+}
+.quiz-box h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.8rem;
+  color: var(--neon-yellow);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+}
+.quiz-question { font-size: 0.95rem; margin-bottom: 16px; line-height: 1.7; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.quiz-opt {
+  background: #ffffff08;
+  border: 1px solid #ffffff15;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 0.88rem;
+}
+.quiz-opt:hover { background: #00f5ff15; border-color: var(--neon-cyan); }
+.quiz-opt.correct { background: #00ff8825; border-color: var(--neon-green); color: var(--neon-green); }
+.quiz-opt.wrong { background: #ff006e25; border-color: var(--neon-pink); color: var(--neon-pink); }
+.quiz-feedback {
+  font-size: 0.85rem;
+  padding: 12px;
+  border-radius: 8px;
+  display: none;
+  line-height: 1.7;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: #00ff8815; color: var(--neon-green); }
+.quiz-feedback.fail { background: #ff006e15; color: var(--neon-pink); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 60px 20px 40px;
+  border-top: 1px solid #ffffff10;
+  margin-top: 80px;
+}
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--neon-cyan);
+  text-shadow: var(--glow-cyan);
+  margin-bottom: 10px;
+}
+.footer-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  line-height: 2;
+}
+.footer-year {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--neon-green);
+  margin-top: 16px;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+}
+
+/* ── PROGRESS BAR ── */
+#progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--neon-cyan), var(--neon-pink), var(--neon-green));
+  z-index: 9999;
+  transition: width 0.1s;
+  box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* ── TOOLTIP ── */
+.tooltip {
+  position: relative;
+  display: inline;
+  border-bottom: 1px dashed var(--neon-yellow);
+  cursor: help;
+  color: var(--neon-yellow);
+}
+.tooltip .tip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0d1f3c;
+  border: 1px solid var(--neon-yellow);
+  border-radius: 8px;
+  padding: 10px 14px;
+  width: 220px;
+  font-size: 0.78rem;
+  color: var(--text-bright);
+  z-index: 100;
+  line-height: 1.5;
+  pointer-events: none;
+}
+.tooltip:hover .tip { display: block; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .section { padding: 40px 16px; }
+  .story-intro { padding: 24px 18px; }
+  .lab-panel { padding: 20px; }
+  .timeline::before { left: 20px; }
+  .tl-item { padding-left: 0; }
+  .elisa-plate { grid-template-columns: repeat(6,1fr); }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes fadeInUp {
+  from { opacity:0; transform: translateY(30px); }
+  to { opacity:1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.7s ease forwards; }
+
+.dna-float {
+  animation: float 4s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Section visibility */
+.section-block {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.section-block.vis { opacity: 1; transform: translateY(0); }
+
+/* Cycle animation for PCR phases */
+@keyframes phase-pulse {
+  0%,100%{opacity:0.4;} 50%{opacity:1;}
+}
+
+/* ── ANTIBODY SVG ANIMATION ── */
+.ab-svg { width: 100%; height: auto; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- Particle Background -->
+<canvas id="particle-bg"></canvas>
+
+<!-- NAV TOGGLE -->
+<div id="nav-toggle" onclick="toggleNav()">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- SIDE NAV -->
+<div id="side-nav">
+  <h3>⚡ Índice</h3>
+  <div class="nav-chapter">
+    <span class="nav-chapter-title" onclick="toggleNavSub(this)">🧬 Cap. 1 — PCR</span>
+    <div class="nav-sub">
+      <a href="#pcr-intro">O que é PCR?</a>
+      <a href="#pcr-historia">História & Etimologia</a>
+      <a href="#pcr-moleculas">As Moléculas</a>
+      <a href="#pcr-etapas">As 3 Etapas</a>
+      <a href="#pcr-tipos">Tipos de PCR</a>
+      <a href="#pcr-lab">Laboratório Virtual</a>
+      <a href="#pcr-clinica">Aplicação Clínica</a>
+      <a href="#pcr-quiz">Quiz</a>
+    </div>
+  </div>
+  <div class="nav-chapter">
+    <span class="nav-chapter-title" onclick="toggleNavSub(this)">🔬 Cap. 2 — ELISA</span>
+    <div class="nav-sub">
+      <a href="#elisa-intro">O que é ELISA?</a>
+      <a href="#elisa-historia">História & Princípio</a>
+      <a href="#elisa-tipos">Tipos de ELISA</a>
+      <a href="#elisa-etapas">Cronologia</a>
+      <a href="#elisa-lab">Placa Interactiva</a>
+      <a href="#elisa-clinica">Aplicação Clínica</a>
+      <a href="#elisa-quiz">Quiz</a>
+    </div>
+  </div>
+  <div class="nav-chapter">
+    <span class="nav-chapter-title" onclick="toggleNavSub(this)">🛡️ Cap. 3 — Sorologia</span>
+    <div class="nav-sub">
+      <a href="#soro-intro">O que é Sorologia?</a>
+      <a href="#soro-anticorpos">Anticorpos em Detalhe</a>
+      <a href="#soro-janela">Janela Imunológica</a>
+      <a href="#soro-testes">Tipos de Testes</a>
+      <a href="#soro-clinica">Aplicação Clínica</a>
+      <a href="#soro-quiz">Quiz</a>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     HERO
+════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-badge">DemilMed-UL · Diagnóstico Laboratorial · 2026</div>
+  <h1 class="hero-title">
+    <span class="t-cyan dna-float">PCR</span> ·
+    <span class="t-pink dna-float" style="animation-delay:0.3s">ELISA</span> ·
+    <span class="t-green dna-float" style="animation-delay:0.6s">SOROLOGIA</span>
+  </h1>
+  <p class="hero-subtitle">
+    "Como é que os médicos encontram o inimigo invisível? <br>
+    Bem-vindo ao universo molecular do diagnóstico — onde átomos revelam doenças."
+  </p>
+  <div class="hero-cards">
+    <div class="hero-card" onclick="scrollTo('#pcr-intro')">
+      <div class="card-icon">🧬</div>
+      <div class="card-label" style="color:var(--neon-cyan)">PCR</div>
+    </div>
+    <div class="hero-card" onclick="scrollTo('#elisa-intro')">
+      <div class="card-icon">🔬</div>
+      <div class="card-label" style="color:var(--neon-pink)">ELISA</div>
+    </div>
+    <div class="hero-card" onclick="scrollTo('#soro-intro')">
+      <div class="card-icon">🛡️</div>
+      <div class="card-label" style="color:var(--neon-green)">SOROLOGIA</div>
+    </div>
+  </div>
+  <div class="scroll-hint">▼ SCROLL PARA COMEÇAR ▼</div>
+</section>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 1 — PCR
+════════════════════════════════════ -->
+<div class="chapter-divider"></div>
+<section class="chapter-header ch-pcr">
+  <div class="chapter-number">CAPÍTULO I</div>
+  <h2 class="chapter-title">PCR</h2>
+  <p class="chapter-tagline">Polymerase Chain Reaction · Reação em Cadeia da Polimerase</p>
+</section>
+
+<main>
+<div class="section" id="pcr-intro">
+
+  <div class="story-intro section-block">
+    <p class="story-text">
+      Imagina que és um detetive. O teu suspeito — um vírus ou bactéria — desapareceu, 
+      deixando apenas <em>pedaços minúsculos de DNA</em> no local do crime (no teu sangue, saliva ou tecido). 
+      Esses fragmentos são tão pequenos que são <strong>invisíveis para qualquer aparelho normal</strong>. 
+      O que fazes? <span class="pink">Usas a PCR</span> — uma máquina do tempo molecular que 
+      <em>copia e amplifica</em> esses fragmentos milhões de vezes até poderes "ver" o culpado.
+    </p>
+  </div>
+
+  <div class="concept-grid section-block">
+    <div class="concept-card">
+      <div class="cc-icon">🔤</div>
+      <h4>Sigla</h4>
+      <p><strong>PCR</strong> = <em>Polymerase Chain Reaction</em> (inglês) = <em>Reação em Cadeia da Polimerase</em> (português). Cada palavra importa — vamos desmontar.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🧬</div>
+      <h4>O Princípio</h4>
+      <p>Copiar um trecho específico de <strong>DNA</strong> ou <strong>RNA</strong> exaustivamente, usando a <em>mesma enzima que a célula usa</em> para replicar o seu genoma.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">📊</div>
+      <h4>Amplificação</h4>
+      <p>Em <strong>30–40 ciclos</strong>, partindo de <strong>1 cópia</strong> de DNA, podes chegar a mais de <span style="color:var(--neon-yellow)">1.073.741.824</span> cópias. Isso é 2³⁰ ≈ 10⁹!</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">⏱️</div>
+      <h4>Tempo</h4>
+      <p>Uma PCR convencional demora <strong>2–4 horas</strong>. A PCR rápida (rapid PCR) pode dar resultados em <strong>45–90 minutos</strong> em cuidados intensivos.</p>
+    </div>
+  </div>
+
+  <div class="info-box etymology section-block">
+    <p>
+      <strong>"Poly"</strong> vem do grego πολύς (polys) = "muitos" · 
+      <strong>"merase"</strong> de μεράζω = dividir, aqui referindo a <em>síntese enzimática</em> · 
+      <strong>"Chain"</strong> = cadeia, porque cada produto serve de molde para o ciclo seguinte — como correntes que crescem · 
+      <strong>"Reaction"</strong> = reação bioquímica. 
+      Em conjunto: <em>"muitas reações encadeadas pela polimerase"</em>. 
+      O DNA é uma molécula de dupla hélice — duas cadeias antiparalelas ligadas por pontes de hidrogénio entre bases nitrogenadas (A-T e G-C, regra de Chargaff).
+    </p>
+  </div>
+</div>
+
+<!-- PCR HISTÓRIA -->
+<div class="section" id="pcr-historia">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🏆 HISTÓRIA · O MOMENTO QUE MUDOU A MEDICINA</h3>
+
+  <div class="timeline section-block">
+    <div class="tl-item">
+      <div class="tl-dot cyan">💡</div>
+      <div class="tl-content">
+        <div class="tl-step">1983 · ORIGEM</div>
+        <h4>Kary Mullis — A ideia na estrada</h4>
+        <p>O bioquímico americano Kary Mullis teve a ideia da PCR <em>enquanto conduzia de notte</em> pela Highway 128 na Califórnia. Ele imaginou usar primers e calor para amplificar DNA. Em 1993, ganhou o <strong>Prémio Nobel da Química</strong> por esta descoberta.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot yellow">🌋</div>
+      <div class="tl-content">
+        <div class="tl-step">1969 · PRÉ-CONDIÇÃO</div>
+        <h4>Thermus aquaticus — A bactéria do Yellowstone</h4>
+        <p>Numa fonte termal do Parque Yellowstone (EUA), a bactéria <em>Thermus aquaticus</em> sobrevivia a <strong>72–75°C</strong>. A sua DNA polimerase (<span style="color:var(--neon-cyan)">Taq polimerase</span>) era termoestável — a chave que tornaria a PCR prática.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot pink">⚙️</div>
+      <div class="tl-content">
+        <div class="tl-step">1987 · AUTOMAÇÃO</div>
+        <h4>Termociclador — O robô que faz o trabalho</h4>
+        <p>A empresa Perkin-Elmer lançou o primeiro termociclador automático, que alterna ciclicamente entre temperaturas programadas. Antes disso, os cientistas moviam tubos manualmente entre banhos-maria — levava horas de trabalho humano extenuante.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot green">🦠</div>
+      <div class="tl-content">
+        <div class="tl-step">1990s → hoje · MEDICINA</div>
+        <h4>PCR entra nos hospitais</h4>
+        <p>Diagnóstico de HIV, tuberculose, SARS-CoV-2, Hepatite B/C, Mycobacterium tuberculosis. A PCR tornou-se o <em>"gold standard"</em> — padrão de ouro — para diagnóstico molecular infeccioso. Em 2020, foi a base global de diagnóstico COVID-19.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PCR MOLÉCULAS -->
+<div class="section" id="pcr-moleculas">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">⚛️ OS ACTORES MOLECULARES DA PCR</h3>
+
+  <div class="story-intro section-block">
+    <p class="story-text">
+      Antes de entrar nos ciclos, precisas conhecer os <em>5 ingredientes essenciais</em> da reação. 
+      Pensa numa cozinha molecular: cada ingrediente tem um papel preciso. Falta um → a receita falha totalmente.
+    </p>
+  </div>
+
+  <div class="concept-grid section-block">
+    <div class="concept-card">
+      <div class="cc-icon">🎯</div>
+      <h4>DNA MOLDE (Template)</h4>
+      <p>O DNA que contém a sequência alvo. Extraído da amostra do doente (sangue, swab, biópsia). Pode ser genómico ou viral. É o <em>"documento original"</em> a ser copiado.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🔑</div>
+      <h4>PRIMERS (Iniciadores)</h4>
+      <p>Pequenos fragmentos de DNA sintético (~20 nucleótidos) — <strong>Primer Forward</strong> e <strong>Primer Reverse</strong> — que flanqueiam (envolvem) a região-alvo. São como duas chaves que trancam o início e o fim do trecho a copiar.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">⚡</div>
+      <h4>Taq POLIMERASE</h4>
+      <p>Enzima termoestável extraída de <em>T. aquaticus</em>. Lê o molde na direção 3'→5' e sintetiza a nova cadeia na direção 5'→3'. Adiciona ~1000 nucleótidos/minuto. Suporta 95°C sem desnaturar.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🧱</div>
+      <h4>dNTPs</h4>
+      <p><strong>dNTPs</strong> = <em>deoxyribonucleoside triphosphates</em> (desoxirribonucleósidos trifosfato) = dATP, dTTP, dCTP, dGTP. São as "letras" (A, T, C, G) que a polimerase adiciona para construir a nova cadeia.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">⚗️</div>
+      <h4>TAMPÃO (Buffer MgCl₂)</h4>
+      <p>Solução com pH ~8.3 e MgCl₂ (cloreto de magnésio). O Mg²⁺ é <em>cofator essencial</em> da Taq polimerase — sem magnésio, a enzima não funciona. É o "sal" que activa o chef molecular.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🌡️</div>
+      <h4>TERMOCICLADOR</h4>
+      <p>Equipamento que alterna temperaturas com precisão de ±0.1°C. Tem bloco térmico de alumínio ou prata. A Peltier thermoelectric technology aquece e arrefece rapidamente (ramp rate ~5°C/seg).</p>
+    </div>
+  </div>
+
+  <!-- DNA Visual -->
+  <div class="molecule-stage section-block">
+    <canvas id="dna-canvas" height="200"></canvas>
+    <div class="molecule-caption">🧬 DNA dupla hélice — arrasta horizontalmente para rodar | Os primers (azul/rosa) flanqueiam a região alvo (amarelo)</div>
+  </div>
+</div>
+
+<!-- PCR ETAPAS -->
+<div class="section" id="pcr-etapas">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🔄 AS 3 ETAPAS DE CADA CICLO PCR</h3>
+
+  <div class="story-intro section-block">
+    <p class="story-text">
+      Cada ciclo tem <span class="pink">3 fases térmicas precisas</span>. Pensa num ballet molecular: 
+      primeiro o DNA separa-se (<em>desnaturação</em>), depois os primers encontram o seu lugar (<em>annealing</em>), 
+      e finalmente a polimerase constrói a nova cópia (<em>extensão</em>). 
+      E <em>repete</em>... 30 a 40 vezes.
+    </p>
+  </div>
+
+  <!-- PCR Animation -->
+  <div id="pcr-anim" class="section-block">
+    <canvas id="pcr-canvas" style="width:100%;height:100%;"></canvas>
+  </div>
+  <div style="text-align:center;margin:-10px 0 20px;" class="section-block">
+    <button onclick="nextPCRStep()" style="background:#00f5ff22;border:1px solid var(--neon-cyan);color:var(--neon-cyan);padding:10px 28px;border-radius:8px;font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;cursor:pointer;">▶ PRÓXIMA FASE</button>
+    <span id="pcr-phase-label" style="margin-left:20px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--neon-yellow);">FASE 0: ESTADO INICIAL</span>
+  </div>
+
+  <div class="timeline section-block">
+    <div class="tl-item">
+      <div class="tl-dot pink">🔥</div>
+      <div class="tl-content">
+        <div class="tl-step">FASE 1 · ~94–96°C · 20–30 segundos</div>
+        <h4>DESNATURAÇÃO (Denaturation)</h4>
+        <p>
+          O calor extremo <strong>rompe as pontes de hidrogénio</strong> entre as bases complementares (A≡T — 2 pontes; G≡C — 3 pontes). 
+          A dupla hélice separa-se em <em>duas cadeias simples</em>. 
+          Física: energia cinética supera ΔG das pontes H (~1–3 kcal/mol cada). 
+          Como "abrir um fecho de correr" no DNA.
+          <br><br>
+          <span style="color:var(--text-dim);font-size:0.82rem;">⚠️ Se a temperatura for insuficiente → DNA não desnatura → ciclo falha. Se for excessiva → Taq pode degradar.</span>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot cyan">❄️</div>
+      <div class="tl-content">
+        <div class="tl-step">FASE 2 · ~50–65°C · 20–40 segundos</div>
+        <h4>ANNEALING (Hibridização / Ligação dos Primers)</h4>
+        <p>
+          Os primers arrefecem e encontram as suas sequências complementares no molde por <strong>hibridização</strong>. 
+          A temperatura de annealing (Tm — <em>melting temperature</em>) é calculada pela 
+          <span style="color:var(--neon-cyan)">regra de Wallace: Tm = 2°C × (A+T) + 4°C × (G+C)</span>.
+          <br><br>
+          Os primers ligam-se especificamente — como peças de Lego únicas. 
+          <em>Especificidade</em> é a magia aqui: só amplifica o que os primers "reconhecem".
+          <br><br>
+          <span style="color:var(--text-dim);font-size:0.82rem;">Tm muito alta → primers não hibridizam (falha). Tm muito baixa → primers ligam em sítios errados (inespecificidade).</span>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot green">🏗️</div>
+      <div class="tl-content">
+        <div class="tl-step">FASE 3 · 72°C · 1 min por kb</div>
+        <h4>EXTENSÃO / ELONGAÇÃO (Extension)</h4>
+        <p>
+          A <strong>Taq polimerase</strong> reconhece o primer ligado e começa a adicionar dNTPs na direção <em>5' → 3'</em>, lendo o molde na direção 3' → 5'. 
+          72°C é a temperatura ótima desta enzima.
+          <br><br>
+          O fosfato do dNTP entrante ataca o grupo 3'-OH do nucleótido anterior → ligação fosfodiéster → nova cadeia cresce.
+          Pyrofosfato (PPi) é libertado e hidrólise de PPi por pirofosfatase torna a reação irreversível (ΔG muito negativo).
+          <br><br>
+          <span style="color:var(--neon-green)">Resultado: 2 cópias onde havia 1.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box formula section-block">
+    <p>
+      <strong>Fórmula de Amplificação:</strong><br><br>
+      N = N₀ × 2ⁿ &nbsp;&nbsp; (teórico perfeito)<br><br>
+      Onde:<br>
+      · N = número final de cópias<br>
+      · N₀ = número inicial de moléculas de DNA<br>
+      · n = número de ciclos<br><br>
+      <strong>Exemplo:</strong> Começas com 1 cópia, 30 ciclos:<br>
+      N = 1 × 2³⁰ = <span style="color:var(--neon-yellow)">1.073.741.824 cópias</span> (~10⁹)<br><br>
+      Na prática, a eficiência não é 100%, usa-se:<br>
+      N = N₀ × (1 + E)ⁿ &nbsp; onde E = eficiência (0 a 1)
+    </p>
+  </div>
+</div>
+
+<!-- PCR TIPOS -->
+<div class="section" id="pcr-tipos">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🧪 TIPOS DE PCR — A FAMÍLIA CRESCE</h3>
+
+  <table class="compare-table section-block">
+    <tr>
+      <th>TIPO</th>
+      <th>NOME COMPLETO</th>
+      <th>PRINCÍPIO EXTRA</th>
+      <th>USO CLÍNICO</th>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-cyan);font-weight:700">PCR Convencional</td>
+      <td>Standard PCR</td>
+      <td>Visualização em gel de agarose (electroforese)</td>
+      <td class="mid">Detecção sim/não</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-pink);font-weight:700">RT-PCR</td>
+      <td>Reverse Transcription PCR</td>
+      <td>RNA → cDNA (via transcriptase reversa) → PCR</td>
+      <td class="good">COVID-19, HIV, Influenza</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-green);font-weight:700">qPCR</td>
+      <td>Quantitative Real-Time PCR</td>
+      <td>Fluorescência mede quantidade em tempo real (SYBR Green, TaqMan)</td>
+      <td class="good">Carga viral HIV, HBV, HCV</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-yellow);font-weight:700">Multiplex PCR</td>
+      <td>Multiplex PCR</td>
+      <td>Vários pares de primers → detecta vários patogéneos simultaneamente</td>
+      <td class="good">Painel respiratório (flu+RSV+COVID)</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-orange);font-weight:700">ddPCR</td>
+      <td>Droplet Digital PCR</td>
+      <td>Amostra dividida em ~20.000 gotículas; contagem absoluta de cópias</td>
+      <td class="mid">Oncologia (ctDNA), MRD</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-purple);font-weight:700">Nested PCR</td>
+      <td>Nested PCR</td>
+      <td>2 rondas: primers externos, depois internos → mais sensibilidade</td>
+      <td class="mid">TB, leishmaniose</td>
+    </tr>
+  </table>
+
+  <div class="story-intro section-block" style="border-color:#ff006e33;">
+    <p class="story-text">
+      <span class="pink">RT-PCR</span> merece destaque especial: vírus como SARS-CoV-2 têm 
+      <strong>RNA</strong> como genoma, não DNA. A enzima 
+      <em>transcriptase reversa</em> (do vírus HIV, curiosamente) converte primeiro 
+      o RNA em <strong>cDNA</strong> (DNA complementar). Só depois começa a PCR normal. 
+      É por isso que o teste de COVID-19 PCR demora mais — tem um passo extra.
+    </p>
+  </div>
+</div>
+
+<!-- PCR LAB -->
+<div class="section" id="pcr-lab">
+  <div class="lab-panel section-block">
+    <h3>LABORATÓRIO VIRTUAL DE PCR</h3>
+    <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:20px;">Ajusta as variáveis e observa o resultado da tua PCR em tempo real:</p>
+    <div class="slider-group">
+      <div class="slider-item">
+        <label>CICLOS (n): <span class="val" id="cycles-val">30</span></label>
+        <input type="range" min="10" max="45" value="30" oninput="updatePCRLab()">
+      </div>
+      <div class="slider-item">
+        <label>CÓPIAS INICIAIS (N₀): <span class="val" id="n0-val">1</span></label>
+        <input type="range" min="1" max="100" value="1" oninput="updatePCRLab()">
+      </div>
+      <div class="slider-item">
+        <label>EFICIÊNCIA (%): <span class="val" id="eff-val">95</span>%</label>
+        <input type="range" min="50" max="100" value="95" oninput="updatePCRLab()">
+      </div>
+      <div class="slider-item">
+        <label>Tm PRIMER (°C): <span class="val" id="tm-val">60</span>°C</label>
+        <input type="range" min="45" max="72" value="60" oninput="updatePCRLab()">
+      </div>
+    </div>
+    <div class="lab-result" id="pcr-result">
+      <span class="r-label">Cópias Finais: </span><span class="r-value" id="r-copies">-</span><br>
+      <span class="r-label">Log₁₀: </span><span class="r-value" id="r-log">-</span><br>
+      <span class="r-label">Status annealing: </span><span id="r-anneal">-</span><br>
+      <span class="r-label">Sensibilidade estimada: </span><span id="r-sens">-</span>
+    </div>
+    <canvas id="pcr-graph" height="150" style="margin-top:16px;border-radius:8px;background:#030810;width:100%;"></canvas>
+  </div>
+</div>
+
+<!-- PCR CLÍNICA -->
+<div class="section" id="pcr-clinica">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-cyan);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🏥 APLICAÇÃO CLÍNICA — O QUE O MÉDICO FAZ COM A PCR</h3>
+
+  <div class="concept-grid section-block">
+    <div class="concept-card">
+      <div class="cc-icon">🦠</div>
+      <h4>DIAGNÓSTICO INFECCIOSO</h4>
+      <p>Gold standard para HIV (qualitativo + carga viral), Hepatite B/C, SARS-CoV-2, Tuberculose (Xpert MTB/RIF), Sepsis (painel bacteriano multiplex)</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🧬</div>
+      <h4>ONCOLOGIA MOLECULAR</h4>
+      <p>Detecção de mutações (BRCA1/2, KRAS, EGFR), DNA tumoral circulante (ctDNA), Doença Residual Mínima (MRD) em leucemia</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🩸</div>
+      <h4>TRIAGEM DE SANGUE</h4>
+      <p>Bancos de sangue usam PCR para detetar HIV, HCV, HBV em dadores — reduz a "janela imunológica" (período antes de anticorpos aparecerem)</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🧪</div>
+      <h4>FARMACOGENÓMICA</h4>
+      <p>Polimorfismos em CYP2C19, CYP2D6 (enzimas hepáticas) determinam metabolização de fármacos — doses personalizadas de clopidogrel, tamoxifeno, etc.</p>
+    </div>
+  </div>
+
+  <div class="info-box clinical section-block">
+    <p>
+      <strong>Cenário Real UCI (Unidade de Cuidados Intensivos):</strong> Doente em choque séptico. 
+      Hemocultura demora 48–72h. PCR de painel sepsis (BioFire FilmArray® Blood Culture) 
+      dá resultado em <strong>~1 hora</strong>, identificando bactéria e padrão de resistência (ex: KPC, NDM — 
+      carbapenemases). Médico ajusta antibiótico imediatamente, reduzindo mortalidade em ~20–30%.
+      <br><br>
+      Referência: <em>Banerjee R et al., Clin Infect Dis 2015; 60(8):1180–1187</em>
+    </p>
+  </div>
+
+  <div class="info-box warning section-block">
+    <p>
+      <strong>PCR POSITIVA ≠ DOENÇA ACTIVA!</strong> 
+      A PCR detecta DNA/RNA — que pode ser de um patogéneo morto, colonizante não invasor, ou contaminante. 
+      Ex: PCR positiva para <em>Streptococcus pneumoniae</em> em nasofaringe pode ser colonização normal em criança. 
+      O resultado deve <strong>sempre ser interpretado com o quadro clínico</strong>. 
+      Isto é essencial para o médico: correlação clínico-laboratorial é o pilar do diagnóstico.
+    </p>
+  </div>
+</div>
+
+<!-- PCR QUIZ -->
+<div class="section" id="pcr-quiz">
+  <div class="quiz-box section-block">
+    <h3>⚡ QUIZ — CAPÍTULO 1 · PCR</h3>
+    <div id="q1">
+      <p class="quiz-question">1. A temperatura de desnaturação na PCR (~94°C) serve para:</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">A) Activar a Taq polimerase</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','q1')">B) Separar as duas cadeias da dupla hélice de DNA</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">C) Permitir a hibridização dos primers</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">D) Adicionar os dNTPs à cadeia</div>
+      </div>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="q2">
+      <p class="quiz-question">2. Por que se usa a Taq polimerase e não outra DNA polimerase?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">A) É mais barata de produzir</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">B) Tem maior fidelidade de cópia</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','q2')">C) É termoestável — não desnatura a 95°C</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">D) Funciona sem dNTPs</div>
+      </div>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="q3">
+      <p class="quiz-question">3. Um doente HIV positivo tem carga viral indetectável por qPCR. O que isto significa clinicamente?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q3')">A) O doente está curado do HIV</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q3')">B) O HIV foi eliminado do organismo</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','q3')">C) A terapia antirretroviral está eficaz — cópias virais abaixo do limite de detecção</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','q3')">D) O doente pode parar a medicação</div>
+      </div>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 2 — ELISA
+════════════════════════════════════ -->
+<div class="chapter-divider" style="background:linear-gradient(to right,transparent,var(--neon-pink),transparent)"></div>
+<section class="chapter-header ch-elisa">
+  <div class="chapter-number">CAPÍTULO II</div>
+  <h2 class="chapter-title">ELISA</h2>
+  <p class="chapter-tagline">Enzyme-Linked Immunosorbent Assay · Ensaio Imunoabsorvente Ligado a Enzima</p>
+</section>
+
+<div class="section" id="elisa-intro">
+  <div class="story-intro section-block" style="border-color:#ff006e33;">
+    <p class="story-text">
+      Imagina agora um <em>tapete com anzóis específicos</em>. 
+      Cada anzol (anticorpo) só pesca um peixe específico (antigénio ou anticorpo do doente). 
+      Depois, um <span class="pink">marcador com enzima</span> "revela" se o peixe foi capturado — 
+      mudando de cor. Quanto mais cor, mais peixe. Isto é, em essência, o ELISA.
+      <br><br>
+      Enquanto a PCR detecta DNA/RNA do patogéneo, o ELISA detecta 
+      <strong>proteínas</strong> — antigénios virais ou anticorpos produzidos pelo teu sistema imune.
+    </p>
+  </div>
+
+  <div class="concept-grid section-block">
+    <div class="concept-card">
+      <div class="cc-icon">🔤</div>
+      <h4>SIGLA EXPANDIDA</h4>
+      <p><strong>E</strong>nzyme-<strong>L</strong>inked = enzima ligada (conjugada) · <strong>I</strong>mmuno = imune · <strong>S</strong>orbent = que absorve (adsorção proteica) · <strong>A</strong>ssay = ensaio/teste. ELISA = "teste imunológico onde a deteção é feita por enzima"</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🎨</div>
+      <h4>O SINAL</h4>
+      <p>Enzimas comuns: <strong>HRP</strong> (Horseradish Peroxidase — peroxidase de rábano) e <strong>AP</strong> (Alkaline Phosphatase — fosfatase alcalina). Reagem com substrato (ex: TMB — tetrametilbenzidina) → cor azul/amarela. Lida por espectrofotómetro a 450nm.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">📊</div>
+      <h4>QUANTITATIVO</h4>
+      <p>ELISA dá <strong>valores de absorbância (OD — Optical Density)</strong>. Usando curva padrão (calibração), converte OD em concentração (ng/mL, pg/mL). É semi-quantitativo ou totalmente quantitativo.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">💰</div>
+      <h4>CUSTO-BENEFÍCIO</h4>
+      <p>Muito mais barato que PCR. Placa de 96 poços = 96 amostras testadas em paralelo. Ideal para rastreio populacional em grande escala. Equipamento acessível até em países com menos recursos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ELISA HISTÓRIA -->
+<div class="section" id="elisa-historia">
+  <div class="info-box etymology section-block">
+    <p>
+      <strong>Origem do ELISA:</strong> Desenvolvido em 1971 por <em>Eva Engvall</em> e <em>Peter Perlmann</em> (Universidade de Estocolmo) e independentemente por <em>Anton Schuurs</em> e <em>Bauke van Weemen</em> nos Países Baixos. Publicado na <em>Immunochemistry</em> (1971; 8:871-874). 
+      O princípio central: substituir os radioisótopos do RIA (Radio-Immuno Assay — técnica anterior radioativa, perigosa) por enzimas seguras e baratas. Uma revolução de segurança e acessibilidade diagnóstica.
+    </p>
+  </div>
+
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-pink);letter-spacing:3px;font-size:0.9rem;margin:30px 0 20px;" class="section-block">🧪 TIPOS DE ELISA</h3>
+
+  <div class="timeline section-block">
+    <div class="tl-item">
+      <div class="tl-dot pink">🎯</div>
+      <div class="tl-content">
+        <div class="tl-step">TIPO 1</div>
+        <h4>ELISA Directo</h4>
+        <p>
+          Antigénio da amostra adsorve à placa → anticorpo <em>primário conjugado</em> com enzima liga diretamente ao antigénio → substrato → cor.<br>
+          <span style="color:var(--neon-green)">✓ Rápido, simples, poucos passos</span><br>
+          <span style="color:var(--neon-pink)">✗ Menos sensível, anticorpo primário deve ser marcado</span>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot cyan">🔬</div>
+      <div class="tl-content">
+        <div class="tl-step">TIPO 2</div>
+        <h4>ELISA Indirecto (Mais comum em sorologia!)</h4>
+        <p>
+          Antigénio à placa → anticorpo primário do doente liga → anticorpo secundário anti-IgG conjugado com enzima liga ao anticorpo primário → substrato → cor.<br>
+          <span style="color:var(--neon-green)">✓ Alta sensibilidade, pode detectar anticorpos do doente</span><br>
+          <span style="color:var(--neon-pink)">✗ Mais passos, possível reação cruzada</span><br><br>
+          <em>Usado para: HIV, HBsAg, SARS-CoV-2 (IgG/IgM)</em>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot yellow">🥪</div>
+      <div class="tl-content">
+        <div class="tl-step">TIPO 3</div>
+        <h4>ELISA Sandwich (Sanduíche)</h4>
+        <p>
+          Anticorpo de captura à placa → antigénio da amostra é "apanhado" → segundo anticorpo de deteção (conjugado enzima) liga ao outro lado do antigénio → substrato → cor.<br>
+          <span style="color:var(--neon-green)">✓ Muito específico e sensível, bom para amostras complexas</span><br>
+          <em>Usado para: TNF-α, IL-6, insulina, HBsAg, COVID-19 Ag rápido (variante lateral flow)</em>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot orange">🔄</div>
+      <div class="tl-content">
+        <div class="tl-step">TIPO 4</div>
+        <h4>ELISA Competitivo</h4>
+        <p>
+          Antigénio marcado e antigénio da amostra <em>competem</em> pelo mesmo anticorpo → mais antigénio da amostra → menos sinal. Relação <em>inversa</em>!<br>
+          <span style="color:var(--neon-green)">✓ Ideal para moléculas pequenas (haptenos)</span><br>
+          <em>Usado para: drogas, hormonas (estradiol, cortisol), aflatoxinas</em>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ELISA ETAPAS CRONOLOGIA -->
+<div class="section" id="elisa-etapas">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-pink);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">⏱️ CRONOLOGIA MOLECULAR DO ELISA INDIRECTO</h3>
+
+  <div class="timeline section-block">
+    <div class="tl-item">
+      <div class="tl-dot pink">1️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 1 · ~2–16h (coating) · 4°C ou 37°C</div>
+        <h4>ADSORÇÃO DO ANTIGÉNIO (Coating)</h4>
+        <p>
+          O antigénio purificado (proteína viral/bacteriana) é pipetado nos poços de uma placa de poliestireno de 96 poços. 
+          As proteínas adsorvem à superfície hidrofóbica do poliestireno por <em>forças de Van der Waals e interações hidrofóbicas</em>. 
+          Cada poço liga ~50–200 ng de proteína. 
+          A placa é incubada overnight a 4°C ou 1–2h a 37°C.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot cyan">2️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 2 · 1–2h · 37°C</div>
+        <h4>BLOQUEIO (Blocking)</h4>
+        <p>
+          Soluções de BSA (<em>Bovine Serum Albumin</em> — albumina sérica bovina) a 1–5% ou leite desnatado são adicionadas. 
+          Estas proteínas inespecíficas "preenchem" os sítios de ligação vazios da placa, 
+          evitando que os anticorpos da amostra se liguem inespecificamente. 
+          Sem bloqueio → <span style="color:var(--neon-pink)">falsos positivos</span>.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot green">3️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 3 · 1–2h · 37°C</div>
+        <h4>INCUBAÇÃO COM AMOSTRA (Anticorpo Primário)</h4>
+        <p>
+          Soro do doente (diluído 1:100 a 1:400) é adicionado. 
+          Se o doente tem anticorpos contra o antigénio → ligam-se com alta afinidade (Kd ~10⁻⁸ a 10⁻¹² M). 
+          Esta ligação anticorpo-antigénio é mediada por forças não-covalentes: 
+          pontes de H, forças de Van der Waals, interações iónicas, efeito hidrofóbico.
+          Lavagem com PBS-Tween20 remove anticorpos não ligados.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot purple">4️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 4 · 1h · 37°C</div>
+        <h4>ANTICORPO SECUNDÁRIO CONJUGADO</h4>
+        <p>
+          Anti-IgG humana produzida em cabra ou coelho, conjugada com HRP, é adicionada. 
+          Liga-se à região Fc dos anticorpos primários do doente. 
+          <em>Uma molécula de anticorpo primário → várias moléculas de anticorpo secundário</em> → amplificação do sinal. 
+          Nova lavagem remove excesso.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot yellow">5️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 5 · 15–30 min · T.A. · escuro</div>
+        <h4>REAÇÃO ENZIMÁTICA (Substrato TMB)</h4>
+        <p>
+          TMB (<em>3,3',5,5'-Tetramethylbenzidine</em>) — substrato cromogénico — é adicionado. 
+          HRP oxida TMB na presença de H₂O₂ → TMB oxidado é azul. 
+          Reação: TMB + H₂O₂ → TMB• (azul) + H₂O. 
+          Solução de paragem (H₂SO₄ 2M) adiciona → cor muda de azul para <span style="color:var(--neon-yellow)">amarelo</span>. 
+          Leitura a 450nm por espectrofotómetro (leitor de ELISA).
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot green">6️⃣</div>
+      <div class="tl-content">
+        <div class="tl-step">PASSO 6 · INTERPRETAÇÃO</div>
+        <h4>LEITURA E CÁLCULO</h4>
+        <p>
+          OD (Optical Density / Densidade Óptica) é medida. 
+          Amostras com OD > cut-off (calculado a partir de controlo negativo + 2–3 SD) são positivas. 
+          <br>Índice S/CO (sample/cut-off): S/CO ≥ 1.0 = reagente (positivo). 
+          Amostras reagentes são confirmadas por Western Blot ou imunofluorescência.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ELISA PLACA INTERACTIVA -->
+<div class="section" id="elisa-lab">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-pink);letter-spacing:3px;font-size:0.9rem;margin-bottom:20px;" class="section-block">🧪 PLACA ELISA INTERACTIVA</h3>
+  <p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:16px;" class="section-block">Clica nos poços para simular resultados. Amarelo = positivo | Azul escuro = negativo</p>
+
+  <div class="lab-panel section-block" style="border-color:var(--neon-pink);box-shadow:var(--glow-pink);">
+    <h3 style="color:var(--neon-pink)">SIMULADOR PLACA 96-POÇOS</h3>
+    <div class="slider-group">
+      <div class="slider-item">
+        <label>DILUIÇÃO SORO (1: <span class="val" id="dilution-val">200</span>)</label>
+        <input type="range" min="50" max="1600" step="50" value="200" oninput="updateELISA()">
+      </div>
+      <div class="slider-item">
+        <label>CONCENTRAÇÃO Ab (U/mL): <span class="val" id="ab-conc-val">50</span></label>
+        <input type="range" min="0" max="200" value="50" oninput="updateELISA()">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:8px;padding:0 20px;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--text-dim);">→ Colunas 1-12</span>
+    </div>
+    <div class="elisa-plate" id="elisa-plate"></div>
+    <div style="display:flex;gap:20px;padding:12px 20px;font-family:'JetBrains Mono',monospace;font-size:0.7rem;flex-wrap:wrap;">
+      <span>🟡 <span style="color:var(--neon-yellow)">Positivo</span></span>
+      <span>🔵 <span style="color:var(--neon-cyan)">Negativo</span></span>
+      <span>⚫ <span style="color:var(--text-dim)">Branco</span></span>
+    </div>
+    <div class="lab-result" id="elisa-result" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ELISA CLÍNICA -->
+<div class="section" id="elisa-clinica">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-pink);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🏥 ELISA NA CLÍNICA</h3>
+
+  <table class="compare-table section-block">
+    <tr>
+      <th>DOENÇA</th>
+      <th>MARCADOR DETECTADO</th>
+      <th>TIPO ELISA</th>
+      <th>JANELA</th>
+    </tr>
+    <tr><td style="color:var(--neon-cyan)">HIV</td><td>Anti-HIV IgG/IgM + Ag p24</td><td class="good">4ª geração (combo)</td><td class="mid">~18 dias pós-infecção</td></tr>
+    <tr><td style="color:var(--neon-pink)">Hepatite B</td><td>HBsAg, Anti-HBc, Anti-HBs</td><td>Sandwich/Indirecto</td><td>Variável</td></tr>
+    <tr><td style="color:var(--neon-green)">COVID-19</td><td>Anti-SARS-CoV-2 IgG (Spike/RBD)</td><td>Indirecto</td><td>~14 dias pós-sintomas</td></tr>
+    <tr><td style="color:var(--neon-yellow)">Dengue</td><td>NS1 Ag + IgM/IgG</td><td>Sandwich + Indirecto</td><td>NS1: dia 1-9</td></tr>
+    <tr><td style="color:var(--neon-orange)">Toxoplasma</td><td>Anti-Toxo IgM/IgG/IgA</td><td>Indirecto</td><td>IgM: infecção recente</td></tr>
+    <tr><td style="color:var(--neon-purple)">Sífilis</td><td>Anti-Treponema IgM/IgG</td><td>Indirecto</td><td>~3-6 semanas</td></tr>
+  </table>
+
+  <div class="info-box clinical section-block">
+    <p>
+      <strong>HIV — A estratégia da 4ª Geração:</strong><br>
+      O ELISA de 4ª geração combina detecção simultânea de <em>Ag p24</em> (antígeno da cápside viral) 
+      E <em>anticorpos IgG/IgM anti-HIV</em>. O p24 aparece antes dos anticorpos (~2 semanas pós-infecção), 
+      então esta combinação encurta a <em>janela imunológica</em> de ~3-4 semanas para ~18 dias. 
+      Resultado ELISA reagente é sempre confirmado por <strong>Western Blot</strong> ou 
+      <strong>Imunoblot de 4ª geração</strong> antes do diagnóstico definitivo.
+      <br><br>
+      Algoritmo OMS: ELISA screening → se reagente → 2º ELISA diferente → se discordante → 3º teste ou NAT (PCR).
+    </p>
+  </div>
+</div>
+
+<!-- ELISA QUIZ -->
+<div class="section" id="elisa-quiz">
+  <div class="quiz-box section-block" style="border-color:var(--neon-pink);">
+    <h3 style="color:var(--neon-pink)">⚡ QUIZ — CAPÍTULO 2 · ELISA</h3>
+    <div id="eq1">
+      <p class="quiz-question">1. No ELISA indirecto para HIV, o que detectamos no soro do doente?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq1')">A) DNA do HIV</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq1')">B) O vírus HIV inteiro</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','eq1')">C) Anticorpos anti-HIV produzidos pelo sistema imune do doente</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq1')">D) A enzima HRP do vírus</div>
+      </div>
+      <div class="quiz-feedback" id="eq1-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="eq2">
+      <p class="quiz-question">2. O passo de "blocking" (bloqueio) no ELISA serve para:</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq2')">A) Activar a enzima HRP</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','eq2')">B) Prevenir ligações inespecíficas que causariam falsos positivos</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq2')">C) Remover anticorpos específicos</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq2')">D) Aumentar a temperatura da reação</div>
+      </div>
+      <div class="quiz-feedback" id="eq2-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="eq3">
+      <p class="quiz-question">3. Num ELISA competitivo, o que acontece ao sinal quando a concentração do analito na amostra aumenta?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq3')">A) O sinal aumenta proporcionalmente</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','eq3')">B) O sinal diminui (relação inversa)</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq3')">C) O sinal não muda</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','eq3')">D) A cor muda de amarelo para azul</div>
+      </div>
+      <div class="quiz-feedback" id="eq3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 3 — SOROLOGIA
+════════════════════════════════════ -->
+<div class="chapter-divider" style="background:linear-gradient(to right,transparent,var(--neon-green),transparent)"></div>
+<section class="chapter-header ch-soro">
+  <div class="chapter-number">CAPÍTULO III</div>
+  <h2 class="chapter-title">SOROLOGIA</h2>
+  <p class="chapter-tagline">Serology · A Arte de Ler os Anticorpos</p>
+</section>
+
+<div class="section" id="soro-intro">
+  <div class="story-intro section-block" style="border-color:#00ff8833;">
+    <p class="story-text">
+      Após a batalha, o teu exército deixa <em>cicatrizes moleculares</em> — os anticorpos. 
+      São como <span class="green">tatuagens do sistema imune</span>, registando cada inimigo que enfrentaste. 
+      A <strong>Sorologia</strong> é a ciência de ler essas tatuagens no soro sanguíneo. 
+      Ela não encontra o inimigo directamente (como a PCR), mas encontra 
+      <em>a prova de que o teu corpo já o combateu</em> — ou ainda está a combater.
+    </p>
+  </div>
+
+  <div class="info-box etymology section-block">
+    <p>
+      <strong>"Soro"</strong> do latim <em>serum</em> = líquido, soro do sangue (plasma sem fatores de coagulação). 
+      <strong>"Logia"</strong> do grego λογία (logia) = estudo de. 
+      Sorologia = "estudo do soro". 
+      O soro é obtido por centrifugação do sangue coagulado — a parte líquida sobrenadante sem células nem fibrina. 
+      É rico em: albumina, globulinas, <em>imunoglobulinas (anticorpos)</em>, fatores de complemento, citocinas.
+    </p>
+  </div>
+</div>
+
+<!-- ANTICORPOS EM DETALHE -->
+<div class="section" id="soro-anticorpos">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🛡️ ANTICORPOS — ESTRUTURA MOLECULAR DETALHADA</h3>
+
+  <div class="story-intro section-block" style="border-color:#00ff8833;">
+    <p class="story-text">
+      Um anticorpo (imunoglobulina, Ig) é uma glicoproteína em forma de <em>"Y"</em>. 
+      Tem <strong>2 cadeias pesadas (H — Heavy)</strong> e <strong>2 cadeias leves (L — Light)</strong> 
+      ligadas por pontes dissulfureto (S-S). 
+      Cada braço do "Y" tem uma <span class="green">região variável (Fab — Fragment antigen-binding)</span> 
+      que reconhece especificamente um antigénio. 
+      O tronco do "Y" é a <strong>região constante (Fc — Fragment crystallizable)</strong> 
+      que ativa o sistema imune (complemento, células NK, fagócitos).
+    </p>
+  </div>
+
+  <!-- SVG Anticorpo Animado -->
+  <div class="molecule-stage section-block" style="border-color:#00ff8833;">
+    <svg viewBox="0 0 400 300" class="ab-svg" style="padding:20px;">
+      <defs>
+        <filter id="glow-g">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Fc region -->
+      <rect x="165" y="180" width="70" height="80" rx="12" fill="#00ff8833" stroke="#00ff88" stroke-width="1.5" filter="url(#glow-g)">
+        <animate attributeName="opacity" values="0.7;1;0.7" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <text x="200" y="225" text-anchor="middle" fill="#00ff88" font-size="11" font-family="JetBrains Mono">Fc</text>
+      <text x="200" y="240" text-anchor="middle" fill="#7a9cbf" font-size="8" font-family="JetBrains Mono">(Região constante)</text>
+      <!-- Hinge -->
+      <line x1="175" y1="180" x2="140" y2="120" stroke="#00f5ff" stroke-width="2"/>
+      <line x1="225" y1="180" x2="260" y2="120" stroke="#00f5ff" stroke-width="2"/>
+      <!-- S-S bridges -->
+      <circle cx="185" cy="165" r="3" fill="#ffe600"/>
+      <circle cx="215" cy="165" r="3" fill="#ffe600"/>
+      <line x1="185" y1="165" x2="215" y2="165" stroke="#ffe600" stroke-width="1.5" stroke-dasharray="4,2"/>
+      <text x="200" y="158" text-anchor="middle" fill="#ffe600" font-size="7" font-family="JetBrains Mono">S-S ponte dissulfureto</text>
+      <!-- Fab left -->
+      <rect x="100" y="50" width="60" height="80" rx="12" fill="#00f5ff33" stroke="#00f5ff" stroke-width="1.5">
+        <animate attributeName="y" values="50;44;50" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <text x="130" y="90" text-anchor="middle" fill="#00f5ff" font-size="11" font-family="JetBrains Mono">Fab</text>
+      <text x="130" y="108" text-anchor="middle" fill="#7a9cbf" font-size="7.5" font-family="JetBrains Mono">Região variável</text>
+      <text x="130" y="120" text-anchor="middle" fill="#7a9cbf" font-size="7.5" font-family="JetBrains Mono">(CDR - antígeno)</text>
+      <!-- Fab right -->
+      <rect x="240" y="50" width="60" height="80" rx="12" fill="#00f5ff33" stroke="#00f5ff" stroke-width="1.5">
+        <animate attributeName="y" values="50;44;50" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+      </rect>
+      <text x="270" y="90" text-anchor="middle" fill="#00f5ff" font-size="11" font-family="JetBrains Mono">Fab</text>
+      <!-- Labels -->
+      <text x="60" y="90" fill="#ff6a00" font-size="9" font-family="JetBrains Mono">Cadeia</text>
+      <text x="60" y="102" fill="#ff6a00" font-size="9" font-family="JetBrains Mono">Leve (L)</text>
+      <text x="330" y="90" fill="#ff6a00" font-size="9" font-family="JetBrains Mono">Cadeia</text>
+      <text x="330" y="102" fill="#ff6a00" font-size="9" font-family="JetBrains Mono">Leve (L)</text>
+      <text x="148" y="155" fill="#b400ff" font-size="9" font-family="JetBrains Mono">Cadeia</text>
+      <text x="148" y="167" fill="#b400ff" font-size="9" font-family="JetBrains Mono">Pesada (H)</text>
+    </svg>
+    <div class="molecule-caption">🛡️ Estrutura do anticorpo em forma de "Y" — Fab: ligação ao antigénio | Fc: efetora imune | S-S: pontes dissulfureto</div>
+  </div>
+
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin:30px 0 20px;" class="section-block">📊 AS 5 CLASSES DE IMUNOGLOBULINAS</h3>
+
+  <table class="compare-table section-block">
+    <tr>
+      <th>CLASSE</th>
+      <th>% NO SORO</th>
+      <th>FUNÇÃO PRINCIPAL</th>
+      <th>SIGNIFICADO DIAGNÓSTICO</th>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-green);font-weight:700">IgG</td>
+      <td>75–80%</td>
+      <td>Protecção a longo prazo, atravessa placenta (imunidade neonatal)</td>
+      <td class="good">Infecção passada, vacinação, infecção crónica</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-pink);font-weight:700">IgM</td>
+      <td>5–10%</td>
+      <td>1ª resposta imune, activa complemento eficientemente</td>
+      <td class="good" style="color:var(--neon-pink)">INFECÇÃO AGUDA/RECENTE — aparece 1ª</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-yellow);font-weight:700">IgA</td>
+      <td>15%</td>
+      <td>Mucosas (saliva, lágrimas, colostro, trato GI/respiratório)</td>
+      <td class="mid">Infecções respiratórias/GI, coelíaca</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-orange);font-weight:700">IgE</td>
+      <td>&lt;0.01%</td>
+      <td>Alergia, resposta a parasitas (activa mastócitos/basófilos)</td>
+      <td>Alergias, asma, atopia, helmintíases</td>
+    </tr>
+    <tr>
+      <td style="color:var(--neon-cyan);font-weight:700">IgD</td>
+      <td>&lt;1%</td>
+      <td>Receptor de linfócito B imaturo — função ainda em estudo</td>
+      <td class="bad">Relevância clínica limitada</td>
+    </tr>
+  </table>
+</div>
+
+<!-- JANELA IMUNOLÓGICA -->
+<div class="section" id="soro-janela">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">⏳ JANELA IMUNOLÓGICA — O CONCEITO MAIS IMPORTANTE EM SOROLOGIA</h3>
+
+  <div class="story-intro section-block" style="border-color:#00ff8833;">
+    <p class="story-text">
+      Imagina que o vírus entra no teu corpo hoje. 
+      Mas o teu sistema imune <em>demora dias a semanas</em> para produzir anticorpos detectáveis. 
+      Durante este tempo — a <span class="green">janela imunológica</span> (ou <em>período de janela</em>) — 
+      o teste serológico é <strong>NEGATIVO</strong> mesmo com infecção activa. 
+      Isto é crucial: um ELISA negativo <em>não exclui</em> infecção recente!
+    </p>
+  </div>
+
+  <div class="lab-panel section-block" style="border-color:var(--neon-green);box-shadow:var(--glow-green);">
+    <h3 style="color:var(--neon-green)">SIMULADOR JANELA IMUNOLÓGICA</h3>
+    <div class="slider-group">
+      <div class="slider-item">
+        <label>DIAS PÓS-INFECÇÃO: <span class="val" id="days-val">14</span></label>
+        <input type="range" min="0" max="180" value="14" id="days-slider" oninput="updateWindowSim()">
+      </div>
+      <div class="slider-item">
+        <label>PATOGÉNEO: <span class="val" id="pathogen-val">HIV</span></label>
+        <select id="pathogen-select" onchange="updateWindowSim()" style="background:#0a1628;border:1px solid var(--neon-green);color:var(--neon-green);padding:6px;border-radius:6px;font-family:'JetBrains Mono',monospace;width:100%">
+          <option value="hiv">HIV</option>
+          <option value="hbv">Hepatite B</option>
+          <option value="hcv">Hepatite C</option>
+          <option value="sars">SARS-CoV-2</option>
+          <option value="dengue">Dengue</option>
+          <option value="sifilis">Sífilis</option>
+        </select>
+      </div>
+    </div>
+    <canvas id="window-graph" height="180" style="width:100%;border-radius:8px;background:#030810;margin-bottom:12px;"></canvas>
+    <div class="lab-result" id="window-result"></div>
+  </div>
+</div>
+
+<!-- TESTES SOROLÓGICOS -->
+<div class="section" id="soro-testes">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🔬 TIPOS DE TESTES SOROLÓGICOS</h3>
+
+  <div class="timeline section-block">
+    <div class="tl-item">
+      <div class="tl-dot green">🏆</div>
+      <div class="tl-content">
+        <div class="tl-step">TÉCNICA 1</div>
+        <h4>WESTERN BLOT (Imunoblot)</h4>
+        <p>
+          Proteínas virais separadas por <em>SDS-PAGE</em> (electroforese em gel de poliacrilamida com SDS — dodecilsulfato de sódio) por peso molecular → transferidas para membrana de nitrocelulose → incubação com soro do doente → anticorpos ligam às bandas correspondentes → revelação com anticorpo secundário conjugado. 
+          <br><br>
+          <span style="color:var(--neon-green)">Gold standard confirmatório para HIV.</span> 
+          Bandas específicas: p24, gp41, gp120, gp160 — cada uma confirma resposta contra proteína viral específica.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot cyan">⚡</div>
+      <div class="tl-content">
+        <div class="tl-step">TÉCNICA 2</div>
+        <h4>TESTE RÁPIDO (Lateral Flow / Imunocromatografia)</h4>
+        <p>
+          Membrana de nitrocelulose com zona de conjugado (anticorpo + ouro coloidal), zona T (Test) e zona C (Control). 
+          Amostra migra por capilaridade → se antigénio/anticorpo presente → linha T aparece. 
+          Linha C sempre aparece (valida o teste). 
+          <span style="color:var(--neon-yellow)">Resultado em 15–30 minutos sem equipamento.</span>
+          <br><br>
+          Exemplos: teste rápido HIV, COVID-19 Ag, malária (HRP2), sífilis RPR.
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot pink">🌟</div>
+      <div class="tl-content">
+        <div class="tl-step">TÉCNICA 3</div>
+        <h4>IMUNOFLUORESCÊNCIA (IFA / IIFT)</h4>
+        <p>
+          Células ou tecidos com antigénio em lâmina → incubação com soro do doente → anticorpo secundário conjugado com <em>fluoresceína (FITC)</em> ou <em>rodamina</em> → visualização em microscópio de fluorescência. 
+          <br><br>
+          <span style="color:var(--neon-pink)">Usado para: ANA (anticorpos antinucleares — lúpus), ANCA (vasculites), anti-dsDNA.</span>
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot yellow">🔬</div>
+      <div class="tl-content">
+        <div class="tl-step">TÉCNICA 4</div>
+        <h4>QUIMIOLUMINESCÊNCIA (CLIA/ECLIA)</h4>
+        <p>
+          Variante automatizada do ELISA usando luminescência em vez de cor. 
+          Sinal medido em RLU (<em>Relative Light Units</em>). 
+          <span style="color:var(--neon-yellow)">Mais sensível que ELISA colorimétrico.</span> 
+          Usado em plataformas automatizadas de grandes laboratórios (Roche Cobas, Abbott Architect). 
+          Ideal para triagem em alta escala (bancos de sangue, rastreio pré-natal).
+        </p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot purple">⚗️</div>
+      <div class="tl-content">
+        <div class="tl-step">TÉCNICA 5</div>
+        <h4>HEMAGLUTINAÇÃO / FIXAÇÃO DO COMPLEMENTO</h4>
+        <p>
+          Técnicas clássicas (pré-ELISA). 
+          <em>Hemaglutinação</em>: anticorpos aglutinaram hemácias revestidas com antigénio — padrão em "botão" = positivo. 
+          <em>Fixação do complemento</em>: usado historicamente para sífilis (VDRL, RPR — ainda em uso!) e alguns vírus. 
+          <span style="color:var(--neon-purple)">VDRL: detecta anticorpos anti-cardiolipina em sífilis.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARAÇÃO PCR vs ELISA vs SOROLOGIA -->
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin:30px 0 20px;" class="section-block">⚖️ PCR vs ELISA vs SOROLOGIA — COMPARAÇÃO FINAL</h3>
+
+  <table class="compare-table section-block">
+    <tr>
+      <th>CRITÉRIO</th>
+      <th style="color:var(--neon-cyan)">PCR</th>
+      <th style="color:var(--neon-pink)">ELISA</th>
+      <th style="color:var(--neon-green)">SOROLOGIA</th>
+    </tr>
+    <tr><td>O que detecta?</td><td class="good">DNA/RNA (patogéneo)</td><td class="mid">Ag ou Ab proteicos</td><td class="mid">Anticorpos do hospedeiro</td></tr>
+    <tr><td>Janela diagnóstica</td><td class="good">Dias 1-7 (muito precoce)</td><td class="mid">Semanas (Ag rápido)</td><td class="bad">Semanas (necessita resposta imune)</td></tr>
+    <tr><td>Sensibilidade</td><td class="good">Muito alta (fg de DNA)</td><td class="good">Alta</td><td class="mid">Moderada-alta</td></tr>
+    <tr><td>Especificidade</td><td class="good">Muito alta</td><td class="good">Alta (se anticorpos monoclonais)</td><td class="mid">Variável (reação cruzada possível)</td></tr>
+    <tr><td>Quantificação</td><td class="good">Sim (qPCR — carga viral)</td><td class="good">Sim (curva padrão)</td><td class="mid">Título de anticorpos (diluição)</td></tr>
+    <tr><td>Custo</td><td class="bad">Alto</td><td class="mid">Moderado</td><td class="good">Baixo (testes rápidos)</td></tr>
+    <tr><td>Equipamento</td><td class="bad">Termociclador, BSL-2</td><td class="mid">Leitor de ELISA</td><td class="good">Mínimo (lateral flow: zero)</td></tr>
+    <tr><td>Infecção activa?</td><td class="good">Sim (directo)</td><td class="mid">Ag=sim; Ab=indirecto</td><td class="bad">Não directamente</td></tr>
+    <tr><td>Infecção passada?</td><td class="bad">Não</td><td class="mid">Parcialmente (IgG)</td><td class="good">Sim (IgG tardio)</td></tr>
+  </table>
+</div>
+
+<!-- SOROLOGIA CLÍNICA -->
+<div class="section" id="soro-clinica">
+  <h3 style="font-family:'Orbitron',monospace;color:var(--neon-green);letter-spacing:3px;font-size:0.9rem;margin-bottom:28px;" class="section-block">🏥 SOROLOGIA NA CLÍNICA MÉDICA</h3>
+
+  <div class="concept-grid section-block">
+    <div class="concept-card">
+      <div class="cc-icon">🤰</div>
+      <h4>TRIAGEM PRÉ-NATAL</h4>
+      <p>TORCH: Toxoplasma, Rubéola, CMV, HSV. IgM = infecção activa (risco fetal). IgG = imunidade prévia (protecção). IgG negativa para rubéola → vacinar antes de gestar.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🩸</div>
+      <h4>BANCO DE SANGUE</h4>
+      <p>Triagem obrigatória: HIV Ag/Ab, HBsAg, anti-HCV, HTLV, sífilis (VDRL/RPR), Chagas (em zonas endémicas), malária. Janela residual coberta por NAT/PCR.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">💊</div>
+      <h4>SEGUIMENTO TERAPÊUTICO</h4>
+      <p>Anti-HBs após vacinação HBV: título ≥10 mUI/mL = protegido. Anti-HIV sob TARV: monitorização; se IgG persiste positivo (memória imune) mesmo com PCR negativo.</p>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🔬</div>
+      <h4>DOENÇAS AUTOIMUNES</h4>
+      <p>ANA (anti-nuclear antibodies): screening lúpus. Anti-dsDNA: específico LES. ANCA: vasculites (pANCA/cANCA). Anti-CCP: artrite reumatoide. Todos por IFA ou ELISA.</p>
+    </div>
+  </div>
+
+  <div class="info-box clinical section-block">
+    <p>
+      <strong>Algoritmo Diagnóstico HIV (OMS 2022):</strong><br><br>
+      1. ELISA 4ª geração (Ag/Ab) → <span style="color:var(--neon-pink)">Reagente</span>: vai a passo 2<br>
+      2. Segundo ELISA com diferente antigénio → <span style="color:var(--neon-pink)">Reagente</span>: vai a passo 3<br>
+      3. Teste de discriminação (HIV-1 vs HIV-2) → Resultado específico<br>
+      4. Se discordância → PCR qualitativa (NAT) decide<br><br>
+      <strong>Nunca</strong> dar diagnóstico definitivo de HIV com um só teste. 
+      Dois testes reagentes de fabricantes distintos = diagnóstico confirmatório.<br><br>
+      Referência: <em>WHO. HIV Diagnosis. Consolidated guidelines on HIV prevention, 2022</em>
+    </p>
+  </div>
+
+  <div class="info-box warning section-block">
+    <p>
+      <strong>FALSO POSITIVO SEROLÓGICO — Armadilhas Clínicas:</strong><br>
+      • Gravidez → VDRL/RPR falso positivo (anticorpos anti-cardiolipina fisiológicos)<br>
+      • LES, artrite reumatoide → VDRL positivo (sífilis biológica falsa)<br>
+      • Malária, Epstein-Barr → ELISA HIV falso positivo (em kits de 3ª geração)<br>
+      • Vacinação BCG → PPD/Mantoux positivo (reação cruzada)<br>
+      • Transfusão recente → anticorpos passivos do dador<br><br>
+      <strong>Regra de ouro:</strong> sempre confirmar resultado positivo com segundo método diferente.
+    </p>
+  </div>
+</div>
+
+<!-- SOROLOGIA QUIZ -->
+<div class="section" id="soro-quiz">
+  <div class="quiz-box section-block" style="border-color:var(--neon-green);">
+    <h3 style="color:var(--neon-green)">⚡ QUIZ — CAPÍTULO 3 · SOROLOGIA</h3>
+    <div id="sq1">
+      <p class="quiz-question">1. Um doente é exposto ao HIV. 10 dias depois, faz ELISA de 4ª geração. Resultado: negativo. O que deve concluir?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq1')">A) O doente não foi infectado</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','sq1')">B) Pode estar na janela imunológica — repetir em 3-6 semanas ou fazer PCR qualitativa</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq1')">C) O ELISA está com defeito</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq1')">D) Resultado definitivamente negativo</div>
+      </div>
+      <div class="quiz-feedback" id="sq1-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="sq2">
+      <p class="quiz-question">2. Uma grávida tem IgM positiva para Toxoplasma e IgG negativa. O que isto indica?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','sq2')">A) Infecção primária aguda — alto risco fetal, requer tratamento urgente</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq2')">B) Imunidade prévia — sem risco fetal</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq2')">C) Infecção antiga, sem relevância</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq2')">D) Falso positivo, sem preocupação</div>
+      </div>
+      <div class="quiz-feedback" id="sq2-fb"></div>
+    </div>
+    <hr style="border-color:#ffffff10;margin:20px 0;">
+    <div id="sq3">
+      <p class="quiz-question">3. No Western Blot para HIV, o que significa a presença de bandas em p24 e gp120?</p>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq3')">A) Contaminação do teste</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq3')">B) Falso positivo por outras infecções</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'correct','sq3')">C) Anticorpos específicos contra proteínas virais do HIV — confirma infecção</div>
+        <div class="quiz-opt" onclick="checkQuiz(this,'wrong','sq3')">D) Imunidade vacinal apenas</div>
+      </div>
+      <div class="quiz-feedback" id="sq3-fb"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SUMÁRIO FINAL -->
+<div class="section" style="max-width:960px;margin:0 auto 40px;padding:0 24px;">
+  <div class="story-intro section-block" style="border-color:#ffe60033;background:linear-gradient(135deg,#1a1a0a88,#0a1a0a88);">
+    <p class="story-text" style="text-align:center;font-size:1.1rem;line-height:2.2;">
+      <span style="color:var(--neon-cyan);font-family:'Orbitron',monospace;font-size:0.8rem;letter-spacing:3px;">🧬 PCR</span> — encontra o patogéneo pelo seu DNA/RNA.<br>
+      Usa calor para separar, primers para especificidade, polimerase para copiar.<br><br>
+      <span style="color:var(--neon-pink);font-family:'Orbitron',monospace;font-size:0.8rem;letter-spacing:3px;">🔬 ELISA</span> — detecta proteínas (antigénios ou anticorpos).<br>
+      Usa anticorpos como iscas, enzimas como reveladoras.<br><br>
+      <span style="color:var(--neon-green);font-family:'Orbitron',monospace;font-size:0.8rem;letter-spacing:3px;">🛡️ SOROLOGIA</span> — lê a memória do sistema imune.<br>
+      IgM = recente. IgG = memória. Janela imunológica = período perigoso de falso negativo.<br><br>
+      <em style="color:var(--neon-yellow)">Juntos, estes três métodos formam o triângulo diagnóstico da medicina moderna.</em>
+    </p>
+  </div>
+</div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">
+    UNIVERSIDADE LICUNGO<br>
+    Faculdade de Medicina · 2º Ano<br>
+    Diagnóstico Laboratorial — Módulo Molecular
+  </div>
+  <div class="footer-year">© 2026 · DemilMed-UL · UL = UNIVERSIDADE LICUNGO · ANO 2026 · 2º ANO DE MEDICINA</div>
+</footer>
+
+<!-- ════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════ -->
+<script>
+// ── PROGRESS BAR
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ── NAV
+function toggleNav() {
+  document.getElementById('nav-toggle').classList.toggle('open');
+  document.getElementById('side-nav').classList.toggle('open');
+}
+function toggleNavSub(el) {
+  el.nextElementSibling.classList.toggle('open');
+}
+function scrollTo(id) {
+  document.querySelector(id)?.scrollIntoView({behavior:'smooth'});
+}
+
+// ── INTERSECTION OBSERVER for animations
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      e.target.classList.add('vis','visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.section-block, .tl-item').forEach(el => io.observe(el));
+
+// ── PARTICLE BACKGROUND
+const pCanvas = document.getElementById('particle-bg');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+function resizeParticles() {
+  pCanvas.width = window.innerWidth;
+  pCanvas.height = window.innerHeight;
+}
+resizeParticles();
+window.addEventListener('resize', resizeParticles);
+
+for(let i=0;i<80;i++) {
+  particles.push({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    vx: (Math.random()-0.5)*0.3,
+    vy: (Math.random()-0.5)*0.3,
+    r: Math.random()*2+0.5,
+    c: [`#00f5ff`, `#00ff88`, `#ff006e`, `#ffe600`][Math.floor(Math.random()*4)],
+    a: Math.random()*0.5+0.1
+  });
+}
+
+function animParticles() {
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0||p.x>pCanvas.width) p.vx*=-1;
+    if(p.y<0||p.y>pCanvas.height) p.vy*=-1;
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    pCtx.fillStyle = p.c + Math.floor(p.a*255).toString(16).padStart(2,'0');
+    pCtx.fill();
+  });
+  // Draw connections
+  for(let i=0;i<particles.length;i++) {
+    for(let j=i+1;j<particles.length;j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if(d<120) {
+        pCtx.beginPath();
+        pCtx.moveTo(particles[i].x,particles[i].y);
+        pCtx.lineTo(particles[j].x,particles[j].y);
+        pCtx.strokeStyle = `#00f5ff${Math.floor((1-d/120)*40).toString(16).padStart(2,'0')}`;
+        pCtx.lineWidth = 0.5;
+        pCtx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ── DNA CANVAS
+const dnaCanvas = document.getElementById('dna-canvas');
+const dnaCtx = dnaCanvas.getContext('2d');
+let dnaT = 0;
+let dragDNA = false;
+let dnaRot = 0;
+let dnaLastX = 0;
+
+dnaCanvas.width = dnaCanvas.parentElement.offsetWidth;
+dnaCanvas.height = 200;
+
+dnaCanvas.addEventListener('mousedown', e => { dragDNA=true; dnaLastX=e.clientX; });
+dnaCanvas.addEventListener('mousemove', e => { if(dragDNA) { dnaRot+=(e.clientX-dnaLastX)*0.01; dnaLastX=e.clientX; }});
+dnaCanvas.addEventListener('mouseup', ()=>dragDNA=false);
+dnaCanvas.addEventListener('touchstart', e=>{ dnaLastX=e.touches[0].clientX; });
+dnaCanvas.addEventListener('touchmove', e=>{ dnaRot+=(e.touches[0].clientX-dnaLastX)*0.01; dnaLastX=e.touches[0].clientX; e.preventDefault(); },{passive:false});
+
+function drawDNA() {
+  dnaCanvas.width = dnaCanvas.parentElement.offsetWidth;
+  const W=dnaCanvas.width, H=200;
+  dnaCtx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  const amp=40, step=20, bases=18;
+  const startX = cx - (bases/2)*step;
+
+  for(let i=0;i<bases;i++) {
+    const x = startX + i*step;
+    const phase = i*0.35 + dnaT + dnaRot;
+    const y1 = cy + amp*Math.sin(phase);
+    const y2 = cy + amp*Math.sin(phase+Math.PI);
+    const r = Math.abs(Math.sin(phase));
+
+    // Backbone 1
+    if(i<bases-1) {
+      const nx=startX+(i+1)*step;
+      const ny1=cy+amp*Math.sin((i+1)*0.35+dnaT+dnaRot);
+      const ny2=cy+amp*Math.sin((i+1)*0.35+dnaT+dnaRot+Math.PI);
+      dnaCtx.beginPath();
+      dnaCtx.moveTo(x,y1); dnaCtx.lineTo(nx,ny1);
+      dnaCtx.strokeStyle='#00f5ff99'; dnaCtx.lineWidth=2.5; dnaCtx.stroke();
+      dnaCtx.beginPath();
+      dnaCtx.moveTo(x,y2); dnaCtx.lineTo(nx,ny2);
+      dnaCtx.strokeStyle='#ff006e99'; dnaCtx.lineWidth=2.5; dnaCtx.stroke();
+    }
+
+    // Base pair (rungs)
+    const depth = Math.cos(phase);
+    if(depth>-0.3) {
+      // Primer target region = bases 5-12 → yellow
+      const isPrimer = (i>=4&&i<=5) || (i>=12&&i<=13);
+      const isTarget = i>5&&i<12;
+      const baseColor = isPrimer ? '#ff006e' : isTarget ? '#ffe600' : '#ffffff33';
+      dnaCtx.beginPath();
+      dnaCtx.moveTo(x,y1); dnaCtx.lineTo(x,y2);
+      dnaCtx.strokeStyle=baseColor;
+      dnaCtx.lineWidth = isPrimer?2.5:isTarget?2:1;
+      dnaCtx.globalAlpha = 0.3+0.7*Math.abs(depth);
+      dnaCtx.stroke();
+      dnaCtx.globalAlpha=1;
+    }
+
+    // Nucleotide dots
+    dnaCtx.beginPath();
+    dnaCtx.arc(x,y1,3.5,0,Math.PI*2);
+    dnaCtx.fillStyle='#00f5ff';
+    dnaCtx.fill();
+    dnaCtx.beginPath();
+    dnaCtx.arc(x,y2,3.5,0,Math.PI*2);
+    dnaCtx.fillStyle='#ff006e';
+    dnaCtx.fill();
+  }
+  dnaT+=0.025;
+  requestAnimationFrame(drawDNA);
+}
+drawDNA();
+
+// ── PCR ANIMATION (step by step)
+const pcrCanvas = document.getElementById('pcr-canvas');
+const pcrCtx = pcrCanvas.getContext('2d');
+let pcrStep = 0;
+
+function resizePCR() {
+  pcrCanvas.width = pcrCanvas.parentElement.offsetWidth;
+  pcrCanvas.height = document.getElementById('pcr-anim').offsetHeight;
+  drawPCRStep();
+}
+resizePCR();
+window.addEventListener('resize', resizePCR);
+
+const pcrPhases = [
+  { label:'FASE 0: ESTADO INICIAL — DNA dupla hélice', color:'#00f5ff' },
+  { label:'FASE 1: DESNATURAÇÃO (~95°C) — cadeias separadas', color:'#ff006e' },
+  { label:'FASE 2: ANNEALING (~60°C) — primers hibridizam', color:'#ffe600' },
+  { label:'FASE 3: EXTENSÃO (72°C) — novas cadeias sintetizadas', color:'#00ff88' },
+  { label:'CICLO COMPLETO: 2 cópias → repete 30-40 vezes!', color:'#b400ff' }
+];
+
+function nextPCRStep() {
+  pcrStep = (pcrStep+1) % pcrPhases.length;
+  document.getElementById('pcr-phase-label').textContent = pcrPhases[pcrStep].label;
+  document.getElementById('pcr-phase-label').style.color = pcrPhases[pcrStep].color;
+  drawPCRStep();
+}
+
+function drawPCRStep() {
+  const W=pcrCanvas.width, H=pcrCanvas.height;
+  pcrCtx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+
+  if(pcrStep===0) {
+    // Double helix
+    drawSimpleDNA(cx,cy,W,H,'double');
+  } else if(pcrStep===1) {
+    // Denaturation - two separated strands
+    drawSimpleDNA(cx,cy,W,H,'separated');
+  } else if(pcrStep===2) {
+    // Annealing - primers attached
+    drawSimpleDNA(cx,cy,W,H,'primers');
+  } else if(pcrStep===3) {
+    // Extension - new strands
+    drawSimpleDNA(cx,cy,W,H,'extension');
+  } else {
+    // Two complete copies
+    drawSimpleDNA(cx,cy,W,H,'copies');
+  }
+}
+
+function drawSimpleDNA(cx,cy,W,H,mode) {
+  const n=12, step=Math.min(30,(W-100)/n), amp=35;
+  const sx = cx - (n/2)*step;
+
+  pcrCtx.save();
+
+  if(mode==='double') {
+    // Draw double helix
+    for(let i=0;i<n;i++) {
+      const x=sx+i*step;
+      const t = i*0.5;
+      const y1=cy+amp*Math.sin(t);
+      const y2=cy-amp*Math.sin(t);
+      if(i<n-1) {
+        const x2=sx+(i+1)*step, t2=(i+1)*0.5;
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,y1); pcrCtx.lineTo(x2,cy+amp*Math.sin(t2));
+        pcrCtx.strokeStyle='#00f5ffaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,y2); pcrCtx.lineTo(x2,cy-amp*Math.sin(t2));
+        pcrCtx.strokeStyle='#ff006eaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+      }
+      pcrCtx.beginPath(); pcrCtx.moveTo(x,y1); pcrCtx.lineTo(x,y2);
+      pcrCtx.strokeStyle='#ffffff22'; pcrCtx.lineWidth=1; pcrCtx.stroke();
+      circle(pcrCtx,x,y1,4,'#00f5ff');
+      circle(pcrCtx,x,y2,4,'#ff006e');
+    }
+    label(pcrCtx,cx,cy-amp-20,'5\' ────────────── 3\'','#00f5ff',W);
+    label(pcrCtx,cx,cy+amp+20,'3\' ────────────── 5\'','#ff006e',W);
+  }
+
+  else if(mode==='separated') {
+    // Heat - separate into 2 strands
+    const sep=55;
+    pcrCtx.font='bold 14px Orbitron'; pcrCtx.fillStyle='#ff006e'; pcrCtx.textAlign='center';
+    pcrCtx.fillText('🔥 95°C — PONTES H QUEBRADAS', cx, 30);
+    for(let i=0;i<n;i++) {
+      const x=sx+i*step;
+      if(i<n-1){ const x2=sx+(i+1)*step;
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy-sep); pcrCtx.lineTo(x2,cy-sep);
+        pcrCtx.strokeStyle='#00f5ffaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+sep); pcrCtx.lineTo(x2,cy+sep);
+        pcrCtx.strokeStyle='#ff006eaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+      }
+      circle(pcrCtx,x,cy-sep,4,'#00f5ff');
+      circle(pcrCtx,x,cy+sep,4,'#ff006e');
+    }
+    label(pcrCtx,cx,cy-sep-18,'Cadeia 1 (molde)','#00f5ff',W);
+    label(pcrCtx,cx,cy+sep+18,'Cadeia 2 (molde)','#ff006e',W);
+  }
+
+  else if(mode==='primers') {
+    const sep=55;
+    pcrCtx.font='bold 13px Orbitron'; pcrCtx.fillStyle='#ffe600'; pcrCtx.textAlign='center';
+    pcrCtx.fillText('❄️ ~60°C — PRIMERS HIBRIDIZAM', cx, 30);
+    for(let i=0;i<n;i++) {
+      const x=sx+i*step;
+      if(i<n-1){ const x2=sx+(i+1)*step;
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy-sep); pcrCtx.lineTo(x2,cy-sep);
+        pcrCtx.strokeStyle='#00f5ffaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+sep); pcrCtx.lineTo(x2,cy+sep);
+        pcrCtx.strokeStyle='#ff006eaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+      }
+      circle(pcrCtx,x,cy-sep,4,'#00f5ff');
+      circle(pcrCtx,x,cy+sep,4,'#ff006e');
+    }
+    // Primer forward (bottom of top strand)
+    const pfX=sx+step;
+    for(let i=0;i<3;i++) {
+      const x=pfX+i*step;
+      if(i<2) { pcrCtx.beginPath(); pcrCtx.moveTo(x,cy-sep+12); pcrCtx.lineTo(x+step,cy-sep+12);
+        pcrCtx.strokeStyle='#ffe600cc'; pcrCtx.lineWidth=3; pcrCtx.stroke(); }
+      circle(pcrCtx,x,cy-sep+12,5,'#ffe600');
+    }
+    // Primer reverse
+    const prX=sx+(n-4)*step;
+    for(let i=0;i<3;i++) {
+      const x=prX+i*step;
+      if(i<2) { pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+sep-12); pcrCtx.lineTo(x+step,cy+sep-12);
+        pcrCtx.strokeStyle='#b400ffcc'; pcrCtx.lineWidth=3; pcrCtx.stroke(); }
+      circle(pcrCtx,x,cy+sep-12,5,'#b400ff');
+    }
+    label(pcrCtx,pfX+step,cy-sep+28,'Primer Forward','#ffe600',W);
+    label(pcrCtx,prX+step,cy+sep-28,'Primer Reverse','#b400ff',W);
+  }
+
+  else if(mode==='extension') {
+    const sep=55;
+    pcrCtx.font='bold 13px Orbitron'; pcrCtx.fillStyle='#00ff88'; pcrCtx.textAlign='center';
+    pcrCtx.fillText('⚙️ 72°C — Taq POLIMERASE SINTETIZA', cx, 30);
+    for(let i=0;i<n;i++) {
+      const x=sx+i*step;
+      if(i<n-1){ const x2=sx+(i+1)*step;
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy-sep); pcrCtx.lineTo(x2,cy-sep);
+        pcrCtx.strokeStyle='#00f5ffaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        // New strand growing
+        if(i<8) {
+          pcrCtx.beginPath(); pcrCtx.moveTo(x,cy-sep+14); pcrCtx.lineTo(x2,cy-sep+14);
+          pcrCtx.strokeStyle='#00ff88aa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        }
+        pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+sep); pcrCtx.lineTo(x2,cy+sep);
+        pcrCtx.strokeStyle='#ff006eaa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        if(i>3) {
+          pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+sep-14); pcrCtx.lineTo(x2,cy+sep-14);
+          pcrCtx.strokeStyle='#00ff88aa'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        }
+      }
+      circle(pcrCtx,x,cy-sep,4,'#00f5ff');
+      if(i<9) circle(pcrCtx,x,cy-sep+14,4,'#00ff88');
+      circle(pcrCtx,x,cy+sep,4,'#ff006e');
+      if(i>3) circle(pcrCtx,x,cy+sep-14,4,'#00ff88');
+    }
+    // Taq enzyme icon
+    pcrCtx.font='20px serif'; pcrCtx.fillText('⚡',sx+8*step,cy-sep+14);
+    label(pcrCtx,cx,cy,'← Novas cadeias sendo sintetizadas →','#00ff88',W);
+  }
+
+  else if(mode==='copies') {
+    pcrCtx.font='bold 13px Orbitron'; pcrCtx.fillStyle='#b400ff'; pcrCtx.textAlign='center';
+    pcrCtx.fillText('✅ 2 CÓPIAS IDÊNTICAS PRODUZIDAS!', cx, 25);
+    const offsets=[-65,65];
+    offsets.forEach((off,oi) => {
+      const colors=[['#00f5ff','#00ff88'],['#ff006e','#00ff88']];
+      for(let i=0;i<n;i++) {
+        const x=sx+i*step;
+        if(i<n-1){ const x2=sx+(i+1)*step;
+          pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+off-15); pcrCtx.lineTo(x2,cy+off-15);
+          pcrCtx.strokeStyle=colors[oi][0]+'99'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+          pcrCtx.beginPath(); pcrCtx.moveTo(x,cy+off+15); pcrCtx.lineTo(x2,cy+off+15);
+          pcrCtx.strokeStyle=colors[oi][1]+'99'; pcrCtx.lineWidth=2; pcrCtx.stroke();
+        }
+        circle(pcrCtx,x,cy+off-15,3.5,colors[oi][0]);
+        circle(pcrCtx,x,cy+off+15,3.5,colors[oi][1]);
+      }
+    });
+    label(pcrCtx,cx,cy+110,'1 → 2 → 4 → 8 → ... → 2ⁿ cópias','#b400ff',W);
+  }
+
+  pcrCtx.restore();
+}
+
+function circle(ctx,x,y,r,c) {
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle=c; ctx.fill();
+}
+function label(ctx,x,y,txt,c,W) {
+  ctx.save();
+  ctx.font='11px JetBrains Mono'; ctx.fillStyle=c; ctx.textAlign='center';
+  ctx.globalAlpha=0.85;
+  ctx.fillText(txt,Math.min(Math.max(x,80),W-80),y);
+  ctx.restore();
+}
+
+drawPCRStep();
+
+// ── PCR LAB SLIDERS
+function updatePCRLab() {
+  const sliders = document.querySelectorAll('#pcr-lab input[type=range]');
+  const n = parseInt(sliders[0].value);
+  const n0 = parseInt(sliders[1].value);
+  const eff = parseInt(sliders[2].value)/100;
+  const tm = parseInt(sliders[3].value);
+
+  document.getElementById('cycles-val').textContent = n;
+  document.getElementById('n0-val').textContent = n0;
+  document.getElementById('eff-val').textContent = Math.round(eff*100);
+  document.getElementById('tm-val').textContent = tm;
+
+  const copies = n0 * Math.pow(1+eff, n);
+  const logVal = Math.log10(copies).toFixed(2);
+
+  document.getElementById('r-copies').textContent = copies.toExponential(2);
+  document.getElementById('r-log').textContent = logVal;
+
+  const annealEl = document.getElementById('r-anneal');
+  if(tm < 50) { annealEl.textContent = '❌ Muito baixa — inespecificidade!'; annealEl.className='r-warn'; }
+  else if(tm > 70) { annealEl.textContent = '❌ Muito alta — sem hibridização!'; annealEl.className='r-warn'; }
+  else { annealEl.textContent = '✅ Óptima (' + tm + '°C)'; annealEl.className='r-value'; }
+
+  const sensEl = document.getElementById('r-sens');
+  if(copies > 1e9) { sensEl.textContent = '✅ Excelente — visível em gel'; sensEl.className='r-value'; }
+  else if(copies > 1e6) { sensEl.textContent = '🟡 Boa'; sensEl.className=''; sensEl.style.color='var(--neon-yellow)'; }
+  else { sensEl.textContent = '❌ Insuficiente para deteção'; sensEl.className='r-warn'; }
+
+  // Draw graph
+  drawPCRGraph(n, n0, eff);
+}
+
+function drawPCRGraph(maxN, n0, eff) {
+  const c = document.getElementById('pcr-graph');
+  c.width = c.parentElement.offsetWidth;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=150;
+  ctx.clearRect(0,0,W,H);
+
+  const data = [];
+  for(let i=0;i<=maxN;i++) {
+    data.push(Math.log10(n0 * Math.pow(1+eff, i)));
+  }
+  const maxV = Math.max(...data);
+
+  // Grid
+  ctx.strokeStyle='#ffffff10'; ctx.lineWidth=1;
+  for(let i=0;i<5;i++) {
+    const y=H-(i/4)*H*0.85-10;
+    ctx.beginPath(); ctx.moveTo(40,y); ctx.lineTo(W-10,y); ctx.stroke();
+    ctx.fillStyle='#ffffff30'; ctx.font='9px JetBrains Mono'; ctx.textAlign='right';
+    ctx.fillText((i/4*maxV).toFixed(0), 36, y+4);
+  }
+
+  // Curve
+  ctx.beginPath();
+  data.forEach((v,i) => {
+    const x=40+(i/maxN)*(W-50);
+    const y=H-(v/maxV)*H*0.85-10;
+    i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#00f5ff'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // Fill
+  ctx.lineTo(40+(maxN/maxN)*(W-50), H-10);
+  ctx.lineTo(40, H-10);
+  ctx.closePath();
+  ctx.fillStyle='#00f5ff15'; ctx.fill();
+
+  ctx.fillStyle='#7a9cbf'; ctx.font='9px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('Ciclos →', W/2, H-2);
+  ctx.save(); ctx.translate(14, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('log₁₀(cópias)', 0, 0); ctx.restore();
+}
+
+updatePCRLab();
+
+// ── ELISA PLATE
+function buildElisaPlate() {
+  const plate = document.getElementById('elisa-plate');
+  plate.innerHTML='';
+  for(let r=0;r<8;r++) {
+    for(let c=0;c<12;c++) {
+      const w = document.createElement('div');
+      w.className='well';
+      w.dataset.row=r; w.dataset.col=c;
+      // First col = blank
+      if(c===0) w.classList.add('blank');
+      // Default pattern
+      else if(r<3 && c>=1 && c<=6) w.classList.add('positive');
+      else if(r===7) w.classList.add('blank');
+      else w.classList.add('negative');
+      w.addEventListener('click', ()=>{
+        if(w.classList.contains('positive')) { w.classList.remove('positive'); w.classList.add('negative'); }
+        else if(w.classList.contains('negative')) { w.classList.remove('negative'); w.classList.add('blank'); }
+        else { w.classList.remove('blank'); w.classList.add('positive'); }
+        updateElisaResult();
+      });
+      plate.appendChild(w);
+    }
+  }
+  updateElisaResult();
+}
+
+function updateELISA() {
+  const dil = document.getElementById('elisa-plate') ? 
+    document.querySelectorAll('#elisa-lab input[type=range]')[0]?.value : 200;
+  const abConc = document.querySelectorAll('#elisa-lab input[type=range]')[1]?.value;
+
+  if(document.getElementById('dilution-val')) document.getElementById('dilution-val').textContent = dil || 200;
+  if(document.getElementById('ab-conc-val')) document.getElementById('ab-conc-val').textContent = abConc || 50;
+
+  // Recalculate plate based on dilution and Ab concentration
+  const plate = document.getElementById('elisa-plate');
+  if(!plate) return;
+  const wells = plate.querySelectorAll('.well');
+  wells.forEach((w,i) => {
+    const col = i%12;
+    const row = Math.floor(i/12);
+    if(col===0 || row===7) return; // keep blank
+    const dilFactor = (parseInt(dil||200));
+    const abC = parseInt(abConc||50);
+    // Simulate: high Ab + low dilution = more positives
+    const signal = abC / (col * dilFactor/200 * 2);
+    const cutoff = 8;
+    w.className='well';
+    if(signal > cutoff) w.classList.add('positive');
+    else w.classList.add('negative');
+  });
+  updateElisaResult();
+}
+
+function updateElisaResult() {
+  const wells = document.querySelectorAll('#elisa-plate .well');
+  let pos=0, neg=0, blank=0;
+  wells.forEach(w => {
+    if(w.classList.contains('positive')) pos++;
+    else if(w.classList.contains('negative')) neg++;
+    else blank++;
+  });
+  const total = pos+neg;
+  const pct = total>0 ? (pos/total*100).toFixed(1) : 0;
+
+  const res = document.getElementById('elisa-result');
+  if(res) res.innerHTML = `
+    <span class="r-label">Poços positivos: </span><span class="r-value">${pos}</span> &nbsp;|&nbsp;
+    <span class="r-label">Negativos: </span><span style="color:var(--neon-cyan)">${neg}</span> &nbsp;|&nbsp;
+    <span class="r-label">Brancos: </span><span style="color:var(--text-dim)">${blank}</span><br>
+    <span class="r-label">Taxa de Reactividade: </span><span class="${pct>20?'r-value':'r-warn'}">${pct}%</span><br>
+    <span class="r-label">Interpretação: </span><span class="${pos>5?'r-value':'r-warn'}">${pos>5?'🟡 Amostra REAGENTE — confirmar!':'🔵 Amostra NÃO reagente'}</span>
+  `;
+}
+
+buildElisaPlate();
+
+// ── WINDOW SIMULATOR
+const pathogens = {
+  hiv:    { name:'HIV', igmStart:18, igmPeak:45, igmEnd:120, iggStart:25, iggPeak:90, p24Start:10, p24End:35 },
+  hbv:    { name:'Hepatite B', igmStart:30, igmPeak:60, igmEnd:150, iggStart:50, iggPeak:180, p24Start:14, p24End:60 },
+  hcv:    { name:'Hepatite C', igmStart:45, igmPeak:90, igmEnd:200, iggStart:60, iggPeak:180, p24Start:null },
+  sars:   { name:'SARS-CoV-2', igmStart:7, igmPeak:21, igmEnd:90, iggStart:14, iggPeak:60, p24Start:1, p24End:14 },
+  dengue: { name:'Dengue', igmStart:4, igmPeak:14, igmEnd:90, iggStart:7, iggPeak:60, p24Start:1, p24End:9 },
+  sifilis:{ name:'Sífilis', igmStart:21, igmPeak:60, igmEnd:180, iggStart:35, iggPeak:180, p24Start:null }
+};
+
+function updateWindowSim() {
+  const days = parseInt(document.getElementById('days-slider').value);
+  const pathKey = document.getElementById('pathogen-select').value;
+  const p = pathogens[pathKey];
+
+  document.getElementById('days-val').textContent = days;
+  document.getElementById('pathogen-val').textContent = p.name;
+
+  // Draw graph
+  const c = document.getElementById('window-graph');
+  c.width = c.parentElement.offsetWidth;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=180;
+  ctx.clearRect(0,0,W,H);
+
+  const maxDays=180;
+  const toX = d => 50 + (d/maxDays)*(W-60);
+  const toY = (v,ch=H-40) => H-30 - v*ch;
+
+  // Grid
+  ctx.strokeStyle='#ffffff10'; ctx.lineWidth=1;
+  [0,25,50,75,100].forEach(pct => {
+    const y=toY(pct/100);
+    ctx.beginPath(); ctx.moveTo(50,y); ctx.lineTo(W-10,y); ctx.stroke();
+  });
+  [0,30,60,90,120,150,180].forEach(d => {
+    const x=toX(d);
+    ctx.beginPath(); ctx.moveTo(x,10); ctx.lineTo(x,H-30); ctx.stroke();
+    ctx.fillStyle='#ffffff30'; ctx.font='9px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(d+'d', x, H-15);
+  });
+
+  const gauss = (x,mu,sig) => Math.exp(-0.5*((x-mu)/sig)**2);
+
+  // IgM curve
+  const igmArr = Array.from({length:maxDays+1},(_,d) => {
+    if(d<p.igmStart) return 0;
+    if(d>p.igmEnd) return Math.max(0,0.2*gauss(d,p.igmPeak,40));
+    return gauss(d,p.igmPeak,25);
+  });
+  drawCurve(ctx,igmArr,maxDays,W,H,'#ff006e','IgM');
+
+  // IgG curve
+  const iggArr = Array.from({length:maxDays+1},(_,d) => {
+    if(d<p.iggStart) return 0;
+    return Math.min(1,0.05*(d-p.iggStart));
+  });
+  drawCurve(ctx,iggArr,maxDays,W,H,'#00ff88','IgG');
+
+  // Ag/RNA curve (p24 or equivalent)
+  if(p.p24Start) {
+    const agArr = Array.from({length:maxDays+1},(_,d) => {
+      if(d<p.p24Start) return 0;
+      if(d>p.p24End) return 0;
+      const mid=(p.p24Start+p.p24End)/2;
+      return gauss(d,mid,(p.p24End-p.p24Start)/4);
+    });
+    drawCurve(ctx,agArr,maxDays,W,H,'#ffe600','Ag/RNA');
+  }
+
+  // Current day line
+  const curX=toX(days);
+  ctx.beginPath(); ctx.moveTo(curX,10); ctx.lineTo(curX,H-30);
+  ctx.strokeStyle='#ffffff88'; ctx.lineWidth=2; ctx.setLineDash([4,4]); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#fff'; ctx.font='bold 10px JetBrains Mono'; ctx.textAlign='center';
+  ctx.fillText('HOJE: dia '+days, curX, 22);
+
+  // Legend
+  ctx.font='10px JetBrains Mono';
+  [['#ff006e','IgM'],['#00ff88','IgG'],['#ffe600','Ag/RNA']].forEach(([c,l],i) => {
+    ctx.fillStyle=c; ctx.fillRect(W-90, 15+i*16, 12, 8);
+    ctx.fillStyle='#ccc'; ctx.textAlign='left'; ctx.fillText(l, W-74, 23+i*16);
+  });
+
+  // Result
+  const igmVal = igmArr[Math.min(days,maxDays)];
+  const iggVal = iggArr[Math.min(days,maxDays)];
+  const agVal = p.p24Start ? (days>=p.p24Start&&days<=p.p24End?1:0) : 0;
+
+  const res = document.getElementById('window-result');
+  let interp='';
+  if(days < p.igmStart && days < (p.p24Start||999)) {
+    interp = `<span class="r-warn">⚠️ JANELA IMUNOLÓGICA — PCR/Ag também negativos. Infecção não detectável! Repetir em ${p.igmStart - days} dias.</span>`;
+  } else if(igmVal > 0.3 && iggVal < 0.3) {
+    interp = `<span class="r-value">🔴 INFECÇÃO AGUDA/PRIMÁRIA — IgM elevada, IgG ausente ou baixa. Notificar e iniciar tratamento!</span>`;
+  } else if(igmVal < 0.1 && iggVal > 0.3) {
+    interp = `<span style="color:var(--neon-cyan)">🔵 INFECÇÃO PASSADA / IMUNIDADE — IgG persistente, IgM resolvida. Monitorizar.</span>`;
+  } else if(igmVal > 0.2 && iggVal > 0.3) {
+    interp = `<span class="r-value">🟡 FASE DE TRANSIÇÃO IgM→IgG — Infecção em resolução ou reinfecção. Acompanhar.</span>`;
+  }
+
+  res.innerHTML = `
+    <span class="r-label">Dia: </span><span class="r-value">${days}</span> &nbsp;|&nbsp;
+    <span class="r-label">IgM: </span><span style="color:#ff006e">${(igmVal*100).toFixed(0)}%</span> &nbsp;|&nbsp;
+    <span class="r-label">IgG: </span><span style="color:#00ff88">${(iggVal*100).toFixed(0)}%</span><br>
+    <span class="r-label">Antígeno/RNA detectável: </span><span class="${agVal?'r-value':'r-warn'}">${agVal?'✅ SIM':'❌ NÃO'}</span><br>
+    <span class="r-label">Interpretação: </span>${interp}
+  `;
+}
+
+function drawCurve(ctx,arr,maxDays,W,H,color,name) {
+  const toX = d => 50 + (d/maxDays)*(W-60);
+  const toY = v => H-30 - v*(H-40);
+  ctx.beginPath();
+  arr.forEach((v,d) => {
+    const x=toX(d), y=toY(v);
+    d===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle=color; ctx.lineWidth=2.5; ctx.stroke();
+}
+
+updateWindowSim();
+
+// ── QUIZ
+const quizAnswers = {
+  q1: { correct: 'B', fb: '✅ Correcto! A desnaturação usa calor (~94–96°C) para romper as pontes de hidrogénio entre as bases complementares, separando a dupla hélice em cadeias simples — preparando o molde para os primers.' },
+  q2: { correct: 'C', fb: '✅ Exacto! A Taq polimerase foi isolada de Thermus aquaticus, uma bactéria de fontes termais. É termoestável, não desnaturando a 95°C — sem ela, a polimerase destruiria em cada ciclo de desnaturação.' },
+  q3: { correct: 'C', fb: '✅ Certo! Carga viral indetectável (< 50 cópias/mL) indica que a TARV está suprimindo eficazmente a replicação viral. O doente NÃO está curado — o vírus persiste em reservatórios latentes, e parar a medicação causaria rebote viral.' },
+  eq1: { correct: 'C', fb: '✅ Exacto! No ELISA indirecto, o que detectamos são os anticorpos anti-HIV que o sistema imune do doente produziu em resposta à infecção. O antigénio viral (HIV) está fixado na placa como "isca" para capturar os anticorpos.' },
+  eq2: { correct: 'B', fb: '✅ Correcto! Sem blocking, as proteínas do soro (incluindo anticorpos inespecíficos) ligar-se-iam aleatoriamente à placa de poliestireno, gerando sinal mesmo sem anticorpos específicos — falso positivo.' },
+  eq3: { correct: 'B', fb: '✅ Perfeito! No ELISA competitivo, o analito da amostra compete com o analito marcado pelo mesmo anticorpo. Mais analito na amostra → menos analito marcado se liga → menos enzima → menos cor. Relação INVERSA ao analito.' },
+  sq1: { correct: 'B', fb: '✅ Exacto! Este é um dos conceitos mais importantes em medicina: um ELISA negativo nas primeiras semanas NÃO exclui infecção HIV. O ELISA de 4ª geração detecta a partir de ~18 dias, mas o ideal é repetir aos 45 dias e 3 meses. Para diagnóstico precoce, solicitar PCR qualitativa.' },
+  sq2: { correct: 'A', fb: '✅ Correcto e urgente! IgM positiva para Toxoplasma numa grávida indica infecção primária aguda — há risco real de toxoplasmose congénita com malformações graves (coriorretinite, hidrocefalia, calcificações). Iniciar espiramicina imediatamente e referir ao especialista.' },
+  sq3: { correct: 'C', fb: '✅ Exacto! No Western Blot, as bandas correspondem a anticorpos contra proteínas virais específicas separadas por peso molecular. p24 = antígeno da cápside; gp120 = glicoproteína do envelope. Presença de pelo menos 2 bandas específicas confirma HIV. Interpretação: 3 bandas (ou p24+gp41+gp120) = positivo definitivo.' }
+};
+
+function checkQuiz(el, type, qId) {
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.style.pointerEvents='none');
+  el.classList.add(type);
+  const fb = document.getElementById(qId+'-fb');
+  fb.classList.add('show');
+  fb.classList.add(type==='correct'?'ok':'fail');
+  const ans = quizAnswers[qId];
+  if(type==='correct') {
+    fb.textContent = ans.fb;
+  } else {
+    fb.textContent = '❌ Incorrecto. ' + ans.fb;
+    // Highlight correct
+    opts.forEach(o => {
+      if(o.textContent.startsWith(ans.correct+')')) o.classList.add('correct');
+    });
+  }
+}
+
+// Init graph and window
+drawPCRStep();
+</script>
+</body>
+</html>

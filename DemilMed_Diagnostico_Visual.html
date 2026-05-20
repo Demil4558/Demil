@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | Diagnóstico Visual</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@700;900&family=Space+Mono&display=swap');
+
+  :root {
+    --bg: #080c14;
+    --bg2: #0d1420;
+    --bg3: #111827;
+    --panel: #131d2e;
+    --border: #1e3a5f;
+    --cyan: #00f5ff;
+    --pink: #ff2d78;
+    --yellow: #ffd700;
+    --green: #39ff14;
+    --purple: #bf5fff;
+    --orange: #ff6b35;
+    --white: #e8f4f8;
+    --muted: #7a9bb5;
+    --glow-cyan: 0 0 20px #00f5ff55, 0 0 40px #00f5ff22;
+    --glow-pink: 0 0 20px #ff2d7855, 0 0 40px #ff2d7822;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── PARTICLES BG ── */
+  #particles {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--cyan);
+    border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-50px) translateX(40px); opacity: 0; }
+  }
+
+  /* ── NAV ── */
+  #hamburger {
+    position: fixed; top: 18px; right: 18px; z-index: 1000;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 13px;
+    cursor: pointer; display: flex; flex-direction: column; gap: 5px;
+    box-shadow: var(--glow-cyan);
+    transition: all 0.3s;
+  }
+  #hamburger:hover { border-color: var(--cyan); }
+  .ham-line {
+    width: 24px; height: 2px; background: var(--cyan);
+    border-radius: 2px; transition: all 0.3s;
+  }
+  #hamburger.open .ham-line:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+  #hamburger.open .ham-line:nth-child(2) { opacity: 0; }
+  #hamburger.open .ham-line:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+  #chapter-nav {
+    position: fixed; top: 0; right: -320px; width: 300px; height: 100vh;
+    background: rgba(8,12,20,0.97); backdrop-filter: blur(20px);
+    border-left: 1px solid var(--border); z-index: 999;
+    padding: 80px 20px 30px; transition: right 0.4s ease;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 8px;
+  }
+  #chapter-nav.open { right: 0; }
+  .nav-title {
+    font-family: 'Orbitron', sans-serif; font-size: 11px;
+    color: var(--muted); letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .nav-item {
+    padding: 12px 16px; border-radius: 10px; cursor: pointer;
+    border: 1px solid transparent; transition: all 0.3s;
+    font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: var(--bg3); border-color: var(--cyan); color: var(--cyan);
+  }
+  .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+  .nav-item[data-ch="2"] .nav-dot { background: var(--pink); }
+  .nav-item[data-ch="3"] .nav-dot { background: var(--purple); }
+  .nav-item[data-ch="4"] .nav-dot { background: var(--orange); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px; text-align: center;
+  }
+  .hero-badge {
+    font-family: 'Orbitron', sans-serif; font-size: 10px;
+    letter-spacing: 4px; color: var(--cyan); text-transform: uppercase;
+    border: 1px solid var(--cyan); padding: 6px 18px; border-radius: 20px;
+    margin-bottom: 24px; animation: pulse-border 2s ease-in-out infinite;
+  }
+  @keyframes pulse-border {
+    0%,100% { box-shadow: 0 0 10px #00f5ff44; }
+    50% { box-shadow: 0 0 25px #00f5ff88, 0 0 50px #00f5ff33; }
+  }
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--cyan), var(--purple), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 0 30px #00f5ff44);
+  }
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.3rem); color: var(--muted);
+    max-width: 550px; line-height: 1.6; margin-bottom: 40px;
+  }
+  .chapter-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; max-width: 900px; width: 100%;
+  }
+  .ch-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px 18px;
+    cursor: pointer; transition: all 0.3s;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    text-decoration: none; color: var(--white);
+  }
+  .ch-card:hover { transform: translateY(-6px); border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+  .ch-card[data-color="pink"]:hover { border-color: var(--pink); box-shadow: var(--glow-pink); }
+  .ch-card[data-color="purple"]:hover { border-color: var(--purple); box-shadow: 0 0 20px #bf5fff55; }
+  .ch-card[data-color="orange"]:hover { border-color: var(--orange); box-shadow: 0 0 20px #ff6b3555; }
+  .ch-icon { font-size: 2.4rem; }
+  .ch-num {
+    font-family: 'Orbitron', sans-serif; font-size: 10px;
+    color: var(--muted); letter-spacing: 2px;
+  }
+  .ch-name { font-weight: 800; font-size: 14px; text-align: center; }
+
+  /* ── MAIN CONTENT ── */
+  main { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ── SECTION ── */
+  .chapter-section { display: none; animation: fadeSlide 0.5s ease; }
+  .chapter-section.active { display: block; }
+  @keyframes fadeSlide {
+    from { opacity:0; transform: translateY(30px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── CHAPTER HEADER ── */
+  .ch-header {
+    text-align: center; padding: 60px 20px 40px;
+    border-bottom: 1px solid var(--border); margin-bottom: 40px;
+  }
+  .ch-tag {
+    font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 3px;
+    padding: 5px 16px; border-radius: 20px; border: 1px solid;
+    display: inline-block; margin-bottom: 20px;
+  }
+  .ch-tag.cyan { color: var(--cyan); border-color: var(--cyan); }
+  .ch-tag.pink { color: var(--pink); border-color: var(--pink); }
+  .ch-tag.purple { color: var(--purple); border-color: var(--purple); }
+  .ch-tag.orange { color: var(--orange); border-color: var(--orange); }
+  .ch-big-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 7vw, 4.5rem);
+    line-height: 1.1; margin-bottom: 14px;
+  }
+  .cyan-text { color: var(--cyan); }
+  .pink-text { color: var(--pink); }
+  .purple-text { color: var(--purple); }
+  .orange-text { color: var(--orange); }
+  .ch-desc { color: var(--muted); font-size: 1.05rem; line-height: 1.7; max-width: 600px; margin: 0 auto; }
+
+  /* ── COMIC PANEL ── */
+  .comic-panel {
+    background: var(--panel); border: 2px solid var(--border);
+    border-radius: 16px; padding: 28px; margin-bottom: 28px;
+    position: relative; overflow: hidden;
+  }
+  .comic-panel::before {
+    content: ''; position: absolute; top:0; left:0;
+    width: 4px; height: 100%; background: var(--cyan);
+  }
+  .comic-panel.pink::before { background: var(--pink); }
+  .comic-panel.purple::before { background: var(--purple); }
+  .comic-panel.orange::before { background: var(--orange); }
+  .comic-panel.yellow::before { background: var(--yellow); }
+  .panel-label {
+    font-family: 'Orbitron', sans-serif; font-size: 9px;
+    letter-spacing: 3px; color: var(--muted); text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .panel-title {
+    font-family: 'Bangers', cursive; font-size: 1.8rem;
+    color: var(--cyan); margin-bottom: 14px; line-height: 1.2;
+  }
+  .comic-panel.pink .panel-title { color: var(--pink); }
+  .comic-panel.purple .panel-title { color: var(--purple); }
+  .comic-panel.orange .panel-title { color: var(--orange); }
+  .panel-body { font-size: 0.97rem; line-height: 1.8; color: var(--white); }
+  .panel-body p { margin-bottom: 14px; }
+  .panel-body p:last-child { margin-bottom: 0; }
+
+  /* ── SPEECH BUBBLE ── */
+  .bubble-wrap { display: flex; gap: 14px; align-items: flex-start; margin: 20px 0; }
+  .bubble-avatar {
+    width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; border: 2px solid var(--cyan);
+    background: var(--bg3);
+  }
+  .bubble-avatar.pink { border-color: var(--pink); }
+  .bubble-avatar.purple { border-color: var(--purple); }
+  .bubble-content {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 0 16px 16px 16px; padding: 14px 18px;
+    font-size: 0.93rem; line-height: 1.7; flex: 1;
+    position: relative;
+  }
+  .bubble-content::before {
+    content: ''; position: absolute; top: 14px; left: -8px;
+    border: 8px solid transparent; border-right-color: var(--border);
+  }
+  .bubble-name {
+    font-family: 'Orbitron', sans-serif; font-size: 9px;
+    color: var(--cyan); letter-spacing: 2px; margin-bottom: 6px;
+  }
+  .bubble-name.pink { color: var(--pink); }
+  .bubble-name.purple { color: var(--purple); }
+
+  /* ── MOLECULE ANIMATION ── */
+  .molecule-box {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px; margin: 20px 0;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px;
+  }
+  .mol-label {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 1px;
+  }
+  .mol-canvas { width: 100%; max-width: 400px; height: 200px; }
+
+  /* ── INTERACTIVE SLIDER ── */
+  .slider-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin: 20px 0;
+  }
+  .slider-title {
+    font-family: 'Bangers', cursive; font-size: 1.3rem;
+    color: var(--yellow); margin-bottom: 16px;
+  }
+  .slider-row { display: flex; flex-direction: column; gap: 14px; }
+  .slider-item { display: flex; flex-direction: column; gap: 6px; }
+  .slider-label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+  input[type=range] {
+    width: 100%; height: 6px; border-radius: 3px;
+    background: var(--border); outline: none; cursor: pointer;
+    -webkit-appearance: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan); cursor: pointer;
+  }
+  .slider-val {
+    font-family: 'Orbitron', sans-serif; font-size: 12px;
+    color: var(--cyan); text-align: right;
+  }
+  .result-box {
+    margin-top: 18px; background: var(--panel); border-radius: 12px;
+    padding: 16px; border: 1px solid var(--border);
+    font-size: 0.9rem; line-height: 1.7; color: var(--white);
+  }
+
+  /* ── QUIZ ── */
+  .quiz-card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; margin: 20px 0;
+  }
+  .quiz-title {
+    font-family: 'Bangers', cursive; font-size: 1.5rem;
+    color: var(--green); margin-bottom: 6px;
+  }
+  .quiz-q { font-size: 1rem; line-height: 1.6; margin-bottom: 18px; color: var(--white); }
+  .quiz-opts { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    padding: 12px 18px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--border); font-size: 0.9rem;
+    transition: all 0.2s; background: var(--bg2); color: var(--white);
+    text-align: left; font-family: 'Nunito', sans-serif; font-weight: 600;
+  }
+  .quiz-opt:hover { border-color: var(--cyan); color: var(--cyan); }
+  .quiz-opt.correct { border-color: var(--green); background: #39ff1415; color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--pink); background: #ff2d7815; color: var(--pink); }
+  .quiz-feedback {
+    margin-top: 14px; padding: 14px; border-radius: 10px;
+    font-size: 0.88rem; line-height: 1.6; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: #39ff1415; border: 1px solid var(--green); color: var(--green); }
+  .quiz-feedback.bad { background: #ff2d7815; border: 1px solid var(--pink); color: var(--pink); }
+
+  /* ── TIMELINE ── */
+  .timeline { position: relative; padding-left: 34px; margin: 20px 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 12px; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, var(--cyan), var(--purple));
+  }
+  .tl-item { position: relative; margin-bottom: 28px; }
+  .tl-dot {
+    position: absolute; left: -27px; top: 4px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--cyan); border: 2px solid var(--bg);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+  .tl-dot.pink { background: var(--pink); box-shadow: 0 0 8px var(--pink); }
+  .tl-dot.purple { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+  .tl-dot.orange { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+  .tl-step { font-family: 'Orbitron', sans-serif; font-size: 9px; color: var(--muted); letter-spacing: 2px; margin-bottom: 4px; }
+  .tl-title { font-weight: 800; font-size: 1rem; color: var(--cyan); margin-bottom: 6px; }
+  .tl-title.pink { color: var(--pink); }
+  .tl-title.purple { color: var(--purple); }
+  .tl-body { font-size: 0.88rem; line-height: 1.7; color: var(--white); }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    border-radius: 12px; padding: 16px 20px; margin: 14px 0;
+    border: 1px solid; font-size: 0.88rem; line-height: 1.7;
+  }
+  .info-box.cyan { border-color: var(--cyan); background: #00f5ff0a; color: #b0f5ff; }
+  .info-box.pink { border-color: var(--pink); background: #ff2d780a; color: #ffb0c8; }
+  .info-box.yellow { border-color: var(--yellow); background: #ffd7000a; color: #fff0a0; }
+  .info-box.green { border-color: var(--green); background: #39ff140a; color: #aaffaa; }
+  .info-box.purple { border-color: var(--purple); background: #bf5fff0a; color: #e0b0ff; }
+  .info-box.orange { border-color: var(--orange); background: #ff6b350a; color: #ffccaa; }
+  .info-box b { display: block; margin-bottom: 6px; font-size: 0.95rem; }
+
+  /* ── GRID ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+  .stat-box {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px; text-align: center;
+  }
+  .stat-num {
+    font-family: 'Orbitron', sans-serif; font-size: 2rem;
+    font-weight: 900; color: var(--cyan); margin-bottom: 4px;
+  }
+  .stat-box.pink .stat-num { color: var(--pink); }
+  .stat-box.purple .stat-num { color: var(--purple); }
+  .stat-lbl { font-size: 0.78rem; color: var(--muted); }
+
+  /* ── SCROLL TO TOP ── */
+  #back-to-top {
+    position: fixed; bottom: 24px; left: 24px; z-index: 500;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 50%; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.2rem; transition: all 0.3s;
+    color: var(--cyan); opacity: 0; pointer-events: none;
+  }
+  #back-to-top.visible { opacity: 1; pointer-events: all; }
+  #back-to-top:hover { border-color: var(--cyan); box-shadow: var(--glow-cyan); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    border-top: 1px solid var(--border); padding: 32px 20px;
+    text-align: center;
+  }
+  .footer-brand {
+    font-family: 'Bangers', cursive; font-size: 1.6rem;
+    background: linear-gradient(90deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+  .footer-info { font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── SVG ANIMATIONS ── */
+  .dna-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw 3s ease forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .spin-slow { animation: spin 12s linear infinite; }
+  .spin-rev { animation: spin 9s linear infinite reverse; }
+  @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+  .bob { animation: bob 3s ease-in-out infinite; }
+  @keyframes bob {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .pulse-dot { animation: pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot {
+    0%,100% { r: 5; opacity: 1; }
+    50% { r: 9; opacity: 0.5; }
+  }
+  .blink { animation: blink 1.5s step-end infinite; }
+  @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
+
+  /* toggle tabs */
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .tab-btn {
+    padding: 8px 18px; border-radius: 20px; cursor: pointer;
+    border: 1px solid var(--border); font-size: 0.82rem; font-weight: 700;
+    background: var(--bg2); color: var(--muted); transition: all 0.25s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--cyan); border-color: var(--cyan); color: var(--bg);
+  }
+  .tab-btn.pink.active, .tab-btn.pink:hover { background: var(--pink); border-color: var(--pink); }
+  .tab-btn.purple.active, .tab-btn.purple:hover { background: var(--purple); border-color: var(--purple); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeSlide 0.4s ease; }
+
+  /* expandable */
+  .expand-btn {
+    width: 100%; text-align: left; padding: 14px 18px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--white); font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.2s; margin-bottom: 8px;
+  }
+  .expand-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .expand-btn .arrow { transition: transform 0.3s; }
+  .expand-btn.open .arrow { transform: rotate(180deg); }
+  .expand-body {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+    font-size: 0.88rem; line-height: 1.8; color: var(--white);
+    background: var(--panel); border-radius: 0 0 10px 10px;
+    border: 1px solid transparent; padding: 0 18px;
+  }
+  .expand-body.open {
+    max-height: 600px; padding: 16px 18px;
+    border-color: var(--border); margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<!-- HAMBURGER -->
+<div id="hamburger" onclick="toggleNav()">
+  <div class="ham-line"></div>
+  <div class="ham-line"></div>
+  <div class="ham-line"></div>
+</div>
+
+<!-- NAV -->
+<div id="chapter-nav">
+  <div class="nav-title">Capítulos</div>
+  <div class="nav-item" data-ch="0" onclick="goHome()">🏠 Início</div>
+  <div class="nav-item" data-ch="1" onclick="showChapter(1)"><span class="nav-dot"></span> Cap. 4 — TDR</div>
+  <div class="nav-item" data-ch="2" onclick="showChapter(2)"><span class="nav-dot" style="background:var(--pink)"></span> Cap. 5 — Papanicolau</div>
+  <div class="nav-item" data-ch="3" onclick="showChapter(3)"><span class="nav-dot" style="background:var(--purple)"></span> Cap. 6 — Microscopia Eletrônica</div>
+  <div class="nav-item" data-ch="4" onclick="showChapter(4)"><span class="nav-dot" style="background:var(--orange)"></span> Cap. 7 — Imunohistoquímica</div>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-badge">DemilMed-UL · 2026 · 2º Ano de Medicina</div>
+  <h1 class="hero-title">Diagnóstico<br>Visual Lab</h1>
+  <p class="hero-sub">Quatro técnicas que mudaram a medicina — contadas como nunca antes. Do TDR ao anticorpo monoclonal, da célula ao diagnóstico.</p>
+  <div class="chapter-cards">
+    <div class="ch-card" onclick="showChapter(1)">
+      <div class="ch-icon">🧪</div>
+      <div class="ch-num">CAPÍTULO 4</div>
+      <div class="ch-name">TDR — Teste de Diagnóstico Rápido</div>
+    </div>
+    <div class="ch-card" data-color="pink" onclick="showChapter(2)">
+      <div class="ch-icon">🔬</div>
+      <div class="ch-num">CAPÍTULO 5</div>
+      <div class="ch-name" style="color:var(--pink)">Papanicolau</div>
+    </div>
+    <div class="ch-card" data-color="purple" onclick="showChapter(3)">
+      <div class="ch-icon">⚡</div>
+      <div class="ch-num">CAPÍTULO 6</div>
+      <div class="ch-name" style="color:var(--purple)">Microscopia Eletrônica</div>
+    </div>
+    <div class="ch-card" data-color="orange" onclick="showChapter(4)">
+      <div class="ch-icon">🎯</div>
+      <div class="ch-num">CAPÍTULO 7</div>
+      <div class="ch-name" style="color:var(--orange)">Imunohistoquímica</div>
+    </div>
+  </div>
+</section>
+
+<main>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 4 — TDR
+════════════════════════════════════ -->
+<section class="chapter-section" id="ch1">
+  <div class="ch-header">
+    <div class="ch-tag cyan">CAPÍTULO 4</div>
+    <h2 class="ch-big-title cyan-text">🧪 TDR<br><span style="font-size:0.6em;color:var(--white)">Teste de Diagnóstico Rápido</span></h2>
+    <p class="ch-desc">Imagina que o teu corpo é um campo de batalha. O TDR é o radar que detecta o inimigo — em minutos, sem laboratório, sem espera.</p>
+  </div>
+
+  <!-- NARRATIVA INTRO -->
+  <div class="comic-panel">
+    <div class="panel-label">Cena 01 · A Chegada do Inimigo</div>
+    <div class="panel-title">O Vírus Entrou no Corpo</div>
+    <div class="panel-body">
+      <div class="bubble-wrap">
+        <div class="bubble-avatar">🦠</div>
+        <div class="bubble-content">
+          <div class="bubble-name">VÍRUS DA MALÁRIA</div>
+          "Entrei pela picada do mosquito. Agora estou dentro dos glóbulos vermelhos. Tenho proteínas únicas que o sistema imune vai tentar destruir... mas o médico pode me detectar ANTES disso!"
+        </div>
+      </div>
+      <div class="bubble-wrap" style="flex-direction:row-reverse">
+        <div class="bubble-avatar pink">👩‍⚕️</div>
+        <div class="bubble-content" style="border-radius:16px 0 16px 16px">
+          <div class="bubble-name pink">DRA. ANA</div>
+          "Sem problema. Tenho aqui um TDR. Em 15 minutos vou saber exactamente o que está a acontecer — sem precisar de laboratório central!"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- O QUE É TDR -->
+  <div class="comic-panel">
+    <div class="panel-label">Conceito Base</div>
+    <div class="panel-title">O que é um TDR?</div>
+    <div class="panel-body">
+      <p>TDR significa <strong style="color:var(--cyan)">Teste de Diagnóstico Rápido</strong> (em inglês: <em>Rapid Diagnostic Test — RDT</em>). É um dispositivo portátil, geralmente em formato de tira ou cassete, que detecta a presença de uma doença em poucos minutos — usando uma gota de sangue, saliva ou urina.</p>
+      <div class="info-box cyan">
+        <b>🔤 Etimologia:</b>
+        <strong>Diagnóstico</strong> vem do grego <em>dia</em> (através) + <em>gnosis</em> (conhecimento). Literalmente: "conhecer através" — passar pelo doente e descobrir o que há de errado. Rápido porque dá resultado em 5–30 minutos!
+      </div>
+      <p>Pensa assim: um TDR é como uma "peneira molecular". Ele filtra a amostra do paciente e captura APENAS o antígeno ou anticorpo específico que procura. Se encontrar, aparece uma linha colorida. Se não encontrar, nada aparece.</p>
+    </div>
+  </div>
+
+  <!-- ANATOMIA DO TDR — SVG -->
+  <div class="molecule-box">
+    <div class="mol-label">ANATOMIA INTERNA DO TDR — CLICA PARA ANIMAR</div>
+    <svg id="tdr-svg" class="mol-canvas" viewBox="0 0 400 200" style="cursor:pointer;max-width:500px;height:220px" onclick="animateTDR()">
+      <!-- Background -->
+      <rect width="400" height="200" rx="12" fill="#0d1420"/>
+      <!-- TDR Cassette outline -->
+      <rect x="20" y="50" width="360" height="110" rx="10" fill="#131d2e" stroke="#1e3a5f" stroke-width="1.5"/>
+      <!-- Sample pad -->
+      <rect x="30" y="65" width="60" height="80" rx="6" fill="#1a2740" stroke="#00f5ff" stroke-width="1.5"/>
+      <text x="60" y="108" text-anchor="middle" font-family="Nunito" font-size="9" fill="#00f5ff">AMOSTRA</text>
+      <text x="60" y="120" text-anchor="middle" font-family="Nunito" font-size="8" fill="#7a9bb5">(sangue)</text>
+      <!-- Conjugate pad -->
+      <rect x="100" y="65" width="60" height="80" rx="6" fill="#1a2740" stroke="#ffd700" stroke-width="1.5"/>
+      <text x="130" y="101" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ffd700">CONJUGADO</text>
+      <text x="130" y="113" text-anchor="middle" font-family="Nunito" font-size="8" fill="#7a9bb5">anticorpo+</text>
+      <text x="130" y="124" text-anchor="middle" font-family="Nunito" font-size="8" fill="#7a9bb5">ouro coloidal</text>
+      <!-- Nitrocellulose membrane -->
+      <rect x="170" y="65" width="140" height="80" rx="4" fill="#0d1a2a" stroke="#bf5fff" stroke-width="1.5"/>
+      <text x="240" y="82" text-anchor="middle" font-family="Orbitron" font-size="7" fill="#bf5fff">MEMBRANA</text>
+      <!-- Test line -->
+      <rect id="tline" x="220" y="72" width="6" height="66" rx="3" fill="#1e3a5f"/>
+      <text x="223" y="150" text-anchor="middle" font-family="Nunito" font-size="9" fill="#7a9bb5">T</text>
+      <!-- Control line -->
+      <rect id="cline" x="265" y="72" width="6" height="66" rx="3" fill="#1e3a5f"/>
+      <text x="268" y="150" text-anchor="middle" font-family="Nunito" font-size="9" fill="#7a9bb5">C</text>
+      <!-- Absorbent pad -->
+      <rect x="320" y="65" width="50" height="80" rx="6" fill="#1a2740" stroke="#ff6b35" stroke-width="1.5"/>
+      <text x="345" y="108" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ff6b35">ABSORÇÃO</text>
+      <!-- Molecules travelling -->
+      <circle id="mol1" cx="60" cy="105" r="5" fill="#00f5ff" opacity="0"/>
+      <circle id="mol2" cx="60" cy="105" r="4" fill="#ffd700" opacity="0"/>
+      <circle id="mol3" cx="60" cy="105" r="5" fill="#ff2d78" opacity="0"/>
+      <!-- Labels top -->
+      <text x="200" y="30" text-anchor="middle" font-family="Orbitron" font-size="10" fill="#00f5ff">CLICA PARA VER O FLUXO CAPILAR</text>
+    </svg>
+    <div id="tdr-result" style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);text-align:center;margin-top:6px">Aguardando animação...</div>
+  </div>
+
+  <!-- PRINCÍPIO: IMUNOCROMATOGRAFIA -->
+  <div class="comic-panel">
+    <div class="panel-label">Cena 02 · O Mecanismo Secreto</div>
+    <div class="panel-title">Imunocromatografia Lateral</div>
+    <div class="panel-body">
+      <p>O princípio científico do TDR chama-se <strong style="color:var(--cyan)">imunocromatografia de fluxo lateral</strong> (Lateral Flow Immunoassay — LFIA). É uma reacção antígeno-anticorpo combinada com cromatografia em papel (membranas de nitrocelulose).</p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">PASSO 1 · 0 SEGUNDOS</div>
+          <div class="tl-title">Deposição da Amostra</div>
+          <div class="tl-body">Uma gota de sangue (ou outra amostra) é colocada no <strong>pad de amostra</strong>. O líquido começa a fluir por capilaridade — como água a subir por papel de filtro. Os antígenos do patogénio (ex: proteínas da malária) estão na amostra.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-step">PASSO 2 · 30 SEGUNDOS</div>
+          <div class="tl-title pink">Encontro com o Conjugado</div>
+          <div class="tl-body">O líquido chega ao <strong>pad de conjugado</strong>. Aqui estão anticorpos marcados com <strong style="color:var(--yellow)">ouro coloidal</strong> (nanopartículas de ouro — dão a cor vermelha/rosa às linhas). Estes anticorpos "agarram" os antígenos como um imã.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot purple"></div>
+          <div class="tl-step">PASSO 3 · 5–15 MINUTOS</div>
+          <div class="tl-title purple">Captura na Linha T</div>
+          <div class="tl-body">O complexo [antígeno + anticorpo-ouro] continua a fluir e chega à <strong>Linha T (Test Line)</strong>. Nessa zona estão anticorpos fixos que capturam APENAS os complexos com antígeno. O ouro coloidal acumula-se → linha colorida POSITIVA!</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-step">PASSO 4 · VALIDAÇÃO</div>
+          <div class="tl-title" style="color:var(--orange)">Linha C — Controlo Sempre Positivo</div>
+          <div class="tl-body">Todos os anticorpos-ouro (com ou sem antígeno) são capturados na <strong>Linha C (Control Line)</strong>. Se a Linha C NÃO aparecer = teste inválido. A linha C garante que o teste funcionou correctamente!</div>
+        </div>
+      </div>
+
+      <div class="info-box green">
+        <b>🧲 A Lógica por Trás:</b>
+        Antígeno = chave. Anticorpo = fechadura. O TDR usa DUAS fechaduras:
+        a primeira "abraça" o antígeno e torna-o visível (conjugado-ouro),
+        a segunda "prende" esse abraço na Linha T, tornando-o detectável a olho nu.
+        É engenharia molecular ao serviço da medicina de campo!
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERPRETAÇÃO INTERACTIVA -->
+  <div class="slider-card">
+    <div class="slider-title">🎮 SIMULADOR DE RESULTADO TDR</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px">Selecciona o resultado e aprende a interpretar:</p>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="setTDRResult('positivo', this)">✅ Positivo</button>
+      <button class="tab-btn" onclick="setTDRResult('negativo', this)">❌ Negativo</button>
+      <button class="tab-btn" onclick="setTDRResult('invalido', this)">⚠️ Inválido</button>
+      <button class="tab-btn" onclick="setTDRResult('fraco', this)">🔅 Linha Fraca</button>
+    </div>
+    <div id="tdr-interp-box" class="result-box">
+      <strong style="color:var(--green)">POSITIVO (C + T visíveis):</strong><br>
+      Ambas as linhas (C e T) aparecem. Isso significa que:<br>
+      • O teste funcionou (linha C ✓)<br>
+      • O antígeno alvo FOI detectado na amostra (linha T ✓)<br>
+      • Interpretação clínica: DOENÇA PRESENTE (ou exposição anterior, dependendo do teste)<br>
+      • Próximo passo: confirmação clínica, tratamento imediato se indicado.
+    </div>
+  </div>
+
+  <!-- TIPOS DE TDR -->
+  <div class="comic-panel">
+    <div class="panel-label">Cena 03 · Arsenal Diagnóstico</div>
+    <div class="panel-title">Tipos de TDR em Medicina</div>
+    <div class="panel-body">
+      <p>Os TDRs podem detectar <strong>antígenos</strong> (partes do patogénio directamente) ou <strong>anticorpos</strong> (resposta do hospedeiro). Esta distinção é crucial para entender o que estamos a medir:</p>
+      <div class="tabs" style="margin-top:14px">
+        <button class="tab-btn active" onclick="showTab('tdr-ag', this)">Antígeno</button>
+        <button class="tab-btn" onclick="showTab('tdr-ac', this)">Anticorpo</button>
+        <button class="tab-btn" onclick="showTab('tdr-ex', this)">Exemplos Clínicos</button>
+      </div>
+      <div class="tab-content active" id="tdr-ag">
+        <div class="info-box cyan">
+          <b>TDR de ANTÍGENO</b>
+          Detecta proteínas do próprio patogénio (vírus, bactéria, parasita) na amostra.
+          Vantagem: positivo desde o início da infecção, antes do sistema imune responder.
+          Exemplos: TDR COVID-19 (proteína S ou N do SARS-CoV-2), TDR Malária (HRP2, pLDH).
+        </div>
+      </div>
+      <div class="tab-content" id="tdr-ac">
+        <div class="info-box pink">
+          <b>TDR de ANTICORPO</b>
+          Detecta anticorpos IgM/IgG que o paciente produziu contra o patogénio.
+          Desvantagem: janela de soro-conversão (pode ser negativo nas primeiras semanas).
+          Exemplos: TDR HIV (anticorpos anti-HIV), TDR Sífilis (anticorpos anti-Treponema).
+        </div>
+      </div>
+      <div class="tab-content" id="tdr-ex">
+        <div class="two-col">
+          <div class="stat-box"><div class="stat-num">15min</div><div class="stat-lbl">TDR Malária (resultado)</div></div>
+          <div class="stat-box pink"><div class="stat-num">20min</div><div class="stat-lbl">TDR COVID-19 (resultado)</div></div>
+          <div class="stat-box" style="--cyan:var(--purple)"><div class="stat-num">20min</div><div class="stat-lbl">TDR HIV (resultado)</div></div>
+          <div class="stat-box" style="--cyan:var(--orange)"><div class="stat-num">97%</div><div class="stat-lbl">Sensibilidade TDR Malária (OMS)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SENSIBILIDADE vs ESPECIFICIDADE -->
+  <div class="comic-panel yellow">
+    <div class="panel-label">Conceito Crítico</div>
+    <div class="panel-title" style="color:var(--yellow)">⚖️ Sensibilidade vs Especificidade</div>
+    <div class="panel-body">
+      <p>Dois números que todo médico tem de saber para avaliar um TDR — ou qualquer teste diagnóstico:</p>
+      <div class="expand-btn" onclick="toggleExpand(this)">🎯 Sensibilidade — o que é? <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        Sensibilidade = capacidade do teste de identificar os VERDADEIROS POSITIVOS.
+        Fórmula: Sensibilidade = VP / (VP + FN) × 100%<br><br>
+        <strong>VP</strong> = Verdadeiros Positivos (doentes correctamente identificados)<br>
+        <strong>FN</strong> = Falsos Negativos (doentes que o teste disse estar saudáveis — PERIGOSO!)<br><br>
+        Se Sensibilidade = 95%: de 100 doentes, 95 serão detectados e 5 passam despercebidos.
+        Um teste muito sensível é melhor para triagem — não deixa doentes passar.
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🔒 Especificidade — o que é? <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        Especificidade = capacidade do teste de identificar os VERDADEIROS NEGATIVOS.
+        Fórmula: Especificidade = VN / (VN + FP) × 100%<br><br>
+        <strong>VN</strong> = Verdadeiros Negativos (saudáveis correctamente identificados)<br>
+        <strong>FP</strong> = Falsos Positivos (saudáveis que o teste disse estar doentes — causa ansiedade e tratamento desnecessário!)<br><br>
+        Um teste muito específico confirma diagnósticos — não acusa inocentes.
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🧠 Truque Mnemónico — SnNout / SpPin <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        <strong>SnNout</strong>: Sensitivity — Negative = rule OUT<br>
+        → Se o teste é muito Sensível e deu Negativo → DESCARTA a doença com segurança.<br><br>
+        <strong>SpPin</strong>: Specificity — Positive = rule IN<br>
+        → Se o teste é muito Específico e deu Positivo → CONFIRMA a doença com segurança.<br><br>
+        Exemplo prático: TDR HIV tem alta sensibilidade → um resultado negativo descarta HIV.
+        Mas um resultado positivo precisa de teste confirmatório (Western Blot) porque a especificidade pode ser menor!
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ TDR -->
+  <div class="quiz-card">
+    <div class="quiz-title">🎮 QUIZ · TDR</div>
+    <div class="quiz-q">Uma paciente realiza TDR para COVID-19. Aparecem AMBAS as linhas (C e T). O que isso significa?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz1')">A) O teste é inválido</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','quiz1')">B) Resultado Positivo — antígeno detectado</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz1')">C) Resultado Negativo — apenas a linha C importa</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz1')">D) Precisa de repetir o teste</button>
+    </div>
+    <div class="quiz-feedback ok" id="quiz1-ok">✅ Correcto! C = Controlo (confirma que o teste funcionou). T = Teste (confirma que o antígeno foi detectado). Ambas visíveis = POSITIVO!</div>
+    <div class="quiz-feedback bad" id="quiz1-bad">❌ Não! Lembra: Linha C = validade do teste, Linha T = presença do antígeno. Ambas visíveis = POSITIVO!</div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px">
+    <button class="tab-btn" onclick="showChapter(2)" style="padding:12px 24px">Próximo Capítulo →</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 5 — PAPANICOLAU
+════════════════════════════════════ -->
+<section class="chapter-section" id="ch2">
+  <div class="ch-header">
+    <div class="ch-tag pink">CAPÍTULO 5</div>
+    <h2 class="ch-big-title pink-text">🔬 Esfregaço de<br>Papanicolau</h2>
+    <p class="ch-desc">A técnica que salvou milhões de vidas — criada por um médico grego que estudava células vaginais de porquinhos da índia. A história mais improvável da medicina.</p>
+  </div>
+
+  <!-- HISTÓRIA -->
+  <div class="comic-panel pink">
+    <div class="panel-label">Cena 01 · A Descoberta</div>
+    <div class="panel-title">O Médico e os Porquinhos da Índia</div>
+    <div class="panel-body">
+      <div class="bubble-wrap">
+        <div class="bubble-avatar" style="border-color:var(--pink)">🧑‍🔬</div>
+        <div class="bubble-content">
+          <div class="bubble-name pink">DR. GEORGIOS PAPANICOLAOU · 1928</div>
+          "Estava a estudar ciclos menstruais em porquinhos da índia, observando células vaginais ao microscópio. De repente, vi algo que ninguém esperava: uma mulher com cancro do colo do útero tinha células completamente diferentes das normais — ainda SEM SINTOMAS!"
+        </div>
+      </div>
+      <div class="info-box pink">
+        <b>🏆 O Impacto:</b>
+        Antes do Papanicolau (Pap), o cancro do colo do útero era a principal causa de morte por cancro em mulheres nos EUA.
+        Após a implementação do rastreio com Pap, a mortalidade reduziu >70% em 50 anos.
+        É um dos maiores sucessos de rastreio oncológico da história da medicina.
+      </div>
+    </div>
+  </div>
+
+  <!-- O QUE É PAP -->
+  <div class="comic-panel pink">
+    <div class="panel-label">Conceito Base</div>
+    <div class="panel-title">O que é a Citologia de Papanicolau?</div>
+    <div class="panel-body">
+      <p>O <strong style="color:var(--pink)">Esfregaço de Papanicolau</strong> (Pap smear / Pap test) é um método de <strong>citologia esfoliativa</strong> — estuda células esfoliadas (descamadas) de superfícies epiteliais. A mais famosa aplicação é a do colo do útero (cérvix uterina).</p>
+      <div class="info-box pink">
+        <b>🔤 Etimologia Detalhada:</b>
+        <strong>Citologia</strong>: grego <em>kytos</em> (célula, vaso) + <em>logos</em> (estudo). Literalmente: "estudo das células".<br>
+        <strong>Esfoliativa</strong>: latim <em>exfoliare</em> (tirar folhas/camadas). Células que naturalmente se desprendem das superfícies mucosas.<br>
+        <strong>Cérvix</strong>: latim, significa "pescoço" — o colo do útero é o "pescoço" do útero.
+      </div>
+      <p>Princípio: células normais, pré-cancerosas e cancerosas têm <strong>morfologias completamente diferentes</strong> que são identificáveis ao microscópio óptico após coloração específica.</p>
+    </div>
+  </div>
+
+  <!-- ANATOMIA DA CÉRVIX + SVG -->
+  <div class="molecule-box">
+    <div class="mol-label">ZONA DE TRANSFORMAÇÃO CERVICAL — A ÁREA CRÍTICA</div>
+    <svg viewBox="0 0 400 220" style="width:100%;max-width:500px;height:220px">
+      <rect width="400" height="220" rx="12" fill="#0d1420"/>
+      <!-- Útero simplificado -->
+      <ellipse cx="200" cy="80" rx="80" ry="55" fill="#1a0a1a" stroke="#ff2d78" stroke-width="2"/>
+      <text x="200" y="75" text-anchor="middle" font-family="Nunito" font-size="11" fill="#ff2d78" font-weight="800">ÚTERO</text>
+      <!-- Canal cervical -->
+      <rect x="185" y="130" width="30" height="50" rx="6" fill="#2a0a1a" stroke="#ff2d78" stroke-width="1.5"/>
+      <text x="200" y="162" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ff2d78">CANAL</text>
+      <!-- Ectocérvix -->
+      <ellipse cx="200" cy="185" rx="45" ry="18" fill="#0a1a2a" stroke="#00f5ff" stroke-width="1.5"/>
+      <text x="200" y="188" text-anchor="middle" font-family="Nunito" font-size="9" fill="#00f5ff">ECTOCÉRVIX</text>
+      <!-- Zona de transformação -->
+      <ellipse cx="200" cy="180" rx="22" ry="9" fill="#2a1a00" stroke="#ffd700" stroke-width="2" stroke-dasharray="4,3"/>
+      <text x="200" y="179" text-anchor="middle" font-family="Nunito" font-size="7" fill="#ffd700" font-weight="800">ZT</text>
+      <!-- Labels -->
+      <line x1="222" y1="180" x2="300" y2="165" stroke="#ffd700" stroke-width="1" stroke-dasharray="3,3"/>
+      <text x="305" y="162" font-family="Nunito" font-size="9" fill="#ffd700">Zona de</text>
+      <text x="305" y="173" font-family="Nunito" font-size="9" fill="#ffd700">Transformação</text>
+      <!-- Células animadas -->
+      <circle cx="195" cy="185" r="4" fill="#ff2d78" class="pulse-dot" opacity="0.7"/>
+      <circle cx="205" cy="183" r="3" fill="#ffd700" class="pulse-dot" opacity="0.5" style="animation-delay:0.5s"/>
+      <circle cx="200" cy="192" r="3.5" fill="#00f5ff" class="pulse-dot" opacity="0.6" style="animation-delay:1s"/>
+      <!-- Espátula de colheita -->
+      <rect x="40" y="195" width="80" height="6" rx="3" fill="#bf5fff" class="bob"/>
+      <text x="80" y="210" text-anchor="middle" font-family="Nunito" font-size="9" fill="#bf5fff">Espátula de Ayre</text>
+      <!-- Arrow -->
+      <path d="M120 198 Q160 192 188 188" stroke="#bf5fff" stroke-width="1.5" fill="none" marker-end="url(#arr)" stroke-dasharray="5,3"/>
+      <defs>
+        <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3 z" fill="#bf5fff"/>
+        </marker>
+      </defs>
+      <text x="200" y="20" text-anchor="middle" font-family="Orbitron" font-size="9" fill="#7a9bb5">ZT = Local onde ocorrem 90% dos cancros cervicais</text>
+    </svg>
+  </div>
+
+  <!-- TÉCNICA PASSO A PASSO -->
+  <div class="comic-panel pink">
+    <div class="panel-label">Cena 02 · O Procedimento</div>
+    <div class="panel-title">Como se Realiza o Pap?</div>
+    <div class="panel-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-step">PASSO 1</div>
+          <div class="tl-title pink">Colheita das Células</div>
+          <div class="tl-body">Usando uma <strong>espátula de Ayre</strong> (para ectocérvix) e uma <strong>escovinha endocervical</strong>, o médico ou enfermeiro raspa suavemente a Zona de Transformação cervical. As células esfoliadas ficam presas nos instrumentos.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--purple)"></div>
+          <div class="tl-step">PASSO 2</div>
+          <div class="tl-title" style="color:var(--purple)">Esfregaço na Lâmina</div>
+          <div class="tl-body">As células são espalhadas numa lâmina de vidro (método convencional) ou colocadas em solução líquida (citologia líquida — método ThinPrep® / SurePath®). A citologia líquida permite também testar HPV na mesma amostra!</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">PASSO 3</div>
+          <div class="tl-title">Fixação Imediata</div>
+          <div class="tl-body">A lâmina é imediatamente fixada com <strong>álcool a 95%</strong> ou spray fixador. Isto preserva a morfologia celular exactamente como estava in vivo. Se demorar → artefactos de secagem → leitura impossível!</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-step">PASSO 4 · O CORAÇÃO DO MÉTODO</div>
+          <div class="tl-title pink">Coloração de Papanicolau</div>
+          <div class="tl-body">A lâmina passa por uma sequência precisa de corantes. Cada um tem afinidade por componentes celulares específicos, criando um mapa de cores que permite identificar o tipo e estado de cada célula.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--orange)"></div>
+          <div class="tl-step">PASSO 5</div>
+          <div class="tl-title" style="color:var(--orange)">Leitura ao Microscópio Óptico</div>
+          <div class="tl-body">Um citotécnico (técnico especializado) faz a leitura de toda a lâmina. Um citologista (médico) confirma os casos anormais e emite o laudo seguindo o Sistema de Bethesda.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLORAÇÃO PAP INTERACTIVA -->
+  <div class="slider-card">
+    <div class="slider-title" style="color:var(--pink)">🎨 OS CORANTES DO PAP — COLORAÇÃO TRICRÓMICA</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px">Clica em cada corante para ver o que cora:</p>
+    <div class="tabs">
+      <button class="tab-btn pink active" onclick="showTab('pap-hema', this)">Hematoxilina</button>
+      <button class="tab-btn pink" onclick="showTab('pap-oran', this)">Orange G</button>
+      <button class="tab-btn pink" onclick="showTab('pap-ea', this)">EA-36/50</button>
+      <button class="tab-btn pink" onclick="showTab('pap-result', this)">Resultado Final</button>
+    </div>
+    <div class="tab-content active" id="pap-hema">
+      <div class="info-box purple">
+        <b>💜 Hematoxilina — Cor: Azul/Violeta</b>
+        O que cora: estruturas ácidas — principalmente DNA e RNA (ácidos nucleicos).
+        Na prática: cora o NÚCLEO celular de azul-violeta escuro.
+        Origem: extraída da árvore Haematoxylum campechianum (México/América Central).
+        Etimologia: grego haima (sangue) + xylon (madeira) — literalmente "madeira de sangue" pela cor vermelha da madeira.
+        Importância diagnóstica: permite avaliar o tamanho do núcleo, relação núcleo:citoplasma, hipercromasia (núcleo mais escuro = mais DNA = possível malignidade).
+      </div>
+    </div>
+    <div class="tab-content" id="pap-oran">
+      <div class="info-box orange">
+        <b>🟠 Orange G — Cor: Laranja</b>
+        O que cora: proteínas ricas em queratina (citoplasma de células escamosas maduras).
+        Na prática: superficiais escamosas queratinizadas ficam laranja/vermelho — indica células maduras da superfície epitelial.
+        Importância: ajuda a identificar o grau de maturação das células escamosas e a presença de hiperqueratose (sinal de irritação crónica).
+      </div>
+    </div>
+    <div class="tab-content" id="pap-ea">
+      <div class="info-box pink">
+        <b>🩷 EA-36/EA-50 — Cor: Verde/Rosa</b>
+        Mistura de corantes: Eosina Y (rosa), Light Green SF (verde), e Bismarck Brown Y.
+        Eosina Y: cora citoplasma de células maduras → ROSA.
+        Light Green: cora citoplasma de células imaturas/metaplásicas → VERDE.
+        Resultado visual: distingue células em diferentes estágios de diferenciação pelo CITOPLASMA.
+        Clinicamente: células com citoplasma verde-azulado (cianofílico) = metaplasia ou imaturidade. Células com citoplasma rosa (eosinofílico) = maturidade.
+      </div>
+    </div>
+    <div class="tab-content" id="pap-result">
+      <div class="info-box green">
+        <b>🎨 O Resultado Final — Célula Escamosa Normal:</b><br>
+        NÚCLEO: azul-violeta escuro (hematoxilina) — pequeno, regular<br>
+        CITOPLASMA: rosa ou verde pálido (EA) — abundante<br>
+        Relação N:C baixa (núcleo pequeno vs citoplasma grande) = sinal de NORMALIDADE<br><br>
+        <strong>⚠️ Célula Cancerosa:</strong><br>
+        NÚCLEO: muito maior, hipercromático, irregular<br>
+        CITOPLASMA: escasso<br>
+        Relação N:C ALTA = SINAL DE ALARME!
+      </div>
+      <!-- Mini SVG de células -->
+      <svg viewBox="0 0 300 120" style="width:100%;max-width:350px;margin:10px auto;display:block">
+        <rect width="300" height="120" rx="8" fill="#0d1420"/>
+        <!-- Célula normal -->
+        <ellipse cx="75" cy="60" rx="40" ry="35" fill="#1a0a1a" stroke="#00f5ff" stroke-width="1.5"/>
+        <ellipse cx="75" cy="60" rx="12" ry="10" fill="#1a1040" stroke="#bf5fff" stroke-width="1.5"/>
+        <text x="75" y="105" text-anchor="middle" font-family="Nunito" font-size="9" fill="#00f5ff">NORMAL</text>
+        <text x="75" y="115" text-anchor="middle" font-family="Nunito" font-size="7" fill="#7a9bb5">N:C baixo</text>
+        <!-- Célula displásica -->
+        <ellipse cx="175" cy="60" rx="32" ry="28" fill="#1a0a0a" stroke="#ffd700" stroke-width="1.5"/>
+        <ellipse cx="175" cy="58" rx="20" ry="17" fill="#1a1040" stroke="#ffd700" stroke-width="2"/>
+        <text x="175" y="105" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ffd700">DISPLASIA</text>
+        <text x="175" y="115" text-anchor="middle" font-family="Nunito" font-size="7" fill="#7a9bb5">N:C médio</text>
+        <!-- Célula cancerosa -->
+        <ellipse cx="258" cy="60" rx="25" ry="22" fill="#1a0a0a" stroke="#ff2d78" stroke-width="1.5"/>
+        <ellipse cx="257" cy="59" rx="22" ry="19" fill="#2a0a1a" stroke="#ff2d78" stroke-width="2.5"/>
+        <text x="258" y="105" text-anchor="middle" font-family="Nunito" font-size="9" fill="#ff2d78">CARCINOMA</text>
+        <text x="258" y="115" text-anchor="middle" font-family="Nunito" font-size="7" fill="#7a9bb5">N:C alto</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SISTEMA DE BETHESDA -->
+  <div class="comic-panel pink">
+    <div class="panel-label">Cena 03 · A Linguagem dos Patologistas</div>
+    <div class="panel-title">Sistema de Bethesda 2014</div>
+    <div class="panel-body">
+      <p>O <strong style="color:var(--pink)">Sistema de Bethesda</strong> é a nomenclatura padronizada para reportar resultados do Pap — criada em Bethesda, Maryland, EUA, em 1988 (última revisão em 2014). É a língua universal da citologia cervical.</p>
+      <div class="expand-btn" onclick="toggleExpand(this)">🟢 NILM — Negativo <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        <strong>NILM</strong> = Negative for Intraepithelial Lesion or Malignancy (Negativo para Lesão Intraepitelial ou Malignidade).
+        É o resultado NORMAL. A amostra pode ainda mostrar achados não neoplásicos como inflamação, atrofia, etc.
+        Conduta: rastreio de rotina (3 em 3 anos após 2 negativos consecutivos, ou 5 em 5 anos com co-teste HPV).
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🟡 ASC-US — Atenção! <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        <strong>ASC-US</strong> = Atypical Squamous Cells of Undetermined Significance (Células Escamosas Atípicas de Significado Indeterminado).
+        Células anómalas mas insuficientes para diagnóstico de lesão intraepitelial.
+        Conduta: teste HPV reflexo. Se HPV positivo → colposcopia. Se HPV negativo → repetir Pap em 3 anos.
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🟠 LSIL — Lesão Baixo Grau <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        <strong>LSIL</strong> = Low-grade Squamous Intraepithelial Lesion (Lesão Escamosa Intraepitelial de Baixo Grau).
+        Corresponde histologicamente a CIN 1 (NIC 1) e infecção por HPV.
+        Achados: coilocitose (vacúolos perinucleares = efeito citopático do HPV), atipia nuclear leve.
+        Conduta: colposcopia.
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🔴 HSIL — Lesão Alto Grau — URGENTE! <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        <strong>HSIL</strong> = High-grade Squamous Intraepithelial Lesion (Lesão Escamosa Intraepitelial de Alto Grau).
+        Corresponde histologicamente a CIN 2 / CIN 3 / carcinoma in situ.
+        Achados: células com núcleos hipercromáticos grandes, relação N:C muito aumentada, membrana nuclear irregular.
+        IMPORTANTE: sem tratamento, ~30% progridem para carcinoma invasivo.
+        Conduta: colposcopia + biópsia + tratamento (LEEP, cone cirúrgico).
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">⚫ Carcinoma Escamoso / Adenocarcinoma <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        Células com características inequívocas de malignidade invasiva.
+        Diagnóstico citológico de carcinoma escamoso invasivo ou adenocarcinoma do endocérvice.
+        Conduta: encaminhamento urgente para oncologia ginecológica.
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ PAP -->
+  <div class="quiz-card">
+    <div class="quiz-title">🎮 QUIZ · PAPANICOLAU</div>
+    <div class="quiz-q">Um resultado PAP mostra células com vacúolos perinucleares proeminentes (coilocitose) e atipia nuclear leve. Qual o diagnóstico mais provável pelo Sistema de Bethesda?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz2')">A) NILM</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','quiz2')">B) LSIL (com efeito citopático por HPV)</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz2')">C) HSIL</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz2')">D) Carcinoma escamoso</button>
+    </div>
+    <div class="quiz-feedback ok" id="quiz2-ok">✅ Excelente! A coilocitose (vacúolo perinuclear = efeito citopático clássico do HPV) com atipia leve é o padrão de LSIL. Corresponde histologicamente a CIN 1.</div>
+    <div class="quiz-feedback bad" id="quiz2-bad">❌ Coilocitose + atipia leve = LSIL! A coilocitose é a "assinatura digital" do HPV nas células.</div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:space-between;margin-top:20px">
+    <button class="tab-btn" onclick="showChapter(1)">← Anterior</button>
+    <button class="tab-btn" onclick="showChapter(3)">Próximo →</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 6 — MICROSCOPIA ELETRÔNICA
+════════════════════════════════════ -->
+<section class="chapter-section" id="ch3">
+  <div class="ch-header">
+    <div class="ch-tag purple">CAPÍTULO 6</div>
+    <h2 class="ch-big-title purple-text">⚡ Microscopia<br>Eletrônica</h2>
+    <p class="ch-desc">O microscópio óptico amplia até 1000×. A microscopia electrónica amplia até 1.000.000×. Descemos ao nível dos átomos. Bem-vindo ao mundo ultraestrutural.</p>
+  </div>
+
+  <!-- INTRO NARRATIVA -->
+  <div class="comic-panel purple">
+    <div class="panel-label">Cena 01 · O Limite da Luz</div>
+    <div class="panel-title">Por que a Luz não Chega?</div>
+    <div class="panel-body">
+      <div class="bubble-wrap">
+        <div class="bubble-avatar" style="border-color:var(--purple)">🔬</div>
+        <div class="bubble-content">
+          <div class="bubble-name purple">ERNST RUSKA · 1931</div>
+          "O microscópio óptico tem um limite físico irremediável: o limite de difracção de Abbe. Nenhuma lente óptica consegue resolver estruturas menores que metade do comprimento de onda da luz visível — cerca de 200 nanómetros. Uma mitocôndria tem 500–1000 nm. Mas os ribossomas têm 25 nm. Impossível ver com luz!"
+        </div>
+      </div>
+      <div class="info-box purple">
+        <b>💡 A Solução Genial:</b>
+        Electrões têm comprimento de onda ~100.000× MENOR que a luz visível.
+        De Broglie (1924): λ = h/mv (partículas têm ondas associadas).
+        Ruska e Knoll (1931) criaram o primeiro microscópio electrónico.
+        Em 1986, Ruska ganhou o Prémio Nobel de Física por esta invenção.
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARAÇÃO LUZ vs ELECTRÕES SVG -->
+  <div class="molecule-box">
+    <div class="mol-label">COMPRIMENTOS DE ONDA — LUZ vs ELECTRÃO</div>
+    <svg viewBox="0 0 400 180" style="width:100%;max-width:500px;height:180px">
+      <rect width="400" height="180" rx="12" fill="#0d1420"/>
+      <!-- Onda de luz -->
+      <text x="20" y="40" font-family="Nunito" font-size="10" fill="#ffd700">Luz visível (~500 nm)</text>
+      <path d="M20,70 Q50,45 80,70 Q110,95 140,70 Q170,45 200,70 Q230,95 260,70 Q290,45 320,70 Q350,95 380,70" stroke="#ffd700" stroke-width="2.5" fill="none"/>
+      <!-- Onda electrão -->
+      <text x="20" y="110" font-family="Nunito" font-size="10" fill="#bf5fff">Electrão (~0.004 nm)</text>
+      <path id="ewave" d="M20,140 Q22,135 24,140 Q26,145 28,140 Q30,135 32,140 Q34,145 36,140 Q38,135 40,140 Q42,145 44,140 Q46,135 48,140 Q50,145 52,140 Q54,135 56,140 Q58,145 60,140 Q62,135 64,140 Q66,145 68,140 Q70,135 72,140 Q74,145 76,140 Q78,135 80,140 Q82,145 84,140 Q86,135 88,140 Q90,145 92,140 Q94,135 96,140 Q98,145 100,140 Q102,135 104,140 Q106,145 108,140 Q110,135 112,140 Q114,145 116,140 Q118,135 120,140 Q122,145 124,140 Q126,135 128,140 Q130,145 132,140 Q134,135 136,140 Q138,145 140,140 Q142,135 144,140 Q146,145 148,140 Q150,135 152,140 Q154,145 156,140 Q158,135 160,140 Q162,145 164,140 Q166,135 168,140 Q170,145 172,140 Q174,135 176,140 Q178,145 180,140 Q182,135 184,140 Q186,145 188,140 Q190,135 192,140 Q194,145 196,140 Q198,135 200,140 Q202,145 204,140 Q206,135 208,140 Q210,145 212,140 Q214,135 216,140 Q218,145 220,140 Q222,135 224,140 Q226,145 228,140 Q230,135 232,140 Q234,145 236,140 Q238,135 240,140 Q242,145 244,140 Q246,135 248,140 Q250,145 252,140 Q254,135 256,140 Q258,145 260,140 Q262,135 264,140 Q266,145 268,140 Q270,135 272,140 Q274,145 276,140 Q278,135 280,140 Q282,145 284,140 Q286,135 288,140 Q290,145 292,140 Q294,135 296,140 Q298,145 300,140 Q302,135 304,140 Q306,145 308,140 Q310,135 312,140 Q314,145 316,140 Q318,135 320,140 Q322,145 324,140 Q326,135 328,140 Q330,145 332,140 Q334,135 336,140 Q338,145 340,140 Q342,135 344,140 Q346,145 348,140 Q350,135 352,140 Q354,145 356,140 Q358,135 360,140 Q362,145 364,140 Q366,135 368,140 Q370,145 372,140 Q374,135 376,140 Q378,145 380,140" stroke="#bf5fff" stroke-width="1.5" fill="none"/>
+      <text x="200" y="170" text-anchor="middle" font-family="Orbitron" font-size="8" fill="#7a9bb5">Resolução: luz=200nm · electrão=0.1nm = 2000× melhor!</text>
+    </svg>
+  </div>
+
+  <!-- TIPOS DE ME -->
+  <div class="comic-panel purple">
+    <div class="panel-label">Cena 02 · Os Dois Titãs</div>
+    <div class="panel-title">MET vs MEV</div>
+    <div class="panel-body">
+      <p>Existem dois grandes tipos de microscopia electrónica, cada um com aplicações distintas na patologia e biologia celular:</p>
+      <div class="tabs" style="margin-top:14px">
+        <button class="tab-btn purple active" onclick="showTab('met', this)">MET — Transmissão</button>
+        <button class="tab-btn purple" onclick="showTab('mev', this)">MEV — Varrimento</button>
+        <button class="tab-btn purple" onclick="showTab('me-comp', this)">Comparação</button>
+      </div>
+      <div class="tab-content active" id="met">
+        <div class="info-box purple">
+          <b>⚡ MET — Microscópio Electrónico de Transmissão (TEM — Transmission Electron Microscopy)</b><br><br>
+          <strong>Princípio:</strong> O feixe de electrões ATRAVESSA (transmite) a amostra extremamente fina (50–100 nm de espessura). Os electrões são dispersos diferentemente conforme a densidade electrónica dos componentes celulares.<br><br>
+          <strong>O que vê:</strong> Interior da célula — organelas, membranas, vesículas, vírus, ribossomas, junções celulares.<br><br>
+          <strong>Resolução:</strong> 0.1–0.5 nm (resolve moléculas individuais!)<br><br>
+          <strong>Imagem:</strong> Bidimensional, tons de cinzento (electrões não têm cor — as imagens a cores são artificialmente coloridas depois).<br><br>
+          <strong>Preparo:</strong> Fixação em glutaraldeído + tetróxido de ósmio → desidratação → inclusão em resina → cortes ultrafinos com ultramicrótomo → contraste com acetato de uranilo / citrato de chumbo.
+        </div>
+      </div>
+      <div class="tab-content" id="mev">
+        <div class="info-box cyan">
+          <b>⚡ MEV — Microscópio Electrónico de Varrimento (SEM — Scanning Electron Microscopy)</b><br><br>
+          <strong>Princípio:</strong> O feixe de electrões varre (scan) a SUPERFÍCIE da amostra. Detecta electrões secundários emitidos pela superfície → cria imagem 3D da topografia.<br><br>
+          <strong>O que vê:</strong> Superfície celular — morfologia 3D de células, eritrócitos, vilosidades, cílios, superfície de vírus, estruturas ósseas.<br><br>
+          <strong>Resolução:</strong> 1–20 nm<br><br>
+          <strong>Imagem:</strong> Tridimensional, aparência "esculpida" — extraordinariamente bela e informativa.<br><br>
+          <strong>Preparo:</strong> Fixação → desidratação → ponto crítico → metalização com ouro/paládio (torna a amostra condutora de electrões).
+        </div>
+      </div>
+      <div class="tab-content" id="me-comp">
+        <div class="two-col">
+          <div class="stat-box" style="--cyan:var(--purple)"><div class="stat-num" style="font-size:1.2rem">MET</div><div class="stat-lbl">Interior celular · 2D · 0.1nm</div></div>
+          <div class="stat-box"><div class="stat-num" style="font-size:1.2rem">MEV</div><div class="stat-lbl">Superfície · 3D · 1–20nm</div></div>
+          <div class="stat-box" style="--cyan:var(--yellow)"><div class="stat-num">1000×</div><div class="stat-lbl">Vezes melhor que microscópio óptico</div></div>
+          <div class="stat-box" style="--cyan:var(--green)"><div class="stat-num">10⁻¹⁰m</div><div class="stat-lbl">Resolução máxima MET (Angström)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREPARAÇÃO DA AMOSTRA TIMELINE -->
+  <div class="comic-panel purple">
+    <div class="panel-label">Cena 03 · A Preparação é Arte</div>
+    <div class="panel-title">Preparo para MET — Passo a Passo</div>
+    <div class="panel-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--purple)"></div>
+          <div class="tl-step">PASSO 1 · FIXAÇÃO PRIMÁRIA</div>
+          <div class="tl-title" style="color:var(--purple)">Glutaraldeído 2.5%</div>
+          <div class="tl-body">O tecido é mergulhado em glutaraldeído — um fixador químico que forma pontes covalentes entre proteínas (cross-links), preservando a estrutura exactamente como estava in vivo. Temperatura: 4°C (impede degradação enzimática).</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-step">PASSO 2 · FIXAÇÃO SECUNDÁRIA</div>
+          <div class="tl-title pink">Tetróxido de Ósmio (OsO₄)</div>
+          <div class="tl-body">Agente de contraste E fixador. O ósmio reage com lípidos insaturados → membranas ficam electrono-densas (escuras). Resultado: todas as membranas celulares ficam visíveis na MET. PERIGOSO: tetróxido de ósmio é extremamente tóxico — vapores atacam córnea e pulmões.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">PASSO 3 · DESIDRATAÇÃO</div>
+          <div class="tl-title">Série de Álcoois + Óxido de Propileno</div>
+          <div class="tl-body">A água é substituída progressivamente: álcool 30% → 50% → 70% → 90% → 100% → óxido de propileno. Necessário porque a resina (próximo passo) não é miscível com água.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--yellow)"></div>
+          <div class="tl-step">PASSO 4 · INCLUSÃO EM RESINA</div>
+          <div class="tl-title" style="color:var(--yellow)">Resina Epóxi (Epon/Spurr)</div>
+          <div class="tl-body">A resina líquida penetra no tecido e é polimerizada (solidificada) a 60°C por 24–48h. O bloco resultante tem a consistência de plástico duro — permitirá cortes ultrafinos sem deformar.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--orange)"></div>
+          <div class="tl-step">PASSO 5 · ULTRAMICROTOMIA</div>
+          <div class="tl-title" style="color:var(--orange)">Cortes de 50–100 nanómetros</div>
+          <div class="tl-body">O ultramicrótomo usa uma lâmina de diamante ou vidro para cortar secções de 50–100 nm de espessura — uma célula normal tem 10.000 nm (10 µm)! Os cortes flutuam numa calha com água e são recolhidos em grelhas de cobre.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--purple)"></div>
+          <div class="tl-step">PASSO 6 · CONTRASTE</div>
+          <div class="tl-title" style="color:var(--purple)">Acetato de Uranilo + Citrato de Chumbo</div>
+          <div class="tl-body">Sais de metais pesados depositam-se nas estruturas biológicas, aumentando o contraste. Acetato de uranilo → DNA, RNA, membranas. Citrato de chumbo → ribossomas, membranas. Imagem final: tons de cinzento com estruturas escuras (electrono-densas).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULADOR ME INTERACTIVO -->
+  <div class="slider-card" style="border-color:var(--purple)">
+    <div class="slider-title" style="color:var(--purple)">🔬 SIMULADOR DE MAGNIFICAÇÃO</div>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:16px">Arrasta o slider para explorar diferentes ampliações:</p>
+    <div class="slider-item">
+      <div class="slider-label">Magnificação</div>
+      <input type="range" id="mag-slider" min="1" max="7" value="1" oninput="updateMag(this.value)" style="accent-color:var(--purple)">
+      <div class="slider-val" id="mag-val" style="color:var(--purple)">1000×</div>
+    </div>
+    <div class="result-box" id="mag-result">
+      <strong style="color:var(--purple)">1000× — Microscópio Óptico Convencional</strong><br>
+      O que vê: Células individuais, núcleo, citoplasma geral. Tecidos e sua organização.
+      Resolução: ~200 nm. Aplicação: histopatologia de rotina (H&E, Giemsa, Ziehl-Neelsen).
+    </div>
+  </div>
+
+  <!-- APLICAÇÕES CLÍNICAS -->
+  <div class="comic-panel purple">
+    <div class="panel-label">Cena 04 · Na Prática Clínica</div>
+    <div class="panel-title">Quando Usamos ME em Patologia?</div>
+    <div class="panel-body">
+      <div class="expand-btn" onclick="toggleExpand(this)">🦠 Vírus — identificação directa <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        A MET permite VER vírus directamente — reconhecer morfologia, tamanho, cápside, envelope.
+        Exemplos históricos: identificação do vírus da SIDA (HIV) em 1983, vírus Ebola, SARS-CoV-2.
+        Utilidade clínica actual: distinguir poxvírus (varíola vs molluscum), identificar vírus em lesões cutâneas atípicas.
+        Actualmente parcialmente substituída por PCR, mas a ME continua indispensável em investigação e casos raros.
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🫘 Doenças Renais — Glomerulopatias <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        A biópsia renal com MET é ESSENCIAL para classificar as glomerulopatias.
+        Depósitos electrão-densos: identifica onde se depositam os imunocomplexos (subepitelial, subendotelial, mesangial, intramembranoso).
+        Exemplos:
+        • Nefropatia membranosa: depósitos subepiteliais ("spikes")
+        • Nefrite lúpica: depósitos em todas as regiões ("full house")
+        • GNPE (pós-estreptocócica): "humps" subepiteliais
+        Sem ME, muitas glomerulopatias são indistinguíveis!
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">💪 Miopatias — Doenças Musculares <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        MET identifica alterações ultraestruturais das mitocôndrias musculares:
+        • Miopatias mitocondriais: mitocôndrias gigantes, inclusões cristalinas ("parking lot"), proliferação.
+        • Síndroma de Pompe (Glicogenose II): acumulação de glicogénio nos lisossomas musculares.
+        • Distrofinemia: alterações da membrana basal da fibra muscular.
+        A "ragged red fiber" na coloração Gomori-Tricrómica corresponde a mitocôndrias anormais visíveis na MET!
+      </div>
+      <div class="expand-btn" onclick="toggleExpand(this)">🧫 Tumores — Classificação de Origem <span class="arrow">▼</span></div>
+      <div class="expand-body">
+        Quando um tumor é indiferenciado (sem marcadores definidos na histologia convencional), a MET pode identificar:
+        • Grânulos neurossecretores → tumor neuroendócrino
+        • Melanossomas (pré-melanossomas, estágios I-IV) → melanoma
+        • Desmossomas proeminentes → carcinoma escamoso
+        • Lâmina basal → carcinoma (vs sarcoma ou linfoma)
+        Hoje em dia, a imunohistoquímica (próximo capítulo!) é preferida por ser mais rápida e menos cara.
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ ME -->
+  <div class="quiz-card">
+    <div class="quiz-title">🎮 QUIZ · MICROSCOPIA ELECTRÓNICA</div>
+    <div class="quiz-q">Um patologista realiza biópsia renal e identifica, na MET, depósitos electrão-densos subepiteliais em "corcova" (humps). Qual o diagnóstico mais provável?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz3')">A) Nefropatia membranosa</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','quiz3')">B) Glomerulonefrite pós-estreptocócica</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz3')">C) Nefrite lúpica classe IV</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz3')">D) Doença de Alport</button>
+    </div>
+    <div class="quiz-feedback ok" id="quiz3-ok">✅ Correcto! Os "humps" (corcovas) subepiteliais são a marca ultraestrutural da GNPE. A membranosa tem "spikes". O lúpus tem depósitos em múltiplas regiões ("full house").</div>
+    <div class="quiz-feedback bad" id="quiz3-bad">❌ Os "humps" subepiteliais são clássicos da GNPE (Glomerulonefrite Pós-Estreptocócica). Lembra: GNPE = humps, Membranosa = spikes, Lúpus = full house!</div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:space-between;margin-top:20px">
+    <button class="tab-btn" onclick="showChapter(2)">← Anterior</button>
+    <button class="tab-btn" onclick="showChapter(4)">Próximo →</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     CAPÍTULO 7 — IMUNOHISTOQUÍMICA
+════════════════════════════════════ -->
+<section class="chapter-section" id="ch4">
+  <div class="ch-header">
+    <div class="ch-tag orange">CAPÍTULO 7</div>
+    <h2 class="ch-big-title orange-text">🎯 Imuno-<br>histoquímica</h2>
+    <p class="ch-desc">Imagina poder marcar qualquer proteína num tecido com uma cor fluorescente. Isso é a IHQ — o GPS molecular da patologia moderna.</p>
+  </div>
+
+  <!-- INTRO -->
+  <div class="comic-panel orange">
+    <div class="panel-label">Cena 01 · O Problema</div>
+    <div class="panel-title">Quando a Histologia Não Chega</div>
+    <div class="panel-body">
+      <div class="bubble-wrap">
+        <div class="bubble-avatar" style="border-color:var(--orange)">🧫</div>
+        <div class="bubble-content">
+          <div class="bubble-name" style="color:var(--orange)">PATOLOGISTA</div>
+          "Tenho aqui um tumor altamente indiferenciado — células grandes e bizarras, sem padrão reconhecível no H&E. É um carcinoma? Um linfoma? Um sarcoma? Um melanoma? A histologia convencional não consegue dizer. Preciso de saber a ORIGEM molecular destas células!"
+        </div>
+      </div>
+      <div class="bubble-wrap" style="flex-direction:row-reverse">
+        <div class="bubble-avatar" style="border-color:var(--yellow)">🎯</div>
+        <div class="bubble-content" style="border-radius:16px 0 16px 16px">
+          <div class="bubble-name" style="color:var(--yellow)">IHQ</div>
+          "Deixa-me entrar! Tenho anticorpos para TUDO. Carcinoma? Uso CK (citoqueratinas). Linfoma? CD20 ou CD3. Melanoma? S100 + HMB45. Sarcoma? Vimentina. Em 24 horas tens a resposta com cores lindas no microscópio!"
+        </div>
+      </div>
+      <div class="info-box orange">
+        <b>🔤 Etimologia:</b>
+        <strong>Imuno</strong>: latim <em>immunis</em> (isento, protegido) — relativo ao sistema imune e anticorpos.<br>
+        <strong>Histo</strong>: grego <em>histos</em> (tecido, literalmente "teia de tear").<br>
+        <strong>Química</strong>: detecção por reacção química colorimétrica.<br>
+        Juntos: "detectar proteínas em tecidos usando anticorpos e reacção química". Exactamente o que a IHQ faz!
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINCÍPIO BÁSICO -->
+  <div class="comic-panel orange">
+    <div class="panel-label">Conceito Base</div>
+    <div class="panel-title">Como Funciona a IHQ?</div>
+    <div class="panel-body">
+      <p>A IHQ baseia-se no princípio da <strong style="color:var(--orange)">especificidade anticorpo-antígeno</strong>: cada anticorpo liga-se APENAS ao seu antígeno específico (proteína-alvo), como uma chave à sua fechadura.</p>
+      <p>A detecção é feita por amplificação do sinal — o anticorpo primário não é directamente visível, então usa-se um sistema de amplificação para tornar a ligação detectável a olho nu ao microscópio.</p>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot orange"></div>
+          <div class="tl-step">PASSO 1</div>
+          <div class="tl-title" style="color:var(--orange)">Fixação e Processamento</div>
+          <div class="tl-body">O tecido é fixado em formalina (formol a 10%) → processado → incluído em parafina → cortado em 3–5 µm → montado em lâminas. A formalina preserva mas mascara antígenos (forma cross-links proteicos).</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--yellow)"></div>
+          <div class="tl-step">PASSO 2 · CRÍTICO</div>
+          <div class="tl-title" style="color:var(--yellow)">Recuperação Antigénica (Antigen Retrieval)</div>
+          <div class="tl-body">A formalina "escondeu" os epitopos (sítios de ligação dos anticorpos). Precisamos de os "desmascarar":<br>
+          <strong>Calor (HIER)</strong>: autoclave/pressão a 95–121°C em tampão citrato pH 6 ou EDTA pH 9.<br>
+          <strong>Enzimas (PIER)</strong>: proteinase K, tripsina — digerem as proteínas cruzadas.<br>
+          Sem este passo → resultado falso-negativo!</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot pink"></div>
+          <div class="tl-step">PASSO 3 · BLOQUEIO</div>
+          <div class="tl-title pink">Bloqueio da Peroxidase Endógena</div>
+          <div class="tl-body">O tecido tem peroxidase endógena (especialmente eritrócitos e neutrófilos) que causaria sinal de fundo (background). Bloqueia-se com H₂O₂ a 3% por 10 minutos. Também se bloqueia com soro normal para evitar ligações inespecíficas.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-step">PASSO 4 · A CHAVE</div>
+          <div class="tl-title">Anticorpo Primário</div>
+          <div class="tl-body">O anticorpo primário (produzido em coelho, rato, cabra, etc.) é aplicado à lâmina e incubado (30–60 min a 37°C ou overnight a 4°C). Liga-se ESPECIFICAMENTE ao antígeno-alvo no tecido. Sozinho é invisível.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--orange)"></div>
+          <div class="tl-step">PASSO 5 · AMPLIFICAÇÃO</div>
+          <div class="tl-title" style="color:var(--orange)">Anticorpo Secundário + Enzima</div>
+          <div class="tl-body">Um anticorpo secundário (anti-espécie) ligado a enzima (peroxidase de rabanete — HRP, ou fosfatase alcalina — AP) liga-se ao anticorpo primário. Amplifica o sinal — múltiplos anticorpos secundários por primário!</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--green)"></div>
+          <div class="tl-step">PASSO 6 · VISUALIZAÇÃO</div>
+          <div class="tl-title" style="color:var(--green)">Substrato Cromogénico</div>
+          <div class="tl-body">A enzima converte o substrato numa cor visível:<br>
+          HRP + DAB (diaminobenzidina) → CASTANHO (cor mais usada)<br>
+          AP + Fast Red → VERMELHO<br>
+          AP + NBT/BCIP → AZUL/PÚRPURA<br>
+          A coloração de fundo com hematoxilina torna os núcleos azuis — contraste perfeito!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIMULADOR IHQ VISUAL -->
+  <div class="molecule-box" style="border-color:var(--orange)">
+    <div class="mol-label">SIMULADOR IHQ — SELECCIONA O ANTICORPO</div>
+    <div class="tabs" style="margin:10px 0">
+      <button class="tab-btn" style="--cyan:var(--orange)" onclick="simulateIHQ('ck','CK (Citoqueratinas)','Carcinoma / Epitélio','Citoplasma castanho em células epiteliais. Positivo em todos os carcinomas (diferenciação epitelial).','#ff6b35')">CK</button>
+      <button class="tab-btn" onclick="simulateIHQ('cd20','CD20','Linfoma B','Membrana celular castanha em linfócitos B. Positivo em linfoma difuso de grandes células B, linfoma folicular.','#00f5ff')">CD20</button>
+      <button class="tab-btn" onclick="simulateIHQ('s100','S100','Melanoma / Neural','Núcleo e citoplasma castanhos em células derivadas da crista neural. Melanoma, schwannoma, histiocitose.','#ffd700')">S100</button>
+      <button class="tab-btn" onclick="simulateIHQ('vim','Vimentina','Sarcoma / Mesenquimal','Citoplasma castanho em células mesenquimais. Positivo em sarcomas, melanoma, alguns carcinomas.','#bf5fff')">Vimentina</button>
+      <button class="tab-btn" onclick="simulateIHQ('ki67','Ki-67','Proliferação','Núcleo castanho em células em divisão activa. Índice proliferativo — quanto mais alto, mais agressivo o tumor.','#ff2d78')">Ki-67</button>
+    </div>
+    <svg id="ihq-svg" viewBox="0 0 400 200" style="width:100%;max-width:500px;height:200px">
+      <rect width="400" height="200" rx="12" fill="#0d1a10"/>
+      <!-- Tecido -->
+      <text x="200" y="25" text-anchor="middle" font-family="Orbitron" font-size="9" fill="#7a9bb5">Selecciona um anticorpo para ver a positividade no tecido →</text>
+      <!-- Células -->
+      <ellipse id="c1" cx="80" cy="100" rx="38" ry="32" fill="#0a1a0a" stroke="#2a4a2a" stroke-width="1.5"/>
+      <ellipse id="cn1" cx="80" cy="100" rx="14" ry="12" fill="#0a0a1a" stroke="#1e3a5f" stroke-width="1"/>
+      <ellipse id="c2" cx="180" cy="90" rx="42" ry="35" fill="#0a1a0a" stroke="#2a4a2a" stroke-width="1.5"/>
+      <ellipse id="cn2" cx="180" cy="90" rx="15" ry="13" fill="#0a0a1a" stroke="#1e3a5f" stroke-width="1"/>
+      <ellipse id="c3" cx="290" cy="105" rx="36" ry="30" fill="#0a1a0a" stroke="#2a4a2a" stroke-width="1.5"/>
+      <ellipse id="cn3" cx="290" cy="105" rx="13" ry="11" fill="#0a0a1a" stroke="#1e3a5f" stroke-width="1"/>
+      <ellipse id="c4" cx="355" cy="80" rx="28" ry="24" fill="#0a1a0a" stroke="#2a4a2a" stroke-width="1.5"/>
+      <ellipse id="cn4" cx="355" cy="80" rx="11" ry="10" fill="#0a0a1a" stroke="#1e3a5f" stroke-width="1"/>
+      <!-- Hematoxilina nuclei (always blue) -->
+      <ellipse cx="80" cy="100" rx="14" ry="12" fill="#1a1a40" stroke="#4040aa" stroke-width="0.5" opacity="0.7"/>
+      <ellipse cx="180" cy="90" rx="15" ry="13" fill="#1a1a40" stroke="#4040aa" stroke-width="0.5" opacity="0.7"/>
+      <ellipse cx="290" cy="105" rx="13" ry="11" fill="#1a1a40" stroke="#4040aa" stroke-width="0.5" opacity="0.7"/>
+      <ellipse cx="355" cy="80" rx="11" ry="10" fill="#1a1a40" stroke="#4040aa" stroke-width="0.5" opacity="0.7"/>
+      <text id="ihq-label" x="200" y="175" text-anchor="middle" font-family="Nunito" font-size="10" fill="#7a9bb5">Aguardando selecção de anticorpo...</text>
+      <text id="ihq-sub" x="200" y="190" text-anchor="middle" font-family="Nunito" font-size="9" fill="#4a6a4a">Núcleos contracorados com Hematoxilina (azul)</text>
+    </svg>
+    <div class="result-box" id="ihq-desc" style="border-color:var(--orange);margin-top:10px">
+      Selecciona um anticorpo acima para ver a positividade e a sua interpretação clínica.
+    </div>
+  </div>
+
+  <!-- PAINEL DE MARCADORES -->
+  <div class="comic-panel orange">
+    <div class="panel-label">Cena 03 · O Painel Diagnóstico</div>
+    <div class="panel-title">Marcadores Essenciais — O Guia de Bolso</div>
+    <div class="panel-body">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('ihq-onco', this)" style="--active-bg:var(--orange)">Oncologia</button>
+        <button class="tab-btn" onclick="showTab('ihq-linfo', this)">Linfomas</button>
+        <button class="tab-btn" onclick="showTab('ihq-neuro', this)">Neuro/Neural</button>
+        <button class="tab-btn" onclick="showTab('ihq-prog', this)">Prognóstico</button>
+      </div>
+      <div class="tab-content active" id="ihq-onco">
+        <div class="info-box orange">
+          <b>🎯 Marcadores de Linhagem Tumoral:</b><br><br>
+          <strong>CK (AE1/AE3, CAM5.2, MNF116):</strong> Citoqueratinas → Carcinomas (origem epitelial). Todos os carcinomas são CK+.<br>
+          <strong>EMA (Epithelial Membrane Antigen):</strong> Reforça origem epitelial. Positivo em carcinomas e meningiomas.<br>
+          <strong>Vimentina:</strong> Filamento intermediário mesenquimal → Sarcomas, linfomas, melanoma.<br>
+          <strong>HMB45 + Melan-A + S100:</strong> Painel para melanoma (S100 sensível mas pouco específico; HMB45 + Melan-A são específicos).<br>
+          <strong>TTF-1 (Thyroid Transcription Factor-1):</strong> Pulmão + tiroide → adenocarcinoma pulmonar vs carcinoma tiroideu.<br>
+          <strong>PSA (Prostate Specific Antigen):</strong> Adenocarcinoma da próstata (rastreio e IHQ).
+        </div>
+      </div>
+      <div class="tab-content" id="ihq-linfo">
+        <div class="info-box cyan">
+          <b>🔵 Marcadores de Linfomas:</b><br><br>
+          <strong>CD20:</strong> Linfócito B maduro → Linfoma de células B (alvo do Rituximab!).<br>
+          <strong>CD3:</strong> Linfócito T → Linfoma T.<br>
+          <strong>CD30:</strong> Linfoma de Hodgkin (células de Reed-Sternberg) + ALCL.<br>
+          <strong>CD15:</strong> Linfoma de Hodgkin clássico (células Reed-Sternberg CD15+/CD30+).<br>
+          <strong>CD10 + BCL6 + MUM1:</strong> Classificação de LDGCB (DLBCL) — algoritmo de Hans.<br>
+          <strong>TdT (Terminal deoxynucleotidyl Transferase):</strong> Células linfóides imaturas → Linfoma linfoblástico / ALL.
+        </div>
+      </div>
+      <div class="tab-content" id="ihq-neuro">
+        <div class="info-box purple">
+          <b>🧠 Marcadores Neuro-Neurais:</b><br><br>
+          <strong>GFAP (Glial Fibrillary Acidic Protein):</strong> Astrócitos → Gliomas (astrocitoma, glioblastoma).<br>
+          <strong>Sinaptofisina + Cromogranina A:</strong> Tumores neuroendócrinos (NETs) — grânulos neurossecretores.<br>
+          <strong>CD56 (NCAM):</strong> Células NK e neuroectodérmicas → Carcinoma neuroendócrino de pequenas células.<br>
+          <strong>NeuN:</strong> Neurónios maduros — distingue tumores neuronais de gliais.<br>
+          <strong>IDH1/IDH2:</strong> Mutações em gliomas — importantíssimo na nova classificação OMS 2021 de tumores do SNC!
+        </div>
+      </div>
+      <div class="tab-content" id="ihq-prog">
+        <div class="info-box yellow">
+          <b>📊 Marcadores de Prognóstico e Terapêutica:</b><br><br>
+          <strong>Ki-67 (MIB-1):</strong> Índice proliferativo — % de células em ciclo. Alto = tumor mais agressivo. Define graus em NETs.<br>
+          <strong>ER + PR (Receptores de Estrogénio e Progesterona):</strong> Carcinoma da mama → prediz resposta à hormonoterapia (tamoxifeno, aromatase).<br>
+          <strong>HER2/neu (ErbB2):</strong> Amplificação → 20% carcinomas da mama → alvo do Trastuzumab (Herceptin®). IHQ 3+ = positivo; 2+ → FISH.<br>
+          <strong>PD-L1:</strong> Ligando do ponto de controlo imune → prediz resposta à imunoterapia (pembrolizumab, nivolumab).<br>
+          <strong>p53:</strong> Acumulação nuclear = mutação do gene supressor tumoral TP53.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLO QUALIDADE -->
+  <div class="comic-panel">
+    <div class="panel-label">Cena 04 · A Armadilha dos Falsos</div>
+    <div class="panel-title">Controlos em IHQ — Evitar Erros Fatais</div>
+    <div class="panel-body">
+      <p>Em IHQ, um resultado falso pode levar a um diagnóstico errado e tratamento equivocado. Por isso, <strong style="color:var(--cyan)">controlos são obrigatórios</strong> em cada lâmina:</p>
+      <div class="two-col">
+        <div class="stat-box">
+          <div class="stat-num" style="font-size:1.1rem">Controlo+</div>
+          <div class="stat-lbl">Tecido sabidamente positivo no mesmo slide — confirma que o anticorpo funcionou</div>
+        </div>
+        <div class="stat-box pink">
+          <div class="stat-num" style="font-size:1.1rem">Controlo−</div>
+          <div class="stat-lbl">Isotipo controlo (anticorpo irrelevante) — confirma ausência de ligação inespecífica</div>
+        </div>
+      </div>
+      <div class="info-box yellow" style="margin-top:14px">
+        <b>⚠️ Fontes de Erro em IHQ:</b><br>
+        1. Fixação inadequada (sub- ou sobre-fixação em formalina)<br>
+        2. Falha na recuperação antigénica<br>
+        3. Anticorpo fora da validade ou mal armazenado<br>
+        4. Background inespecífico (bloqueio insuficiente)<br>
+        5. Interpretação incorrecta (ex: confundir positividade citoplasmática com nuclear)<br>
+        Sempre correlacionar com morfologia H&E e dados clínicos!
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ IHQ -->
+  <div class="quiz-card">
+    <div class="quiz-title">🎮 QUIZ · IMUNOHISTOQUÍMICA</div>
+    <div class="quiz-q">Uma mulher de 52 anos tem carcinoma da mama invasivo. A IHQ mostra: ER+, PR+, HER2 3+. Qual o perfil molecular e qual a implicação terapêutica principal?</div>
+    <div class="quiz-opts">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz4')">A) Triple-negative — não beneficia de terapia-alvo</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','quiz4')">B) ER+/HER2+ — beneficia de hormonoterapia + Trastuzumab</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz4')">C) Luminal A — prognóstico excelente, só hormonoterapia</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','quiz4')">D) HER2 enriquecido — HER2 negativo, sem terapia-alvo</button>
+    </div>
+    <div class="quiz-feedback ok" id="quiz4-ok">✅ Perfeito! ER+/PR+ → hormonoterapia (tamoxifeno ou inibidor de aromatase). HER2 3+ (positivo) → Trastuzumab (Herceptin®) + pertuzumab. Este perfil HER2-enriquecido/luminal B beneficia de ambas as terapias-alvo.</div>
+    <div class="quiz-feedback bad" id="quiz4-bad">❌ HER2 3+ = HER2 POSITIVO → indica Trastuzumab. ER+/PR+ → hormonoterapia. Este tumor beneficia de AMBAS as terapias-alvo.</div>
+  </div>
+
+  <!-- RESUMO FINAL -->
+  <div class="comic-panel orange">
+    <div class="panel-label">Cena Final · A Grande Síntese</div>
+    <div class="panel-title">IHQ vs Outras Técnicas — Quando Usar Cada Uma?</div>
+    <div class="panel-body">
+      <div class="two-col">
+        <div style="background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
+          <div style="color:var(--cyan);font-weight:800;margin-bottom:8px">🧪 TDR</div>
+          <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Rastreio rápido em campo. Antígeno ou anticorpo. Sem laboratório. 5–30 min. Para triagem e zonas de recursos limitados.</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
+          <div style="color:var(--pink);font-weight:800;margin-bottom:8px">🔬 Papanicolau</div>
+          <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Rastreio oncológico. Morfologia celular. Identifica displasia antes do cancro. Microscópio óptico.</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
+          <div style="color:var(--purple);font-weight:800;margin-bottom:8px">⚡ ME</div>
+          <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Ultrestrutura. Nanómetros. Vírus, organelas, membranas. Glomerulopatias, miopatias. Lento e caro.</div>
+        </div>
+        <div style="background:var(--bg2);border-radius:12px;padding:16px;border:1px solid var(--border)">
+          <div style="color:var(--orange);font-weight:800;margin-bottom:8px">🎯 IHQ</div>
+          <div style="font-size:0.82rem;color:var(--muted);line-height:1.6">Proteínas específicas em tecido. Diagnóstico tumoral, subtipagem, prognóstico, guia terapêutico. Padrão-ouro em patologia cirúrgica.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:12px;justify-content:space-between;margin-top:20px">
+    <button class="tab-btn" onclick="showChapter(3)">← Anterior</button>
+    <button class="tab-btn" onclick="goHome()">🏠 Início</button>
+  </div>
+</section>
+
+</main>
+
+<!-- BACK TO TOP -->
+<div id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">DemilMed-UL</div>
+  <div class="footer-info">
+    Universidade Licungo (UL) · 2º Ano de Medicina · 2026<br>
+    MolecularMentes | Demil · Recursos Educativos em Medicina
+  </div>
+</footer>
+
+<script>
+// ── PARTICLES ──
+(function(){
+  const c = document.getElementById('particles');
+  for(let i=0;i<35;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (8+Math.random()*14)+'s';
+    p.style.animationDelay = (Math.random()*10)+'s';
+    p.style.width = p.style.height = (1+Math.random()*3)+'px';
+    const colors = ['#00f5ff','#ff2d78','#bf5fff','#ffd700','#39ff14'];
+    p.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.appendChild(p);
+  }
+})();
+
+// ── NAV ──
+function toggleNav(){
+  document.getElementById('hamburger').classList.toggle('open');
+  document.getElementById('chapter-nav').classList.toggle('open');
+}
+document.getElementById('chapter-nav').addEventListener('click', e => {
+  if(e.target === document.getElementById('chapter-nav')) toggleNav();
+});
+
+// ── CHAPTERS ──
+let currentChapter = 0;
+function showChapter(n){
+  document.getElementById('hero').style.display='none';
+  document.querySelectorAll('.chapter-section').forEach(s=>s.classList.remove('active'));
+  const ch = document.getElementById('ch'+n);
+  if(ch){ ch.classList.add('active'); currentChapter=n; }
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    item.classList.toggle('active', parseInt(item.dataset.ch)===n);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(document.getElementById('chapter-nav').classList.contains('open')) toggleNav();
+}
+function goHome(){
+  document.getElementById('hero').style.display='flex';
+  document.querySelectorAll('.chapter-section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(document.getElementById('chapter-nav').classList.contains('open')) toggleNav();
+}
+
+// ── TABS ──
+function showTab(id, btn){
+  const parent = btn ? btn.closest('.comic-panel, .slider-card') || btn.parentElement.parentElement : document.body;
+  const allTabs = parent.querySelectorAll('.tab-content');
+  const allBtns = parent.querySelectorAll('.tab-btn');
+  allTabs.forEach(t=>t.classList.remove('active'));
+  allBtns.forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ── EXPAND ──
+function toggleExpand(btn){
+  btn.classList.toggle('open');
+  const body = btn.nextElementSibling;
+  if(body) body.classList.toggle('open');
+}
+
+// ── QUIZ ──
+function checkQuiz(btn, result, qid){
+  const parent = btn.closest('.quiz-card');
+  parent.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(result);
+  const okBox = document.getElementById(qid+'-ok');
+  const badBox = document.getElementById(qid+'-bad');
+  if(result==='correct'){ okBox.classList.add('show'); }
+  else { badBox.classList.add('show'); }
+}
+
+// ── TDR ANIMATION ──
+let tdrAnimated = false;
+function animateTDR(){
+  if(tdrAnimated) return;
+  tdrAnimated = true;
+  const r = document.getElementById('tdr-result');
+  r.textContent = '⏳ Amostra flui por capilaridade...';
+  r.style.color = 'var(--yellow)';
+
+  const mol1 = document.getElementById('mol1');
+  const mol2 = document.getElementById('mol2');
+  const tline = document.getElementById('tline');
+  const cline = document.getElementById('cline');
+
+  // Animate molecules flowing
+  let x = 60;
+  const anim = setInterval(()=>{
+    x += 3;
+    mol1.setAttribute('cx', x); mol1.setAttribute('opacity', x<360?0.9:0);
+    mol2.setAttribute('cx', Math.max(60,x-20)); mol2.setAttribute('opacity', x>80&&x<360?0.8:0);
+    if(x>180){r.textContent='🟡 Conjugado ligado ao antígeno (ouro coloidal activado)...'; r.style.color='var(--yellow)';}
+    if(x>220){ tline.setAttribute('fill','#ff6b35'); tline.setAttribute('filter','url(#glow)'); }
+    if(x>265){ cline.setAttribute('fill','#39ff14'); }
+    if(x>=380){
+      clearInterval(anim);
+      r.textContent='✅ POSITIVO: Linha T (laranja) + Linha C (verde) visíveis!';
+      r.style.color='var(--green)';
+      tdrAnimated = false; // allow replay
+    }
+  }, 30);
+}
+
+// ── TDR INTERPRETAÇÃO ──
+const tdrInterps = {
+  positivo: '<strong style="color:var(--green)">POSITIVO (C + T visíveis):</strong><br>Ambas as linhas (C e T) aparecem. Isso significa que:<br>• O teste funcionou (linha C ✓)<br>• O antígeno alvo FOI detectado na amostra (linha T ✓)<br>• Interpretação: DOENÇA PRESENTE (ou exposição anterior, dependendo do teste)<br>• Próximo passo: confirmação clínica e tratamento se indicado.',
+  negativo: '<strong style="color:var(--cyan)">NEGATIVO (apenas C visível):</strong><br>Apenas a linha C aparece, a linha T está ausente.<br>• O teste funcionou (linha C ✓)<br>• O antígeno alvo NÃO foi detectado (linha T ausente ✓)<br>• Atenção: pode haver falso-negativo se colhido cedo demais (janela diagnóstica).<br>• Para alta suspeita clínica: repetir em 3–5 dias ou usar método alternativo (PCR).',
+  invalido: '<strong style="color:var(--pink)">INVÁLIDO (linha C ausente):</strong><br>A linha C não apareceu — o teste NÃO é interpretável!<br>• Possíveis causas: amostra insuficiente, teste expirado, técnica incorrecta, teste deteriorado (calor/humidade).<br>• NUNCA interpretar um teste sem linha C!<br>• Conduta: repetir com novo kit, verificar armazenamento e técnica.',
+  fraco: '<strong style="color:var(--yellow)">LINHA T FRACA — Zona Cinzenta:</strong><br>A linha T aparece muito ténue. Situação ambígua.<br>• Causas: baixa carga antigénica (fase inicial/resolução), limiar de detecção, diluição da amostra.<br>• Conduta: repetir após 24–48h, considerar testes quantitativos (ELISA, PCR) para confirmação.<br>• Importante: linha fraca = POSITIVO, mas de baixa intensidade — reportar e confirmar!'
+};
+function setTDRResult(type, btn){
+  document.querySelectorAll('.slider-card .tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tdr-interp-box').innerHTML = tdrInterps[type];
+}
+
+// ── MAGNIFICAÇÃO ──
+const magData = [
+  {val:'1000×', title:'Microscópio Óptico Convencional', body:'O que vê: Células individuais, núcleo, citoplasma. Tecidos e organização histológica geral. Resolução: ~200 nm. Aplicação: histopatologia de rotina (H&E, Giemsa, Ziehl-Neelsen, PAS).'},
+  {val:'5.000×', title:'Microscópio Confocal / Fluorescência Avançada', body:'Cortes ópticos de células marcadas com fluoróforos. Permite ver distribuição de proteínas em 3D dentro da célula viva. Resolução: ~100 nm. Aplicação: investigação celular, localização de receptores.'},
+  {val:'10.000×', title:'Início da Microscopia Electrónica de Varrimento (MEV)', body:'Superfície celular em 3D — microvilosidades, cílios, flagelos, eritrócitos deformados. Resolução: 10–20 nm. Aplicação: morfologia superficial, eritropatias, estruturas fúngicas e bacterianas.'},
+  {val:'50.000×', title:'MEV de Alta Resolução', body:'Estrutura superficial de vírus, detalhe de membranas plasmáticas, junções celulares, cílios estriados. Resolução: 2–5 nm. Aplicação: virologia, patologia renal, ciliopatias.'},
+  {val:'100.000×', title:'MET — Microscopia Electrónica de Transmissão', body:'Interior celular: retículo endoplasmático, mitocôndrias, aparelho de Golgi, lisossomas, núcleo. Depósitos de imunocomplexos na biópsia renal. Resolução: 0.5–1 nm.'},
+  {val:'500.000×', title:'MET de Alta Resolução — Vírus e Proteínas', body:'Cápsides virais, poros nucleares, ribossomas individuais (25 nm), estrutura interna de organelas. Resolução: 0.2–0.5 nm. Aplicação: virologia estructural, complexos proteicos.'},
+  {val:'1.000.000×', title:'MET Atómica / Criogénica (Cryo-EM)', body:'Estrutura de proteínas individuais, complexos moleculares, DNA. Cryo-EM → Nobel de Química 2017! Permite ver estrutura 3D de proteínas sem cristalização. Resolução: < 0.1 nm (sub-angström).'}
+];
+function updateMag(val){
+  const i = parseInt(val)-1;
+  const d = magData[i];
+  document.getElementById('mag-val').textContent = d.val;
+  document.getElementById('mag-result').innerHTML = `<strong style="color:var(--purple)">${d.val} — ${d.title}</strong><br>${d.body}`;
+}
+
+// ── IHQ SIMULATOR ──
+const ihqColors = {
+  ck: {cells:['#8B4513','#8B4513','#8B4513','#8B4513'], nuclei:['#1a1a40','#1a1a40','#1a1a40','#1a1a40'], location:'Citoplasma'},
+  cd20: {cells:['#0a3a5a','#0a3a5a','#0a3a5a','#0a1a2a'], nuclei:['#004488','#004488','#004488','#1a1a40'], location:'Membrana'},
+  s100: {cells:['#5a4a00','#5a4a00','#0a1a0a','#5a4a00'], nuclei:['#8B8000','#8B8000','#1a1a40','#8B8000'], location:'Núcleo+Citoplasma'},
+  vim: {cells:['#3a0a6a','#3a0a6a','#0a1a0a','#3a0a6a'], nuclei:['#1a1a40','#1a1a40','#1a1a40','#1a1a40'], location:'Citoplasma'},
+  ki67: {cells:['#0a1a0a','#0a1a0a','#0a1a0a','#0a1a0a'], nuclei:['#5a0a1a','#1a1a40','#5a0a1a','#1a1a40'], location:'Núcleo'}
+};
+function simulateIHQ(type, name, target, desc, color){
+  const d = ihqColors[type];
+  const cells = ['c1','c2','c3','c4'];
+  const nuclei = ['cn1','cn2','cn3','cn4'];
+  cells.forEach((id,i)=>{ document.getElementById(id).setAttribute('fill', d.cells[i]); });
+  nuclei.forEach((id,i)=>{ document.getElementById(id).setAttribute('fill', d.nuclei[i]); });
+  document.getElementById('ihq-label').setAttribute('fill',color);
+  document.getElementById('ihq-label').textContent = name + ' — Positividade: ' + d.location;
+  document.getElementById('ihq-desc').innerHTML = `<strong style="color:${color}">${name} → ${target}</strong><br><br>${desc}`;
+  document.getElementById('ihq-desc').style.borderColor = color;
+  document.querySelectorAll('.molecule-box .tab-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ── BACK TO TOP ──
+window.addEventListener('scroll', ()=>{
+  const btn = document.getElementById('back-to-top');
+  btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// ── CLOSE NAV ON OUTSIDE CLICK ──
+document.addEventListener('click', e=>{
+  const nav = document.getElementById('chapter-nav');
+  const ham = document.getElementById('hamburger');
+  if(nav.classList.contains('open') && !nav.contains(e.target) && !ham.contains(e.target)){
+    toggleNav();
+  }
+});
+</script>
+</body>
+</html>

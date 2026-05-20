@@ -1,0 +1,1849 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Cascata do Oxigénio — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:ital,wght@0,300;0,400;0,700;1,400&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #060b14;
+    --bg2: #0d1525;
+    --bg3: #111e35;
+    --cyan: #00f5ff;
+    --yellow: #ffd700;
+    --pink: #ff2d78;
+    --green: #39ff14;
+    --purple: #bf5fff;
+    --orange: #ff7700;
+    --text: #e8f4ff;
+    --text2: #8aafd4;
+    --card: rgba(0,245,255,0.04);
+    --border: rgba(0,245,255,0.15);
+    --glow: 0 0 20px rgba(0,245,255,0.4);
+    --glow-pink: 0 0 20px rgba(255,45,120,0.5);
+    --glow-yellow: 0 0 20px rgba(255,215,0,0.5);
+    --glow-green: 0 0 20px rgba(57,255,20,0.5);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ---- STARFIELD ---- */
+  #stars {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    pointer-events:none;
+    z-index:0;
+    overflow:hidden;
+  }
+  .star {
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  @keyframes twinkle { from{opacity:.1;transform:scale(.8)} to{opacity:.9;transform:scale(1.2)} }
+
+  /* ---- FLOATING O2 MOLECULES ---- */
+  .mol-bg {
+    position: fixed;
+    pointer-events: none;
+    z-index:0;
+    animation: floatMol var(--md) ease-in-out infinite alternate;
+    opacity: 0.08;
+    font-size: 1.5rem;
+    color: var(--cyan);
+    font-family: 'Share Tech Mono', monospace;
+  }
+  @keyframes floatMol {
+    from { transform: translate(0,0) rotate(0deg); }
+    to { transform: translate(var(--mx), var(--my)) rotate(360deg); }
+  }
+
+  /* ---- LAYOUT ---- */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 1.2rem; position:relative; z-index:1; }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--pink), var(--purple));
+    color:#fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size:.65rem;
+    letter-spacing:.2em;
+    padding:.4rem 1.2rem;
+    border-radius:999px;
+    margin-bottom:1.5rem;
+    animation: fadeDown .8s ease both;
+    box-shadow: var(--glow-pink);
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 8vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(120deg, var(--cyan) 0%, var(--purple) 50%, var(--pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: fadeDown .9s ease .1s both;
+    margin-bottom: .5rem;
+    filter: drop-shadow(0 0 30px rgba(0,245,255,.3));
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: var(--yellow);
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing:.1em;
+    animation: fadeDown 1s ease .2s both;
+    margin-bottom: 1.5rem;
+    text-shadow: var(--glow-yellow);
+  }
+
+  .hero-intro {
+    max-width:600px;
+    font-size:1.05rem;
+    color:var(--text2);
+    line-height:1.7;
+    animation: fadeDown 1s ease .3s both;
+    margin-bottom:2.5rem;
+  }
+
+  .hero-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap:.8rem;
+    justify-content: center;
+    animation: fadeDown 1s ease .4s both;
+    margin-bottom: 3rem;
+  }
+
+  .hero-values span {
+    background: rgba(0,245,255,.08);
+    border: 1px solid var(--cyan);
+    border-radius: 8px;
+    padding: .4rem 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--cyan);
+    font-size:.9rem;
+    box-shadow: var(--glow);
+  }
+
+  .scroll-hint {
+    animation: bounce 2s ease infinite;
+    color: var(--text2);
+    font-size:.8rem;
+    letter-spacing:.2em;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.4rem;
+  }
+  .scroll-hint svg { animation: bounce 2s ease infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+
+  /* ---- PROGRESS BAR ---- */
+  #progress-bar {
+    position: fixed;
+    top:0; left:0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    z-index: 100;
+    transition: width .1s linear;
+    box-shadow: var(--glow);
+  }
+
+  /* ---- NAV DOTS ---- */
+  #nav-dots {
+    position: fixed;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: .7rem;
+    z-index: 50;
+  }
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: rgba(0,245,255,.2);
+    border: 1px solid var(--cyan);
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+  }
+  .nav-dot:hover, .nav-dot.active {
+    background: var(--cyan);
+    box-shadow: var(--glow);
+    transform: scale(1.4);
+  }
+  .nav-dot .dot-label {
+    position: absolute;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: .7rem;
+    color: var(--cyan);
+    opacity: 0;
+    font-family: 'Share Tech Mono', monospace;
+    pointer-events:none;
+    transition: opacity .3s;
+  }
+  .nav-dot:hover .dot-label { opacity: 1; }
+
+  /* ---- SECTIONS ---- */
+  .chapter {
+    padding: 5rem 0 2rem;
+    position: relative;
+  }
+
+  .chapter-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: .6rem;
+    letter-spacing: .3em;
+    color: var(--text2);
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .chapter-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap:.8rem;
+    flex-wrap: wrap;
+  }
+
+  .chapter-num {
+    display: inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:2.2rem;
+    height:2.2rem;
+    border-radius:50%;
+    font-size:.8rem;
+    font-weight:900;
+    flex-shrink:0;
+  }
+
+  /* ---- SPEECH BUBBLES (Manga style) ---- */
+  .manga-panel {
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+  }
+  .manga-panel.right { flex-direction: row-reverse; }
+
+  .char-icon {
+    width: 64px; height:64px;
+    border-radius: 50%;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.8rem;
+    border: 2px solid var(--cyan);
+    background: var(--bg2);
+    box-shadow: var(--glow);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  .char-icon.pink { border-color: var(--pink); box-shadow: var(--glow-pink); }
+  .char-icon.yellow { border-color: var(--yellow); box-shadow: var(--glow-yellow); }
+  .char-icon.green { border-color: var(--green); box-shadow: var(--glow-green); }
+  .char-icon.purple { border-color: var(--purple); box-shadow: 0 0 20px rgba(191,95,255,.5); }
+
+  @keyframes pulse { 0%,100%{box-shadow:var(--glow)} 50%{box-shadow:0 0 40px rgba(0,245,255,.7)} }
+
+  .speech-bubble {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    position: relative;
+    font-size:.97rem;
+    line-height:1.7;
+    color: var(--text);
+    min-width: 200px;
+  }
+  .speech-bubble::before {
+    content:'';
+    position:absolute;
+    top: 20px;
+    left: -9px;
+    width:0; height:0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 9px solid var(--bg2);
+  }
+  .manga-panel.right .speech-bubble::before {
+    left:auto; right:-9px;
+    border-right:none;
+    border-left: 9px solid var(--bg2);
+  }
+  .speech-bubble .char-name {
+    font-family:'Orbitron', sans-serif;
+    font-size:.6rem;
+    letter-spacing:.15em;
+    margin-bottom:.4rem;
+    opacity:.7;
+  }
+
+  /* ---- INFO CARDS ---- */
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin: 1rem 0;
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s;
+  }
+  .info-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--cyan);
+    box-shadow: var(--glow);
+  }
+  .info-card::before {
+    content:'';
+    position:absolute;
+    top:0; left:0;
+    width:3px; height:100%;
+    background: var(--cyan);
+  }
+  .info-card.pink::before { background: var(--pink); }
+  .info-card.yellow::before { background: var(--yellow); }
+  .info-card.green::before { background: var(--green); }
+  .info-card.purple::before { background: var(--purple); }
+  .info-card.orange::before { background: var(--orange); }
+
+  .info-card h4 {
+    font-family:'Orbitron', sans-serif;
+    font-size:.8rem;
+    letter-spacing:.1em;
+    margin-bottom:.6rem;
+    color: var(--cyan);
+  }
+  .info-card.pink h4 { color:var(--pink); }
+  .info-card.yellow h4 { color:var(--yellow); }
+  .info-card.green h4 { color:var(--green); }
+  .info-card.purple h4 { color:var(--purple); }
+  .info-card.orange h4 { color:var(--orange); }
+
+  /* ---- MOLECULE ANIMATION ---- */
+  .molecule-stage {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 140px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .o2-molecule {
+    display: inline-flex;
+    align-items:center;
+    gap: 4px;
+    animation: spin3d 4s linear infinite;
+  }
+  @keyframes spin3d {
+    0% { transform: perspective(300px) rotateY(0deg) rotateX(10deg); }
+    100% { transform: perspective(300px) rotateY(360deg) rotateX(10deg); }
+  }
+  .atom {
+    width:44px; height:44px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Orbitron', monospace;
+    font-weight:700;
+    font-size:.8rem;
+    position:relative;
+    box-shadow: 0 0 20px currentColor;
+  }
+  .atom::after {
+    content:'';
+    position:absolute;
+    inset:-4px;
+    border-radius:50%;
+    border:2px solid currentColor;
+    opacity:.3;
+    animation: orbit 2s linear infinite;
+  }
+  @keyframes orbit { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .atom.o { background: rgba(0,245,255,.15); color: var(--cyan); border:2px solid var(--cyan); }
+  .atom.c { background: rgba(255,215,0,.15); color: var(--yellow); border:2px solid var(--yellow); }
+  .atom.h2o { background: rgba(57,255,20,.15); color: var(--green); border:2px solid var(--green); }
+  .bond { width: 20px; height: 3px; background: var(--text2); border-radius:2px; position:relative; }
+  .bond::before {
+    content:''; position:absolute; top:-5px; left:0; width:100%; height:3px;
+    background:var(--text2); border-radius:2px;
+  }
+  .bond::after {
+    content:''; position:absolute; bottom:-5px; left:0; width:100%; height:3px;
+    background:var(--text2); border-radius:2px;
+  }
+
+  /* ---- CASCADE DIAGRAM ---- */
+  #cascade-diagram {
+    margin: 2rem 0;
+    position: relative;
+  }
+
+  .cascade-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1rem;
+    margin-bottom: .3rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all .3s;
+    background: var(--bg2);
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+  .cascade-step:hover, .cascade-step.active-step {
+    border-color: var(--cyan);
+    box-shadow: var(--glow);
+    transform: translateX(4px);
+  }
+  .cascade-step.active-step { background: rgba(0,245,255,.08); }
+
+  .step-bar-wrap {
+    flex:1;
+    height: 28px;
+    background: rgba(255,255,255,.05);
+    border-radius: 6px;
+    overflow:hidden;
+    position:relative;
+  }
+  .step-bar {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1s ease;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding-right:.5rem;
+    font-family:'Share Tech Mono', monospace;
+    font-size:.75rem;
+    color:#fff;
+    font-weight:700;
+    min-width: 60px;
+  }
+  .step-label {
+    min-width: 130px;
+    font-size:.82rem;
+    color:var(--text2);
+    font-family:'Share Tech Mono', monospace;
+  }
+  .step-value {
+    min-width: 70px;
+    text-align:right;
+    font-family:'Orbitron', sans-serif;
+    font-size:.7rem;
+    font-weight:700;
+  }
+
+  .step-tooltip {
+    display:none;
+    background: var(--bg3);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:.8rem 1rem;
+    font-size:.85rem;
+    color:var(--text2);
+    line-height:1.6;
+    margin-top:.5rem;
+    animation: fadeIn .3s ease;
+  }
+  .cascade-step.active-step + .step-tooltip { display:block; }
+
+  /* ---- ALVEOLAR EQUATION ---- */
+  .equation-box {
+    background: var(--bg2);
+    border: 1px solid var(--yellow);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    text-align:center;
+    font-family:'Share Tech Mono', monospace;
+    box-shadow: var(--glow-yellow);
+    position:relative;
+    overflow:hidden;
+  }
+  .equation-box::before {
+    content:'EQUAÇÃO ALVEOLAR';
+    position:absolute;
+    top:8px; left:12px;
+    font-size:.55rem;
+    letter-spacing:.2em;
+    color:var(--yellow);
+    opacity:.6;
+    font-family:'Orbitron', sans-serif;
+  }
+  .eq-main {
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: var(--yellow);
+    margin: .5rem 0;
+    text-shadow: var(--glow-yellow);
+  }
+  .eq-sub { font-size:.85rem; color:var(--text2); margin:.3rem 0; }
+
+  /* ---- INTERACTIVE QUIZ ---- */
+  .quiz-box {
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 0 20px rgba(191,95,255,.2);
+  }
+  .quiz-box h3 {
+    font-family:'Orbitron', sans-serif;
+    font-size:.9rem;
+    color:var(--purple);
+    margin-bottom:1rem;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .quiz-question {
+    font-size:1rem;
+    margin-bottom:1rem;
+    line-height:1.6;
+  }
+  .quiz-options {
+    display:grid;
+    gap:.6rem;
+    margin-bottom:1rem;
+  }
+  .quiz-opt {
+    background: rgba(191,95,255,.06);
+    border: 1px solid rgba(191,95,255,.3);
+    border-radius:8px;
+    padding:.7rem 1rem;
+    cursor:pointer;
+    font-size:.9rem;
+    transition: all .2s;
+    text-align:left;
+    color:var(--text);
+  }
+  .quiz-opt:hover { border-color:var(--purple); background:rgba(191,95,255,.15); }
+  .quiz-opt.correct { border-color:var(--green); background:rgba(57,255,20,.1); color:var(--green); }
+  .quiz-opt.wrong { border-color:var(--pink); background:rgba(255,45,120,.1); color:var(--pink); }
+  .quiz-feedback {
+    display:none;
+    padding:.8rem 1rem;
+    border-radius:8px;
+    font-size:.9rem;
+    line-height:1.6;
+    animation: fadeIn .3s ease;
+  }
+  .quiz-feedback.show { display:block; }
+  .quiz-feedback.ok { background:rgba(57,255,20,.08); border:1px solid var(--green); color:var(--green); }
+  .quiz-feedback.nok { background:rgba(255,45,120,.08); border:1px solid var(--pink); color:var(--pink); }
+
+  /* ---- ORGAN TABLE ---- */
+  .organ-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: .8rem;
+    margin: 1.5rem 0;
+  }
+  .organ-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem .8rem;
+    text-align:center;
+    cursor:pointer;
+    transition:all .3s;
+    position:relative;
+    overflow:hidden;
+  }
+  .organ-card:hover {
+    border-color:var(--cyan);
+    box-shadow:var(--glow);
+    transform: scale(1.05);
+  }
+  .organ-icon { font-size:1.8rem; margin-bottom:.4rem; display:block; }
+  .organ-name { font-family:'Orbitron', sans-serif; font-size:.65rem; letter-spacing:.1em; color:var(--text2); margin-bottom:.3rem; }
+  .organ-pao2 { font-size:1rem; font-weight:700; font-family:'Share Tech Mono', monospace; }
+  .organ-pao2-bar {
+    height:4px;
+    border-radius:2px;
+    margin-top:.5rem;
+    background: linear-gradient(90deg, var(--pink), var(--cyan));
+    transition: width .8s ease;
+  }
+  .organ-tooltip {
+    display:none;
+    position:absolute;
+    bottom:0; left:0; right:0;
+    background:rgba(6,11,20,.9);
+    font-size:.7rem;
+    padding:.4rem;
+    line-height:1.4;
+    color:var(--text2);
+    animation:fadeIn .2s;
+  }
+  .organ-card:hover .organ-tooltip { display:block; }
+
+  /* ---- TIMELINE ---- */
+  .timeline {
+    position:relative;
+    padding-left:2rem;
+    margin: 2rem 0;
+  }
+  .timeline::before {
+    content:'';
+    position:absolute;
+    left:.5rem;
+    top:0; bottom:0;
+    width:2px;
+    background: linear-gradient(180deg, var(--cyan), var(--purple), var(--pink));
+    border-radius:2px;
+  }
+  .tl-item {
+    position:relative;
+    margin-bottom:2rem;
+    opacity:0;
+    transform: translateX(-20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .tl-item.visible { opacity:1; transform:translateX(0); }
+  .tl-dot {
+    position:absolute;
+    left:-1.7rem;
+    top:.3rem;
+    width:14px; height:14px;
+    border-radius:50%;
+    border: 2px solid var(--cyan);
+    background: var(--bg);
+    box-shadow: var(--glow);
+    animation: tldot 2s ease-in-out infinite;
+  }
+  @keyframes tldot { 0%,100%{box-shadow:var(--glow)} 50%{box-shadow:0 0 30px rgba(0,245,255,.8)} }
+  .tl-dot.pink { border-color:var(--pink); box-shadow:var(--glow-pink); }
+  .tl-dot.yellow { border-color:var(--yellow); box-shadow:var(--glow-yellow); }
+  .tl-dot.green { border-color:var(--green); box-shadow:var(--glow-green); }
+  .tl-dot.purple { border-color:var(--purple); }
+  .tl-dot.orange { border-color:var(--orange); }
+  .tl-title {
+    font-family:'Orbitron', sans-serif;
+    font-size:.8rem;
+    letter-spacing:.1em;
+    margin-bottom:.4rem;
+  }
+  .tl-content { font-size:.92rem; line-height:1.7; color:var(--text2); }
+
+  /* ---- PASTEUR SECTION ---- */
+  .danger-box {
+    background: rgba(255,45,120,.07);
+    border: 1px solid var(--pink);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: var(--glow-pink);
+    position:relative;
+    overflow:hidden;
+  }
+  .danger-box::before {
+    content:'⚠ PONTO CRÍTICO';
+    font-family:'Orbitron', sans-serif;
+    font-size:.55rem;
+    letter-spacing:.2em;
+    color:var(--pink);
+    display:block;
+    margin-bottom:.8rem;
+  }
+
+  /* ---- ALTITUDE VISUALISER ---- */
+  .altitude-vis {
+    background: var(--bg2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.5rem;
+    margin:1.5rem 0;
+  }
+  .alt-slider {
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    outline:none;
+    margin:1rem 0;
+  }
+  .alt-slider::-webkit-slider-thumb {
+    -webkit-appearance:none;
+    width:20px; height:20px;
+    border-radius:50%;
+    background: var(--cyan);
+    cursor:pointer;
+    box-shadow:var(--glow);
+    border:2px solid #fff;
+  }
+  .alt-display {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin-top:1rem;
+  }
+  .alt-val {
+    background: var(--bg3);
+    border-radius:10px;
+    padding:.8rem 1rem;
+    text-align:center;
+  }
+  .alt-val-num {
+    font-family:'Orbitron', sans-serif;
+    font-size:1.4rem;
+    font-weight:700;
+    color:var(--cyan);
+  }
+  .alt-val-label { font-size:.7rem; color:var(--text2); margin-top:.2rem; }
+
+  /* ---- DIVIDER ---- */
+  .section-divider {
+    text-align:center;
+    padding: 2rem 0;
+    color:var(--text2);
+    font-size:.7rem;
+    letter-spacing:.3em;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    opacity:.4;
+  }
+  .section-divider::before,.section-divider::after {
+    content:'';flex:1;height:1px;background:var(--border);
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  .reveal {
+    opacity:0;
+    transform:translateY(30px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ---- GLOW TEXT ---- */
+  .glow-cyan { color:var(--cyan); text-shadow:0 0 10px var(--cyan); }
+  .glow-yellow { color:var(--yellow); text-shadow:0 0 10px var(--yellow); }
+  .glow-pink { color:var(--pink); text-shadow:0 0 10px var(--pink); }
+  .glow-green { color:var(--green); text-shadow:0 0 10px var(--green); }
+  .glow-purple { color:var(--purple); text-shadow:0 0 10px var(--purple); }
+
+  /* ---- BADGE ---- */
+  .badge {
+    display:inline-block;
+    font-family:'Share Tech Mono',monospace;
+    font-size:.75rem;
+    padding:.2rem .6rem;
+    border-radius:4px;
+    margin:.15rem;
+  }
+  .badge.cyan { background:rgba(0,245,255,.12); color:var(--cyan); border:1px solid var(--cyan); }
+  .badge.pink { background:rgba(255,45,120,.12); color:var(--pink); border:1px solid var(--pink); }
+  .badge.yellow { background:rgba(255,215,0,.12); color:var(--yellow); border:1px solid var(--yellow); }
+  .badge.green { background:rgba(57,255,20,.12); color:var(--green); border:1px solid var(--green); }
+
+  /* ---- HIGHLIGHT ---- */
+  mark {
+    background: rgba(255,215,0,.18);
+    color: var(--yellow);
+    border-radius:3px;
+    padding:0 .2em;
+  }
+
+  /* ---- SECTION BG ACCENTS ---- */
+  .section-accent {
+    position:relative;
+  }
+  .section-accent::before {
+    content:'';
+    position:absolute;
+    top:-100px; right:-150px;
+    width:400px; height:400px;
+    border-radius:50%;
+    background: radial-gradient(circle, rgba(0,245,255,.04) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 1.5rem 2rem;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  footer::before {
+    content:'';
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    width:200px; height:1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    box-shadow: var(--glow);
+  }
+  .footer-logo {
+    font-family:'Orbitron', sans-serif;
+    font-size:1.8rem;
+    font-weight:900;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:.5rem;
+  }
+  .footer-sub { font-size:.8rem; color:var(--text2); letter-spacing:.1em; margin-bottom:1.5rem; }
+  .footer-info { font-size:.75rem; color:var(--text2); opacity:.5; margin-top:.5rem; }
+
+  /* ---- INTERACTIVE METER ---- */
+  .o2-meter {
+    margin: 1.5rem 0;
+    background: var(--bg2);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:1.5rem;
+  }
+  .meter-title {
+    font-family:'Orbitron', sans-serif;
+    font-size:.75rem;
+    color:var(--cyan);
+    letter-spacing:.1em;
+    margin-bottom:1rem;
+  }
+  .meter-row {
+    display:flex;
+    align-items:center;
+    gap:.8rem;
+    margin-bottom:.7rem;
+  }
+  .meter-loc {
+    min-width:120px;
+    font-size:.8rem;
+    color:var(--text2);
+    font-family:'Share Tech Mono', monospace;
+  }
+  .meter-track {
+    flex:1;
+    height:18px;
+    background:rgba(255,255,255,.05);
+    border-radius:9px;
+    overflow:hidden;
+    position:relative;
+  }
+  .meter-fill {
+    height:100%;
+    border-radius:9px;
+    transition: width 1.5s ease;
+    position:relative;
+    overflow:hidden;
+  }
+  .meter-fill::after {
+    content:'';
+    position:absolute;
+    top:0;left:-60%;width:50%;height:100%;
+    background:rgba(255,255,255,.3);
+    transform:skewX(-20deg);
+    animation:shimmer 2.5s ease-in-out infinite;
+  }
+  @keyframes shimmer { 0%{left:-60%} 100%{left:120%} }
+  .meter-num {
+    min-width:60px;
+    text-align:right;
+    font-family:'Share Tech Mono', monospace;
+    font-size:.8rem;
+    font-weight:700;
+  }
+
+  /* ---- CANVAS SPIRAL ---- */
+  #spiral-canvas {
+    width:100%;
+    max-width:500px;
+    height:300px;
+    display:block;
+    margin:0 auto;
+    border-radius:14px;
+    background:var(--bg2);
+    border:1px solid var(--border);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background: linear-gradient(var(--cyan), var(--purple)); border-radius:2px; }
+
+  /* ---- MOBILE ADJUSTMENTS ---- */
+  @media (max-width:600px) {
+    .manga-panel { flex-direction:column !important; }
+    .speech-bubble::before { display:none; }
+    .step-label { min-width:80px; font-size:.7rem; }
+    .alt-display { grid-template-columns:1fr 1fr; }
+    #nav-dots { display:none; }
+    .organ-grid { grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- STARS -->
+<div id="stars"></div>
+
+<!-- FLOATING MOLECULES -->
+<div id="float-mols"></div>
+
+<!-- NAV DOTS -->
+<nav id="nav-dots"></nav>
+
+<!-- =================== HERO =================== -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-badge">⚗ DEMILMED-UL · FISIOLOGIA RESPIRATÓRIA · 2026</div>
+    <h1 class="hero-title">A CASCATA<br>DO OXIGÉNIO</h1>
+    <p class="hero-subtitle">🌊 Do Céu às Mitocôndrias</p>
+    <p class="hero-intro">
+      Imagina o oxigénio como um herói que faz uma viagem épica — desde o ar que respiramos até às células mais profundas do nosso corpo.
+      Em cada etapa da jornada, ele perde pressão. Mas nunca desiste. Esta é a sua história.
+    </p>
+    <div class="hero-values">
+      <span>🌍 Atmosfera: 159 mmHg</span>
+      <span>💧 Vias Aéreas: 149 mmHg</span>
+      <span>🫁 Alvéolo: 99 mmHg</span>
+      <span>🩸 Artéria: 92 mmHg</span>
+      <span>🔬 Mitocôndria: 1–10 mmHg</span>
+    </div>
+
+    <!-- Live O2 Molecule -->
+    <div style="margin:1.5rem 0">
+      <div class="o2-molecule">
+        <div class="atom o">O</div>
+        <div class="bond"></div>
+        <div class="atom o">O</div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>COMEÇA A JORNADA</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- =================== WHAT IS IT =================== -->
+<section id="sec0" class="chapter section-accent">
+  <div class="container">
+    <div class="chapter-tag">// PRÓLOGO</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(0,245,255,.15);color:var(--cyan);border:2px solid var(--cyan)">00</span>
+      O que é a Cascata do Oxigénio?
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon">🧑‍⚕️</div>
+      <div class="speech-bubble">
+        <div class="char-name">// NARRADOR · PROF. DEMILMED</div>
+        Pensa assim: o oxigénio começa a sua vida no ar puro, com uma pressão de <mark>159 mmHg</mark>. Mas até chegar à tua célula... ele vai "perdendo energia" em cada passo. Cada perda tem uma razão científica precisa.
+      </div>
+    </div>
+
+    <div class="manga-panel right reveal">
+      <div class="char-icon yellow">🧬</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · O₂ (OXIGÉNIO)</div>
+        Eu sou o O₂! A minha missão é chegar às mitocôndrias para produzir <strong>ATP</strong> — a energia da tua vida. Mas a minha jornada é cheia de obstáculos. Cada barreira que encontro... baixa a minha pressão.
+      </div>
+    </div>
+
+    <div class="info-card reveal">
+      <h4>📖 DEFINIÇÃO SIMPLES</h4>
+      <p style="line-height:1.7">A <strong>Cascata do Oxigénio</strong> é a <mark>diminuição gradual e em degraus</mark> da pressão parcial de oxigénio (PaO₂) desde o ar atmosférico até às mitocôndrias das células. É chamada de "cascata" porque, tal como uma cascata de água que desce de nível em nível, o oxigénio vai perdendo pressão progressivamente em cada etapa do sistema respiratório.</p>
+    </div>
+
+    <div class="info-card yellow reveal">
+      <h4>🔑 PORQUÊ IMPORTA?</h4>
+      <p style="line-height:1.7">Sem o gradiente de pressão parcial de O₂, o oxigénio <strong>não difundiria</strong> do ar para os pulmões, nem dos pulmões para o sangue, nem do sangue para as células. É literalmente o motor físico que move o O₂ por todo o corpo — como a gravidade que faz a água descer uma montanha.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== OVERVIEW METER =================== -->
+<section id="sec-overview" style="padding:2rem 0;">
+  <div class="container">
+    <div class="section-divider">VISÃO GERAL · A DESCIDA DA PRESSÃO</div>
+    <div class="o2-meter reveal" id="main-meter">
+      <div class="meter-title">⬇ PRESSÃO PARCIAL DE O₂ EM CADA ETAPA (mmHg)</div>
+      <div id="meter-rows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STEP 1: ATMOSPHERE =================== -->
+<section id="sec1" class="chapter section-accent">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 01</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(0,245,255,.15);color:var(--cyan);border:2px solid var(--cyan)">01</span>
+      <span class="glow-cyan">O Ar Atmosférico</span>
+      <span class="badge cyan">159 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon">🌍</div>
+      <div class="speech-bubble">
+        <div class="char-name">// ATMOSFERA · NÍVEL DO MAR</div>
+        Aqui começo a minha jornada. O ar que nos rodeia tem uma pressão total de <mark>760 mmHg</mark> ao nível do mar. Disso, <strong>21% é oxigénio</strong>. Calcula: 760 × 0,21 = <span class="glow-cyan">159,6 mmHg</span>! Este é o ponto de partida.
+      </div>
+    </div>
+
+    <div class="molecule-stage reveal">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1rem">
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;justify-content:center">
+          <div class="o2-molecule" style="animation-duration:3s">
+            <div class="atom o" style="width:36px;height:36px;font-size:.7rem">O</div>
+            <div class="bond"></div>
+            <div class="atom o" style="width:36px;height:36px;font-size:.7rem">O</div>
+          </div>
+          <div class="atom c" style="width:32px;height:32px;font-size:.65rem;animation:spin3d 5s linear infinite">N₂</div>
+          <div class="atom c" style="width:28px;height:28px;font-size:.6rem;animation:spin3d 7s linear infinite reverse">Ar</div>
+          <div class="o2-molecule" style="animation-duration:6s">
+            <div class="atom o" style="width:30px;height:30px;font-size:.6rem">O</div>
+            <div class="bond"></div>
+            <div class="atom o" style="width:30px;height:30px;font-size:.6rem">O</div>
+          </div>
+        </div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.8rem;color:var(--text2)">
+          N₂ (78%) · O₂ (21%) · CO₂ (0.04%) · outros
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card reveal">
+      <h4>🌡️ A FÓRMULA</h4>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:1rem;color:var(--cyan);text-align:center;padding:.5rem;background:rgba(0,245,255,.05);border-radius:8px;margin:.5rem 0">
+        PO₂ = Pressão Atm. × Fracção de O₂<br>
+        PO₂ = 760 × 0.21 = <strong>159.6 mmHg</strong>
+      </div>
+      <p style="line-height:1.7;margin-top:.5rem">O ar é uma mistura de gases. A <strong>lei de Dalton</strong> diz que cada gás exerce a sua própria pressão parcial, independentemente dos outros. O O₂ representa 21% desta mistura — constante em toda a atmosfera até altitudes elevadas.</p>
+    </div>
+
+    <!-- Altitude interactive -->
+    <div class="altitude-vis reveal">
+      <div class="meter-title">🏔️ ALTITUDE INTERACTIVA — O que acontece quando subimos?</div>
+      <p style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">Desliza para simular diferentes altitudes:</p>
+      <input type="range" class="alt-slider" id="alt-slider" min="0" max="8849" value="0" step="100">
+      <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--text2);font-family:'Share Tech Mono',monospace;margin-top:.2rem">
+        <span>Nível do Mar (0m)</span>
+        <span>Monte Everest (8849m)</span>
+      </div>
+      <div class="alt-display">
+        <div class="alt-val">
+          <div class="alt-val-num" id="alt-alt">0</div>
+          <div class="alt-val-label">Altitude (m)</div>
+        </div>
+        <div class="alt-val">
+          <div class="alt-val-num" id="alt-patm">760</div>
+          <div class="alt-val-label">P. Atm. (mmHg)</div>
+        </div>
+        <div class="alt-val">
+          <div class="alt-val-num" id="alt-po2" style="color:var(--cyan)">159</div>
+          <div class="alt-val-label">PO₂ Atm. (mmHg)</div>
+        </div>
+        <div class="alt-val">
+          <div class="alt-val-num" id="alt-alv" style="color:var(--yellow)">99</div>
+          <div class="alt-val-label">PO₂ Alveolar</div>
+        </div>
+      </div>
+      <div id="alt-comment" style="margin-top:.8rem;font-size:.8rem;color:var(--text2);font-style:italic;text-align:center;min-height:2rem"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STEP 2: HUMIDIFICATION =================== -->
+<section id="sec2" class="chapter">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 02</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(57,255,20,.15);color:var(--green);border:2px solid var(--green)">02</span>
+      <span class="glow-green">Vias Aéreas: Humidificação</span>
+      <span class="badge green">149 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon green">💧</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · VAPOR DE ÁGUA (H₂O)</div>
+        Quando o ar entra pelo nariz e boca, passo a humidificá-lo. Sou o vapor de água! Adiciono <mark>47 mmHg</mark> de pressão ao gás. Isso dilui todos os outros gases — incluindo o meu amigo O₂. Não é pessoal... é física!
+      </div>
+    </div>
+
+    <div class="manga-panel right reveal">
+      <div class="char-icon">🧑‍⚕️</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PROF. DEMILMED</div>
+        O nariz e a faringe funcionam como um <strong>humidificador natural</strong>. O ar inspirado é aquecido até à temperatura corporal (37°C) e saturado a 100% de humidade. A pressão do vapor de água a 37°C é <em>sempre</em> 47 mmHg — é uma constante!
+      </div>
+    </div>
+
+    <div class="equation-box reveal">
+      <div class="eq-main">PO₂ = (760 − 47) × 0.21 = 149 mmHg</div>
+      <div class="eq-sub">Subtrai-se a pressão do vapor de água antes de calcular a fracção de O₂</div>
+      <div class="eq-sub" style="color:var(--text2)">(760 − 47) = 713 mmHg · 713 × 0.21 = <strong style="color:var(--green)">149.7 mmHg</strong></div>
+    </div>
+
+    <div class="molecule-stage reveal">
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center">
+        <div style="text-align:center">
+          <div class="o2-molecule" style="justify-content:center">
+            <div class="atom o" style="width:36px;height:36px;font-size:.7rem">O</div>
+            <div class="bond"></div>
+            <div class="atom o" style="width:36px;height:36px;font-size:.7rem">O</div>
+          </div>
+          <div style="font-size:.7rem;color:var(--text2);margin-top:.5rem">O₂ (diluted)</div>
+        </div>
+        <div style="font-size:2rem;color:var(--text2)">+</div>
+        <div style="text-align:center">
+          <div class="atom h2o" style="animation:spin3d 3s linear infinite;margin:0 auto">H₂O</div>
+          <div style="font-size:.7rem;color:var(--text2);margin-top:.5rem">Vapor (47 mmHg)</div>
+        </div>
+        <div style="font-size:2rem;color:var(--text2)">=</div>
+        <div style="text-align:center;font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--green)">
+          149 mmHg
+          <div style="font-size:.65rem;color:var(--text2);font-family:'Share Tech Mono',monospace;margin-top:.3rem">PO₂ vias aéreas</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card green reveal">
+      <h4>📍 ONDE ACONTECE</h4>
+      <p style="line-height:1.7">Ocorre progressivamente desde o nariz/boca até ao chamado <strong>"limite isotérmico"</strong>, que fica em torno da carina (bifurcação da traqueia). A partir daí, o ar já está completamente saturado de vapor de água. A descida de PO₂ nesta etapa é <mark>pequena mas garantida</mark>: de 159 → 149 mmHg (−10 mmHg).</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STEP 3: ALVEOLUS =================== -->
+<section id="sec3" class="chapter section-accent">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 03</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(255,215,0,.15);color:var(--yellow);border:2px solid var(--yellow)">03</span>
+      <span class="glow-yellow">O Alvéolo: A Grande Descida</span>
+      <span class="badge yellow">99 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon yellow">💨</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · CO₂</div>
+        Muahahaha! Eu, o CO₂, saio do sangue para o alvéolo e diluio o O₂. A minha pressão alveolar é de <mark>40 mmHg</mark>. Isso faz com que o O₂ desça de 149 para... <strong>~99 mmHg</strong>! A maior queda da cascata inteira!
+      </div>
+    </div>
+
+    <div class="manga-panel right reveal">
+      <div class="char-icon">🧑‍⚕️</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PROF. DEMILMED</div>
+        Esta é a etapa mais importante da cascata. No alvéolo, o CO₂ que vem do sangue venoso "dilui" o O₂ do ar inspirado. Usamos a <strong>Equação do Gás Alveolar</strong> para calcular isso com precisão. É uma equação que o exame vai pedir!
+      </div>
+    </div>
+
+    <div class="equation-box reveal" style="border-color:var(--yellow)">
+      <div class="eq-main" style="color:var(--yellow)">PAO₂ = FiO₂ × (Patm − PH₂O) − PaCO₂ × (1/RQ)</div>
+      <div style="height:1px;background:rgba(255,215,0,.2);margin:.8rem 0"></div>
+      <div class="eq-sub" style="color:var(--text)">Com FiO₂ = 0.21, Patm = 760, PH₂O = 47, PaCO₂ = 40, RQ = 0.8:</div>
+      <div class="eq-main" style="color:var(--yellow);margin-top:.5rem">PAO₂ = 0.21 × (760 − 47) − 40 × 1.25</div>
+      <div class="eq-main" style="color:var(--yellow)">PAO₂ = 149 − 50 = <strong>99 mmHg</strong> ✓</div>
+      <div class="eq-sub" style="margin-top:.5rem;color:var(--text2)">RQ = Quociente Respiratório (normalmente 0.8 em repouso)</div>
+    </div>
+
+    <div class="info-card yellow reveal">
+      <h4>🎯 VARIÁVEIS-CHAVE</h4>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.8rem;margin-top:.5rem">
+        <div style="background:rgba(255,215,0,.05);border-radius:8px;padding:.7rem;border:1px solid rgba(255,215,0,.2)">
+          <div style="font-family:'Share Tech Mono',monospace;color:var(--yellow);font-size:.9rem">FiO₂ = 0.21</div>
+          <div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">Fracção inspirada de O₂ (ar ambiente = 21%)</div>
+        </div>
+        <div style="background:rgba(255,215,0,.05);border-radius:8px;padding:.7rem;border:1px solid rgba(255,215,0,.2)">
+          <div style="font-family:'Share Tech Mono',monospace;color:var(--yellow);font-size:.9rem">PaCO₂ = 40</div>
+          <div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">Pressão arterial de CO₂ (normal em repouso)</div>
+        </div>
+        <div style="background:rgba(255,215,0,.05);border-radius:8px;padding:.7rem;border:1px solid rgba(255,215,0,.2)">
+          <div style="font-family:'Share Tech Mono',monospace;color:var(--yellow);font-size:.9rem">RQ = 0.8</div>
+          <div style="font-size:.75rem;color:var(--text2);margin-top:.2rem">Rácio CO₂ produzido / O₂ consumido</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card reveal">
+      <h4>🌬️ TAMBÉM: ABSORÇÃO DE O₂ PELOS CAPILARES</h4>
+      <p style="line-height:1.7">Para além do CO₂, os capilares também <strong>absorvem O₂</strong> do alvéolo. O sangue venoso que chega tem ~50 mmHg de PO₂, e a hemoglobina capta o O₂ com grande afinidade. Esta absorção diminui ainda mais (ligeiramente) o O₂ alveolar, mas é difícil de quantificar com exactidão pois depende de muitas variáveis.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== A-a GRADIENT =================== -->
+<section id="sec4" class="chapter">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 04</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(255,119,0,.15);color:var(--orange);border:2px solid var(--orange)">04</span>
+      <span style="color:var(--orange)">Sangue Arterial & Gradiente A-a</span>
+      <span class="badge" style="background:rgba(255,119,0,.12);color:var(--orange);border-color:var(--orange)">92 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon pink">🩸</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · SANGUE VENOSO</div>
+        Quando o sangue mistura nos pulmões, nem todo ele passa pelos alvéolos com ventilação. Parte do sangue "bypassa" — é o <strong>shunt fisiológico</strong> e a <strong>mistura venosa</strong>. Isso faz a PaO₂ arterial ser ~7 mmHg mais baixa que a alveolar.
+      </div>
+    </div>
+
+    <div class="info-card orange reveal">
+      <h4>📐 GRADIENTE A-a (Alveolar-Arterial)</h4>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:1rem;color:var(--orange);text-align:center;background:rgba(255,119,0,.07);border-radius:8px;padding:.7rem;margin:.5rem 0">
+        Gradiente A-a = PAO₂ − PaO₂ = 99 − 92 = 7 mmHg
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:.8rem">
+        <div style="background:rgba(255,119,0,.05);border-radius:8px;padding:.7rem;border:1px solid rgba(255,119,0,.2)">
+          <div style="font-size:.75rem;color:var(--orange);font-family:'Orbitron',sans-serif;margin-bottom:.3rem">JOVEM SAUDÁVEL</div>
+          <div style="font-size:1.1rem;font-family:'Share Tech Mono',monospace;color:var(--green)">~7 mmHg</div>
+        </div>
+        <div style="background:rgba(255,119,0,.05);border-radius:8px;padding:.7rem;border:1px solid rgba(255,119,0,.2)">
+          <div style="font-size:.75rem;color:var(--orange);font-family:'Orbitron',sans-serif;margin-bottom:.3rem">IDOSO SAUDÁVEL</div>
+          <div style="font-size:1.1rem;font-family:'Share Tech Mono',monospace;color:var(--yellow)">~14 mmHg</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card reveal">
+      <h4>❓ PORQUÊ EXISTE O GRADIENTE A-a?</h4>
+      <div style="line-height:1.7">
+        <p style="margin-bottom:.5rem">Existem 3 causas principais:</p>
+        <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.3rem">
+          <div style="padding:.6rem .8rem;background:rgba(0,245,255,.05);border-radius:8px;border-left:3px solid var(--cyan)">
+            <strong class="glow-cyan">1. Shunt anatómico (~2%)</strong><br>
+            <span style="font-size:.85rem;color:var(--text2)">Sangue das veias brônquicas e veias de Thebesius que drena directamente para o coração esquerdo, sem passar pelos alvéolos.</span>
+          </div>
+          <div style="padding:.6rem .8rem;background:rgba(255,215,0,.05);border-radius:8px;border-left:3px solid var(--yellow)">
+            <strong class="glow-yellow">2. Desequilíbrio V/Q (~1%)</strong><br>
+            <span style="font-size:.85rem;color:var(--text2)">Alvéolos com perfusão mas pouca ventilação contribuem para sangue menos oxigenado.</span>
+          </div>
+          <div style="padding:.6rem .8rem;background:rgba(57,255,20,.05);border-radius:8px;border-left:3px solid var(--green)">
+            <strong class="glow-green">3. Difusão (só no esforço)</strong><br>
+            <span style="font-size:.85rem;color:var(--text2)">Em repouso, a difusão é negligenciável. No exercício intenso, com débito cardíaco alto, o tempo de trânsito capilar diminui e pode haver um gradiente de difusão.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz 1 -->
+    <div class="quiz-box reveal">
+      <h3>🎮 QUIZ — TESTA O TEU CONHECIMENTO!</h3>
+      <div class="quiz-question">Se um doente tem PAO₂ = 100 mmHg e PaO₂ = 70 mmHg, qual é o gradiente A-a e isso é normal?</div>
+      <div class="quiz-options" id="q1-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'q1',false)">A) 30 mmHg — é normal em adultos</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q1',true)">B) 30 mmHg — está aumentado (patológico)</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q1',false)">C) 70 mmHg — está normal</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q1',false)">D) Não é possível calcular sem mais dados</button>
+      </div>
+      <div class="quiz-feedback" id="q1-fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STEP 5: TISSUES =================== -->
+<section id="sec5" class="chapter section-accent">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 05</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(191,95,255,.15);color:var(--purple);border:2px solid var(--purple)">05</span>
+      <span class="glow-purple">Os Tecidos: Variação por Órgão</span>
+      <span class="badge" style="background:rgba(191,95,255,.12);color:var(--purple);border-color:var(--purple)">10–70 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon purple">🫀</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · CÉLULA TECIDUAL</div>
+        Finalmente chegaste! Mas eu consumo O₂ ativamente. A PaO₂ no meu interior depende de duas coisas: a distância ao capilar mais próximo e o quanto eu consumo. Não existe um valor único — cada órgão tem o seu!
+      </div>
+    </div>
+
+    <div style="margin:1rem 0 .5rem">
+      <div style="font-family:'Orbitron',sans-serif;font-size:.75rem;color:var(--purple);letter-spacing:.1em;margin-bottom:.8rem">🫁 CLICA NUM ÓRGÃO PARA SABER MAIS</div>
+      <div class="organ-grid" id="organ-grid"></div>
+    </div>
+
+    <div class="info-card purple reveal">
+      <h4>📏 PORQUÊ VARIA TANTO?</h4>
+      <p style="line-height:1.7">A PaO₂ nos tecidos depende de:</p>
+      <div style="display:flex;flex-direction:column;gap:.4rem;margin-top:.5rem">
+        <div style="padding:.5rem .8rem;background:rgba(191,95,255,.06);border-radius:6px">
+          <strong style="color:var(--purple)">Distância de difusão:</strong> <span style="color:var(--text2)">Quanto mais longe do capilar, menor a PaO₂ na célula</span>
+        </div>
+        <div style="padding:.5rem .8rem;background:rgba(191,95,255,.06);border-radius:6px">
+          <strong style="color:var(--purple)">Taxa metabólica:</strong> <span style="color:var(--text2)">Órgãos com maior consumo de O₂ têm menor PaO₂ intersticial</span>
+        </div>
+        <div style="padding:.5rem .8rem;background:rgba(191,95,255,.06);border-radius:6px">
+          <strong style="color:var(--purple)">Densidade capilar:</strong> <span style="color:var(--text2)">O coração tem capilares densos; a pele, menos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== STEP 6: MITOCHONDRIA =================== -->
+<section id="sec6" class="chapter">
+  <div class="container">
+    <div class="chapter-tag">// CAPÍTULO 06</div>
+    <h2 class="chapter-title">
+      <span class="chapter-num" style="background:rgba(255,45,120,.15);color:var(--pink);border:2px solid var(--pink)">06</span>
+      <span class="glow-pink">A Mitocôndria: Destino Final</span>
+      <span class="badge pink">1–10 mmHg</span>
+    </h2>
+
+    <div class="manga-panel reveal">
+      <div class="char-icon pink">⚡</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PERSONAGEM · MITOCÔNDRIA</div>
+        Eu sou a central elétrica da célula! O O₂ chega até mim com apenas <mark>1–10 mmHg</mark>. Mas não preciso de mais — a minha maquinaria (os citocromos da fosforilação oxidativa) tem uma afinidade <em>extremamente alta</em> para o O₂. Só preciso de 1 mmHg para trabalhar!
+      </div>
+    </div>
+
+    <div class="molecule-stage reveal" style="flex-direction:column;gap:1rem">
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;justify-content:center">
+        <div style="text-align:center">
+          <div class="o2-molecule" style="justify-content:center">
+            <div class="atom o" style="width:32px;height:32px;font-size:.65rem">O</div>
+            <div class="bond"></div>
+            <div class="atom o" style="width:32px;height:32px;font-size:.65rem">O</div>
+          </div>
+          <div style="font-size:.7rem;color:var(--pink);margin-top:.3rem">O₂ (chega!)</div>
+        </div>
+        <div style="font-size:1.5rem">➡️</div>
+        <div style="text-align:center;background:rgba(255,45,120,.1);border:1px solid var(--pink);border-radius:10px;padding:.8rem 1.2rem">
+          <div style="font-family:'Orbitron',sans-serif;color:var(--pink);font-size:.8rem">FOSFORILAÇÃO<br>OXIDATIVA</div>
+          <div style="font-size:1.5rem;margin:.3rem 0">⚡</div>
+          <div style="font-family:'Share Tech Mono',monospace;color:var(--yellow);font-size:.9rem">ATP</div>
+        </div>
+        <div style="font-size:1.5rem">+</div>
+        <div style="text-align:center">
+          <div class="atom c" style="animation:spin3d 4s linear infinite;margin:0 auto">CO₂</div>
+          <div style="font-size:.7rem;color:var(--text2);margin-top:.3rem">CO₂ + H₂O</div>
+        </div>
+      </div>
+      <div style="font-size:.8rem;color:var(--text2);text-align:center;max-width:400px">
+        C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + <strong style="color:var(--yellow)">~30–32 ATP</strong>
+      </div>
+    </div>
+
+    <!-- PASTEUR POINT -->
+    <div class="danger-box reveal">
+      <h4 style="font-family:'Orbitron',sans-serif;font-size:.85rem;color:var(--pink);margin-bottom:.8rem">🔴 PONTO DE PASTEUR: O LIMITE DA VIDA</h4>
+      <p style="line-height:1.7">Se a PaO₂ mitocondrial descer abaixo de <mark>~0.5–1 mmHg</mark> (≈ 7 µmol/L O₂), as enzimas da fosforilação oxidativa <strong>param de funcionar</strong>. O metabolismo aeróbio cessa. A célula tenta sobreviver por via anaeróbia (lactato), mas isso não é sustentável por muito tempo.</p>
+      <div style="margin-top:1rem;display:flex;gap:.8rem;flex-wrap:wrap">
+        <div style="background:rgba(255,45,120,.08);border:1px solid rgba(255,45,120,.3);border-radius:8px;padding:.6rem 1rem;font-size:.82rem">
+          <strong style="color:var(--pink)">O termo vem de Louis Pasteur</strong><br>
+          <span style="color:var(--text2)">Que descobriu em microrganismos o limiar de O₂ entre metabolismo aeróbio e anaeróbio</span>
+        </div>
+        <div style="background:rgba(255,45,120,.08);border:1px solid rgba(255,45,120,.3);border-radius:8px;padding:.6rem 1rem;font-size:.82rem">
+          <strong style="color:var(--pink)">Em humanos</strong><br>
+          <span style="color:var(--text2)">Este limite crítico corresponde a ≈ 0.5 mmHg — mas a maioria dos tecidos nunca chega perto disto em condições normais</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz 2 -->
+    <div class="quiz-box reveal">
+      <h3>🎮 QUIZ 2 — MITOCÔNDRIA EM CHOQUE!</h3>
+      <div class="quiz-question">Um doente tem choque hemorrágico grave. O O₂ não chega às mitocôndrias. O que acontece ao metabolismo?</div>
+      <div class="quiz-options" id="q2-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'q2',false)">A) O corpo produz mais ATP do que o habitual</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q2',false)">B) As mitocôndrias passam a usar CO₂ como substrato</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q2',true)">C) O metabolismo torna-se anaeróbio, com acumulação de lactato e acidose</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q2',false)">D) O ponto de Pasteur eleva-se automaticamente</button>
+      </div>
+      <div class="quiz-feedback" id="q2-fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FULL TIMELINE =================== -->
+<section id="sec-tl" class="chapter section-accent">
+  <div class="container">
+    <div class="section-divider">LINHA DO TEMPO COMPLETA</div>
+    <h2 class="chapter-title" style="justify-content:center;margin-bottom:2rem">
+      🗺️ A Jornada Completa do O₂
+    </h2>
+    <div class="timeline" id="timeline"></div>
+  </div>
+</section>
+
+<!-- =================== INTERACTIVE CASCADE =================== -->
+<section id="sec-cascade" class="chapter">
+  <div class="container">
+    <div class="section-divider">DIAGRAMA INTERACTIVO</div>
+    <h2 class="chapter-title" style="justify-content:center;margin-bottom:1.5rem">
+      📊 Clica em Cada Degrau para Explorar
+    </h2>
+
+    <div id="cascade-diagram">
+      <div id="cascade-steps"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SUMMARY =================== -->
+<section id="sec-sum" class="chapter section-accent">
+  <div class="container">
+    <div class="section-divider">RESUMO FINAL</div>
+    <h2 class="chapter-title" style="justify-content:center;margin-bottom:1.5rem">
+      📋 Tabela Mestra da Cascata
+    </h2>
+
+    <div style="overflow-x:auto;margin:1rem 0">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="background:rgba(0,245,255,.08)">
+            <th style="padding:.7rem 1rem;text-align:left;font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.1em;border-bottom:1px solid var(--border);color:var(--cyan)">ETAPA</th>
+            <th style="padding:.7rem 1rem;text-align:center;font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.1em;border-bottom:1px solid var(--border);color:var(--cyan)">PO₂ (mmHg)</th>
+            <th style="padding:.7rem 1rem;text-align:left;font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.1em;border-bottom:1px solid var(--border);color:var(--cyan)">CAUSA DA QUEDA</th>
+            <th style="padding:.7rem 1rem;text-align:center;font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:.1em;border-bottom:1px solid var(--border);color:var(--cyan)">QUEDA (mmHg)</th>
+          </tr>
+        </thead>
+        <tbody id="summary-table"></tbody>
+      </table>
+    </div>
+
+    <div class="manga-panel reveal" style="margin-top:2rem">
+      <div class="char-icon">🧑‍⚕️</div>
+      <div class="speech-bubble">
+        <div class="char-name">// PROF. DEMILMED · CONCLUSÃO</div>
+        E assim o O₂ completa a sua epopeia — de <mark>159 mmHg</mark> no ar fresco até <mark>1–10 mmHg</mark> na mitocôndria. Cada degrau é fisicamente inevitável e biologicamente perfeito. O teu corpo faz isto <strong>automaticamente</strong>, a cada respiração. Agora és um especialista na cascata do oxigénio! 🏆
+      </div>
+    </div>
+
+    <!-- Quiz 3 -->
+    <div class="quiz-box reveal">
+      <h3>🎮 QUIZ FINAL — EXPERT LEVEL!</h3>
+      <div class="quiz-question">Num doente com DPOC (doença pulmonar obstrutiva crónica) com hipercapnia (PaCO₂ = 70 mmHg), qual será a PAO₂ estimada ao nível do mar a respirar ar ambiente?</div>
+      <div class="quiz-options" id="q3-opts">
+        <button class="quiz-opt" onclick="answerQ(this,'q3',false)">A) 99 mmHg (igual ao normal)</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q3',true)">B) ~61 mmHg — muito reduzida devido ao CO₂ elevado</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q3',false)">C) 149 mmHg — não muda porque o FiO₂ é igual</button>
+        <button class="quiz-opt" onclick="answerQ(this,'q3',false)">D) 0 mmHg — não há oxigénio no alvéolo</button>
+      </div>
+      <div class="quiz-feedback" id="q3-fb"></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== FOOTER =================== -->
+<footer>
+  <div class="container">
+    <div class="footer-logo">DemilMed-UL</div>
+    <div class="footer-sub">UNIVERSIDADE LICUNGO · FACULDADE DE CIÊNCIAS DE SAÚDE</div>
+    <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin:1rem 0">
+      <span class="badge cyan">2º Ano de Medicina</span>
+      <span class="badge yellow">Fisiologia Respiratória</span>
+      <span class="badge pink">Ano 2026</span>
+    </div>
+    <div style="font-size:.75rem;color:var(--text2);line-height:1.8;margin-top:1rem">
+      Conteúdo baseado em: Deranged Physiology — The Oxygen Cascade (Alex Yartsev)<br>
+      Referências: Biro (2013), Carreau et al. (2011), Ortiz-Prado et al. (2019)
+    </div>
+    <div class="footer-info">© 2026 DemilMed-UL · Universidade Licungo · Todos os direitos reservados</div>
+  </div>
+</footer>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const cascadeData = [
+  { id:'atm', label:'Ar Atmosférico', value:159, color:'#00f5ff', desc:'Ar ambiente ao nível do mar. 21% de O₂ × 760 mmHg = 159 mmHg. Ponto de partida da cascata.' },
+  { id:'airway', label:'Vias Aéreas', value:149, color:'#39ff14', desc:'Humidificação pelo muco das vias aéreas. Vapor de água (47 mmHg) dilui o O₂. Queda de ~10 mmHg.' },
+  { id:'alv', label:'Alvéolo', value:99, color:'#ffd700', desc:'Grande queda! CO₂ (40 mmHg) dilui o O₂ alveolar. Equação do gás alveolar: PAO₂ = 149 − 50 = 99 mmHg.' },
+  { id:'cap', label:'Capilar Pulmonar', value:97, color:'#ff9900', desc:'Essencialmente igual ao alveolar em saúde. A difusão é muito eficiente em repouso (demora apenas 0.25s).' },
+  { id:'art', label:'Sangue Arterial', value:92, color:'#ff7700', desc:'Mistura venosa (shunt fisiológico + desequilíbrio V/Q) cria gradiente A-a de ~7 mmHg. PaO₂ = ~92 mmHg.' },
+  { id:'tis', label:'Tecidos', value:35, color:'#bf5fff', desc:'Variável! Vai de 8 mmHg (pele) a 72 mmHg (rim). A difusão e o consumo metabólico reduzem a PO₂.' },
+  { id:'mito', label:'Mitocôndria', value:5, color:'#ff2d78', desc:'Destino final. 1–10 mmHg. A fosforilação oxidativa tem alta afinidade para O₂. Mínimo vital: ~0.5–1 mmHg (Ponto de Pasteur).' }
+];
+
+const meterData = [
+  { label:'Atmosfera', value:159, max:160, color:'#00f5ff' },
+  { label:'Vias Aéreas', value:149, max:160, color:'#39ff14' },
+  { label:'Alvéolo', value:99, max:160, color:'#ffd700' },
+  { label:'Cap. Pulmonar', value:97, max:160, color:'#ff9900' },
+  { label:'Sangue Arterial', value:92, max:160, color:'#ff7700' },
+  { label:'Tecidos (médio)', value:35, max:160, color:'#bf5fff' },
+  { label:'Mitocôndria', value:5, max:160, color:'#ff2d78' }
+];
+
+const organs = [
+  { icon:'🧠', name:'Cérebro', pao2:33.8, tip:'Alta taxa metabólica. Sensível à hipóxia!', color:'#bf5fff' },
+  { icon:'🫁', name:'Pulmão', pao2:42.8, tip:'Tecido pulmonar (não o ar alveolar)', color:'#00f5ff' },
+  { icon:'🫀', name:'Coração', pao2:23, tip:'Consumo de O₂ muito elevado. Capilares densos.', color:'#ff2d78' },
+  { icon:'🟤', name:'Fígado', pao2:40.6, tip:'Metabolismo intenso. Duplo aporte sanguíneo.', color:'#ff9900' },
+  { icon:'🫘', name:'Rim', pao2:72, tip:'Maior PaO₂ tecidual. Alta perfusão relativamente ao consumo.', color:'#39ff14' },
+  { icon:'💪', name:'Músculo', pao2:29.2, tip:'Em repouso 29 mmHg. No exercício pode chegar a 2–3 mmHg!', color:'#ffd700' },
+  { icon:'🩹', name:'Pele', pao2:8, tip:'Região superficial da pele. Longe dos capilares. Menor PaO₂!', color:'#ff7700' },
+  { icon:'🦴', name:'Med. Óssea', pao2:48.9, tip:'Importante para a eritropoiese. O₂ estimula produção de EPO.', color:'#ff2d78' }
+];
+
+const timelineData = [
+  { color:'cyan', val:'159 mmHg', title:'🌍 Atmosfera — O ponto de partida', content:'Ar ambiente ao nível do mar. Pressão total: 760 mmHg. 21% é O₂: 760 × 0.21 = 159 mmHg. Esta é a reserva máxima de O₂ disponível para o organismo.' },
+  { color:'green', val:'149 mmHg', title:'💧 Vias Aéreas — Humidificação', content:'O nariz e faringe humedificam e aquecem o ar. Vapor de água: 47 mmHg constantes a 37°C. O₂ dilui-se: (760−47) × 0.21 = 149 mmHg. Queda de apenas 10 mmHg.' },
+  { color:'yellow', val:'99 mmHg', title:'🫁 Alvéolo — A grande descida', content:'O CO₂ proveniente do sangue venoso dilui o O₂ no espaço alveolar. Equação do gás alveolar: PAO₂ = FiO₂×(Patm−47) − PaCO₂×1.25. Com PaCO₂ = 40 mmHg → PAO₂ ≈ 99 mmHg. Queda de 50 mmHg!' },
+  { color:'cyan', val:'~97 mmHg', title:'🔬 Capilar Pulmonar — Difusão eficaz', content:'O O₂ difunde do alvéolo para o sangue em apenas 0.25 segundos (de 0.75s disponíveis). Em saúde, o sangue do capilar fica equilibrado com o alvéolo. Gradiente de difusão em repouso = 0 mmHg.' },
+  { color:'orange', val:'92 mmHg', title:'🩸 Sangue Arterial — Gradiente A-a', content:'Mistura venosa fisiológica (shunt brônquico + desequilíbrio V/Q) cria o gradiente A-a. Normal: 7 mmHg em jovens, 14 mmHg em idosos. PaO₂ arterial = ~92 mmHg.' },
+  { color:'purple', val:'10–70 mmHg', title:'🫀 Tecidos — Variação por órgão', content:'A PaO₂ tecidual depende da distância ao capilar, taxa metabólica e densidade capilar. Rim: 72 mmHg. Cérebro: 34 mmHg. Pele: 8–35 mmHg. Músculo em exercício: ~3 mmHg!' },
+  { color:'pink', val:'1–10 mmHg', title:'⚡ Mitocôndria — Destino final', content:'A fosforilação oxidativa tem altíssima afinidade para O₂. Funciona até ~0.5–1 mmHg (Ponto de Pasteur). Abaixo disto → metabolismo anaeróbio → acumulação de lactato → acidose metabólica.' }
+];
+
+const summaryRows = [
+  ['🌍 Atmosfera', '159', 'Valor base: 21% × 760 mmHg', '—'],
+  ['💧 Vias Aéreas', '149', 'Diluição por vapor de água (47 mmHg)', '10'],
+  ['🫁 Alvéolo', '99', 'Diluição por CO₂ + absorção pelos capilares', '50'],
+  ['🔬 Capilar Pulm.', '~97', 'Difusão eficaz (mínima queda)', '2'],
+  ['🩸 Sangue Arterial', '92', 'Mistura venosa (shunt + V/Q)', '7'],
+  ['🫀 Tecidos', '10–70', 'Difusão + consumo metabólico', '22–82'],
+  ['⚡ Mitocôndria', '1–10', 'Difusão final + consumo pelos citocromos', 'Variável']
+];
+
+const quizFeedbacks = {
+  q1: { ok:'✅ Correcto! 100−70 = 30 mmHg. O normal é 7–14 mmHg. 30 mmHg indica patologia (ex: pneumonia, edema pulmonar, shunt aumentado). Este doente precisa de investigação!', nok:'❌ Não. O gradiente A-a = PAO₂ − PaO₂ = 100 − 70 = 30 mmHg. O normal é ~7 mmHg (jovem) a 14 mmHg (idoso). 30 mmHg é patológico!' },
+  q2: { ok:'✅ Exacto! Sem O₂ nas mitocôndrias, a fosforilação oxidativa para. O corpo usa a glicólise anaeróbia como alternativa de emergência, produzindo lactato. O pH desce (acidose láctica) — é uma emergência médica!', nok:'❌ Errado! Sem O₂, as mitocôndrias não conseguem fazer fosforilação oxidativa. O metabolismo muda para anaeróbio, com produção de lactato e acidose metabólica.' },
+  q3: { ok:'✅ Muito bem! Com PaCO₂ = 70 mmHg: PAO₂ = 149 − (70 × 1.25) = 149 − 87.5 = 61.5 mmHg. O CO₂ elevado "rouba" espaço ao O₂ no alvéolo — é por isso que doentes com DPOC grave ficam hipoxémicos!', nok:'❌ Não. Usa a equação: PAO₂ = 149 − (PaCO₂ × 1.25) = 149 − (70 × 1.25) = 149 − 87.5 ≈ 61 mmHg. O CO₂ elevado dilui massivamente o O₂ alveolar!' }
+};
+
+// ============================================================
+// STARS
+// ============================================================
+function createStars() {
+  const c = document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const sz = Math.random()*2+.5;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*4).toFixed(1)}s`;
+    c.appendChild(s);
+  }
+}
+
+// ============================================================
+// FLOATING MOLECULES
+// ============================================================
+function createMols() {
+  const c = document.getElementById('float-mols');
+  const labels = ['O₂','O₂','H₂O','CO₂','O₂','N₂','O₂'];
+  for(let i=0;i<12;i++){
+    const m = document.createElement('div');
+    m.className='mol-bg';
+    m.textContent = labels[i%labels.length];
+    const x = Math.random()*90;
+    const y = Math.random()*90;
+    m.style.cssText = `left:${x}%;top:${y}%;--md:${(Math.random()*10+8).toFixed(1)}s;--mx:${(Math.random()*60-30).toFixed(0)}px;--my:${(Math.random()*60-30).toFixed(0)}px;animation-delay:${(Math.random()*5).toFixed(1)}s`;
+    c.appendChild(m);
+  }
+}
+
+// ============================================================
+// METER
+// ============================================================
+function buildMeter() {
+  const c = document.getElementById('meter-rows');
+  meterData.forEach(d => {
+    const pct = (d.value/d.max*100).toFixed(1);
+    c.innerHTML += `
+      <div class="meter-row">
+        <div class="meter-loc">${d.label}</div>
+        <div class="meter-track">
+          <div class="meter-fill" data-pct="${pct}" style="width:0%;background:linear-gradient(90deg,${d.color}88,${d.color})"></div>
+        </div>
+        <div class="meter-num" style="color:${d.color}">${d.value}</div>
+      </div>`;
+  });
+}
+
+// ============================================================
+// ORGAN GRID
+// ============================================================
+function buildOrgans() {
+  const c = document.getElementById('organ-grid');
+  organs.forEach(o => {
+    const pct = (o.pao2/80*100).toFixed(0);
+    c.innerHTML += `
+      <div class="organ-card" style="border-color:${o.color}22">
+        <span class="organ-icon">${o.icon}</span>
+        <div class="organ-name">${o.name}</div>
+        <div class="organ-pao2" style="color:${o.color}">${o.pao2} <span style="font-size:.6rem;color:var(--text2)">mmHg</span></div>
+        <div class="organ-pao2-bar" style="width:${pct}%;background:${o.color}"></div>
+        <div class="organ-tooltip">${o.tip}</div>
+      </div>`;
+  });
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+function buildTimeline() {
+  const c = document.getElementById('timeline');
+  timelineData.forEach((t,i) => {
+    c.innerHTML += `
+      <div class="tl-item" id="tl-${i}">
+        <div class="tl-dot ${t.color}"></div>
+        <div class="tl-title" style="color:var(--${t.color})">${t.title} <span style="font-family:'Share Tech Mono',monospace;font-size:.75rem;opacity:.7">${t.val}</span></div>
+        <div class="tl-content">${t.content}</div>
+      </div>`;
+  });
+}
+
+// ============================================================
+// CASCADE STEPS
+// ============================================================
+function buildCascade() {
+  const c = document.getElementById('cascade-steps');
+  cascadeData.forEach((d,i) => {
+    const pct = (d.value/160*100).toFixed(0);
+    c.innerHTML += `
+      <div class="cascade-step" id="cstep-${d.id}" onclick="toggleCascade('${d.id}')">
+        <div class="step-label">${d.label}</div>
+        <div class="step-bar-wrap">
+          <div class="step-bar" data-pct="${pct}" style="width:0%;background:linear-gradient(90deg,${d.color}66,${d.color})">
+            ${d.value} mmHg
+          </div>
+        </div>
+        <div class="step-value" style="color:${d.color}">${d.value}<span style="font-size:.6rem;font-family:'Share Tech Mono',monospace;color:var(--text2)"> mmHg</span></div>
+      </div>
+      <div class="step-tooltip" id="stt-${d.id}">
+        <strong style="color:${d.color}">${d.label}</strong>: ${d.desc}
+      </div>`;
+  });
+}
+
+let activeCascade = null;
+function toggleCascade(id) {
+  const step = document.getElementById('cstep-'+id);
+  if(activeCascade === id) {
+    step.classList.remove('active-step');
+    activeCascade = null;
+  } else {
+    if(activeCascade) document.getElementById('cstep-'+activeCascade)?.classList.remove('active-step');
+    step.classList.add('active-step');
+    activeCascade = id;
+  }
+}
+
+// ============================================================
+// SUMMARY TABLE
+// ============================================================
+function buildSummary() {
+  const c = document.getElementById('summary-table');
+  const colors = ['#00f5ff','#39ff14','#ffd700','#ff9900','#ff7700','#bf5fff','#ff2d78'];
+  summaryRows.forEach((r,i) => {
+    c.innerHTML += `
+      <tr style="border-bottom:1px solid var(--border);transition:background .2s" onmouseover="this.style.background='rgba(0,245,255,.04)'" onmouseout="this.style.background='transparent'">
+        <td style="padding:.6rem 1rem;color:${colors[i]};font-weight:700">${r[0]}</td>
+        <td style="padding:.6rem 1rem;text-align:center;font-family:'Share Tech Mono',monospace;color:${colors[i]};font-weight:700">${r[1]}</td>
+        <td style="padding:.6rem 1rem;color:var(--text2);font-size:.85rem">${r[2]}</td>
+        <td style="padding:.6rem 1rem;text-align:center;font-family:'Share Tech Mono',monospace;color:var(--pink)">${r[3]}</td>
+      </tr>`;
+  });
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function answerQ(btn, qid, correct) {
+  const opts = document.querySelectorAll('#'+qid+'-opts .quiz-opt');
+  opts.forEach(o => { o.disabled=true; });
+  const fb = document.getElementById(qid+'-fb');
+  if(correct) {
+    btn.classList.add('correct');
+    fb.className='quiz-feedback show ok';
+    fb.innerHTML = quizFeedbacks[qid].ok;
+  } else {
+    btn.classList.add('wrong');
+    fb.className='quiz-feedback show nok';
+    fb.innerHTML = quizFeedbacks[qid].nok;
+    // Highlight correct
+    opts.forEach(o => { if(o.getAttribute('onclick').includes(',true)')) o.classList.add('correct'); });
+  }
+}
+
+// ============================================================
+// ALTITUDE SLIDER
+// ============================================================
+function initAltitude() {
+  const sl = document.getElementById('alt-slider');
+  const comments = [
+    [0, 'Nível do mar — condições normais! 😊'],
+    [1500, 'Moderadamente elevado — alpinistas sentem ligeiro desconforto.'],
+    [3000, 'Altitude de trekking. Pode surgir AMS (Altitude Mountain Sickness).'],
+    [5000, 'Acampamento base do Everest. Necessária aclimatação!'],
+    [7000, 'Zona da morte aproxima-se. Suplementação de O₂ necessária.'],
+    [8849, '🏔️ Topo do Everest! PO₂ ≈ 52 mmHg. Quase impossível sobreviver sem O₂ adicional.']
+  ];
+  sl.addEventListener('input', () => {
+    const alt = +sl.value;
+    const patm = Math.round(760 * Math.pow(1 - 0.0000226*alt, 5.256));
+    const po2 = Math.round(patm * 0.21);
+    const alv = Math.max(0, Math.round(po2 - 50));
+    document.getElementById('alt-alt').textContent = alt.toLocaleString();
+    document.getElementById('alt-patm').textContent = patm;
+    document.getElementById('alt-po2').textContent = po2;
+    document.getElementById('alt-alv').textContent = alv;
+    const c = comments.find(([t]) => alt >= t) || comments[0];
+    document.getElementById('alt-comment').textContent = comments.reverse().find(([t]) => alt >= t)?.[1] || comments[0][1];
+    comments.reverse();
+    const po2El = document.getElementById('alt-po2');
+    po2El.style.color = po2 > 120 ? 'var(--green)' : po2 > 80 ? 'var(--cyan)' : po2 > 60 ? 'var(--yellow)' : 'var(--pink)';
+  });
+}
+
+// ============================================================
+// NAV DOTS
+// ============================================================
+const sections = ['hero','sec0','sec1','sec2','sec3','sec4','sec5','sec6','sec-tl','sec-cascade','sec-sum'];
+const dotLabels = ['Início','O Que É?','Atmosfera','Vias Aéreas','Alvéolo','Gradiente A-a','Tecidos','Mitocôndria','Timeline','Cascata','Resumo'];
+
+function buildNavDots() {
+  const c = document.getElementById('nav-dots');
+  sections.forEach((s,i) => {
+    const d = document.createElement('div');
+    d.className='nav-dot';
+    d.innerHTML=`<span class="dot-label">${dotLabels[i]}</span>`;
+    d.addEventListener('click',()=>document.getElementById(s)?.scrollIntoView({behavior:'smooth'}));
+    d.id='ndot-'+i;
+    c.appendChild(d);
+  });
+}
+
+// ============================================================
+// SCROLL OBSERVER
+// ============================================================
+function initObserver() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Animate bars
+        e.target.querySelectorAll('[data-pct]').forEach(el => {
+          setTimeout(()=>{ el.style.width = el.dataset.pct+'%'; }, 100);
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal, .tl-item, .info-card, .manga-panel').forEach(el => io.observe(el));
+
+  // Meter observer
+  const meterEl = document.getElementById('main-meter');
+  if(meterEl) io.observe(meterEl);
+}
+
+// ============================================================
+// SCROLL EFFECTS
+// ============================================================
+function initScroll() {
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100).toFixed(1);
+    document.getElementById('progress-bar').style.width = pct+'%';
+
+    // Active nav dot
+    sections.forEach((s,i) => {
+      const el = document.getElementById(s);
+      if(!el) return;
+      const r = el.getBoundingClientRect();
+      if(r.top <= window.innerHeight/2 && r.bottom >= window.innerHeight/2) {
+        document.querySelectorAll('.nav-dot').forEach(d=>d.classList.remove('active'));
+        document.getElementById('ndot-'+i)?.classList.add('active');
+      }
+    });
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  createStars();
+  createMols();
+  buildMeter();
+  buildOrgans();
+  buildTimeline();
+  buildCascade();
+  buildSummary();
+  buildNavDots();
+  initAltitude();
+  initObserver();
+  initScroll();
+
+  // Animate cascade bars on load (after short delay)
+  setTimeout(() => {
+    document.querySelectorAll('.step-bar[data-pct]').forEach(el => {
+      el.style.width = el.dataset.pct+'%';
+    });
+  }, 500);
+});
+</script>
+</body>
+</html>

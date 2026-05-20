@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Coloração de Gram — DemilMed-UL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg: #060a12;
+  --bg2: #0a1020;
+  --bg3: #0f1830;
+  --panel: #111827;
+  --panel2: #1a2540;
+  --border: #1e3a5f;
+  --accent1: #00e5ff;
+  --accent2: #7c3aed;
+  --accent3: #f59e0b;
+  --accent4: #10b981;
+  --accent5: #ef4444;
+  --gram-pos: #8b5cf6;
+  --gram-neg: #f97316;
+  --crystal-v: #6d28d9;
+  --iodine: #92400e;
+  --acetone: #94a3b8;
+  --safranin: #dc2626;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --glow1: 0 0 20px rgba(0,229,255,0.4);
+  --glow2: 0 0 20px rgba(124,58,237,0.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  height:100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Exo 2', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===== TOP BAR ===== */
+#topbar {
+  position: fixed; top:0; left:0; right:0; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 18px;
+  background: rgba(6,10,18,0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  transition: transform 0.4s ease;
+}
+#topbar.hidden { transform: translateY(-100%); }
+#topbar-title {
+  font-family:'Orbitron',monospace;
+  font-size:13px; font-weight:700;
+  color: var(--accent1);
+  letter-spacing:2px;
+}
+#menu-btn {
+  background:none; border:none; cursor:pointer;
+  display:flex; flex-direction:column; gap:5px; padding:6px;
+}
+#menu-btn span {
+  display:block; width:22px; height:2px;
+  background: var(--accent1);
+  border-radius:2px;
+  transition: all 0.3s;
+}
+#menu-btn.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+#menu-btn.active span:nth-child(2) { opacity:0; }
+#menu-btn.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* ===== NAV DRAWER ===== */
+#nav-drawer {
+  position:fixed; top:0; left:-280px; bottom:0; width:280px; z-index:999;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  transition: left 0.35s cubic-bezier(.4,0,.2,1);
+  padding-top:70px;
+  overflow-y:auto;
+}
+#nav-drawer.open { left:0; }
+#nav-overlay {
+  display:none; position:fixed; inset:0; z-index:998;
+  background: rgba(0,0,0,0.6);
+}
+#nav-overlay.show { display:block; }
+
+.nav-section { padding:14px 20px 6px; font-size:10px; letter-spacing:3px; color:var(--text2); font-family:'Orbitron',monospace; }
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 20px; cursor:pointer;
+  border-left: 3px solid transparent;
+  font-size:14px; font-weight:600;
+  transition: all 0.2s;
+  color: var(--text2);
+}
+.nav-item:hover, .nav-item.active {
+  background: rgba(0,229,255,0.08);
+  border-left-color: var(--accent1);
+  color: var(--accent1);
+}
+.nav-icon { font-size:18px; }
+
+/* ===== MAIN ===== */
+main { padding-top:56px; min-height:100vh; }
+
+/* ===== SECTIONS ===== */
+.section { display:none; padding:20px 16px 40px; max-width:900px; margin:0 auto; }
+.section.active { display:block; }
+
+/* ===== HERO ===== */
+#hero-section { text-align:center; padding:30px 16px 60px; }
+.hero-badge {
+  display:inline-block;
+  background: linear-gradient(135deg,rgba(0,229,255,0.15),rgba(124,58,237,0.15));
+  border:1px solid var(--accent1);
+  border-radius:20px; padding:4px 16px;
+  font-size:11px; letter-spacing:3px; font-family:'Orbitron',monospace;
+  color:var(--accent1); margin-bottom:24px;
+}
+.hero-title {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(22px,5vw,42px);
+  font-weight:900;
+  line-height:1.1;
+  background: linear-gradient(135deg,#00e5ff,#7c3aed,#f59e0b);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:12px;
+}
+.hero-sub {
+  font-size:16px; color:var(--text2); margin-bottom:36px;
+  max-width:500px; margin-left:auto; margin-right:auto; line-height:1.6;
+}
+
+/* Animated bacteria preview */
+#bacteria-preview {
+  width:100%; height:220px; position:relative;
+  border-radius:20px; overflow:hidden;
+  background: radial-gradient(ellipse at 50% 50%, #0a1930 0%, #060a12 100%);
+  border:1px solid var(--border);
+  margin-bottom:36px;
+}
+.bact-live {
+  position:absolute; border-radius:50%;
+  animation: floatBact linear infinite;
+  filter: blur(0.5px);
+}
+@keyframes floatBact {
+  0%{ transform:translate(0,0) rotate(0deg); }
+  25%{ transform:translate(var(--dx1),var(--dy1)) rotate(90deg); }
+  50%{ transform:translate(var(--dx2),var(--dy2)) rotate(180deg); }
+  75%{ transform:translate(var(--dx3),var(--dy3)) rotate(270deg); }
+  100%{ transform:translate(0,0) rotate(360deg); }
+}
+
+.mode-cards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:28px; }
+.mode-card {
+  background: var(--panel);
+  border:1px solid var(--border);
+  border-radius:16px; padding:22px 16px;
+  cursor:pointer; transition: all 0.3s;
+  text-align:center;
+}
+.mode-card:hover {
+  border-color:var(--accent1);
+  background: rgba(0,229,255,0.08);
+  transform:translateY(-3px);
+  box-shadow: var(--glow1);
+}
+.mode-card .mode-icon { font-size:36px; margin-bottom:10px; }
+.mode-card h3 { font-family:'Orbitron',monospace; font-size:12px; color:var(--accent1); margin-bottom:6px; letter-spacing:1px; }
+.mode-card p { font-size:12px; color:var(--text2); line-height:1.5; }
+
+.quick-facts {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+}
+.qf {
+  background:var(--panel); border:1px solid var(--border); border-radius:12px;
+  padding:14px 10px; text-align:center;
+}
+.qf-val { font-family:'Orbitron',monospace; font-size:18px; font-weight:700; color:var(--accent1); }
+.qf-label { font-size:11px; color:var(--text2); margin-top:4px; }
+
+/* ===== SIMULATORS ===== */
+.sim-header {
+  text-align:center; margin-bottom:28px;
+}
+.sim-title {
+  font-family:'Orbitron',monospace;
+  font-size:clamp(14px,4vw,22px);
+  color:var(--accent1);
+  margin-bottom:8px;
+}
+.sim-desc { font-size:13px; color:var(--text2); line-height:1.6; }
+
+/* Steps bar */
+.steps-bar {
+  display:flex; gap:4px; margin-bottom:24px;
+  overflow-x:auto; padding-bottom:6px;
+}
+.step-btn {
+  flex-shrink:0;
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:10px; padding:8px 14px;
+  font-size:11px; cursor:pointer; color:var(--text2);
+  font-family:'Exo 2',sans-serif; font-weight:600;
+  transition:all 0.2s; white-space:nowrap;
+}
+.step-btn.active {
+  background:rgba(0,229,255,0.15);
+  border-color:var(--accent1);
+  color:var(--accent1);
+}
+.step-btn.done {
+  border-color:var(--accent4);
+  color:var(--accent4);
+}
+.step-btn.done::before { content:'✓ '; }
+
+/* Microscope canvas area */
+.lab-view {
+  display:grid; grid-template-columns:1fr auto;
+  gap:16px; align-items:start; margin-bottom:20px;
+}
+.microscope-canvas-wrap {
+  position:relative; border-radius:16px; overflow:hidden;
+  border:2px solid var(--border);
+  background:#000;
+  aspect-ratio:4/3;
+}
+canvas.micro-canvas {
+  width:100%; height:100%; display:block;
+}
+.lens-overlay {
+  position:absolute; inset:0; pointer-events:none;
+  border-radius:16px;
+  background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,0.85) 100%);
+}
+.magnify-badge {
+  position:absolute; bottom:10px; right:10px;
+  background:rgba(0,0,0,0.7); border:1px solid var(--accent1);
+  border-radius:8px; padding:4px 10px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px; color:var(--accent1);
+}
+
+/* Lab controls panel */
+.lab-controls {
+  display:flex; flex-direction:column; gap:10px; width:120px;
+}
+@media(max-width:600px){
+  .lab-view { grid-template-columns:1fr; }
+  .lab-controls { flex-direction:row; width:100%; flex-wrap:wrap; }
+}
+
+/* Reagent tray */
+.reagent-tray {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px;
+  margin-bottom:16px;
+}
+.tray-title { font-size:11px; letter-spacing:2px; color:var(--text2); font-family:'Orbitron',monospace; margin-bottom:12px; }
+.reagents-row { display:flex; gap:10px; flex-wrap:wrap; }
+.reagent-item {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer;
+}
+.reagent-bottle {
+  width:44px; height:60px; position:relative;
+  border-radius:6px 6px 8px 8px;
+  border:2px solid rgba(255,255,255,0.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+  transition: all 0.3s;
+  overflow:hidden;
+}
+.reagent-bottle::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0;
+  height:40%;
+  background: rgba(255,255,255,0.1);
+  border-radius:0 0 6px 6px;
+}
+.reagent-bottle:hover {
+  transform:scale(1.1);
+  box-shadow:0 0 15px currentColor;
+}
+.reagent-bottle.selected {
+  border-color:currentColor;
+  box-shadow:0 0 20px currentColor;
+  transform:scale(1.12);
+}
+.reagent-label { font-size:10px; color:var(--text2); text-align:center; max-width:60px; }
+
+.cv { color:#8b5cf6; background:rgba(139,92,246,0.12); }
+.lug { color:#b45309; background:rgba(180,83,9,0.12); }
+.acet { color:#6b7280; background:rgba(107,114,128,0.12); }
+.saf { color:#dc2626; background:rgba(220,38,38,0.12); }
+.agua { color:#38bdf8; background:rgba(56,189,248,0.12); }
+.ansa { color:#f59e0b; background:rgba(245,158,11,0.12); }
+
+/* Action panel */
+.action-panel {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:16px; margin-bottom:16px;
+}
+.action-title { font-size:11px; letter-spacing:2px; color:var(--text2); font-family:'Orbitron',monospace; margin-bottom:12px; }
+
+.btn-action {
+  display:inline-flex; align-items:center; gap:8px;
+  background: linear-gradient(135deg,rgba(0,229,255,0.15),rgba(124,58,237,0.15));
+  border:1px solid var(--accent1);
+  color:var(--accent1); border-radius:10px;
+  padding:10px 18px; font-size:13px; font-weight:600;
+  cursor:pointer; font-family:'Exo 2',sans-serif;
+  transition:all 0.25s; margin:4px;
+}
+.btn-action:hover {
+  background: linear-gradient(135deg,rgba(0,229,255,0.3),rgba(124,58,237,0.3));
+  box-shadow:var(--glow1); transform:scale(1.02);
+}
+.btn-action:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+.btn-action.danger { border-color:var(--accent5); color:var(--accent5); }
+.btn-action.success { border-color:var(--accent4); color:var(--accent4); }
+.btn-action.warn { border-color:var(--accent3); color:var(--accent3); }
+
+/* Info box */
+.info-box {
+  background: linear-gradient(135deg,rgba(0,229,255,0.07),rgba(124,58,237,0.07));
+  border:1px solid rgba(0,229,255,0.25);
+  border-radius:12px; padding:14px 16px;
+  margin-bottom:14px;
+}
+.info-box.warn-box { border-color:rgba(245,158,11,0.4); background:rgba(245,158,11,0.07); }
+.info-box.success-box { border-color:rgba(16,185,129,0.4); background:rgba(16,185,129,0.07); }
+.info-box.error-box { border-color:rgba(239,68,68,0.4); background:rgba(239,68,68,0.07); }
+.info-title { font-size:11px; letter-spacing:2px; color:var(--accent1); font-family:'Orbitron',monospace; margin-bottom:6px; }
+.info-body { font-size:13px; color:var(--text); line-height:1.7; }
+.info-body strong { color:var(--accent1); }
+
+/* Magnification selector */
+.mag-selector { display:flex; gap:6px; flex-wrap:wrap; }
+.mag-btn {
+  background:var(--panel2); border:1px solid var(--border);
+  border-radius:8px; padding:6px 12px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px; cursor:pointer; color:var(--text2);
+  transition:all 0.2s;
+}
+.mag-btn.active { border-color:var(--accent1); color:var(--accent1); background:rgba(0,229,255,0.1); }
+
+/* Progress */
+.progress-bar-wrap { background:var(--bg3); border-radius:10px; height:8px; margin-bottom:20px; overflow:hidden; }
+.progress-bar { height:100%; border-radius:10px; transition:width 0.5s ease; background:linear-gradient(90deg,var(--accent2),var(--accent1)); }
+
+/* Quiz styles */
+.quiz-q {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:20px; margin-bottom:16px;
+}
+.quiz-q h4 { font-size:15px; color:var(--accent1); margin-bottom:14px; line-height:1.5; }
+.quiz-opts { display:flex; flex-direction:column; gap:8px; }
+.quiz-opt {
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:10px; padding:12px 16px;
+  cursor:pointer; font-size:13px; color:var(--text);
+  transition:all 0.2s;
+}
+.quiz-opt:hover { border-color:var(--accent1); color:var(--accent1); }
+.quiz-opt.correct { border-color:var(--accent4)!important; background:rgba(16,185,129,0.15)!important; color:var(--accent4)!important; }
+.quiz-opt.wrong { border-color:var(--accent5)!important; background:rgba(239,68,68,0.1)!important; color:var(--accent5)!important; }
+
+/* Score */
+.score-display {
+  text-align:center; padding:30px;
+  font-family:'Orbitron',monospace;
+}
+.score-num { font-size:72px; font-weight:900; color:var(--accent1); }
+.score-label { font-size:14px; color:var(--text2); margin-top:8px; }
+
+/* Tag badges */
+.tag {
+  display:inline-block; border-radius:6px; padding:2px 10px;
+  font-size:11px; font-weight:700; font-family:'Orbitron',monospace;
+  margin:2px;
+}
+.tag-pos { background:rgba(139,92,246,0.2); color:#a78bfa; border:1px solid rgba(139,92,246,0.4); }
+.tag-neg { background:rgba(249,115,22,0.2); color:#fb923c; border:1px solid rgba(249,115,22,0.4); }
+
+/* ===== Theory section ===== */
+.theory-card {
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:16px; margin-bottom:16px; overflow:hidden;
+}
+.theory-head {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 18px; cursor:pointer;
+  font-weight:700; font-size:14px;
+}
+.theory-head:hover { background:rgba(0,229,255,0.05); }
+.theory-body { padding:0 18px; max-height:0; overflow:hidden; transition:all 0.4s ease; }
+.theory-body.open { max-height:600px; padding:4px 18px 18px; }
+
+/* bacteria wall diagram */
+.wall-diagram { display:flex; gap:20px; margin:16px 0; flex-wrap:wrap; }
+.wall-type {
+  flex:1; min-width:140px;
+  border-radius:12px; overflow:hidden; border:1px solid var(--border);
+}
+.wall-header { padding:10px; text-align:center; font-family:'Orbitron',monospace; font-size:11px; font-weight:700; }
+.wall-layers { padding:10px; }
+.layer {
+  text-align:center; padding:8px; border-radius:6px;
+  font-size:11px; margin-bottom:4px; font-weight:600;
+}
+
+/* Molecule animation canvas */
+#molecule-canvas {
+  width:100%; height:180px;
+  border-radius:14px; margin:16px 0;
+  border:1px solid var(--border);
+}
+
+/* Footer */
+footer {
+  text-align:center; padding:30px 20px;
+  border-top:1px solid var(--border);
+  color:var(--text2); font-size:12px;
+  line-height:2;
+}
+footer .foot-brand {
+  font-family:'Orbitron',monospace;
+  font-size:16px; color:var(--accent1);
+  font-weight:700;
+}
+footer .foot-univ { color:var(--text2); font-size:11px; }
+
+/* Responsive */
+@media(max-width:480px){
+  .mode-cards { grid-template-columns:1fr; }
+  .quick-facts { grid-template-columns:repeat(2,1fr); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:var(--bg); }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:10px; }
+::-webkit-scrollbar-thumb:hover { background:var(--accent1); }
+
+/* Loading pulse */
+.pulse { animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+/* Notification toast */
+#toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px);
+  background:var(--panel2); border:1px solid var(--accent1);
+  border-radius:12px; padding:12px 24px;
+  font-size:13px; color:var(--text); z-index:2000;
+  transition:transform 0.3s ease;
+  max-width:90vw; text-align:center;
+}
+#toast.show { transform:translateX(-50%) translateY(0); }
+#toast.success-toast { border-color:var(--accent4); }
+#toast.error-toast { border-color:var(--accent5); }
+
+/* cell animation */
+@keyframes wiggle {
+  0%,100%{ transform:rotate(0deg) scale(1); }
+  25%{ transform:rotate(3deg) scale(1.02); }
+  75%{ transform:rotate(-3deg) scale(0.98); }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div id="topbar-title">🔬 GRAM SIMULATOR</div>
+  <button id="menu-btn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- NAV DRAWER -->
+<div id="nav-overlay"></div>
+<nav id="nav-drawer">
+  <div class="nav-section">NAVEGAÇÃO</div>
+  <div class="nav-item active" data-section="home"><span class="nav-icon">🏠</span> Início</div>
+  <div class="nav-item" data-section="theory"><span class="nav-icon">📖</span> Teoria Base</div>
+  <div class="nav-section">SIMULADORES</div>
+  <div class="nav-item" data-section="sim1"><span class="nav-icon">🧫</span> SIM 1 — Preparação</div>
+  <div class="nav-item" data-section="sim2"><span class="nav-icon">💜</span> SIM 2 — Cristal Violeta</div>
+  <div class="nav-item" data-section="sim3"><span class="nav-icon">🟤</span> SIM 3 — Lugol</div>
+  <div class="nav-item" data-section="sim4"><span class="nav-icon">💧</span> SIM 4 — Descorante</div>
+  <div class="nav-item" data-section="sim5"><span class="nav-icon">🔴</span> SIM 5 — Safranina</div>
+  <div class="nav-item" data-section="sim6"><span class="nav-icon">🔍</span> SIM 6 — Microscopia</div>
+  <div class="nav-section">AVALIAÇÃO</div>
+  <div class="nav-item" data-section="quiz"><span class="nav-icon">🧠</span> Modo Teste</div>
+</nav>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<main>
+
+<!-- ======== HOME ======== -->
+<div class="section active" id="home">
+  <div id="hero-section">
+    <div class="hero-badge">DEMILMED-UL • 2026</div>
+    <h1 class="hero-title">Coloração de Gram<br>Laboratório Virtual</h1>
+    <p class="hero-sub">Aprende passo a passo como distinguir bactérias Gram-positivas das Gram-negativas, com moléculas animadas e simulação em tempo real.</p>
+
+    <div id="bacteria-preview"></div>
+
+    <div class="mode-cards">
+      <div class="mode-card" onclick="goSection('sim1')">
+        <div class="mode-icon">🎓</div>
+        <h3>MODO ENSINO</h3>
+        <p>Observa cada reagente a ligar-se à bactéria em tempo real, com explicações detalhadas em cada etapa.</p>
+      </div>
+      <div class="mode-card" onclick="goSection('quiz')">
+        <div class="mode-icon">🧠</div>
+        <h3>MODO TESTE</h3>
+        <p>Põe à prova os teus conhecimentos. Responde a perguntas práticas sobre cada etapa do processo.</p>
+      </div>
+    </div>
+
+    <div class="quick-facts">
+      <div class="qf"><div class="qf-val">4</div><div class="qf-label">Reagentes Principais</div></div>
+      <div class="qf"><div class="qf-val">6</div><div class="qf-label">Simuladores</div></div>
+      <div class="qf"><div class="qf-val">1884</div><div class="qf-label">Técnica de Hans Christian Gram</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======== THEORY ======== -->
+<div class="section" id="theory">
+  <div class="sim-header">
+    <div class="sim-title">📖 Teoria Base</div>
+    <div class="sim-desc">Compreende o fundamento científico antes de entrar no laboratório.</div>
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">O QUE É A COLORAÇÃO DE GRAM?</div>
+    <div class="info-body">
+      É uma <strong>técnica de coloração diferencial</strong> usada em Microbiologia para classificar bactérias em dois grandes grupos: <strong>Gram-positivas (+)</strong> e <strong>Gram-negativas (−)</strong>, com base na estrutura da sua parede celular. Inventada em 1884 pelo médico dinamarquês <strong>Hans Christian Gram</strong>.
+    </div>
+  </div>
+
+  <canvas id="molecule-canvas"></canvas>
+
+  <div class="wall-diagram">
+    <div class="wall-type" style="border-color:#8b5cf6">
+      <div class="wall-header" style="background:rgba(139,92,246,0.2);color:#a78bfa">GRAM-POSITIVA (+)</div>
+      <div class="wall-layers">
+        <div class="layer" style="background:rgba(56,189,248,0.15);color:#38bdf8">Membrana Plasmática</div>
+        <div class="layer" style="background:rgba(139,92,246,0.3);color:#c4b5fd;font-size:13px;padding:16px">PEPTIDOGLICANO<br><span style="font-size:10px;opacity:0.8">Camada ESPESSA<br>20-80 nm</span></div>
+        <div class="layer" style="background:rgba(255,255,255,0.05);color:#94a3b8">Sem membrana externa</div>
+      </div>
+    </div>
+    <div class="wall-type" style="border-color:#f97316">
+      <div class="wall-header" style="background:rgba(249,115,22,0.2);color:#fb923c">GRAM-NEGATIVA (−)</div>
+      <div class="wall-layers">
+        <div class="layer" style="background:rgba(56,189,248,0.15);color:#38bdf8">Membrana Plasmática</div>
+        <div class="layer" style="background:rgba(249,115,22,0.15);color:#fdba74;font-size:10px;padding:8px">PEPTIDOGLICANO FINO<br>2-7 nm</div>
+        <div class="layer" style="background:rgba(239,68,68,0.2);color:#fca5a5">Membrana Externa<br><span style="font-size:10px">+ LPS</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-head" onclick="toggleTheory(this)">
+      💜 Por que o Cristal Violeta fica retido nas Gram+? <span>▼</span>
+    </div>
+    <div class="theory-body">
+      <div class="info-body">
+        Nas bactérias <strong>Gram-positivas</strong>, a camada espessa de peptidoglicano retém o complexo <strong>Cristal Violeta + Lugol</strong> durante a descoloração com acetona/álcool. A camada é tão densa que funciona como uma barreira física. Já nas <strong>Gram-negativas</strong>, o álcool dissolve a membrana externa lipídica, criando poros que permitem a saída do corante, deixando as células transparentes — prontas para absorver a safranina (vermelha).
+      </div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-head" onclick="toggleTheory(this)">
+      🔬 O papel do Lugol (Solução de Lugol) <span>▼</span>
+    </div>
+    <div class="theory-body">
+      <div class="info-body">
+        O Lugol (iodo + iodeto de potássio) age como <strong>mordente</strong>. Liga-se ao cristal violeta dentro da bactéria formando um complexo <strong>Cristal Violeta–Iodo (CVI)</strong>, um complexo grande e insolúvel que fica "preso" dentro das células. Sem o Lugol, o cristal violeta seria facilmente removido.
+      </div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-head" onclick="toggleTheory(this)">
+      💧 A etapa crítica: Descorante (Álcool/Acetona) <span>▼</span>
+    </div>
+    <div class="theory-body">
+      <div class="info-body">
+        Esta é a etapa <strong>mais crítica</strong> e mais fácil de errar! O álcool/acetona deve ser aplicado por apenas <strong>10-30 segundos</strong>. Se for muito pouco tempo → Gram-negativas ficam falsamente positivas. Se for muito tempo → Gram-positivas perdem a coloração e parecem negativas. É o paso mais crítico de toda a técnica!
+      </div>
+    </div>
+  </div>
+
+  <div class="theory-card">
+    <div class="theory-head" onclick="toggleTheory(this)">
+      🔴 Safranina — O Contra-corante Final <span>▼</span>
+    </div>
+    <div class="theory-body">
+      <div class="info-body">
+        A safranina é um corante vermelho/rosa que colore as bactérias que ficaram incolores após a descorante. Apenas as <strong>Gram-negativas</strong> (que perderam o cristal violeta) ficam visíveis a vermelho/rosa. As Gram-positivas já estão coradas de violeta e apenas absorvem superficialmente a safranina.
+      </div>
+    </div>
+  </div>
+
+  <div class="info-box success-box">
+    <div class="info-title">RESULTADO FINAL</div>
+    <div class="info-body">
+      <span class="tag tag-pos">GRAM+ → VIOLETA/ROXO</span>
+      <span class="tag tag-neg">GRAM− → ROSA/VERMELHO</span>
+      <br><br>
+      Esta diferença é fundamental para escolher o antibiótico correto, pois os dois grupos têm diferentes sensibilidades a antibióticos!
+    </div>
+  </div>
+
+  <button class="btn-action" onclick="goSection('sim1')">▶ Começar Simuladores</button>
+</div>
+
+<!-- ======== SIM 1 — PREPARAÇÃO ======== -->
+<div class="section" id="sim1">
+  <div class="sim-header">
+    <div class="sim-title">🧫 SIM 1 — Preparação da Lâmina</div>
+    <div class="sim-desc">Coloca a amostra na lâmina, deixa secar e fixa pelo calor. Esta etapa garante que as bactérias fiquem aderidas ao vidro.</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb1" style="width:0%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim1" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-1">×100</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(1,'×10')" id="mag1-10">×10</div>
+        <div class="mag-btn" onclick="setMag(1,'×40')" id="mag1-40">×40</div>
+        <div class="mag-btn active" onclick="setMag(1,'×100')" id="mag1-100">×100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🧪 MATERIAIS NECESSÁRIOS</div>
+    <div class="reagents-row">
+      <div class="reagent-item">
+        <div class="reagent-bottle ansa">🔩</div>
+        <div class="reagent-label">Ansa de Platina</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle agua" style="width:50px;height:30px;border-radius:4px;font-size:14px">🔲</div>
+        <div class="reagent-label">Lâmina de Vidro</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle agua">🔥</div>
+        <div class="reagent-label">Bico de Bunsen</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle agua">💧</div>
+        <div class="reagent-label">Água Destilada</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle ansa">🧫</div>
+        <div class="reagent-label">Cultura Bacteriana</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-panel" id="ap1">
+    <div class="action-title">⚡ ACÇÕES — Realiza pela ordem correcta!</div>
+    <div id="s1-actions">
+      <button class="btn-action" id="btn-s1-1" onclick="sim1Step(1)">1️⃣ Esterilizar a Ansa</button>
+      <button class="btn-action" id="btn-s1-2" onclick="sim1Step(2)" disabled>2️⃣ Colher Amostra</button>
+      <button class="btn-action" id="btn-s1-3" onclick="sim1Step(3)" disabled>3️⃣ Espalhar na Lâmina</button>
+      <button class="btn-action" id="btn-s1-4" onclick="sim1Step(4)" disabled>4️⃣ Deixar Secar</button>
+      <button class="btn-action" id="btn-s1-5" onclick="sim1Step(5)" disabled>5️⃣ Fixar pelo Calor</button>
+    </div>
+  </div>
+
+  <div class="info-box" id="info-s1">
+    <div class="info-title">ℹ️ INSTRUÇÃO</div>
+    <div class="info-body" id="info-s1-text">Começa por <strong>esterilizar a ansa de platina</strong> na chama do bico de Bunsen até ficar incandescente (vermelho). Isso elimina qualquer contaminação.</div>
+  </div>
+
+  <button class="btn-action success" onclick="goSection('sim2')" id="next-sim1" style="display:none">✅ Próximo: Cristal Violeta →</button>
+</div>
+
+<!-- ======== SIM 2 — CRISTAL VIOLETA ======== -->
+<div class="section" id="sim2">
+  <div class="sim-header">
+    <div class="sim-title">💜 SIM 2 — Cristal Violeta</div>
+    <div class="sim-desc">1º Corante: O Cristal Violeta penetra em TODAS as bactérias, Gram+ e Gram−, corando-as de violeta. Tempo de acção: 1 minuto.</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb2" style="width:0%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim2" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-2">×100</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(2,'×10')">×10</div>
+        <div class="mag-btn" onclick="setMag(2,'×40')">×40</div>
+        <div class="mag-btn active" onclick="setMag(2,'×100')">×100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🧪 REAGENTES DESTA ETAPA</div>
+    <div class="reagents-row">
+      <div class="reagent-item" onclick="selectReagent('cv',2)">
+        <div class="reagent-bottle cv" id="r2-cv">💜</div>
+        <div class="reagent-label">Cristal Violeta</div>
+      </div>
+      <div class="reagent-item" onclick="selectReagent('agua',2)">
+        <div class="reagent-bottle agua" id="r2-agua">💧</div>
+        <div class="reagent-label">Água (lavagem)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-panel">
+    <div class="action-title">⚡ ACÇÕES</div>
+    <button class="btn-action" id="btn-apply-cv" onclick="applyCV()">💜 Aplicar Cristal Violeta (1 min)</button>
+    <button class="btn-action" id="btn-wash-cv" onclick="washCV()" disabled>💧 Lavar com Água</button>
+  </div>
+
+  <div class="info-box" id="info-s2">
+    <div class="info-title">💜 CRISTAL VIOLETA — Como funciona?</div>
+    <div class="info-body">O cristal violeta é um corante <strong>catiónico</strong> (carga positiva). Ele penetra facilmente a parede celular de <strong>todos os tipos de bactérias</strong>. Nesta fase, todas as bactérias ficam violetas — ainda não consegues distinguir Gram+ de Gram−. O tempo correcto é <strong>1 minuto</strong>.</div>
+  </div>
+
+  <button class="btn-action success" onclick="goSection('sim3')" id="next-sim2" style="display:none">✅ Próximo: Lugol →</button>
+</div>
+
+<!-- ======== SIM 3 — LUGOL ======== -->
+<div class="section" id="sim3">
+  <div class="sim-header">
+    <div class="sim-title">🟤 SIM 3 — Lugol (Mordente)</div>
+    <div class="sim-desc">O Lugol fixa o cristal violeta dentro das bactérias, formando um complexo insolúvel. Tempo: 1 minuto.</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb3" style="width:0%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim3" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-3">×100</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(3,'×10')">×10</div>
+        <div class="mag-btn" onclick="setMag(3,'×40')">×40</div>
+        <div class="mag-btn active" onclick="setMag(3,'×100')">×100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🧪 REAGENTES DESTA ETAPA</div>
+    <div class="reagents-row">
+      <div class="reagent-item" onclick="selectReagent('lug',3)">
+        <div class="reagent-bottle lug" id="r3-lug">🟤</div>
+        <div class="reagent-label">Lugol<br>(Iodo+KI)</div>
+      </div>
+      <div class="reagent-item" onclick="selectReagent('agua',3)">
+        <div class="reagent-bottle agua" id="r3-agua">💧</div>
+        <div class="reagent-label">Água (lavagem)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-panel">
+    <div class="action-title">⚡ ACÇÕES</div>
+    <button class="btn-action warn" id="btn-apply-lug" onclick="applyLugol()">🟤 Aplicar Lugol (1 min)</button>
+    <button class="btn-action" id="btn-wash-lug" onclick="washLugol()" disabled>💧 Lavar com Água</button>
+  </div>
+
+  <div class="info-box warn-box" id="info-s3">
+    <div class="info-title">🟤 LUGOL — O Mordente</div>
+    <div class="info-body">
+      O lugol (iodo + iodeto de potássio) não é um corante, é um <strong>mordente</strong>! Ele reage com o cristal violeta já dentro das bactérias, formando um <strong>complexo grande e insolúvel</strong> (Cristal Violeta–Iodo). Este complexo é difícil de remover, especialmente na parede espessa das <strong>Gram-positivas</strong>.
+    </div>
+  </div>
+
+  <button class="btn-action success" onclick="goSection('sim4')" id="next-sim3" style="display:none">✅ Próximo: Descorante →</button>
+</div>
+
+<!-- ======== SIM 4 — DESCORANTE ======== -->
+<div class="section" id="sim4">
+  <div class="sim-header">
+    <div class="sim-title">💧 SIM 4 — Descorante (Etapa CRÍTICA!)</div>
+    <div class="sim-desc">Álcool-acetona remove o corante das Gram-negativas. ATENÇÃO: 10-30 segundos APENAS! Esta é a etapa mais importante.</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb4" style="width:0%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim4" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-4">×100</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(4,'×10')">×10</div>
+        <div class="mag-btn" onclick="setMag(4,'×40')">×40</div>
+        <div class="mag-btn active" onclick="setMag(4,'×100')">×100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🧪 REAGENTES</div>
+    <div class="reagents-row">
+      <div class="reagent-item" onclick="selectReagent('acet',4)">
+        <div class="reagent-bottle acet" id="r4-acet">⚗️</div>
+        <div class="reagent-label">Álcool-Acetona<br>95%</div>
+      </div>
+      <div class="reagent-item" onclick="selectReagent('agua',4)">
+        <div class="reagent-bottle agua" id="r4-agua">💧</div>
+        <div class="reagent-label">Água (parar)</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timer-display" style="text-align:center;margin:12px 0;display:none">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:36px;color:var(--accent3)" id="timer-num">30</div>
+    <div style="font-size:11px;color:var(--text2)">segundos restantes</div>
+  </div>
+
+  <div class="action-panel">
+    <div class="action-title">⚡ ACÇÕES — ATENÇÃO ao tempo!</div>
+    <button class="btn-action danger" id="btn-apply-acet" onclick="applyAcetone()">⚗️ Aplicar Descorante (máx. 30s)</button>
+    <button class="btn-action" id="btn-wash-acet" onclick="washAcetone()" disabled>💧 Parar com Água</button>
+  </div>
+
+  <div class="info-box error-box">
+    <div class="info-title">⚠️ ETAPA MAIS CRÍTICA!</div>
+    <div class="info-body">
+      • <strong>Tempo correcto (10-30s):</strong> Remove o corante das Gram− (finas parede), mantém nas Gram+ (parede espessa)<br>
+      • <strong>Tempo a menos:</strong> As Gram− ficam falsamente violetas → resultado ERRADO!<br>
+      • <strong>Tempo a mais:</strong> As Gram+ perdem a cor → também ERRADO!<br><br>
+      O álcool dissolve a membrana externa lipídica das Gram− abrindo poros. O complexo CVI sai facilmente. Nas Gram+, a camada espessa de peptidoglicano desidrata e contrai, bloqueando a saída do complexo.
+    </div>
+  </div>
+
+  <button class="btn-action success" onclick="goSection('sim5')" id="next-sim4" style="display:none">✅ Próximo: Safranina →</button>
+</div>
+
+<!-- ======== SIM 5 — SAFRANINA ======== -->
+<div class="section" id="sim5">
+  <div class="sim-header">
+    <div class="sim-title">🔴 SIM 5 — Safranina (Contra-corante)</div>
+    <div class="sim-desc">O contra-corante vermelho cora as bactérias que ficaram incolores (Gram−). As Gram+ mantêm o violeta.</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb5" style="width:0%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim5" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-5">×100</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(5,'×10')">×10</div>
+        <div class="mag-btn" onclick="setMag(5,'×40')">×40</div>
+        <div class="mag-btn active" onclick="setMag(5,'×100')">×100</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🧪 REAGENTES</div>
+    <div class="reagents-row">
+      <div class="reagent-item" onclick="selectReagent('saf',5)">
+        <div class="reagent-bottle saf" id="r5-saf">🔴</div>
+        <div class="reagent-label">Safranina<br>1 min</div>
+      </div>
+      <div class="reagent-item" onclick="selectReagent('agua',5)">
+        <div class="reagent-bottle agua" id="r5-agua">💧</div>
+        <div class="reagent-label">Água (lavagem)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-panel">
+    <div class="action-title">⚡ ACÇÕES</div>
+    <button class="btn-action" id="btn-apply-saf" onclick="applySafranin()">🔴 Aplicar Safranina (1 min)</button>
+    <button class="btn-action" id="btn-wash-saf" onclick="washSafranin()" disabled>💧 Lavar com Água</button>
+    <button class="btn-action" id="btn-dry-saf" onclick="drySafranin()" disabled>🌬️ Secar (papel absorvente)</button>
+  </div>
+
+  <div class="info-box">
+    <div class="info-title">🔴 SAFRANINA — Contra-corante</div>
+    <div class="info-body">
+      A safranina é um corante vermelho/rosa fraco. Cora as células que ficaram <strong>transparentes após o descorante</strong>, ou seja, as <strong>Gram-negativas</strong>. As Gram-positivas já estão bem coradas de violeta e a safranina tem pouco efeito nelas. Tempo correcto: <strong>1-2 minutos</strong>.
+    </div>
+  </div>
+
+  <button class="btn-action success" onclick="goSection('sim6')" id="next-sim5" style="display:none">✅ Próximo: Microscopia →</button>
+</div>
+
+<!-- ======== SIM 6 — MICROSCOPIA ======== -->
+<div class="section" id="sim6">
+  <div class="sim-header">
+    <div class="sim-title">🔍 SIM 6 — Visualização Final</div>
+    <div class="sim-desc">Observa a lâmina ao microscópio óptico com objectiva de imersão (×1000). Identifica Gram+ (violeta) e Gram− (rosa).</div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar" id="pb6" style="width:100%"></div></div>
+
+  <div class="lab-view">
+    <div class="microscope-canvas-wrap">
+      <canvas class="micro-canvas" id="canvas-sim6" width="600" height="450"></canvas>
+      <div class="lens-overlay"></div>
+      <div class="magnify-badge" id="mag-badge-6">×1000</div>
+    </div>
+    <div class="lab-controls">
+      <div style="font-size:10px;color:var(--text2);font-family:'Orbitron',monospace;margin-bottom:6px">AMPLIAÇÃO</div>
+      <div class="mag-selector" style="flex-direction:column;">
+        <div class="mag-btn" onclick="setMag(6,'×100')">×100</div>
+        <div class="mag-btn" onclick="setMag(6,'×400')">×400</div>
+        <div class="mag-btn active" onclick="setMag(6,'×1000')">×1000</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reagent-tray">
+    <div class="tray-title">🔬 MATERIAIS PARA VISUALIZAÇÃO</div>
+    <div class="reagents-row">
+      <div class="reagent-item">
+        <div class="reagent-bottle agua" style="background:rgba(245,245,220,0.1)">🛢️</div>
+        <div class="reagent-label">Óleo de Imersão</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle ansa">🔬</div>
+        <div class="reagent-label">Microscópio Óptico</div>
+      </div>
+      <div class="reagent-item">
+        <div class="reagent-bottle agua">💡</div>
+        <div class="reagent-label">Ajustar Luz</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-panel">
+    <div class="action-title">⚡ INTERACÇÃO COM MICROSCÓPIO</div>
+    <button class="btn-action" onclick="addOil()">🛢️ Adicionar Óleo de Imersão</button>
+    <button class="btn-action" onclick="focusMicro()">🎯 Focar Microscópio</button>
+    <button class="btn-action warn" onclick="resetAll()">🔄 Reiniciar Simulação</button>
+  </div>
+
+  <div class="info-box success-box">
+    <div class="info-title">✅ INTERPRETAÇÃO DO RESULTADO</div>
+    <div class="info-body">
+      <span class="tag tag-pos">VIOLETA/ROXO = GRAM-POSITIVO (+)</span> — Parede espessa reteve o cristal violeta<br><br>
+      <span class="tag tag-neg">ROSA/VERMELHO = GRAM-NEGATIVO (−)</span> — Parede fina perdeu o cristal violeta, foi corado pela safranina<br><br>
+      <strong>Exemplos Gram+:</strong> Staphylococcus aureus, Streptococcus pneumoniae, Bacillus anthracis<br>
+      <strong>Exemplos Gram−:</strong> Escherichia coli, Pseudomonas aeruginosa, Klebsiella pneumoniae
+    </div>
+  </div>
+
+  <button class="btn-action" onclick="goSection('quiz')">🧠 Ir para o Modo Teste →</button>
+</div>
+
+<!-- ======== QUIZ ======== -->
+<div class="section" id="quiz">
+  <div class="sim-header">
+    <div class="sim-title">🧠 Modo Teste Prático</div>
+    <div class="sim-desc">Responde às questões sobre cada etapa da Coloração de Gram. Põe à prova o teu conhecimento!</div>
+  </div>
+
+  <div id="quiz-container"></div>
+  <div id="score-container" style="display:none">
+    <div class="score-display">
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-label">pontos de <span id="score-max">0</span></div>
+      <div style="margin-top:20px;color:var(--text2)" id="score-msg"></div>
+    </div>
+    <button class="btn-action" onclick="restartQuiz()" style="margin-top:16px">🔄 Tentar Novamente</button>
+    <button class="btn-action success" onclick="goSection('home')" style="margin-top:8px">🏠 Voltar ao Início</button>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="foot-brand">DemilMed-UL</div>
+  <div class="foot-univ">Universidade Licungo — UL</div>
+  <div class="foot-univ">2º Ano de Medicina • 2026</div>
+  <div style="margin-top:12px;font-size:11px;color:rgba(148,163,184,0.5)">Laboratório Virtual de Microbiologia • Coloração de Gram</div>
+</footer>
+
+<script>
+// ===== NAVIGATION =====
+const menuBtn = document.getElementById('menu-btn');
+const navDrawer = document.getElementById('nav-drawer');
+const navOverlay = document.getElementById('nav-overlay');
+const topbar = document.getElementById('topbar');
+
+menuBtn.addEventListener('click',()=>{
+  menuBtn.classList.toggle('active');
+  navDrawer.classList.toggle('open');
+  navOverlay.classList.toggle('show');
+});
+navOverlay.addEventListener('click',closeMenu);
+
+function closeMenu(){
+  menuBtn.classList.remove('active');
+  navDrawer.classList.remove('open');
+  navOverlay.classList.remove('show');
+}
+
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click',()=>{
+    goSection(item.dataset.section);
+    closeMenu();
+  });
+});
+
+function goSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+  document.querySelector(`.nav-item[data-section="${id}"]`)?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='sim1') initSim(1);
+  if(id==='sim2') initSim(2);
+  if(id==='sim3') initSim(3);
+  if(id==='sim4') initSim(4);
+  if(id==='sim5') initSim(5);
+  if(id==='sim6') initSim(6);
+  if(id==='quiz') initQuiz();
+  if(id==='theory') drawMoleculeCanvas();
+}
+
+// ===== TOPBAR HIDE/SHOW =====
+let lastScroll=0;
+window.addEventListener('scroll',()=>{
+  const now=window.scrollY;
+  if(now>lastScroll&&now>80) topbar.classList.add('hidden');
+  else topbar.classList.remove('hidden');
+  lastScroll=now;
+},{passive:true});
+
+// ===== TOAST =====
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='show '+(type==='success'?'success-toast':type==='error'?'error-toast':'');
+  setTimeout(()=>t.className='',2800);
+}
+
+// ===== HERO BACTERIA =====
+function createHeroBacteria(){
+  const wrap=document.getElementById('bacteria-preview');
+  if(!wrap)return;
+  const colors=['#8b5cf6','#7c3aed','#6d28d9','#f97316','#ea580c','#dc2626'];
+  for(let i=0;i<22;i++){
+    const el=document.createElement('div');
+    el.className='bact-live';
+    const sz=Math.random()*18+8;
+    const x=Math.random()*90;
+    const y=Math.random()*80;
+    const color=colors[Math.floor(Math.random()*colors.length)];
+    const dur=6+Math.random()*8;
+    const dx1=(Math.random()-0.5)*60,dy1=(Math.random()-0.5)*40;
+    const dx2=(Math.random()-0.5)*80,dy2=(Math.random()-0.5)*50;
+    const dx3=(Math.random()-0.5)*50,dy3=(Math.random()-0.5)*30;
+    el.style.cssText=`
+      width:${sz}px;height:${sz*1.6}px;
+      left:${x}%;top:${y}%;
+      background:${color};
+      box-shadow:0 0 ${sz}px ${color}88;
+      --dx1:${dx1}px;--dy1:${dy1}px;
+      --dx2:${dx2}px;--dy2:${dy2}px;
+      --dx3:${dx3}px;--dy3:${dy3}px;
+      animation-duration:${dur}s;
+      animation-delay:${Math.random()*-8}s;
+      opacity:0.8;
+    `;
+    wrap.appendChild(el);
+  }
+}
+createHeroBacteria();
+
+// ===== BACTERIA DATA =====
+const bacteria=[];
+function initBacteria(){
+  bacteria.length=0;
+  for(let i=0;i<28;i++){
+    bacteria.push({
+      x:0.06+Math.random()*0.88,
+      y:0.06+Math.random()*0.88,
+      vx:(Math.random()-0.5)*0.0012,
+      vy:(Math.random()-0.5)*0.0012,
+      rot:Math.random()*Math.PI*2,
+      vr:(Math.random()-0.5)*0.02,
+      type:Math.random()<0.5?'pos':'neg',
+      sz:0.024+Math.random()*0.014,
+      cvPenetration:0,
+      lugolFixed:false,
+      decolorized:false,
+      safranin:0,
+      id:i
+    });
+  }
+}
+initBacteria();
+
+// ===== CANVAS DRAWING =====
+const simState={
+  1:{step:0,done:false},
+  2:{cvApplied:false,washed:false,done:false},
+  3:{lugApplied:false,washed:false,done:false},
+  4:{decolorized:false,washed:false,done:false},
+  5:{safApplied:false,washed:false,dried:false,done:false},
+  6:{oilAdded:false,focused:false,done:false}
+};
+
+const animFrames={};
+const magnification={1:'×100',2:'×100',3:'×100',4:'×100',5:'×100',6:'×1000'};
+
+function setMag(sim,mag){
+  magnification[sim]=mag;
+  document.getElementById(`mag-badge-${sim}`).textContent=mag;
+  document.querySelectorAll(`#sim${sim} .mag-btn`).forEach(b=>{
+    b.classList.toggle('active',b.textContent===mag);
+  });
+}
+
+function getBactColor(b,simN){
+  if(simN===1){
+    return 'rgba(180,200,220,0.5)';
+  }
+  if(simN===2){
+    const cv=simState[2].cvApplied?1:0;
+    const a=b.cvPenetration;
+    if(cv>0){
+      return `rgba(${Math.round(100+55*(1-a))},${Math.round(50*a)},${Math.round(200+55*a)},0.85)`;
+    }
+    return 'rgba(160,180,200,0.5)';
+  }
+  if(simN===3){
+    if(simState[3].lugApplied) return `rgba(80,40,160,0.9)`;
+    return `rgba(100,50,200,0.85)`;
+  }
+  if(simN===4){
+    if(simState[4].decolorized){
+      if(b.type==='pos') return 'rgba(100,50,200,0.9)';
+      return 'rgba(200,200,220,0.25)';
+    }
+    return 'rgba(80,40,160,0.9)';
+  }
+  if(simN===5){
+    if(simState[5].safApplied){
+      if(b.type==='pos') return 'rgba(120,60,220,0.9)';
+      return `rgba(220,50,50,${0.5+b.safranin*0.4})`;
+    }
+    if(simState[4].decolorized){
+      if(b.type==='pos') return 'rgba(100,50,200,0.9)';
+      return 'rgba(200,200,220,0.25)';
+    }
+    return 'rgba(80,40,160,0.9)';
+  }
+  if(simN===6){
+    if(b.type==='pos') return 'rgba(130,60,230,0.95)';
+    return 'rgba(230,50,50,0.95)';
+  }
+  return '#888';
+}
+
+function drawSim(n){
+  const canvas=document.getElementById(`canvas-sim${n}`);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const mag=magnification[n];
+
+  // Background
+  ctx.fillStyle='#02060f';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid lines (microscope grid)
+  ctx.strokeStyle='rgba(0,100,150,0.08)';
+  ctx.lineWidth=1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  const magScale={'×10':0.3,'×40':0.6,'×100':1,'×400':2,'×1000':3.5}[mag]||1;
+  const sz_mult=magScale;
+
+  // Draw particles (reagent molecules)
+  if(n===2&&simState[2].cvApplied&&!simState[2].washed){
+    for(let i=0;i<30;i++){
+      const px=Math.random()*W, py=Math.random()*H;
+      ctx.beginPath();
+      ctx.arc(px,py,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(139,92,246,0.3)';
+      ctx.fill();
+    }
+  }
+  if(n===3&&simState[3].lugApplied&&!simState[3].washed){
+    for(let i=0;i<20;i++){
+      const px=Math.random()*W, py=Math.random()*H;
+      ctx.beginPath();
+      ctx.arc(px,py,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(180,100,0,0.25)';
+      ctx.fill();
+    }
+  }
+
+  // Draw bacteria
+  bacteria.forEach(b=>{
+    const bx=b.x*W, by=b.y*H;
+    const bsz=b.sz*W*sz_mult;
+
+    ctx.save();
+    ctx.translate(bx,by);
+    ctx.rotate(b.rot);
+
+    const color=getBactColor(b,n);
+
+    // Cell body (ellipse)
+    ctx.beginPath();
+    ctx.ellipse(0,0,bsz,bsz*1.7,0,0,Math.PI*2);
+    ctx.fillStyle=color;
+    ctx.fill();
+
+    // Cell wall highlight
+    ctx.beginPath();
+    ctx.ellipse(0,0,bsz,bsz*1.7,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.15)';
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    // Inner membrane
+    ctx.beginPath();
+    ctx.ellipse(0,0,bsz*0.65,bsz*1.2,0,0,Math.PI*2);
+    ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    // Glow
+    ctx.beginPath();
+    ctx.ellipse(0,0,bsz,bsz*1.7,0,0,Math.PI*2);
+    const glowColor=b.type==='pos'?'rgba(139,92,246,':'rgba(239,68,68,';
+    ctx.shadowBlur=8;
+    ctx.shadowColor=glowColor+'0.6)';
+    ctx.stroke();
+
+    ctx.restore();
+
+    // Live animation — CV penetration particles
+    if(n===2&&simState[2].cvApplied&&b.cvPenetration<1){
+      ctx.save();
+      ctx.translate(bx,by);
+      ctx.beginPath();
+      ctx.arc(-bsz*0.5,0,2,0,Math.PI*2);
+      ctx.fillStyle='rgba(200,150,255,0.8)';
+      ctx.fill();
+      ctx.restore();
+    }
+  });
+
+  // Labels for final view
+  if(n===6){
+    ctx.font='bold 11px Exo 2, sans-serif';
+    ctx.fillStyle='rgba(200,160,255,0.7)';
+    ctx.fillText('Gram+',6,18);
+    ctx.fillStyle='rgba(255,100,100,0.7)';
+    ctx.fillText('Gram−',6,32);
+  }
+
+  // Slide stage info
+  if(n===1&&simState[1].step===0){
+    ctx.fillStyle='rgba(255,255,255,0.15)';
+    ctx.font='13px Share Tech Mono, monospace';
+    ctx.textAlign='center';
+    ctx.fillText('Lâmina vazia — inicia o processo',W/2,H/2);
+    ctx.textAlign='left';
+  }
+}
+
+function animateSim(n){
+  if(animFrames[n]) cancelAnimationFrame(animFrames[n]);
+  const step=()=>{
+    bacteria.forEach(b=>{
+      b.x+=b.vx; b.y+=b.vy; b.rot+=b.vr;
+      if(b.x<0.04||b.x>0.96){b.vx*=-1;}
+      if(b.y<0.04||b.y>0.96){b.vy*=-1;}
+      // CV penetration animation
+      if(n===2&&simState[2].cvApplied&&b.cvPenetration<1){
+        b.cvPenetration+=0.008;
+      }
+      // Safranin animation
+      if(n===5&&simState[5].safApplied&&b.type==='neg'&&b.safranin<1){
+        b.safranin+=0.012;
+      }
+    });
+    drawSim(n);
+    animFrames[n]=requestAnimationFrame(step);
+  };
+  animFrames[n]=requestAnimationFrame(step);
+}
+
+function initSim(n){
+  setTimeout(()=>animateSim(n),50);
+  if(n===6) drawSim(6);
+}
+
+// ===== SIM 1 LOGIC =====
+const s1msgs=[
+  'Começa por <strong>esterilizar a ansa de platina</strong> na chama do bico de Bunsen até ficar incandescente. Isso elimina qualquer contaminação prévia.',
+  'Com a ansa estéril (já fria!), colhe uma pequena quantidade da <strong>cultura bacteriana</strong> ou amostra clínica.',
+  'Deposita e espalha suavemente a amostra numa <strong>lâmina de vidro limpa</strong>, em movimentos circulares. Camada fina e uniforme!',
+  'Deixa a lâmina <strong>secar ao ar</strong> completamente (~2-5 min). NUNCA aqueces com bactérias ainda em suspensão.',
+  'Passa a lâmina 3x pela chama do bico de Bunsen — isso <strong>fixa as bactérias</strong> ao vidro por calor. Agora está pronto para colorar!'
+];
+const s1pcts=[20,40,60,80,100];
+
+function sim1Step(n){
+  simState[1].step=n;
+  document.getElementById(`info-s1-text`).innerHTML=s1msgs[n-1];
+  document.getElementById(`pb1`).style.width=s1pcts[n-1]+'%';
+  for(let i=1;i<=5;i++){
+    const b=document.getElementById(`btn-s1-${i}`);
+    if(i===n) b.disabled=true;
+    if(i===n+1) b.disabled=false;
+  }
+  if(n===3){
+    bacteria.forEach(b=>{b.x=0.05+Math.random()*0.9;b.y=0.05+Math.random()*0.9;});
+  }
+  if(n===5){
+    document.getElementById('next-sim1').style.display='inline-flex';
+    toast('✅ Lâmina preparada e fixada!','success');
+    simState[1].done=true;
+  }
+  drawSim(1);
+}
+
+// ===== SIM 2 LOGIC =====
+let cvTimer=null;
+function applyCV(){
+  if(simState[2].cvApplied)return;
+  simState[2].cvApplied=true;
+  document.getElementById('btn-apply-cv').disabled=true;
+  document.getElementById('btn-wash-cv').disabled=false;
+  document.getElementById('pb2').style.width='50%';
+  document.getElementById('info-s2').innerHTML=`
+    <div class="info-title pulse">💜 CRISTAL VIOLETA — EM ACÇÃO</div>
+    <div class="info-body">O corante está a penetrar em <strong>TODAS as bactérias</strong>! Vê as moléculas a entrar nas células. Aguarda 1 minuto antes de lavar. Tanto as <strong>Gram+</strong> como as <strong>Gram−</strong> ficam violetas nesta fase.</div>
+  `;
+  toast('💜 Cristal Violeta aplicado — aguarda 1 min');
+}
+function washCV(){
+  if(!simState[2].cvApplied)return;
+  simState[2].washed=true;
+  document.getElementById('btn-wash-cv').disabled=true;
+  document.getElementById('pb2').style.width='100%';
+  document.getElementById('next-sim2').style.display='inline-flex';
+  simState[2].done=true;
+  document.getElementById('info-s2').innerHTML=`
+    <div class="info-title">✅ LAVAGEM CONCLUÍDA</div>
+    <div class="info-body">Todas as bactérias estão <strong>violetas</strong>. O excesso de corante foi removido com água. Próximo passo: aplicar o <strong>Lugol</strong> (mordente) para fixar o corante.</div>
+  `;
+  toast('💧 Lavado! Todas as bactérias estão violetas','success');
+}
+
+// ===== SIM 3 LOGIC =====
+function applyLugol(){
+  if(simState[3].lugApplied)return;
+  simState[3].lugApplied=true;
+  document.getElementById('btn-apply-lug').disabled=true;
+  document.getElementById('btn-wash-lug').disabled=false;
+  document.getElementById('pb3').style.width='50%';
+  bacteria.forEach(b=>b.lugolFixed=true);
+  document.getElementById('info-s3').innerHTML=`
+    <div class="info-title pulse">🟤 LUGOL — FIXANDO O CORANTE</div>
+    <div class="info-body">O iodo está a reagir com o Cristal Violeta formando o <strong>complexo CVI (Cristal Violeta-Iodo)</strong>. Este complexo é grande e insolúvel — está "preso" dentro das células. A cor fica mais escura e intensa.</div>
+  `;
+  toast('🟤 Lugol aplicado — complexo CVI a formar');
+}
+function washLugol(){
+  simState[3].washed=true;
+  document.getElementById('btn-wash-lug').disabled=true;
+  document.getElementById('pb3').style.width='100%';
+  document.getElementById('next-sim3').style.display='inline-flex';
+  simState[3].done=true;
+  document.getElementById('info-s3').innerHTML=`
+    <div class="info-title">✅ LUGOL CONCLUÍDO</div>
+    <div class="info-body">O complexo <strong>Cristal Violeta-Iodo (CVI)</strong> está formado dentro de todas as bactérias. Agora vem a etapa mais crítica: o <strong>descorante</strong>!</div>
+  `;
+  toast('✅ Mordente aplicado com sucesso!','success');
+}
+
+// ===== SIM 4 LOGIC =====
+let acetTimer=null;
+let acetSecs=30;
+function applyAcetone(){
+  if(simState[4].decolorized)return;
+  document.getElementById('btn-apply-acet').disabled=true;
+  document.getElementById('btn-wash-acet').disabled=false;
+  document.getElementById('timer-display').style.display='block';
+  acetSecs=30;
+  document.getElementById('timer-num').textContent=acetSecs;
+  acetTimer=setInterval(()=>{
+    acetSecs--;
+    document.getElementById('timer-num').textContent=acetSecs;
+    if(acetSecs<=10) document.getElementById('timer-num').style.color='var(--accent5)';
+    if(acetSecs<=0){
+      clearInterval(acetTimer);
+      autoWashAcetone();
+    }
+  },1000);
+  simState[4].decolorized=true;
+  bacteria.forEach(b=>{ if(b.type==='neg') b.decolorized=true; });
+  document.getElementById('pb4').style.width='50%';
+  toast('⚗️ Descorante aplicado — lava em 30s!','error');
+}
+function washAcetone(){
+  clearInterval(acetTimer);
+  document.getElementById('timer-display').style.display='none';
+  document.getElementById('btn-wash-acet').disabled=true;
+  document.getElementById('pb4').style.width='100%';
+  document.getElementById('next-sim4').style.display='inline-flex';
+  simState[4].done=true;
+  toast('💧 Lavado a tempo! Gram− transparentes, Gram+ violetas','success');
+}
+function autoWashAcetone(){
+  document.getElementById('timer-display').style.display='none';
+  document.getElementById('btn-wash-acet').disabled=true;
+  document.getElementById('pb4').style.width='100%';
+  document.getElementById('next-sim4').style.display='inline-flex';
+  simState[4].done=true;
+  toast('⚠️ Lavagem automática! Verifica tempo na próxima vez','error');
+}
+
+// ===== SIM 5 LOGIC =====
+function applySafranin(){
+  if(simState[5].safApplied)return;
+  simState[5].safApplied=true;
+  document.getElementById('btn-apply-saf').disabled=true;
+  document.getElementById('btn-wash-saf').disabled=false;
+  document.getElementById('pb5').style.width='40%';
+  toast('🔴 Safranina a penetrar nas Gram−!');
+}
+function washSafranin(){
+  simState[5].washed=true;
+  document.getElementById('btn-wash-saf').disabled=true;
+  document.getElementById('btn-dry-saf').disabled=false;
+  document.getElementById('pb5').style.width='75%';
+  toast('💧 Lavagem feita!');
+}
+function drySafranin(){
+  simState[5].dried=true;
+  document.getElementById('btn-dry-saf').disabled=true;
+  document.getElementById('pb5').style.width='100%';
+  document.getElementById('next-sim5').style.display='inline-flex';
+  simState[5].done=true;
+  toast('✅ Lâmina pronta para visualização!','success');
+}
+
+// ===== SIM 6 LOGIC =====
+function addOil(){
+  simState[6].oilAdded=true;
+  toast('🛢️ Óleo de imersão aplicado na objectiva ×1000');
+  setMag(6,'×1000');
+}
+function focusMicro(){
+  simState[6].focused=true;
+  simState[6].done=true;
+  drawSim(6);
+  toast('🎯 Foco ajustado — bactérias visíveis!','success');
+}
+function resetAll(){
+  if(!confirm('Reiniciar toda a simulação?'))return;
+  initBacteria();
+  Object.keys(simState).forEach(k=>{
+    const s=simState[k];
+    Object.keys(s).forEach(sk=>s[sk]=false);
+    if(k==='1')s.step=0;
+  });
+  // Reset buttons
+  ['btn-s1-2','btn-s1-3','btn-s1-4','btn-s1-5'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=true; });
+  const btn1=document.getElementById('btn-s1-1'); if(btn1)btn1.disabled=false;
+  ['next-sim1','next-sim2','next-sim3','next-sim4','next-sim5'].forEach(id=>{ const b=document.getElementById(id); if(b)b.style.display='none'; });
+  ['btn-apply-cv','btn-apply-lug','btn-apply-acet','btn-apply-saf'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=false; });
+  ['btn-wash-cv','btn-wash-lug','btn-wash-acet','btn-wash-saf','btn-dry-saf'].forEach(id=>{ const b=document.getElementById(id); if(b)b.disabled=true; });
+  toast('🔄 Simulação reiniciada!');
+  goSection('sim1');
+}
+
+// ===== MOLECULE CANVAS (Theory) =====
+function drawMoleculeCanvas(){
+  const canvas=document.getElementById('molecule-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=canvas.offsetWidth*2||600;
+  const H=canvas.height=canvas.offsetHeight*2||360;
+  ctx.scale(2,2);
+  const w=canvas.offsetWidth,h=canvas.offsetHeight;
+
+  let t=0;
+  const mols=[
+    {x:60,y:h*0.5,vx:0.8,vy:0.3,r:8,color:'#8b5cf6',label:'CV'},
+    {x:120,y:h*0.3,vx:-0.5,vy:0.7,r:7,color:'#8b5cf6',label:'CV'},
+    {x:200,y:h*0.6,vx:0.6,vy:-0.4,r:8,color:'#8b5cf6',label:'CV'},
+    {x:300,y:h*0.4,vx:0.3,vy:0.9,r:9,color:'#b45309',label:'I₂'},
+    {x:380,y:h*0.6,vx:-0.7,vy:0.4,r:7,color:'#b45309',label:'I₂'},
+    {x:450,y:h*0.3,vx:0.5,vy:-0.6,r:8,color:'#dc2626',label:'SF'},
+    {x:520,y:h*0.5,vx:-0.4,vy:0.5,r:7,color:'#dc2626',label:'SF'},
+  ];
+
+  function frame(){
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle='#0a1020';
+    ctx.fillRect(0,0,w,h);
+
+    // Draw two bacteria outlines
+    const pos={x:w*0.25,y:h*0.5};
+    const neg={x:w*0.75,y:h*0.5};
+
+    // Gram+
+    ctx.beginPath();
+    ctx.ellipse(pos.x,pos.y,28,50,0,0,Math.PI*2);
+    ctx.strokeStyle='#8b5cf6';
+    ctx.lineWidth=3;
+    ctx.stroke();
+    ctx.fillStyle='rgba(139,92,246,0.15)';
+    ctx.fill();
+    ctx.font='bold 10px sans-serif';
+    ctx.fillStyle='#a78bfa';
+    ctx.textAlign='center';
+    ctx.fillText('GRAM+',pos.x,pos.y+h*0.32);
+
+    // Gram-
+    ctx.beginPath();
+    ctx.ellipse(neg.x,neg.y,24,42,0,0,Math.PI*2);
+    ctx.strokeStyle='#f97316';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    ctx.fillStyle='rgba(249,115,22,0.1)';
+    ctx.fill();
+    ctx.fillStyle='#fb923c';
+    ctx.fillText('GRAM−',neg.x,neg.y+h*0.32);
+
+    // Molecules
+    mols.forEach(m=>{
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<10||m.x>w-10)m.vx*=-1;
+      if(m.y<10||m.y>h-10)m.vy*=-1;
+
+      ctx.beginPath();
+      ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+      ctx.fillStyle=m.color+'aa';
+      ctx.fill();
+      ctx.strokeStyle=m.color;
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+      ctx.font='bold 7px sans-serif';
+      ctx.fillStyle='#fff';
+      ctx.textAlign='center';
+      ctx.fillText(m.label,m.x,m.y+3);
+    });
+
+    t++;
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ===== QUIZ =====
+const quizData=[
+  {
+    q:'Qual é o PRIMEIRO reagente aplicado na Coloração de Gram?',
+    opts:['Safranina','Lugol','Cristal Violeta','Álcool-Acetona'],
+    correct:2,
+    exp:'O Cristal Violeta é sempre o primeiro — cora todas as bactérias de violeta.'
+  },
+  {
+    q:'O Lugol funciona como mordente. O que significa isso?',
+    opts:['Remove o corante das bactérias','Corante final vermelho','Fixa e intensifica o corante já dentro das células','Dissolve a parede celular'],
+    correct:2,
+    exp:'O Lugol forma um complexo insolúvel com o Cristal Violeta, fixando-o dentro das células.'
+  },
+  {
+    q:'Qual é a etapa mais crítica da Coloração de Gram?',
+    opts:['Aplicação do Cristal Violeta','Descorante com álcool-acetona','Lavagem com água','Aplicação da Safranina'],
+    correct:1,
+    exp:'O descorante é crítico: tempo curto deixa as Gram− falsamente positivas; tempo longo decolora as Gram+.'
+  },
+  {
+    q:'Após a Coloração de Gram, as bactérias Gram-negativas ficam com que cor?',
+    opts:['Azul','Violeta/Roxo','Rosa/Vermelho','Amarelo'],
+    correct:2,
+    exp:'As Gram− perdem o cristal violeta e são coradas pela safranina → rosa/vermelho.'
+  },
+  {
+    q:'Por que as bactérias Gram-positivas retêm o Cristal Violeta?',
+    opts:['Têm membrana externa lipídica grossa','Têm uma camada espessa de peptidoglicano','Produzem mais enzimas','São maiores em tamanho'],
+    correct:1,
+    exp:'A espessa camada de peptidoglicano (20-80nm) nas Gram+ impede a saída do complexo Cristal Violeta-Iodo.'
+  },
+  {
+    q:'Qual é a função da Safranina na coloração de Gram?',
+    opts:['1º corante que cora todas as bactérias','Mordente que fixa o cristal violeta','Contra-corante que cora as bactérias incolores (Gram−)','Descorante que remove o corante violeta'],
+    correct:2,
+    exp:'A safranina é o contra-corante final — cora as Gram− que ficaram sem cor após o descorante.'
+  },
+  {
+    q:'Que objectiva é usada na visualização final com óleo de imersão?',
+    opts:['×10','×40','×100 (imersão)','×400'],
+    correct:2,
+    exp:'A objectiva ×100 (de imersão) com óleo proporciona a maior ampliação útil (~×1000 total) para ver bactérias.'
+  },
+  {
+    q:'Em que ano foi desenvolvida a técnica de Coloração de Gram?',
+    opts:['1854','1884','1904','1924'],
+    correct:1,
+    exp:'Hans Christian Gram desenvolveu a técnica em 1884, em Copenhaga, Dinamarca.'
+  }
+];
+
+let quizState={current:0,score:0,answered:[]};
+
+function initQuiz(){
+  quizState={current:0,score:0,answered:[]};
+  document.getElementById('quiz-container').style.display='block';
+  document.getElementById('score-container').style.display='none';
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const container=document.getElementById('quiz-container');
+  container.innerHTML='';
+
+  const prog=document.createElement('div');
+  prog.className='progress-bar-wrap';
+  prog.innerHTML=`<div class="progress-bar" style="width:${(quizState.current/quizData.length)*100}%"></div>`;
+  container.appendChild(prog);
+
+  const info=document.createElement('div');
+  info.style.cssText='text-align:center;margin-bottom:16px;font-size:12px;color:var(--text2)';
+  info.textContent=`Questão ${quizState.current+1} de ${quizData.length}`;
+  container.appendChild(info);
+
+  if(quizState.current>=quizData.length){
+    showScore();
+    return;
+  }
+
+  const q=quizData[quizState.current];
+  const card=document.createElement('div');
+  card.className='quiz-q';
+  card.innerHTML=`<h4>❓ ${q.q}</h4><div class="quiz-opts" id="quiz-opts"></div><div id="quiz-exp" style="display:none;margin-top:14px;padding:12px;background:rgba(16,185,129,0.1);border-radius:8px;font-size:12px;color:var(--accent4);line-height:1.5"></div>`;
+  container.appendChild(card);
+
+  const optsDiv=card.querySelector('#quiz-opts');
+  q.opts.forEach((opt,i)=>{
+    const btn=document.createElement('div');
+    btn.className='quiz-opt';
+    btn.textContent=`${String.fromCharCode(65+i)}. ${opt}`;
+    btn.addEventListener('click',()=>answerQuiz(i,q.correct,card,q.exp));
+    optsDiv.appendChild(btn);
+  });
+
+  const nextBtn=document.createElement('button');
+  nextBtn.className='btn-action';
+  nextBtn.textContent='Próxima Questão →';
+  nextBtn.id='quiz-next';
+  nextBtn.style.cssText='display:none;margin-top:16px';
+  nextBtn.addEventListener('click',()=>{
+    quizState.current++;
+    renderQuiz();
+  });
+  card.appendChild(nextBtn);
+}
+
+function answerQuiz(chosen,correct,card,exp){
+  card.querySelectorAll('.quiz-opt').forEach((opt,i)=>{
+    opt.style.pointerEvents='none';
+    if(i===correct)opt.classList.add('correct');
+    else if(i===chosen&&chosen!==correct)opt.classList.add('wrong');
+  });
+  if(chosen===correct){
+    quizState.score++;
+    toast('✅ Correcto!','success');
+  } else {
+    toast('❌ Errado — vê a explicação','error');
+  }
+  quizState.answered.push(chosen===correct);
+  const expDiv=card.querySelector('#quiz-exp');
+  expDiv.textContent='💡 '+exp;
+  expDiv.style.display='block';
+  document.getElementById('quiz-next').style.display='inline-flex';
+}
+
+function showScore(){
+  document.getElementById('quiz-container').style.display='none';
+  document.getElementById('score-container').style.display='block';
+  const pct=Math.round((quizState.score/quizData.length)*100);
+  document.getElementById('score-num').textContent=`${quizState.score}/${quizData.length}`;
+  document.getElementById('score-max').textContent=quizData.length;
+  let msg='';
+  if(pct>=90) msg='🏆 Excelente! Dominas a Coloração de Gram!';
+  else if(pct>=70) msg='👍 Bom desempenho! Revê os pontos fracos.';
+  else if(pct>=50) msg='📚 Continua a estudar — volta à teoria!';
+  else msg='🔄 Revê os simuladores e tenta novamente!';
+  document.getElementById('score-msg').textContent=msg;
+}
+
+function restartQuiz(){ initQuiz(); }
+
+// ===== THEORY ACCORDION =====
+function toggleTheory(el){
+  const body=el.nextElementSibling;
+  const arrow=el.querySelector('span:last-child');
+  body.classList.toggle('open');
+  arrow.textContent=body.classList.contains('open')?'▲':'▼';
+}
+
+// ===== INIT =====
+goSection('home');
+setTimeout(()=>initSim(1),100);
+</script>
+</body>
+</html>

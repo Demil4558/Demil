@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ziehl-Neelsen Simulator | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg0:#030508;--bg1:#070c12;--bg2:#0d1520;--bg3:#111d2e;--bg4:#162238;
+  --c1:#00e5ff;--c2:#ff3d71;--c3:#39ff14;--c4:#ff9500;--c5:#bf5af2;--c6:#ffe600;
+  --ccarbol:#dc143c;--cfuchsin:#e8003d;--cacid:#4fc3f7;--cmethyl:#1565c0;
+  --tx1:#e8f4f8;--tx2:#8ba4b8;--tx3:#4a6070;
+  --font-title:'Orbitron',monospace;--font-body:'Exo 2',sans-serif;--font-mono:'Share Tech Mono',monospace;
+  --glow1:0 0 20px rgba(0,229,255,.4);--glow2:0 0 20px rgba(255,61,113,.4);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg0);color:var(--tx1);font-family:var(--font-body);overflow-x:hidden;min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg0)}::-webkit-scrollbar-thumb{background:var(--c1);border-radius:2px}
+
+/* ── TOP BAR ── */
+#topbar{
+  position:fixed;top:0;left:0;right:0;height:48px;z-index:1000;
+  background:rgba(3,5,8,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,229,255,.15);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;transition:transform .4s;
+}
+#topbar.hidden{transform:translateY(-50px)}
+.tb-logo{font-family:var(--font-title);font-size:.85rem;color:var(--c1);letter-spacing:2px}
+.tb-menu-btn{
+  width:36px;height:36px;border:none;background:transparent;
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px
+}
+.tb-menu-btn span{display:block;width:22px;height:2px;background:var(--c1);border-radius:1px;transition:all .3s}
+.tb-menu-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.tb-menu-btn.open span:nth-child(2){opacity:0}
+.tb-menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+#nav-drawer{
+  position:fixed;top:48px;right:0;width:240px;
+  background:rgba(7,12,18,.97);backdrop-filter:blur(16px);
+  border-left:1px solid rgba(0,229,255,.2);border-bottom:1px solid rgba(0,229,255,.2);
+  z-index:999;transform:translateX(100%);transition:transform .35s;border-radius:0 0 0 12px;
+  padding:12px 0;
+}
+#nav-drawer.open{transform:translateX(0)}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:12px 20px;
+  font-size:.85rem;cursor:pointer;transition:background .2s;color:var(--tx2);
+  border-left:3px solid transparent;
+}
+.nav-item:hover,.nav-item.active{background:rgba(0,229,255,.06);color:var(--c1);border-left-color:var(--c1)}
+.nav-item .ni-icon{font-size:1.1rem;width:20px;text-align:center}
+
+/* ── HERO ── */
+#hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px 20px 40px;text-align:center;
+  background:radial-gradient(ellipse at 50% 40%,rgba(0,229,255,.07) 0%,transparent 65%);
+  position:relative;overflow:hidden;
+}
+#hero-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.hero-content{position:relative;z-index:1}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.3);
+  border-radius:20px;padding:6px 16px;margin-bottom:20px;
+  font-family:var(--font-mono);font-size:.72rem;color:var(--c1);letter-spacing:2px
+}
+.hero-title{
+  font-family:var(--font-title);font-size:clamp(2rem,7vw,5.5rem);
+  line-height:1;letter-spacing:2px;margin-bottom:10px;
+  background:linear-gradient(135deg,var(--c1),var(--c3),var(--c4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(0,229,255,.5))
+}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.3rem);color:var(--tx2);max-width:600px;line-height:1.7;margin:0 auto 30px}
+.hero-sub strong{color:var(--c6)}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-hero{
+  padding:14px 28px;border-radius:10px;font-family:var(--font-body);font-weight:700;
+  font-size:.95rem;cursor:pointer;transition:all .25s;border:2px solid;text-transform:uppercase;
+  letter-spacing:1px;
+}
+.btn-hero.primary{background:var(--c1);border-color:var(--c1);color:var(--bg0)}
+.btn-hero.primary:hover{background:transparent;color:var(--c1);box-shadow:var(--glow1)}
+.btn-hero.secondary{background:transparent;border-color:var(--c2);color:var(--c2)}
+.btn-hero.secondary:hover{background:var(--c2);color:var(--bg0);box-shadow:var(--glow2)}
+
+/* ── SECTION WRAPPER ── */
+.section{padding:70px 16px;position:relative;z-index:1}
+.section-inner{max-width:1000px;margin:0 auto}
+.sec-header{text-align:center;margin-bottom:40px}
+.sec-num{font-family:var(--font-title);font-size:3.5rem;opacity:.12;line-height:1}
+.sec-title{font-family:var(--font-title);font-size:clamp(1.4rem,4vw,2.2rem);color:var(--c1);margin-top:-10px;line-height:1.2}
+.sec-sub{color:var(--tx2);margin-top:8px;font-size:.9rem;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.7}
+
+/* ── OVERVIEW CARDS ── */
+.overview-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:30px}
+.ov-card{
+  background:var(--bg2);border:1px solid rgba(255,255,255,.07);border-radius:14px;
+  padding:22px;transition:all .3s;cursor:default;position:relative;overflow:hidden
+}
+.ov-card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  background:radial-gradient(ellipse at top left,var(--cc,.2) 0%,transparent 60%);
+  transition:opacity .3s
+}
+.ov-card:hover::before{opacity:1}
+.ov-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,.25)}
+.oc-icon{font-size:2rem;margin-bottom:10px}
+.oc-title{font-family:var(--font-title);font-size:.85rem;color:var(--c1);letter-spacing:1px;margin-bottom:6px}
+.oc-text{font-size:.82rem;color:var(--tx2);line-height:1.6}
+
+/* ── TABS ── */
+.tabs-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:0;justify-content:center}
+.tab-btn{
+  padding:10px 20px;border-radius:8px 8px 0 0;border:2px solid rgba(255,255,255,.1);
+  border-bottom:none;background:var(--bg2);cursor:pointer;
+  font-family:var(--font-body);font-weight:700;font-size:.82rem;
+  color:var(--tx2);transition:all .2s;
+}
+.tab-btn.active,.tab-btn:hover{background:var(--bg3);color:var(--c1);border-color:rgba(0,229,255,.3)}
+.tab-panel{
+  background:var(--bg2);border:2px solid rgba(0,229,255,.15);
+  border-radius:0 12px 12px 12px;padding:24px;display:none
+}
+.tab-panel.active{display:block}
+
+/* ── SIMULATOR CORE ── */
+.sim-wrapper{
+  background:var(--bg1);border:1px solid rgba(0,229,255,.12);
+  border-radius:16px;overflow:hidden;margin:20px 0
+}
+.sim-toolbar{
+  background:var(--bg2);border-bottom:1px solid rgba(255,255,255,.07);
+  padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap
+}
+.sim-title-bar{font-family:var(--font-mono);font-size:.78rem;color:var(--c1);flex:1}
+.sim-body{padding:16px;display:flex;flex-direction:column;gap:16px}
+@media(min-width:700px){.sim-body{flex-direction:row}}
+
+/* ── MICROSCOPE VIEW ── */
+.micro-view{
+  flex:1.4;min-height:300px;
+  background:radial-gradient(ellipse at center,#0a0a0a 60%,#000 100%);
+  border-radius:12px;border:3px solid #222;
+  position:relative;overflow:hidden;cursor:crosshair;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.8)
+}
+.micro-lens-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:4px solid rgba(255,255,255,.04);
+  margin:10px;pointer-events:none
+}
+.micro-crosshair{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:40px 40px
+}
+#micro-canvas-1,#micro-canvas-2,#micro-canvas-3,#micro-canvas-4,#micro-canvas-5,#micro-canvas-6{
+  display:block;width:100%;height:100%;position:absolute;inset:0
+}
+.micro-overlay-text{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,.7);color:var(--c1);font-family:var(--font-mono);
+  font-size:.7rem;padding:4px 12px;border-radius:20px;letter-spacing:1px;
+  pointer-events:none
+}
+.zoom-badge{
+  position:absolute;top:10px;right:10px;
+  background:rgba(0,0,0,.7);color:var(--c6);
+  font-family:var(--font-mono);font-size:.7rem;padding:4px 10px;border-radius:6px;
+  pointer-events:none
+}
+
+/* ── CONTROL PANEL ── */
+.ctrl-panel{flex:1;display:flex;flex-direction:column;gap:12px;min-width:240px}
+
+.step-list{display:flex;flex-direction:column;gap:6px}
+.step-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg3);border-radius:8px;padding:10px 12px;
+  border:1px solid transparent;cursor:pointer;transition:all .2s;
+  font-size:.82rem;
+}
+.step-item.active{border-color:var(--c1);background:rgba(0,229,255,.08);color:var(--c1)}
+.step-item.done{border-color:rgba(57,255,20,.3);color:var(--c3)}
+.step-item.locked{opacity:.4;cursor:not-allowed}
+.step-dot{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;font-family:var(--font-mono)
+}
+.step-item.active .step-dot{background:var(--c1);color:var(--bg0)}
+.step-item.done .step-dot{background:var(--c3);color:var(--bg0)}
+.step-item.locked .step-dot{background:var(--bg4);color:var(--tx3)}
+.step-item:not(.locked):not(.done):not(.active) .step-dot{background:var(--bg4);color:var(--tx2)}
+
+.reagent-box{
+  background:var(--bg3);border-radius:10px;padding:14px;
+  border:1px solid rgba(255,255,255,.07)
+}
+.rb-title{font-family:var(--font-mono);font-size:.7rem;color:var(--tx3);letter-spacing:2px;margin-bottom:10px}
+.reagent-tray{display:flex;gap:8px;flex-wrap:wrap}
+.reagent-item{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;transition:transform .2s;
+}
+.reagent-item:hover{transform:scale(1.08)}
+.ri-bottle{
+  width:36px;height:52px;border-radius:4px 4px 8px 8px;
+  border:2px solid rgba(255,255,255,.2);
+  position:relative;display:flex;align-items:flex-end;
+  overflow:hidden;background:rgba(0,0,0,.5)
+}
+.ri-liquid{
+  position:absolute;bottom:0;left:0;right:0;
+  transition:height .5s;border-radius:0 0 6px 6px
+}
+.ri-cap{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  width:14px;height:8px;border-radius:2px 2px 0 0
+}
+.ri-label{font-family:var(--font-mono);font-size:.58rem;color:var(--tx2);text-align:center;max-width:50px;line-height:1.2}
+
+.btn-action{
+  width:100%;padding:12px;border-radius:8px;
+  font-family:var(--font-body);font-weight:700;font-size:.88rem;
+  cursor:pointer;border:2px solid;transition:all .25s;text-transform:uppercase;
+  letter-spacing:1px;margin-top:4px
+}
+.btn-apply{background:var(--c1);border-color:var(--c1);color:var(--bg0)}
+.btn-apply:hover{background:transparent;color:var(--c1)}
+.btn-apply:disabled{opacity:.4;cursor:not-allowed}
+.btn-wash{background:transparent;border-color:var(--c4);color:var(--c4)}
+.btn-wash:hover{background:var(--c4);color:var(--bg0)}
+.btn-wash:disabled{opacity:.4;cursor:not-allowed}
+
+.info-panel{
+  background:rgba(0,229,255,.05);border:1px solid rgba(0,229,255,.15);
+  border-radius:10px;padding:14px;font-size:.8rem;line-height:1.7;color:var(--tx1);
+  min-height:80px
+}
+.info-panel strong{color:var(--c6)}
+.info-panel em{color:var(--c1);font-style:normal}
+
+/* ── MOLECULE INFO POPOVER ── */
+.mol-info{
+  position:absolute;pointer-events:none;z-index:50;
+  background:rgba(3,5,8,.95);border:1px solid var(--c1);border-radius:8px;
+  padding:10px 14px;font-size:.75rem;min-width:160px;max-width:200px;
+  line-height:1.6;color:var(--tx1);backdrop-filter:blur(8px);
+  transform:translate(10px,-50%);opacity:0;transition:opacity .2s
+}
+.mol-info.visible{opacity:1}
+.mol-info strong{color:var(--c6);display:block;margin-bottom:4px}
+
+/* ── ZOOM CONTROLS ── */
+.zoom-ctrl{display:flex;gap:6px;align-items:center}
+.zoom-btn{
+  width:30px;height:30px;border-radius:6px;
+  background:var(--bg3);border:1px solid rgba(255,255,255,.1);
+  color:var(--tx1);cursor:pointer;font-size:1rem;display:flex;
+  align-items:center;justify-content:center;transition:all .2s
+}
+.zoom-btn:hover{background:var(--bg4);border-color:var(--c1);color:var(--c1)}
+.zoom-val{font-family:var(--font-mono);font-size:.75rem;color:var(--c6);min-width:50px;text-align:center}
+
+/* ── PROGRESS TRACKER ── */
+.progress-track{
+  display:flex;align-items:center;gap:0;margin:20px 0;overflow-x:auto;padding-bottom:4px
+}
+.pt-step{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  min-width:70px;position:relative;flex:1
+}
+.pt-step::after{
+  content:'';position:absolute;top:15px;left:50%;
+  width:100%;height:2px;background:rgba(255,255,255,.1);z-index:0
+}
+.pt-step:last-child::after{display:none}
+.pt-circle{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--bg3);border:2px solid rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);font-size:.65rem;z-index:1;
+  position:relative;transition:all .4s
+}
+.pt-step.done .pt-circle{background:var(--c3);border-color:var(--c3);color:var(--bg0)}
+.pt-step.active .pt-circle{background:var(--c1);border-color:var(--c1);color:var(--bg0);box-shadow:0 0 12px var(--c1)}
+.pt-step.done::after{background:var(--c3)}
+.pt-label{font-family:var(--font-mono);font-size:.55rem;color:var(--tx3);text-align:center;line-height:1.2}
+
+/* ── QUIZ / TEST MODE ── */
+.quiz-question{
+  background:var(--bg3);border-radius:12px;padding:22px;
+  border:1px solid rgba(255,255,255,.08);margin-bottom:16px
+}
+.qq-num{font-family:var(--font-mono);font-size:.7rem;color:var(--c1);letter-spacing:2px;margin-bottom:8px}
+.qq-text{font-size:.95rem;font-weight:600;margin-bottom:16px;line-height:1.5}
+.qq-options{display:flex;flex-direction:column;gap:8px}
+.qq-opt{
+  padding:12px 16px;border-radius:8px;
+  background:var(--bg4);border:2px solid rgba(255,255,255,.08);
+  cursor:pointer;font-size:.85rem;text-align:left;color:var(--tx1);
+  font-family:var(--font-body);transition:all .2s
+}
+.qq-opt:hover{border-color:var(--c1);color:var(--c1);background:rgba(0,229,255,.06)}
+.qq-opt.correct{border-color:var(--c3);background:rgba(57,255,20,.1);color:var(--c3)}
+.qq-opt.wrong{border-color:var(--c2);background:rgba(255,61,113,.1);color:var(--c2)}
+.qq-feedback{
+  margin-top:12px;padding:12px;border-radius:8px;font-size:.82rem;
+  display:none;line-height:1.6
+}
+.qq-feedback.ok{display:block;background:rgba(57,255,20,.08);border:1px solid var(--c3);color:var(--c3)}
+.qq-feedback.no{display:block;background:rgba(255,61,113,.08);border:1px solid var(--c2);color:var(--c2)}
+
+.score-display{
+  text-align:center;padding:30px;background:var(--bg3);
+  border-radius:14px;border:2px solid var(--c6);display:none;margin-top:20px
+}
+.score-big{font-family:var(--font-title);font-size:3.5rem;color:var(--c6)}
+.score-msg{font-family:var(--font-mono);color:var(--tx2);margin-top:8px;font-size:.85rem}
+
+/* ── STAIN KEY LEGEND ── */
+.legend-row{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+.legend-item{
+  display:flex;align-items:center;gap:6px;
+  background:var(--bg3);border-radius:6px;padding:6px 12px;
+  font-family:var(--font-mono);font-size:.72rem;color:var(--tx2)
+}
+.li-dot{width:12px;height:12px;border-radius:50%}
+
+/* ── MATERIAL TABLE ── */
+.mat-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:12px}
+.mat-table th{background:var(--bg3);color:var(--c1);font-family:var(--font-mono);font-size:.72rem;letter-spacing:1px;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.1)}
+.mat-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--tx2)}
+.mat-table tr:hover td{background:rgba(0,229,255,.03);color:var(--tx1)}
+
+/* ── FLOATING TOOLTIP ── */
+#floating-tip{
+  position:fixed;pointer-events:none;z-index:2000;
+  background:rgba(3,5,8,.96);border:1px solid var(--c1);border-radius:8px;
+  padding:8px 14px;font-size:.75rem;color:var(--tx1);max-width:220px;
+  line-height:1.5;backdrop-filter:blur(8px);display:none;
+}
+
+/* ── NOTIFICATION ── */
+#notif{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:5000;
+  background:var(--bg3);border:1px solid var(--c1);color:var(--c1);
+  padding:10px 20px;border-radius:30px;font-family:var(--font-mono);font-size:.78rem;
+  opacity:0;transition:opacity .3s;pointer-events:none;text-align:center;white-space:nowrap
+}
+#notif.show{opacity:1}
+
+/* ── FOOTER ── */
+footer{
+  background:var(--bg1);border-top:1px solid rgba(0,229,255,.1);
+  padding:40px 20px;text-align:center;position:relative;z-index:1
+}
+.footer-logo{font-family:var(--font-title);font-size:1.8rem;color:var(--c1);margin-bottom:8px}
+.footer-info{font-family:var(--font-mono);font-size:.75rem;color:var(--tx3);line-height:2}
+
+/* ── DRAG INDICATOR ── */
+.drag-hint{
+  font-family:var(--font-mono);font-size:.65rem;color:var(--tx3);
+  text-align:center;margin-top:4px;letter-spacing:1px
+}
+
+/* ── ACID-FAST VISUAL ── */
+.af-label{
+  position:absolute;pointer-events:none;
+  background:rgba(220,20,60,.85);color:#fff;
+  font-family:var(--font-mono);font-size:.6rem;
+  padding:2px 6px;border-radius:3px;z-index:10;
+  animation:labelPop .3s ease both
+}
+@keyframes labelPop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .sim-body{flex-direction:column}
+  .micro-view{min-height:240px}
+  .btn-hero{padding:11px 20px;font-size:.82rem}
+}
+</style>
+</head>
+<body>
+
+<!-- FLOATING TIP -->
+<div id="floating-tip"></div>
+<!-- NOTIF -->
+<div id="notif"></div>
+
+<!-- TOP BAR -->
+<header id="topbar">
+  <div class="tb-logo">ZN · SIMULATOR</div>
+  <button class="tb-menu-btn" id="menu-btn" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- NAV DRAWER -->
+<nav id="nav-drawer">
+  <div class="nav-item active" onclick="gotoSec('hero');closeMenu()"><span class="ni-icon">🏠</span>Início</div>
+  <div class="nav-item" onclick="gotoSec('sec-overview');closeMenu()"><span class="ni-icon">📚</span>Visão Geral</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim1');closeMenu()"><span class="ni-icon">🔬</span>Sim. 1 · Esfregaço</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim2');closeMenu()"><span class="ni-icon">🔥</span>Sim. 2 · Fixação</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim3');closeMenu()"><span class="ni-icon">🔴</span>Sim. 3 · Carbol-Fucsina</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim4');closeMenu()"><span class="ni-icon">🧪</span>Sim. 4 · Descoloração</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim5');closeMenu()"><span class="ni-icon">🔵</span>Sim. 5 · Azul de Metileno</div>
+  <div class="nav-item" onclick="gotoSec('sec-sim6');closeMenu()"><span class="ni-icon">🎯</span>Sim. 6 · Leitura</div>
+  <div class="nav-item" onclick="gotoSec('sec-test');closeMenu()"><span class="ni-icon">📝</span>Modo Teste</div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">🧫 DemilMed-UL · 2º Ano · 2026</div>
+    <h1 class="hero-title">ZIEHL-NEELSEN</h1>
+    <p class="hero-sub">
+      Simulador interactivo completo da coloração <strong>BAAR</strong>.<br>
+      Aprende cada etapa, vê as moléculas em tempo real,<br>
+      e testa os teus conhecimentos!
+    </p>
+    <div class="hero-btns">
+      <button class="btn-hero primary" onclick="gotoSec('sec-overview')">▶ Começar a Aprender</button>
+      <button class="btn-hero secondary" onclick="gotoSec('sec-test')">🎯 Modo Teste</button>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section class="section" id="sec-overview">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">00</div>
+      <div class="sec-title">O que é Ziehl-Neelsen?</div>
+      <div class="sec-sub">Técnica especial para colorir bactérias <strong>ácido-resistentes</strong> como <em>Mycobacterium tuberculosis</em>. A parede cerosa resiste à maioria dos corantes — precisamos de força!</div>
+    </div>
+
+    <div class="overview-grid">
+      <div class="ov-card" style="--cc:rgba(220,20,60,.15)">
+        <div class="oc-icon">🦠</div>
+        <div class="oc-title">Quem detecta?</div>
+        <div class="oc-text">BAAR — Bacilos Álcool-Ácido Resistentes.<br><em>Mycobacterium tuberculosis</em>, M. leprae e outras micobactérias com parede rica em ácidos micólicos.</div>
+      </div>
+      <div class="ov-card" style="--cc:rgba(255,149,0,.15)">
+        <div class="oc-icon">⚗️</div>
+        <div class="oc-title">3 Reagentes Principais</div>
+        <div class="oc-text">1. Carbol-Fucsina (vermelho)<br>2. Ácido-Álcool 3% (descolorante)<br>3. Azul de Metileno (contraste)</div>
+      </div>
+      <div class="ov-card" style="--cc:rgba(0,229,255,.15)">
+        <div class="oc-icon">🔬</div>
+        <div class="oc-title">Resultado</div>
+        <div class="oc-text">BAAR = vermelho/rosa vibrante<br>Outras bactérias = azul<br>Fundo = azul claro<br>Leitura: objetiva 100× com óleo de imersão</div>
+      </div>
+      <div class="ov-card" style="--cc:rgba(191,90,242,.15)">
+        <div class="oc-icon">🔑</div>
+        <div class="oc-title">Princípio Chave</div>
+        <div class="oc-text">Os ácidos micólicos da parede capturam a fucsina. O ácido-álcool não consegue removê-la. Daí "ácido-resistente"!</div>
+      </div>
+    </div>
+
+    <!-- Steps Timeline -->
+    <div class="progress-track" id="overview-track">
+      <div class="pt-step done"><div class="pt-circle">✓</div><div class="pt-label">Esfregaço</div></div>
+      <div class="pt-step done"><div class="pt-circle">✓</div><div class="pt-label">Fixação</div></div>
+      <div class="pt-step done"><div class="pt-circle">3</div><div class="pt-label">Carbol-Fucsina</div></div>
+      <div class="pt-step"><div class="pt-circle">4</div><div class="pt-label">Lavagem</div></div>
+      <div class="pt-step"><div class="pt-circle">5</div><div class="pt-label">Ác.-Álcool</div></div>
+      <div class="pt-step"><div class="pt-circle">6</div><div class="pt-label">Lavagem</div></div>
+      <div class="pt-step"><div class="pt-circle">7</div><div class="pt-label">Az.Metileno</div></div>
+      <div class="pt-step"><div class="pt-circle">8</div><div class="pt-label">Lavagem</div></div>
+      <div class="pt-step"><div class="pt-circle">9</div><div class="pt-label">Secagem</div></div>
+      <div class="pt-step"><div class="pt-circle">10</div><div class="pt-label">Leitura</div></div>
+    </div>
+
+    <!-- Materials table -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchTab(this,'mat-tab1')">🧪 Reagentes</button>
+      <button class="tab-btn" onclick="switchTab(this,'mat-tab2')">🔬 Equipamento</button>
+      <button class="tab-btn" onclick="switchTab(this,'mat-tab3')">⚠️ Segurança</button>
+    </div>
+    <div class="tab-panel active" id="mat-tab1">
+      <table class="mat-table">
+        <tr><th>Reagente</th><th>Composição</th><th>Função</th><th>Tempo</th></tr>
+        <tr><td>🔴 Carbol-Fucsina</td><td>Fucsina básica + fenol</td><td>Corante primário — penetra a parede cerosa (aquecido)</td><td>3–5 min + calor</td></tr>
+        <tr><td>💧 Água corrente</td><td>H₂O</td><td>Lavagem entre etapas</td><td>30 seg</td></tr>
+        <tr><td>🟡 Ácido-Álcool 3%</td><td>HCl 3% em etanol 95%</td><td>Descoloração das não-BAAR</td><td>1–3 min</td></tr>
+        <tr><td>🔵 Azul de Metileno</td><td>Azul de metileno 0.3%</td><td>Contracorante — cora fundo e não-BAAR</td><td>1–2 min</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="mat-tab2">
+      <table class="mat-table">
+        <tr><th>Material</th><th>Especificação</th><th>Para quê</th></tr>
+        <tr><td>🔬 Microscópio</td><td>Objetiva 10×, 40×, 100×</td><td>Observação final</td></tr>
+        <tr><td>🪟 Lâmina de vidro</td><td>76×26 mm, lavada e desengordurada</td><td>Suporte do esfregaço</td></tr>
+        <tr><td>🥢 Ansa/palito</td><td>Descartável ou metálico flambado</td><td>Colheita e espalhamento</td></tr>
+        <tr><td>🔥 Lamparina/Bico Bunsen</td><td>Chama directa</td><td>Fixação por calor</td></tr>
+        <tr><td>🛢 Óleo de imersão</td><td>Índice refracção 1.515</td><td>Objetiva 100×</td></tr>
+        <tr><td>🧻 Papel de filtro</td><td>Absorvente</td><td>Evitar escorrência dos corantes</td></tr>
+        <tr><td>🏷 Caneta de diamante</td><td>Para vidro</td><td>Identificação da amostra</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="mat-tab3">
+      <div class="info-panel">
+        <strong>⚠️ Precauções de Biossegurança:</strong><br>
+        • Trabalhar em <em>câmara de biossegurança nível 2</em> (ou 3 se TB suspeita)<br>
+        • Luvas, bata e máscara FFP2 obrigatórias<br>
+        • Carbol-Fucsina contém <em>fenol</em> — tóxico e corrosivo; usar hotte<br>
+        • Ácido-álcool — inflamável e corrosivo; afastar da chama<br>
+        • Todos os resíduos em contentor de risco biológico<br>
+        • Lâminas usadas: autoclavagem antes de descartar<br>
+        • Em caso de derrame: cobrir com hipoclorito 5%, aguardar 30 min
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 1: ESFREGAÇO -->
+<section class="section" id="sec-sim1" style="background:radial-gradient(ellipse at 20% 50%,rgba(57,255,20,.03) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">01</div>
+      <div class="sec-title">Preparação do Esfregaço</div>
+      <div class="sec-sub">A base de tudo. Um esfregaço bem feito é a diferença entre um resultado fiável e um falso negativo.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🔬 SIMULADOR 1 — ESFREGAÇO E PREPARAÇÃO DA LÂMINA</div>
+        <div class="zoom-ctrl">
+          <button class="zoom-btn" onclick="changeZoom('s1',-1)">−</button>
+          <div class="zoom-val" id="zoom-s1">10×</div>
+          <button class="zoom-btn" onclick="changeZoom('s1',1)">+</button>
+        </div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv1" style="height:300px">
+          <canvas id="micro-canvas-1"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot1">Lâmina vazia — pronto para preparar</div>
+          <div class="zoom-badge" id="zb1">10×</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">⚗️ MATERIAIS DISPONÍVEIS</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyMaterial('s1','sample')" title="Amostra (escarro/tecido)">
+                <div class="ri-bottle" style="width:32px;height:44px">
+                  <div class="ri-liquid" style="height:60%;background:#c8a020"></div>
+                  <div class="ri-cap" style="background:#a07010"></div>
+                </div>
+                <div class="ri-label">Amostra</div>
+              </div>
+              <div class="reagent-item" onclick="applyMaterial('s1','ansa')" title="Ansa estéril">
+                <div style="font-size:2rem">🥢</div>
+                <div class="ri-label">Ansa</div>
+              </div>
+              <div class="reagent-item" onclick="applyMaterial('s1','water')" title="Água destilada">
+                <div class="ri-bottle" style="width:32px;height:44px">
+                  <div class="ri-liquid" style="height:80%;background:rgba(100,180,255,.5)"></div>
+                  <div class="ri-cap" style="background:#4488aa"></div>
+                </div>
+                <div class="ri-label">H₂O dest.</div>
+              </div>
+              <div class="reagent-item" onclick="applyMaterial('s1','spread')" title="Espalhar esfregaço">
+                <div style="font-size:2rem">↔️</div>
+                <div class="ri-label">Espalhar</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-list" id="steps-s1">
+            <div class="step-item active" data-s="0"><div class="step-dot">1</div>Limpar e identificar a lâmina</div>
+            <div class="step-item locked" data-s="1"><div class="step-dot">2</div>Colocar gota de amostra</div>
+            <div class="step-item locked" data-s="2"><div class="step-dot">3</div>Espalhar em movimentos circulares</div>
+            <div class="step-item locked" data-s="3"><div class="step-dot">4</div>Secar ao ar (não soprar!)</div>
+          </div>
+          <div class="info-panel" id="info-s1">
+            <strong>Passo 1:</strong> A lâmina deve estar <em>limpa, desengordurada e identificada</em> com caneta de diamante. Esfregaços finos = melhor visualização. Clica nos materiais para avançar!
+          </div>
+          <button class="btn-action btn-apply" id="btn-s1" onclick="nextStepSim(1)" disabled>▶ Próxima Etapa →</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="li-dot" style="background:#c8a020"></div>Células/muco da amostra</div>
+      <div class="legend-item"><div class="li-dot" style="background:rgba(180,150,80,.5)"></div>Esfregaço espalhado</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 2: FIXAÇÃO -->
+<section class="section" id="sec-sim2" style="background:radial-gradient(ellipse at 80% 50%,rgba(255,149,0,.03) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">02</div>
+      <div class="sec-title">Fixação pelo Calor</div>
+      <div class="sec-sub">A lâmina passa 3 vezes sobre a chama. O calor <strong>mata</strong> os microrganismos e <strong>cola</strong> a amostra ao vidro.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🔥 SIMULADOR 2 — FIXAÇÃO PELO CALOR</div>
+        <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--c4)" id="flame-count">Passagens: 0/3</div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv2" style="height:300px">
+          <canvas id="micro-canvas-2"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot2">Esfregaço seco — pronto para fixar</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">🔥 MATERIAIS</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyFlame()" title="Lamparina — passar sobre chama">
+                <div style="font-size:2.5rem;cursor:pointer">🕯️</div>
+                <div class="ri-label">Lamparina<br>Bunsen</div>
+              </div>
+              <div class="reagent-item" title="Pinça para segurar">
+                <div style="font-size:2.5rem">🔧</div>
+                <div class="ri-label">Pinça<br>metálica</div>
+              </div>
+            </div>
+            <div class="drag-hint">👆 Clica na lamparina para cada passagem</div>
+          </div>
+          <div class="info-panel" id="info-s2">
+            <strong>Fixação:</strong> Passar a lâmina (esfregaço para CIMA!) sobre a chama <em>3 vezes</em>. A lâmina deve estar quente ao toque no dorso da mão — mas não escaldante. <br><br>⚠️ Se demasiado quente → as células <strong>destroem-se</strong>!
+          </div>
+          <div style="font-family:var(--font-mono);font-size:.75rem;color:var(--tx2);margin-top:4px">
+            Temperatura ideal: <span style="color:var(--c4)" id="temp-display">--°C</span>
+          </div>
+          <button class="btn-action btn-apply" id="btn-s2" onclick="nextStepSim(2)" disabled>▶ Próxima Etapa →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 3: CARBOL-FUCSINA -->
+<section class="section" id="sec-sim3" style="background:radial-gradient(ellipse at 30% 60%,rgba(220,20,60,.04) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">03</div>
+      <div class="sec-title">Carbol-Fucsina + Calor</div>
+      <div class="sec-sub">O corante primário. Aquecido, penetra a parede cerosa das micobactérias. Fica preso pelos <strong>ácidos micólicos</strong>.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🔴 SIMULADOR 3 — CARBOL-FUCSINA (CORANTE PRIMÁRIO)</div>
+        <div class="zoom-ctrl">
+          <button class="zoom-btn" onclick="changeZoom('s3',-1)">−</button>
+          <div class="zoom-val" id="zoom-s3">40×</div>
+          <button class="zoom-btn" onclick="changeZoom('s3',1)">+</button>
+        </div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv3" style="height:320px">
+          <canvas id="micro-canvas-3"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot3">Aguardando Carbol-Fucsina...</div>
+          <div class="zoom-badge" id="zb3">40×</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">🧪 REAGENTES</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyStain('s3','carbol')" id="ri-carbol">
+                <div class="ri-bottle" style="width:36px;height:56px">
+                  <div class="ri-liquid" style="height:75%;background:#dc143c"></div>
+                  <div class="ri-cap" style="background:#8b0000"></div>
+                </div>
+                <div class="ri-label">Carbol-<br>Fucsina</div>
+              </div>
+              <div class="reagent-item" onclick="heatStain('s3')" id="ri-flame3">
+                <div style="font-size:2.2rem">🕯️</div>
+                <div class="ri-label">Aquecer<br>(3-5min)</div>
+              </div>
+              <div class="reagent-item" onclick="washSlide('s3','water')" id="ri-wash3">
+                <div style="font-size:2.2rem">💧</div>
+                <div class="ri-label">Lavar<br>H₂O</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-list" id="steps-s3">
+            <div class="step-item active" data-s="0"><div class="step-dot">1</div>Cobrir com Carbol-Fucsina</div>
+            <div class="step-item locked" data-s="1"><div class="step-dot">2</div>Aquecer até fumar (NÃO ferver!)</div>
+            <div class="step-item locked" data-s="2"><div class="step-dot">3</div>Aguardar 3-5 min arrefecendo</div>
+            <div class="step-item locked" data-s="3"><div class="step-dot">4</div>Lavar com H₂O corrente 30s</div>
+          </div>
+          <div class="info-panel" id="info-s3">
+            <strong>Carbol-Fucsina:</strong> A fucsina é solubilizada pelo <em>fenol</em> que facilita penetração da parede lipídica. O calor abre os poros da cera! As BAAR ficam completamente <em>vermelhas</em>. Outras bactérias também ficam vermelhas — por enquanto.
+          </div>
+          <div id="stain-progress-s3" style="font-family:var(--font-mono);font-size:.72rem;color:var(--c2);margin-top:4px;display:none">
+            ⏳ Penetração: <span id="sp3-val">0%</span>
+          </div>
+          <button class="btn-action btn-apply" id="btn-s3" onclick="nextStepSim(3)" disabled>▶ Próxima Etapa →</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="li-dot" style="background:#dc143c"></div>Todas bactérias (coradas vermelho)</div>
+      <div class="legend-item"><div class="li-dot" style="background:rgba(220,20,60,.3)"></div>Fundo corado levemente</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 4: DESCOLORAÇÃO -->
+<section class="section" id="sec-sim4" style="background:radial-gradient(ellipse at 70% 40%,rgba(79,195,247,.04) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">04</div>
+      <div class="sec-title">Ácido-Álcool — Descoloração</div>
+      <div class="sec-sub">A etapa crítica. O ácido-álcool 3% remove a fucsina de tudo — <strong>excepto das BAAR</strong> que têm ácidos micólicos a protegê-las.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🟡 SIMULADOR 4 — ÁCIDO-ÁLCOOL (DESCOLORAÇÃO)</div>
+        <div style="font-family:var(--font-mono);font-size:.72rem;color:var(--c4)" id="decolor-timer">Tempo: 0s / 60-180s</div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv4" style="height:320px">
+          <canvas id="micro-canvas-4"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot4">Após lavagem — aplicar ácido-álcool</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">🧪 REAGENTES</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyDecolor()" id="ri-acid">
+                <div class="ri-bottle" style="width:36px;height:56px">
+                  <div class="ri-liquid" style="height:70%;background:rgba(255,220,50,.7)"></div>
+                  <div class="ri-cap" style="background:#aa7700"></div>
+                </div>
+                <div class="ri-label">Ácido-<br>Álcool 3%</div>
+              </div>
+              <div class="reagent-item" onclick="washSlide('s4','water')" id="ri-wash4">
+                <div style="font-size:2.2rem">💧</div>
+                <div class="ri-label">Lavar<br>H₂O</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-list" id="steps-s4">
+            <div class="step-item active" data-s="0"><div class="step-dot">1</div>Aplicar ácido-álcool 3%</div>
+            <div class="step-item locked" data-s="1"><div class="step-dot">2</div>Aguardar 1-3 min (observar cor)</div>
+            <div class="step-item locked" data-s="2"><div class="step-dot">3</div>Lavar com H₂O corrente 30s</div>
+          </div>
+          <div class="info-panel" id="info-s4">
+            <strong>Princípio:</strong> HCl + Etanol disrompem ligações entre o corante e a maioria das células. Mas os <em>ácidos micólicos</em> criam uma barreira que retém a fucsina nas BAAR. Controla o tempo — demasiado tempo descolora até as BAAR!
+          </div>
+          <div id="decolor-progress" style="margin-top:8px;display:none">
+            <div style="background:rgba(255,255,255,.05);border-radius:4px;height:8px;overflow:hidden">
+              <div id="decolor-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--c4),var(--c2));border-radius:4px;transition:width .5s"></div>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:.65rem;color:var(--tx3);margin-top:4px">Descoloração não-BAAR: <span id="decolor-pct">0%</span></div>
+          </div>
+          <button class="btn-action btn-apply" id="btn-s4" onclick="nextStepSim(4)" disabled>▶ Próxima Etapa →</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="li-dot" style="background:#dc143c"></div>BAAR — mantêm vermelho!</div>
+      <div class="legend-item"><div class="li-dot" style="background:rgba(255,255,255,.15)"></div>Não-BAAR — descoloradas (transparentes)</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 5: AZUL DE METILENO -->
+<section class="section" id="sec-sim5" style="background:radial-gradient(ellipse at 30% 70%,rgba(21,101,192,.06) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">05</div>
+      <div class="sec-title">Azul de Metileno — Contracorante</div>
+      <div class="sec-sub">O toque final. Cora tudo o que ficou descolorado de <strong>azul</strong>, criando o contraste perfeito para as BAAR vermelhas.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🔵 SIMULADOR 5 — AZUL DE METILENO (CONTRACORANTE)</div>
+        <div class="zoom-ctrl">
+          <button class="zoom-btn" onclick="changeZoom('s5',-1)">−</button>
+          <div class="zoom-val" id="zoom-s5">40×</div>
+          <button class="zoom-btn" onclick="changeZoom('s5',1)">+</button>
+        </div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv5" style="height:320px">
+          <canvas id="micro-canvas-5"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot5">Após ácido-álcool — aplicar Az.Metileno</div>
+          <div class="zoom-badge" id="zb5">40×</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">🧪 REAGENTES</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyMethylene()" id="ri-methyl">
+                <div class="ri-bottle" style="width:36px;height:56px">
+                  <div class="ri-liquid" style="height:65%;background:#1565c0"></div>
+                  <div class="ri-cap" style="background:#0d47a1"></div>
+                </div>
+                <div class="ri-label">Azul de<br>Metileno</div>
+              </div>
+              <div class="reagent-item" onclick="washSlide('s5','water')" id="ri-wash5">
+                <div style="font-size:2.2rem">💧</div>
+                <div class="ri-label">Lavar<br>H₂O</div>
+              </div>
+              <div class="reagent-item" onclick="drySlide('s5')" id="ri-dry5">
+                <div style="font-size:2.2rem">🌬️</div>
+                <div class="ri-label">Secar ao ar</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-list" id="steps-s5">
+            <div class="step-item active" data-s="0"><div class="step-dot">1</div>Cobrir com azul de metileno</div>
+            <div class="step-item locked" data-s="1"><div class="step-dot">2</div>Aguardar 1-2 minutos</div>
+            <div class="step-item locked" data-s="2"><div class="step-dot">3</div>Lavar com H₂O corrente</div>
+            <div class="step-item locked" data-s="3"><div class="step-dot">4</div>Secar ao ar ou papel filtro</div>
+          </div>
+          <div class="info-panel" id="info-s5">
+            <strong>Azul de Metileno:</strong> Corante catiónico que se liga ao DNA e proteínas aniónicos. Cora <em>bactérias não-BAAR</em>, leucócitos e células epiteliais de <em>azul</em>. As BAAR já estão protegidas pelo corante vermelho.
+          </div>
+          <button class="btn-action btn-apply" id="btn-s5" onclick="nextStepSim(5)" disabled>▶ Próxima Etapa →</button>
+        </div>
+      </div>
+    </div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="li-dot" style="background:#dc143c"></div>BAAR — vermelho brilhante</div>
+      <div class="legend-item"><div class="li-dot" style="background:#1565c0"></div>Não-BAAR / células — azul</div>
+      <div class="legend-item"><div class="li-dot" style="background:#4fc3f7"></div>Fundo — azul claro</div>
+    </div>
+  </div>
+</section>
+
+<!-- SIM 6: LEITURA -->
+<section class="section" id="sec-sim6" style="background:radial-gradient(ellipse at 60% 40%,rgba(191,90,242,.04) 0%,transparent 50%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">06</div>
+      <div class="sec-title">Leitura ao Microscópio</div>
+      <div class="sec-sub">A fase final. <strong>Objetiva 100×</strong> com óleo de imersão. Conta e classifica os BAAR segundo a escala da OMS.</div>
+    </div>
+    <div class="sim-wrapper">
+      <div class="sim-toolbar">
+        <div class="sim-title-bar">🔬 SIMULADOR 6 — LEITURA E CLASSIFICAÇÃO (ESCALA OMS)</div>
+        <div class="zoom-ctrl">
+          <button class="zoom-btn" onclick="changeZoom('s6',-1)">−</button>
+          <div class="zoom-val" id="zoom-s6">100×</div>
+          <button class="zoom-btn" onclick="changeZoom('s6',1)">+</button>
+        </div>
+      </div>
+      <div class="sim-body">
+        <div class="micro-view" id="mv6" style="height:360px;cursor:pointer" onclick="countBAAR(event)">
+          <canvas id="micro-canvas-6"></canvas>
+          <div class="micro-crosshair"></div>
+          <div class="micro-lens-ring"></div>
+          <div class="micro-overlay-text" id="ot6">Lâmina final — Objetiva 100× + óleo · Clica nas BAAR para contar!</div>
+          <div class="zoom-badge" id="zb6">100×</div>
+        </div>
+        <div class="ctrl-panel">
+          <div class="reagent-box">
+            <div class="rb-title">🔬 CONTROLES</div>
+            <div class="reagent-tray">
+              <div class="reagent-item" onclick="applyOil()" title="Óleo de imersão">
+                <div class="ri-bottle" style="width:30px;height:44px">
+                  <div class="ri-liquid" style="height:70%;background:rgba(255,240,180,.5)"></div>
+                </div>
+                <div class="ri-label">Óleo<br>imersão</div>
+              </div>
+              <div class="reagent-item" onclick="moveField('left')" title="Mover campo">
+                <div style="font-size:2rem">◀</div><div class="ri-label">Campo</div>
+              </div>
+              <div class="reagent-item" onclick="moveField('right')">
+                <div style="font-size:2rem">▶</div><div class="ri-label">Campo</div>
+              </div>
+              <div class="reagent-item" onclick="resetCount()">
+                <div style="font-size:2rem">🔄</div><div class="ri-label">Reset</div>
+              </div>
+            </div>
+          </div>
+          <div class="info-panel" id="info-s6">
+            <strong>BAAR contados: <span id="baar-count" style="color:var(--c2);font-size:1.2rem">0</span></strong><br>
+            Campos observados: <span id="field-count" style="color:var(--c6)">0</span>/100<br><br>
+            Clica directamente nas bactérias vermelhas para contar!<br>
+            Lê pelo menos <em>100 campos</em> antes de classificar.
+          </div>
+          <div id="who-scale" style="font-family:var(--font-mono);font-size:.7rem;color:var(--tx2);background:var(--bg3);border-radius:8px;padding:12px;margin-top:4px">
+            <div style="color:var(--c1);margin-bottom:6px;letter-spacing:1px">ESCALA OMS (BAAR/100 campos)</div>
+            <div id="ws-neg" style="padding:2px 0">⬜ Negativo: 0 BAAR em 100 campos</div>
+            <div id="ws-doub" style="padding:2px 0">❓ Duvidoso: 1-9 BAAR (repetir)</div>
+            <div id="ws-1p" style="padding:2px 0">✅ 1+: 10-99 BAAR</div>
+            <div id="ws-2p" style="padding:2px 0">✅✅ 2+: 1-10 BAAR/campo</div>
+            <div id="ws-3p" style="padding:2px 0">✅✅✅ 3+: >10 BAAR/campo</div>
+          </div>
+          <div id="result-display" style="display:none;margin-top:8px;text-align:center;padding:12px;border-radius:8px;border:2px solid var(--c2)">
+            <div style="font-family:var(--font-title);font-size:1.5rem;color:var(--c2)" id="result-text">POSITIVO 2+</div>
+          </div>
+          <button class="btn-action btn-apply" onclick="classifyResult()">🔍 Classificar Resultado</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEST MODE -->
+<section class="section" id="sec-test" style="background:radial-gradient(ellipse at center,rgba(255,230,0,.03) 0%,transparent 60%)">
+  <div class="section-inner">
+    <div class="sec-header">
+      <div class="sec-num">🎯</div>
+      <div class="sec-title">Modo Teste Prático</div>
+      <div class="sec-sub">Põe à prova o que aprendeste! 10 questões sobre Ziehl-Neelsen — das etapas ao princípio molecular.</div>
+    </div>
+
+    <div id="quiz-container">
+      <!-- Q1 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 01 / 10</div>
+        <div class="qq-text">Qual a composição do Carbol-Fucsina e por que razão é aquecido?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q1',false)">A) Azul de metileno + álcool — abre poros por pressão</button>
+          <button class="qq-opt" onclick="checkQ(this,'q1',true)">B) Fucsina básica + fenol — o fenol dissolve a cera e o calor aumenta penetração</button>
+          <button class="qq-opt" onclick="checkQ(this,'q1',false)">C) Fucsina + água destilada — a água hidrata a parede</button>
+          <button class="qq-opt" onclick="checkQ(this,'q1',false)">D) Eosina + fenol — cora o citoplasma</button>
+        </div>
+        <div class="qq-feedback" id="q1-fb"></div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 02 / 10</div>
+        <div class="qq-text">O ácido-álcool 3% não consegue remover a fucsina das BAAR porque:</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q2',false)">A) A fucsina está dentro do núcleo protegido</button>
+          <button class="qq-opt" onclick="checkQ(this,'q2',true)">B) Os ácidos micólicos da parede celular formam uma barreira lipídica impermeável</button>
+          <button class="qq-opt" onclick="checkQ(this,'q2',false)">C) O pH intracelular neutraliza o ácido</button>
+          <button class="qq-opt" onclick="checkQ(this,'q2',false)">D) A BAAR produz enzimas que inactivam o HCl</button>
+        </div>
+        <div class="qq-feedback" id="q2-fb"></div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 03 / 10</div>
+        <div class="qq-text">Qual a cor das BAAR na lâmina final de Ziehl-Neelsen?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q3',false)">A) Azul intenso</button>
+          <button class="qq-opt" onclick="checkQ(this,'q3',false)">B) Verde</button>
+          <button class="qq-opt" onclick="checkQ(this,'q3',true)">C) Vermelho/rosa brilhante sobre fundo azul</button>
+          <button class="qq-opt" onclick="checkQ(this,'q3',false)">D) Roxo/violeta</button>
+        </div>
+        <div class="qq-feedback" id="q3-fb"></div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 04 / 10</div>
+        <div class="qq-text">Qual a ordem CORRECTA das etapas do Ziehl-Neelsen?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q4',false)">A) Az.Metileno → Carbol-Fucsina → Ácido-Álcool</button>
+          <button class="qq-opt" onclick="checkQ(this,'q4',false)">B) Ácido-Álcool → Carbol-Fucsina → Az.Metileno</button>
+          <button class="qq-opt" onclick="checkQ(this,'q4',true)">C) Carbol-Fucsina (c/calor) → Lavagem → Ácido-Álcool → Lavagem → Az.Metileno → Lavagem → Secar</button>
+          <button class="qq-opt" onclick="checkQ(this,'q4',false)">D) Carbol-Fucsina → Az.Metileno → Ácido-Álcool</button>
+        </div>
+        <div class="qq-feedback" id="q4-fb"></div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 05 / 10</div>
+        <div class="qq-text">Por que se usa a objetiva de 100× e não 40× na leitura final?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q5',false)">A) Para ver a cor com mais detalhe</button>
+          <button class="qq-opt" onclick="checkQ(this,'q5',true)">B) As micobactérias são muito pequenas (1-10 µm); a 100× com óleo de imersão aumenta resolução e poder de separação</button>
+          <button class="qq-opt" onclick="checkQ(this,'q5',false)">C) Porque o óleo de imersão só funciona a 40×</button>
+          <button class="qq-opt" onclick="checkQ(this,'q5',false)">D) Para economizar tempo — 100× é mais rápida</button>
+        </div>
+        <div class="qq-feedback" id="q5-fb"></div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 06 / 10</div>
+        <div class="qq-text">O que acontece se o ácido-álcool for aplicado por tempo excessivo?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q6',true)">A) Pode descolorar até as BAAR, dando falso negativo</button>
+          <button class="qq-opt" onclick="checkQ(this,'q6',false)">B) As BAAR ficam mais vermelhas (intensificação)</button>
+          <button class="qq-opt" onclick="checkQ(this,'q6',false)">C) O azul de metileno não adere depois</button>
+          <button class="qq-opt" onclick="checkQ(this,'q6',false)">D) A lâmina quebra pelo ácido</button>
+        </div>
+        <div class="qq-feedback" id="q6-fb"></div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 07 / 10</div>
+        <div class="qq-text">Pela escala da OMS, "2+" em BAAR significa:</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q7',false)">A) 0-9 BAAR em 100 campos</button>
+          <button class="qq-opt" onclick="checkQ(this,'q7',false)">B) 10-99 BAAR em 100 campos</button>
+          <button class="qq-opt" onclick="checkQ(this,'q7',true)">C) 1-10 BAAR por campo (média em 50 campos)</button>
+          <button class="qq-opt" onclick="checkQ(this,'q7',false)">D) Mais de 10 BAAR por campo</button>
+        </div>
+        <div class="qq-feedback" id="q7-fb"></div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 08 / 10</div>
+        <div class="qq-text">Qual o principal patógeno pesquisado com Ziehl-Neelsen em Portugal e Moçambique?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q8',false)">A) Staphylococcus aureus</button>
+          <button class="qq-opt" onclick="checkQ(this,'q8',true)">B) Mycobacterium tuberculosis</button>
+          <button class="qq-opt" onclick="checkQ(this,'q8',false)">C) Escherichia coli</button>
+          <button class="qq-opt" onclick="checkQ(this,'q8',false)">D) Candida albicans</button>
+        </div>
+        <div class="qq-feedback" id="q8-fb"></div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 09 / 10</div>
+        <div class="qq-text">Qual o perigo de não fixar correctamente o esfregaço antes de corar?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q9',false)">A) O corante não penetra nas bactérias</button>
+          <button class="qq-opt" onclick="checkQ(this,'q9',true)">B) A amostra desprende-se durante a coloração E pode haver risco de infecção (bactérias viáveis)</button>
+          <button class="qq-opt" onclick="checkQ(this,'q9',false)">C) A lâmina fica demasiado escura</button>
+          <button class="qq-opt" onclick="checkQ(this,'q9',false)">D) O azul de metileno não funciona</button>
+        </div>
+        <div class="qq-feedback" id="q9-fb"></div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="quiz-question">
+        <div class="qq-num">QUESTÃO 10 / 10</div>
+        <div class="qq-text">Qual a função do fenol na solução de Carbol-Fucsina?</div>
+        <div class="qq-options">
+          <button class="qq-opt" onclick="checkQ(this,'q10',false)">A) Preservar a fucsina evitando degradação</button>
+          <button class="qq-opt" onclick="checkQ(this,'q10',false)">B) Actuar como tampão de pH</button>
+          <button class="qq-opt" onclick="checkQ(this,'q10',true)">C) Dissolver os lípidos da parede celular, permitindo penetração da fucsina</button>
+          <button class="qq-opt" onclick="checkQ(this,'q10',false)">D) Intensificar a cor vermelha da fucsina</button>
+        </div>
+        <div class="qq-feedback" id="q10-fb"></div>
+      </div>
+    </div>
+
+    <div class="score-display" id="score-display">
+      <div class="score-big" id="final-score">0/10</div>
+      <div class="score-msg" id="score-msg"></div>
+      <button class="btn-action btn-apply" style="margin-top:16px;max-width:200px;margin-left:auto;margin-right:auto" onclick="resetQuiz()">🔄 Tentar Novamente</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-info">
+    UNIVERSIDADE LICUNGO<br>
+    2º Ano de Medicina · 2026<br>
+    Microbiologia · Técnica de Ziehl-Neelsen<br>
+    Simulador interactivo educativo
+  </div>
+  <div style="margin-top:16px;font-family:var(--font-mono);font-size:.65rem;color:rgba(255,255,255,.1)">
+    © DemilMed-UL 2026 · Fins educativos
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════ STATE ═══════════════════════════════
+const STATE = {
+  s1:{step:0,materialApplied:[]},
+  s3:{step:0,carbApplied:false,heated:false,washed:false},
+  s4:{step:0,acidApplied:false,washed:false,decolorPct:0},
+  s5:{step:0,methylApplied:false,washed:false,dried:false},
+  s6:{oilApplied:false,baarCount:0,fieldCount:0},
+  s2:{flames:0},
+  quiz:{answers:{},score:0}
+};
+
+const ZOOM_LEVELS = ['10×','40×','100×'];
+const zoomState = {s1:0,s3:1,s5:1,s6:2};
+
+// ═══════════════════════════════════════ UTILS ═══════════════════════════════
+function notify(msg,duration=2500){
+  const n=document.getElementById('notif');
+  n.textContent=msg;n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),duration);
+}
+
+function gotoSec(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function toggleMenu(){
+  const btn=document.getElementById('menu-btn');
+  const drawer=document.getElementById('nav-drawer');
+  btn.classList.toggle('open');
+  drawer.classList.toggle('open');
+}
+function closeMenu(){
+  document.getElementById('menu-btn').classList.remove('open');
+  document.getElementById('nav-drawer').classList.remove('open');
+}
+
+// Topbar hide/show
+let lastY=0;
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  const tb=document.getElementById('topbar');
+  tb.classList.toggle('hidden',y>lastY&&y>100);
+  lastY=y;
+  closeMenu();
+});
+
+// ═══════════════════════════════════════ TABS ═══════════════════════════════
+function switchTab(btn,panelId){
+  btn.closest('.section-inner').querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.closest('.section-inner').querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
+}
+
+// ═══════════════════════════════════════ ZOOM ═══════════════════════════════
+function changeZoom(sim,dir){
+  if(!zoomState[sim]) zoomState[sim]=0;
+  zoomState[sim]=Math.max(0,Math.min(2,zoomState[sim]+dir));
+  const lbl=ZOOM_LEVELS[zoomState[sim]];
+  const zv=document.getElementById('zoom-'+sim);
+  const zb=document.getElementById('zb-'+sim.replace('s',''));
+  if(zv)zv.textContent=lbl;
+  const zbEl=document.getElementById('zb'+sim.replace('s',''));
+  if(zbEl)zbEl.textContent=lbl;
+  notify('Ampliação: '+lbl);
+}
+
+// ═══════════════════════════════════════ HERO CANVAS ═══════════════════════
+const heroC=document.getElementById('hero-canvas');
+function initHero(){
+  heroC.width=heroC.offsetWidth;heroC.height=heroC.offsetHeight;
+  const ctx=heroC.getContext('2d');
+  const particles=[];
+  const colors=['#dc143c','#1565c0','#4fc3f7','#39ff14','rgba(220,20,60,.3)','rgba(21,101,192,.3)'];
+  for(let i=0;i<60;i++) particles.push({
+    x:Math.random()*heroC.width,y:Math.random()*heroC.height,
+    vx:(Math.random()-.5)*.8,vy:(Math.random()-.5)*.8,
+    r:2+Math.random()*5,color:colors[Math.floor(Math.random()*colors.length)],
+    phase:Math.random()*Math.PI*2,type:Math.random()>.5?'baar':'other'
+  });
+  function draw(){
+    ctx.clearRect(0,0,heroC.width,heroC.height);
+    // connections
+    particles.forEach((a,i)=>{
+      particles.slice(i+1).forEach(b=>{
+        const d=Math.hypot(a.x-b.x,a.y-b.y);
+        if(d<100){
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+          ctx.strokeStyle=`rgba(0,229,255,${.06*(1-d/100)})`;
+          ctx.lineWidth=.5;ctx.stroke();
+        }
+      });
+    });
+    const t=Date.now()*.001;
+    particles.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>heroC.width)p.vx*=-1;
+      if(p.y<0||p.y>heroC.height)p.vy*=-1;
+      const pulse=1+.2*Math.sin(t*2+p.phase);
+      ctx.save();
+      ctx.shadowColor=p.color;ctx.shadowBlur=12;
+      if(p.type==='baar'){
+        // rod-shaped BAAR
+        ctx.translate(p.x,p.y);ctx.rotate(t*.3+p.phase);
+        ctx.beginPath();
+        ctx.ellipse(0,0,p.r*2.5*pulse,p.r*.7,0,0,Math.PI*2);
+        ctx.strokeStyle=p.color;ctx.lineWidth=1.5;ctx.stroke();
+        ctx.fillStyle=p.color.replace(')',',0.15)').replace('rgb','rgba');
+        ctx.fill();
+      } else {
+        ctx.beginPath();ctx.arc(p.x,p.y,p.r*pulse,0,Math.PI*2);
+        ctx.strokeStyle=p.color;ctx.lineWidth=1;ctx.stroke();
+      }
+      ctx.restore();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+window.addEventListener('load',initHero);
+window.addEventListener('resize',()=>{heroC.width=heroC.offsetWidth;heroC.height=heroC.offsetHeight;});
+
+// ═══════════════════════════════════════ SIM 1 — ESFREGAÇO ═══════════════
+const s1Steps=[
+  {info:'<strong>Lâmina identificada</strong>: Escreve o nº da amostra com caneta de diamante. Lâmina deve estar <em>limpa e desengordurada</em> (álcool 70%).'},
+  {info:'<strong>Amostra colocada</strong>: Uma pequena gota de escarro (ou fragmento de tecido) no centro da lâmina. <em>Não em excesso</em>!'},
+  {info:'<strong>Esfregaço</strong>: Com a ansa ou outra lâmina, espalhar em movimento circular suave. Espessura uniforme, área ~2×1 cm. <em>Esfregaço fino = melhor visibilidade</em>.'},
+  {info:'<strong>Secar ao ar</strong>: NÃO soprar, NÃO aquecer ainda! Deixar secar completamente. Pronto para fixação.'}
+];
+let s1Progress=0;
+
+function applyMaterial(sim,mat){
+  if(sim==='s1'){
+    if(s1Progress===0&&(mat==='ansa'||mat==='sample')){
+      s1Progress=1;
+      updateS1Step(1,'Colocar gota de amostra — feito! Agora espalha.');
+      animateCanvas1('drop');
+      document.getElementById('info-s1').innerHTML=s1Steps[1].info;
+    } else if(s1Progress===1&&mat==='spread'){
+      s1Progress=2;
+      updateS1Step(2,'Esfregaço espalhado!');
+      animateCanvas1('spread');
+      document.getElementById('info-s1').innerHTML=s1Steps[2].info;
+    } else if(s1Progress===2&&mat==='water'){
+      s1Progress=3;
+      updateS1Step(3,'A secar ao ar...');
+      animateCanvas1('dry');
+      document.getElementById('info-s1').innerHTML=s1Steps[3].info;
+      document.getElementById('btn-s1').disabled=false;
+    }
+  }
+}
+
+function updateS1Step(idx,label){
+  const items=document.querySelectorAll('#steps-s1 .step-item');
+  items.forEach((item,i)=>{
+    item.classList.remove('active','done','locked');
+    if(i<idx) item.classList.add('done');
+    else if(i===idx) item.classList.add('active');
+    else item.classList.add('locked');
+  });
+}
+
+let canvas1Ctx,canvas1Anim,c1State='empty';
+function initCanvas1(){
+  const c=document.getElementById('micro-canvas-1');
+  const mv=document.getElementById('mv1');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  canvas1Ctx=c.getContext('2d');
+  drawC1();
+}
+function drawC1(){
+  const c=document.getElementById('micro-canvas-1');
+  const ctx=canvas1Ctx;if(!ctx||!c)return;
+  ctx.clearRect(0,0,c.width,c.height);
+  // background
+  const grad=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.6);
+  grad.addColorStop(0,'#111');grad.addColorStop(1,'#050505');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,c.width,c.height);
+  // Glass slide lines
+  ctx.strokeStyle='rgba(255,255,255,.03)';ctx.lineWidth=1;
+  for(let i=0;i<c.width;i+=30){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,c.height);ctx.stroke();}
+
+  if(c1State==='drop'){
+    // sample drop
+    ctx.save();ctx.globalAlpha=.7;
+    const dg=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,60);
+    dg.addColorStop(0,'rgba(200,160,30,.8)');dg.addColorStop(1,'rgba(180,140,20,.1)');
+    ctx.fillStyle=dg;ctx.beginPath();ctx.ellipse(c.width/2,c.height/2,60,40,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  } else if(c1State==='spread'||c1State==='dry'){
+    // spread smear
+    const alpha=c1State==='dry'?.6:.5;
+    ctx.save();ctx.globalAlpha=alpha;
+    const sg=ctx.createLinearGradient(c.width*.15,c.height*.25,c.width*.85,c.height*.75);
+    sg.addColorStop(0,'rgba(200,170,80,.6)');sg.addColorStop(.5,'rgba(220,190,100,.8)');sg.addColorStop(1,'rgba(200,170,80,.4)');
+    ctx.fillStyle=sg;
+    ctx.beginPath();ctx.ellipse(c.width*.5,c.height*.5,c.width*.35,c.height*.3,.15,0,Math.PI*2);ctx.fill();
+    // cells
+    for(let i=0;i<25;i++){
+      const x=c.width*.2+Math.random()*c.width*.6;
+      const y=c.height*.2+Math.random()*c.height*.6;
+      const r=3+Math.random()*6;
+      ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${160+Math.random()*60},${120+Math.random()*40},40,.6)`;ctx.fill();
+    }
+    ctx.restore();
+    if(c1State==='dry'){
+      // label
+      ctx.fillStyle='rgba(0,229,255,.4)';ctx.font='bold 11px Exo 2';
+      ctx.fillText('AMOSTRA Nº 001',10,20);
+    }
+  }
+  document.getElementById('ot1').textContent=
+    c1State==='empty'?'Lâmina vazia':
+    c1State==='drop'?'Amostra colocada — espalhar!':
+    c1State==='spread'?'Esfregaço pronto — secar ao ar':
+    'Esfregaço seco ✓ — pronto para fixação';
+}
+function animateCanvas1(type){c1State=type;drawC1();}
+
+// ═══════════════════════════════════════ SIM 2 — FIXAÇÃO ═══════════════
+let flameCount=0;
+function initCanvas2(){
+  const c=document.getElementById('micro-canvas-2');
+  const mv=document.getElementById('mv2');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  drawC2(0);
+}
+function drawC2(heat){
+  const c=document.getElementById('micro-canvas-2');
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const tint=heat/3;
+  const grad=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.6);
+  grad.addColorStop(0,`rgba(${10+heat*20},${10+heat*5},5,1)`);grad.addColorStop(1,'#020202');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,c.width,c.height);
+  // smear
+  ctx.save();ctx.globalAlpha=.55+tint*.2;
+  const sg=ctx.createLinearGradient(c.width*.15,0,c.width*.85,c.height);
+  sg.addColorStop(0,`rgba(${180+heat*15},${150+heat*5},60,.7)`);
+  sg.addColorStop(1,`rgba(${160+heat*10},130,50,.5)`);
+  ctx.fillStyle=sg;
+  ctx.beginPath();ctx.ellipse(c.width*.5,c.height*.5,c.width*.35,c.height*.3,.1,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+  // cells (denatured with heat)
+  for(let i=0;i<20;i++){
+    const x=c.width*.2+Math.random()*c.width*.6;
+    const y=c.height*.2+Math.random()*c.height*.6;
+    const r=3+Math.random()*5;
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    const rb=160+heat*20;
+    ctx.fillStyle=`rgba(${rb},${100-heat*20},20,.7)`;ctx.fill();
+  }
+  // heat shimmer
+  if(heat>0){
+    for(let i=0;i<heat*5;i++){
+      const x=Math.random()*c.width;const y=Math.random()*c.height;
+      ctx.beginPath();ctx.arc(x,y,1,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,200,0,${Math.random()*.4})`;ctx.fill();
+    }
+    // flame effect at bottom
+    if(heat>0){
+      const fy=c.height-20;
+      ctx.save();
+      for(let f=0;f<3;f++){
+        const fx=c.width/2+(f-1)*40;
+        const fg=ctx.createRadialGradient(fx,fy,0,fx,fy,30);
+        fg.addColorStop(0,'rgba(255,200,0,.8)');
+        fg.addColorStop(.4,'rgba(255,100,0,.6)');
+        fg.addColorStop(1,'transparent');
+        ctx.fillStyle=fg;
+        ctx.beginPath();ctx.ellipse(fx,fy,15,25,0,0,Math.PI*2);ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+  document.getElementById('ot2').textContent=
+    heat===0?'Esfregaço seco — clicar lamparina para fixar':
+    heat<3?`Passagem ${heat}/3 — continua!`:
+    'Fixação completa ✓ — lâmina segura para colorir';
+  document.getElementById('flame-count').textContent=`Passagens: ${heat}/3`;
+  const temp=heat===0?'--':heat===1?'~60':heat===2?'~70':'~80';
+  document.getElementById('temp-display').textContent=temp+'°C';
+}
+function applyFlame(){
+  if(flameCount>=3){notify('Já fixado! Máximo 3 passagens.');return;}
+  flameCount++;
+  drawC2(flameCount);
+  if(flameCount===3){
+    document.getElementById('btn-s2').disabled=false;
+    notify('✓ Fixação completa! 3 passagens feitas.');
+  } else {
+    notify(`Passagem ${flameCount} de 3`);
+  }
+}
+
+// ═══════════════════════════════════════ SIM 3 — CARBOL-FUCSINA ═══════════
+let s3Progress=0,s3HeatingInterval=null;
+function initCanvas3(){
+  const c=document.getElementById('micro-canvas-3');
+  const mv=document.getElementById('mv3');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  drawC3('fixed',0);
+}
+function drawC3(stage,penetration){
+  const c=document.getElementById('micro-canvas-3');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  // background
+  const bg=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.7);
+  if(stage==='carbol'||stage==='heating'||stage==='heated'){
+    bg.addColorStop(0,`rgba(${40+penetration*.8},${3},${3},1)`);
+    bg.addColorStop(1,`rgba(${10+penetration*.3},0,0,1)`);
+  } else if(stage==='washed'){
+    bg.addColorStop(0,'rgba(15,8,8,1)');bg.addColorStop(1,'rgba(5,2,2,1)');
+  } else {
+    bg.addColorStop(0,'rgba(12,12,12,1)');bg.addColorStop(1,'rgba(4,4,4,1)');
+  }
+  ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
+
+  const zoom=zoomState['s3']||1;
+  const bacteriaCount=zoom===0?8:zoom===1?20:35;
+  const bacteriaSize=zoom===0?4:zoom===1?8:14;
+
+  // Draw bacteria
+  for(let i=0;i<bacteriaCount;i++){
+    const seed=i*137.5;
+    const bx=((seed*73)%100)/100*c.width*.8+c.width*.1;
+    const by=((seed*43)%100)/100*c.height*.7+c.height*.15;
+    const angle=(seed*17)%Math.PI;
+    const isMycobact=i%4!==0; // 75% BAAR
+
+    ctx.save();ctx.translate(bx,by);ctx.rotate(angle);
+
+    let fillColor,strokeColor;
+    if(stage==='fixed'){fillColor='rgba(180,150,80,.8)';strokeColor='rgba(200,170,90,.9)';}
+    else if(stage==='carbol'){
+      const p=penetration*.01;
+      if(isMycobact){fillColor=`rgba(${Math.round(220*p+180*(1-p))},${Math.round(20*p+150*(1-p))},${Math.round(60*p+80*(1-p))},.9)`;strokeColor='rgba(220,20,60,.9)';}
+      else{fillColor=`rgba(${Math.round(200*p+170*(1-p))},${Math.round(20*p+130*(1-p))},${Math.round(60*p+70*(1-p))},.8)`;strokeColor='rgba(200,80,80,.8)';}
+    } else if(stage==='heating'){
+      if(isMycobact){fillColor=`rgba(220,${20+penetration/5},${60-penetration/3},.95)`;strokeColor='rgba(255,40,40,1)';}
+      else{fillColor=`rgba(180,${80+penetration/5},80,.85)`;strokeColor='rgba(200,100,100,.9)';}
+    } else if(stage==='heated'||stage==='washed'){
+      if(isMycobact){fillColor='rgba(220,20,40,.95)';strokeColor='rgba(255,50,50,1)';}
+      else{fillColor='rgba(180,60,60,.8)';strokeColor='rgba(200,80,80,.9)';}
+    }
+
+    const w=bacteriaSize*2.5,h=bacteriaSize*.7;
+    ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);
+    ctx.fillStyle=fillColor;ctx.fill();
+    ctx.strokeStyle=strokeColor;ctx.lineWidth=1;ctx.stroke();
+
+    // BAAR tag at 100x
+    if(zoom===2&&isMycobact&&(stage==='heated'||stage==='washed')){
+      ctx.restore();ctx.save();ctx.translate(bx,by);
+      ctx.fillStyle='rgba(255,50,50,.9)';
+      ctx.font='7px Share Tech Mono';ctx.textAlign='center';
+      ctx.fillText('BAAR',-0,bacteriaSize+10);
+    }
+    ctx.restore();
+  }
+
+  // Carbol-Fucsina overlay
+  if(stage==='carbol'||stage==='heating'){
+    ctx.fillStyle=`rgba(180,10,30,${.15+penetration*.003})`;
+    ctx.fillRect(0,0,c.width,c.height);
+    // steam/vapor effect when heating
+    if(stage==='heating'){
+      for(let i=0;i<10;i++){
+        const sx=Math.random()*c.width;const sy=c.height-30;
+        ctx.save();ctx.globalAlpha=Math.random()*.3;
+        ctx.fillStyle='rgba(255,200,150,.5)';
+        ctx.beginPath();ctx.ellipse(sx,sy-Math.random()*30,4,10,0,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+
+  let otText='';
+  if(stage==='fixed')otText='Lâmina fixada — aplicar Carbol-Fucsina';
+  else if(stage==='carbol')otText='Carbol-Fucsina aplicada — aquecer!';
+  else if(stage==='heating')otText='⚠️ A aquecer... vapores visíveis. NÃO deixar ferver!';
+  else if(stage==='heated')otText='Arrefecido ✓ — aguardar 3-5 min';
+  else if(stage==='washed')otText='Lavado ✓ — todas bactérias vermelhas';
+  document.getElementById('ot3').textContent=otText;
+}
+
+function applyStain(sim,type){
+  if(sim==='s3'&&type==='carbol'){
+    if(STATE.s3.carbApplied){notify('Já aplicado!');return;}
+    STATE.s3.carbApplied=true;
+    STATE.s3.step=1;
+    updateSimSteps('s3',1);
+    drawC3('carbol',30);
+    document.getElementById('info-s3').innerHTML='<strong>Carbol-Fucsina aplicada!</strong> Agora <em>aquece</em> até aparecerem vapores (NÃO ferver!). O fenol amolece a cera.';
+    notify('🔴 Carbol-Fucsina aplicada!');
+    document.getElementById('stain-progress-s3').style.display='block';
+  }
+}
+function heatStain(sim){
+  if(sim==='s3'){
+    if(!STATE.s3.carbApplied){notify('⚠️ Primeiro aplica o corante!');return;}
+    if(STATE.s3.heated){notify('Já aquecido!');return;}
+    let pct=30;
+    document.getElementById('ot3').textContent='⚠️ A aquecer...';
+    const interval=setInterval(()=>{
+      pct=Math.min(100,pct+5);
+      document.getElementById('sp3-val').textContent=pct+'%';
+      drawC3('heating',pct);
+      if(pct>=100){
+        clearInterval(interval);
+        STATE.s3.heated=true;STATE.s3.step=2;
+        updateSimSteps('s3',2);
+        drawC3('heated',100);
+        document.getElementById('info-s3').innerHTML='<strong>Aquecido ✓</strong> Vapores visíveis = temperatura certa. Agora <em>arrefecer 5 min</em>. Depois lavar com H₂O.';
+        notify('🔥 Aquecimento completo! Aguarda 3-5 min.');
+      }
+    },100);
+  }
+}
+function washSlide(sim,type){
+  if(sim==='s3'){
+    if(!STATE.s3.heated){notify('⚠️ Aquece primeiro!');return;}
+    STATE.s3.washed=true;STATE.s3.step=3;
+    updateSimSteps('s3',3);
+    drawC3('washed',100);
+    document.getElementById('info-s3').innerHTML='<strong>Lavado com H₂O ✓</strong> Todas as bactérias estão vermelhas agora (BAAR e não-BAAR). A próxima etapa irá diferenciar!';
+    document.getElementById('btn-s3').disabled=false;
+    notify('💧 Lavagem feita — prosseguir!');
+  }
+  if(sim==='s4'){
+    if(!STATE.s4.acidApplied){notify('⚠️ Aplica o ácido-álcool primeiro!');return;}
+    STATE.s4.washed=true;STATE.s4.step=2;
+    updateSimSteps('s4',2);
+    drawC4('washed');
+    document.getElementById('info-s4').innerHTML='<strong>Lavagem feita ✓</strong> Observa: <em>apenas as BAAR ficaram vermelhas</em>! As outras bactérias estão transparentes. Pronto para o contracorante.';
+    document.getElementById('btn-s4').disabled=false;
+    notify('💧 Lavagem feita — ácido-álcool neutralizado!');
+  }
+  if(sim==='s5'){
+    if(!STATE.s5.methylApplied){notify('⚠️ Aplica o azul de metileno primeiro!');return;}
+    STATE.s5.washed=true;STATE.s5.step=2;
+    updateSimSteps('s5',2);
+    drawC5('washed');
+    document.getElementById('info-s5').innerHTML='<strong>Lavado ✓</strong> Agora secar ao ar ou com papel de filtro suavemente. A lâmina está quase pronta!';
+    notify('💧 Lavagem feita!');
+  }
+}
+
+// ═══════════════════════════════════════ SIM 4 — ÁCIDO-ÁLCOOL ═══════════
+let decolorInterval=null,decolorSeconds=0;
+function initCanvas4(){
+  const c=document.getElementById('micro-canvas-4');
+  const mv=document.getElementById('mv4');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  drawC4('carbolfixed');
+}
+function drawC4(stage){
+  const c=document.getElementById('micro-canvas-4');if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const bg=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.7);
+  if(stage==='carbolfixed'){bg.addColorStop(0,'rgba(30,5,5,1)');bg.addColorStop(1,'rgba(10,2,2,1)');}
+  else if(stage==='decoloring'){
+    const p=STATE.s4.decolorPct/100;
+    bg.addColorStop(0,`rgba(${30-p*20},${3+p*5},${3+p*5},1)`);
+    bg.addColorStop(1,`rgba(${8-p*5},${p*3},${p*3},1)`);
+  }
+  else{bg.addColorStop(0,'rgba(8,8,10,1)');bg.addColorStop(1,'rgba(3,3,5,1)');}
+  ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
+
+  const zoom=1;
+  const bacteriaCount=22;
+  for(let i=0;i<bacteriaCount;i++){
+    const seed=i*137.5+10;
+    const bx=((seed*73)%100)/100*c.width*.8+c.width*.1;
+    const by=((seed*43)%100)/100*c.height*.7+c.height*.15;
+    const angle=(seed*17)%Math.PI;
+    const isMycobact=i%4!==0;
+    const p=STATE.s4.decolorPct/100;
+
+    ctx.save();ctx.translate(bx,by);ctx.rotate(angle);
+
+    let fillColor,strokeColor;
+    if(stage==='carbolfixed'){fillColor='rgba(220,20,40,.95)';strokeColor='rgba(255,50,50,1)';}
+    else if(stage==='decoloring'){
+      if(isMycobact){
+        fillColor='rgba(220,20,40,.95)';strokeColor='rgba(255,50,50,1)';
+      } else {
+        const alpha=Math.max(0.05,1-p*1.2);
+        fillColor=`rgba(220,20,40,${alpha*.9})`;strokeColor=`rgba(255,50,50,${alpha})`;
+      }
+    } else { // washed
+      if(isMycobact){fillColor='rgba(220,30,50,.95)';strokeColor='rgba(255,60,60,1)';}
+      else{fillColor='rgba(50,50,60,.2)';strokeColor='rgba(80,80,100,.3)';}
+    }
+    const w=16,h=6;
+    ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);
+    ctx.fillStyle=fillColor;ctx.fill();
+    ctx.strokeStyle=strokeColor;ctx.lineWidth=1;ctx.stroke();
+    ctx.restore();
+
+    if(stage==='washed'&&isMycobact){
+      ctx.save();ctx.translate(bx,by);
+      ctx.shadowColor='rgba(255,50,50,.8)';ctx.shadowBlur=6;
+      ctx.fillStyle='rgba(255,50,50,.85)';
+      ctx.font='6px Share Tech Mono';ctx.textAlign='center';
+      ctx.fillText('BAAR',0,15);
+      ctx.restore();
+    }
+  }
+  // Acid overlay
+  if(stage==='decoloring'){
+    const p=STATE.s4.decolorPct/100;
+    ctx.fillStyle=`rgba(200,190,50,${.08*p})`;
+    ctx.fillRect(0,0,c.width,c.height);
+    // drops
+    for(let i=0;i<8;i++){
+      ctx.beginPath();ctx.arc(Math.random()*c.width,Math.random()*c.height,2+Math.random()*4,0,Math.PI*2);
+      ctx.fillStyle='rgba(220,200,50,.15)';ctx.fill();
+    }
+  }
+
+  let ot='';
+  if(stage==='carbolfixed')ot='Após C-Fucsina — Aplicar Ácido-Álcool';
+  else if(stage==='decoloring')ot=`Descolorindo... ${STATE.s4.decolorPct}% das não-BAAR removidas`;
+  else ot='Descoloração completa ✓ — só BAAR em vermelho!';
+  document.getElementById('ot4').textContent=ot;
+}
+function applyDecolor(){
+  if(STATE.s4.acidApplied){notify('Já aplicado!');return;}
+  STATE.s4.acidApplied=true;STATE.s4.step=1;
+  updateSimSteps('s4',1);
+  document.getElementById('decolor-progress').style.display='block';
+  document.getElementById('info-s4').innerHTML='<strong>Ácido-Álcool aplicado!</strong> Observa as <em>não-BAAR a ficarem transparentes</em>. Para quando o fundo estiver límpido mas as BAAR ainda vermelhas. Depois LAVAR!';
+  notify('🟡 Ácido-álcool aplicado — observar descoloração...');
+
+  decolorInterval=setInterval(()=>{
+    STATE.s4.decolorPct=Math.min(100,STATE.s4.decolorPct+2);
+    decolorSeconds+=1;
+    document.getElementById('decolor-bar').style.width=STATE.s4.decolorPct+'%';
+    document.getElementById('decolor-pct').textContent=STATE.s4.decolorPct+'%';
+    document.getElementById('decolor-timer').textContent=`Tempo: ${decolorSeconds}s / 60-180s`;
+    drawC4('decoloring');
+    if(STATE.s4.decolorPct>=100){clearInterval(decolorInterval);}
+  },100);
+}
+
+// ═══════════════════════════════════════ SIM 5 — AZUL METILENO ═══════════
+let s5Progress=0;
+function initCanvas5(){
+  const c=document.getElementById('micro-canvas-5');
+  const mv=document.getElementById('mv5');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  drawC5('afterAcid');
+}
+function drawC5(stage){
+  const c=document.getElementById('micro-canvas-5');if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const bg=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.7);
+  if(stage==='afterAcid'){bg.addColorStop(0,'rgba(8,8,10,1)');bg.addColorStop(1,'rgba(3,3,5,1)');}
+  else if(stage==='methyl'||stage==='washed'){
+    const p=stage==='washed'?.7:.3;
+    bg.addColorStop(0,`rgba(5,${8+p*15},${15+p*30},1)`);
+    bg.addColorStop(1,`rgba(2,${4+p*8},${8+p*15},1)`);
+  } else {
+    bg.addColorStop(0,'rgba(5,12,25,1)');bg.addColorStop(1,'rgba(2,5,12,1)');
+  }
+  ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
+
+  const zoom=zoomState['s5']||1;
+  const bacteriaCount=zoom===0?10:zoom===1?22:40;
+  const bSize=zoom===0?5:zoom===1?9:14;
+
+  for(let i=0;i<bacteriaCount;i++){
+    const seed=i*137.5+20;
+    const bx=((seed*73)%100)/100*c.width*.8+c.width*.1;
+    const by=((seed*43)%100)/100*c.height*.7+c.height*.15;
+    const angle=(seed*17)%Math.PI;
+    const isMycobact=i%4!==0;
+    const isEpith=i%8===7;
+
+    ctx.save();ctx.translate(bx,by);ctx.rotate(angle);
+    let fc,sc;
+    if(stage==='afterAcid'){
+      if(isMycobact){fc='rgba(220,30,50,.95)';sc='rgba(255,60,60,1)';}
+      else{fc='rgba(40,40,50,.15)';sc='rgba(60,60,70,.2)';}
+    } else if(stage==='methyl'){
+      const p=.5;
+      if(isMycobact){fc='rgba(220,30,50,.95)';sc='rgba(255,60,60,1)';}
+      else{fc=`rgba(${21*p},${101*p},${192*p},.8)`;sc=`rgba(30,120,220,.9)`;}
+    } else {
+      if(isMycobact){fc='rgba(220,30,50,.95)';sc='rgba(255,60,60,1)';}
+      else if(isEpith){fc='rgba(50,120,200,.5)';sc='rgba(70,150,230,.6)';}
+      else{fc='rgba(21,101,192,.85)';sc='rgba(40,130,230,.9)';}
+    }
+
+    const w=bSize*2.5;const h=bSize*.7;
+    if(isEpith&&!isMycobact){
+      ctx.beginPath();ctx.ellipse(0,0,bSize*4,bSize*3,0,0,Math.PI*2);
+      ctx.fillStyle=fc;ctx.fill();ctx.strokeStyle=sc;ctx.lineWidth=1;ctx.stroke();
+    } else {
+      ctx.beginPath();ctx.ellipse(0,0,w,h,0,0,Math.PI*2);
+      ctx.fillStyle=fc;ctx.fill();ctx.strokeStyle=sc;ctx.lineWidth=1;ctx.stroke();
+    }
+    ctx.restore();
+
+    if((stage==='methyl'||stage==='washed')&&zoom===2){
+      ctx.save();ctx.translate(bx,by);
+      if(isMycobact){
+        ctx.fillStyle='rgba(255,80,80,.9)';ctx.font='6px Share Tech Mono';
+        ctx.textAlign='center';ctx.fillText('BAAR',0,bSize+10);
+      } else {
+        ctx.fillStyle='rgba(100,180,255,.7)';ctx.font='6px Share Tech Mono';
+        ctx.textAlign='center';ctx.fillText('bact',0,bSize+10);
+      }
+      ctx.restore();
+    }
+  }
+
+  let ot='';
+  if(stage==='afterAcid')ot='Após ácido-álcool — BAAR=vermelho, restantes=invisíveis';
+  else if(stage==='methyl')ot='Azul de Metileno aplicado — contracorando...';
+  else if(stage==='washed')ot='Lavado ✓ — contraste perfeito!';
+  else ot='Seco ✓ — Lâmina FINAL! BAAR=vermelho | resto=azul';
+  document.getElementById('ot5').textContent=ot;
+}
+function applyMethylene(){
+  if(STATE.s5.methylApplied){notify('Já aplicado!');return;}
+  STATE.s5.methylApplied=true;STATE.s5.step=1;
+  updateSimSteps('s5',1);
+  drawC5('methyl');
+  document.getElementById('info-s5').innerHTML='<strong>Azul de Metileno aplicado!</strong> Aguarda <em>1-2 minutos</em>. Depois lavar com H₂O corrente. O corante azul preenche tudo o que estava sem cor.';
+  notify('🔵 Azul de Metileno aplicado — aguardar 1-2 min');
+  setTimeout(()=>{
+    STATE.s5.step=2;
+    updateSimSteps('s5',2);
+    notify('⏰ 1 minuto passado — podes lavar!');
+    document.getElementById('info-s5').innerHTML='<strong>Tempo de coloração ok!</strong> <em>Lavar</em> com H₂O corrente para remover excesso.';
+  },3000);
+}
+function drySlide(sim){
+  if(sim==='s5'){
+    if(!STATE.s5.washed){notify('⚠️ Lava primeiro!');return;}
+    STATE.s5.dried=true;STATE.s5.step=3;
+    updateSimSteps('s5',3);
+    drawC5('dried');
+    document.getElementById('info-s5').innerHTML='<strong>Lâmina seca ✓</strong> A coloração ZN está <em>completa</em>! Pronto para observar ao microscópio com objetiva 100×.';
+    document.getElementById('btn-s5').disabled=false;
+    notify('✅ Lâmina seca — coloração COMPLETA!');
+  }
+}
+
+// ═══════════════════════════════════════ SIM 6 — LEITURA ═══════════════
+let baarPositions=[];
+let clickedBaar=new Set();
+function initCanvas6(){
+  const c=document.getElementById('micro-canvas-6');
+  const mv=document.getElementById('mv6');
+  c.width=mv.offsetWidth;c.height=mv.offsetHeight;
+  generateBaarPositions(c.width,c.height);
+  drawC6();
+}
+function generateBaarPositions(w,h){
+  baarPositions=[];
+  for(let i=0;i<30;i++){
+    const seed=i*113.7+5;
+    baarPositions.push({
+      x:((seed*71)%90)/100*w+w*.05,
+      y:((seed*53)%80)/100*h+h*.1,
+      angle:(seed*19)%Math.PI,
+      w:12+Math.random()*8,h:5+Math.random()*3,
+      clicked:false,id:i
+    });
+  }
+}
+function drawC6(){
+  const c=document.getElementById('micro-canvas-6');if(!c)return;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const bg=ctx.createRadialGradient(c.width/2,c.height/2,0,c.width/2,c.height/2,c.width*.7);
+  bg.addColorStop(0,'rgba(4,10,22,1)');bg.addColorStop(1,'rgba(1,4,10,1)');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,c.width,c.height);
+
+  // Oil shimmer
+  if(STATE.s6.oilApplied){
+    ctx.fillStyle='rgba(255,248,200,.02)';ctx.fillRect(0,0,c.width,c.height);
+  }
+
+  // Background cells (blue)
+  for(let i=0;i<40;i++){
+    const seed=i*97.3;
+    const x=((seed*61)%100)/100*c.width;
+    const y=((seed*41)%100)/100*c.height;
+    const isEpith=i%7===0;
+    ctx.save();ctx.translate(x,y);
+    if(isEpith){
+      ctx.beginPath();ctx.ellipse(0,0,18,14,.3,0,Math.PI*2);
+      ctx.fillStyle='rgba(21,101,192,.4)';ctx.fill();
+      ctx.strokeStyle='rgba(40,130,230,.5)';ctx.lineWidth=.5;ctx.stroke();
+    } else {
+      ctx.rotate((seed*23)%Math.PI);
+      ctx.beginPath();ctx.ellipse(0,0,7,2.5,0,0,Math.PI*2);
+      ctx.fillStyle='rgba(21,101,192,.6)';ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // BAAR bacteria (red)
+  baarPositions.forEach((b,idx)=>{
+    ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.angle);
+    const isClicked=clickedBaar.has(idx);
+    if(isClicked){
+      ctx.shadowColor='rgba(255,255,0,.9)';ctx.shadowBlur=15;
+      ctx.strokeStyle='rgba(255,255,0,.8)';ctx.lineWidth=2;
+      ctx.beginPath();ctx.ellipse(0,0,b.w+4,b.h+4,0,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.shadowColor='rgba(255,50,50,.6)';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.ellipse(0,0,b.w,b.h,0,0,Math.PI*2);
+    ctx.fillStyle=isClicked?'rgba(255,200,0,.95)':'rgba(220,30,50,.95)';
+    ctx.fill();
+    ctx.strokeStyle=isClicked?'rgba(255,220,0,1)':'rgba(255,60,60,1)';
+    ctx.lineWidth=1.2;ctx.stroke();
+    ctx.restore();
+  });
+
+  // Count overlay
+  ctx.fillStyle='rgba(255,60,60,.9)';
+  ctx.font='bold 12px Exo 2';
+  ctx.fillText(`BAAR: ${STATE.s6.baarCount}`,8,20);
+}
+
+function countBAAR(evt){
+  if(!STATE.s6.oilApplied){notify('⚠️ Aplica primeiro o óleo de imersão!');return;}
+  const c=document.getElementById('micro-canvas-6');
+  const rect=c.getBoundingClientRect();
+  const scaleX=c.width/rect.width;const scaleY=c.height/rect.height;
+  const cx=(evt.clientX-rect.left)*scaleX;
+  const cy=(evt.clientY-rect.top)*scaleY;
+
+  let hit=false;
+  baarPositions.forEach((b,idx)=>{
+    const dx=cx-b.x;const dy=cy-b.y;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<b.w+10&&!clickedBaar.has(idx)){
+      clickedBaar.add(idx);
+      STATE.s6.baarCount++;
+      document.getElementById('baar-count').textContent=STATE.s6.baarCount;
+      hit=true;
+    }
+  });
+
+  STATE.s6.fieldCount=Math.min(100,STATE.s6.fieldCount+1);
+  document.getElementById('field-count').textContent=STATE.s6.fieldCount;
+  drawC6();
+  if(hit) notify('✓ BAAR contada! Total: '+STATE.s6.baarCount);
+}
+
+function applyOil(){
+  if(STATE.s6.oilApplied){notify('Óleo já aplicado!');return;}
+  STATE.s6.oilApplied=true;
+  document.getElementById('info-s6').innerHTML='<strong>Óleo de imersão ✓</strong> Objetiva 100× activada. Agora <em>clica nas bactérias VERMELHAS</em> para as contar. Percorre os campos com as setas.';
+  notify('🫧 Óleo aplicado — objetiva 100× activa!');
+  drawC6();
+}
+function moveField(dir){
+  if(!STATE.s6.oilApplied){notify('Aplica óleo primeiro!');return;}
+  STATE.s6.fieldCount=Math.min(100,STATE.s6.fieldCount+(dir==='right'?1:0));
+  document.getElementById('field-count').textContent=STATE.s6.fieldCount;
+  // Regenerate bacteria positions slightly shifted
+  const c=document.getElementById('micro-canvas-6');
+  const offset=(dir==='right'?1:-1)*20;
+  baarPositions=baarPositions.map(b=>({...b,x:((b.x+offset+c.width)%c.width)}));
+  clickedBaar.clear();
+  drawC6();
+  notify('➡️ Campo '+(dir==='right'?'+1':'-1'));
+}
+function resetCount(){
+  STATE.s6.baarCount=0;STATE.s6.fieldCount=0;
+  document.getElementById('baar-count').textContent='0';
+  document.getElementById('field-count').textContent='0';
+  clickedBaar.clear();
+  const c=document.getElementById('micro-canvas-6');
+  generateBaarPositions(c.width,c.height);
+  drawC6();
+  document.getElementById('result-display').style.display='none';
+  notify('🔄 Contagem reiniciada');
+}
+function classifyResult(){
+  const n=STATE.s6.baarCount;const f=STATE.s6.fieldCount;
+  let result='',color='';
+  if(n===0&&f>=100){result='NEGATIVO';color='var(--c1)';}
+  else if(n>0&&n<10){result='DUVIDOSO — REPETIR';color='var(--c4)';}
+  else if(n>=10&&n<100){result='POSITIVO 1+';color='var(--c2)';}
+  else if(n>=100){result='POSITIVO 2+/3+';color='var(--c2)';}
+  else{result='Observar mais campos ('+f+'/100)';color='var(--tx2)';}
+  document.getElementById('result-text').textContent=result;
+  document.getElementById('result-text').style.color=color;
+  document.getElementById('result-display').style.display='block';
+  document.getElementById('result-display').style.borderColor=color;
+  notify('🔍 Resultado: '+result);
+}
+
+// Highlight WHO scale
+function updateWhoScale(n){
+  const ids=['ws-neg','ws-doub','ws-1p','ws-2p','ws-3p'];
+  ids.forEach(id=>document.getElementById(id).style.color='var(--tx2)');
+  if(n===0) document.getElementById('ws-neg').style.color='var(--c3)';
+  else if(n<10) document.getElementById('ws-doub').style.color='var(--c4)';
+  else if(n<100) document.getElementById('ws-1p').style.color='var(--c2)';
+  else document.getElementById('ws-2p').style.color='var(--c2)';
+}
+
+// ═══════════════════════════════════════ SHARED SIM HELPERS ═══════════════
+function updateSimSteps(simId,currentStep){
+  const items=document.querySelectorAll(`#steps-${simId} .step-item`);
+  items.forEach((item,i)=>{
+    item.classList.remove('active','done','locked');
+    if(i<currentStep) item.classList.add('done');
+    else if(i===currentStep) item.classList.add('active');
+    else item.classList.add('locked');
+  });
+}
+
+function nextStepSim(simNum){
+  const destinations={1:'sec-sim2',2:'sec-sim3',3:'sec-sim4',4:'sec-sim5',5:'sec-sim6',6:'sec-test'};
+  gotoSec(destinations[simNum]);
+  notify('✅ Etapa '+simNum+' completa! Próxima etapa...');
+}
+
+// ═══════════════════════════════════════ QUIZ ═══════════════════════════════
+const qFeedback={
+  q1:{ok:'✅ Correcto! O fenol dissolve os lípidos da parede (ácidos micólicos) e o calor aumenta fluidez e penetração.',no:'❌ Errado. É fucsina básica + fenol. O fenol solubiliza a cera e facilita penetração do corante.'},
+  q2:{ok:'✅ Correcto! Os ácidos micólicos formam uma barreira cerosa que retém o complexo fucsina-fenol mesmo sob acção do HCl.',no:'❌ Errado. A resposta são os ácidos micólicos — constituintes únicos da parede das micobactérias.'},
+  q3:{ok:'✅ Correcto! BAAR = vermelho brilhante (retêm fucsina) sobre fundo azul (azul de metileno).',no:'❌ Errado. BAAR ficam VERMELHOS/ROSA por reter a fucsina. O azul é para as outras estruturas.'},
+  q4:{ok:'✅ Perfeito! Carbol-Fucsina + calor → Lavar → Ácido-Álcool → Lavar → Az.Metileno → Lavar → Secar → Observar.',no:'❌ Errado. A ordem correcta é: 1º Carbol-Fucsina (com calor), 2º Ácido-Álcool, 3º Azul de Metileno.'},
+  q5:{ok:'✅ Correcto! Micobactérias medem 1-10 µm. Sem 100× e óleo de imersão, não há resolução suficiente para as ver claramente.',no:'❌ Errado. O motivo principal é o tamanho das bactérias (muito pequenas) e a necessidade de maior poder de resolução.'},
+  q6:{ok:'✅ Correcto! Excesso de ácido-álcool pode descolorar até as BAAR (falso negativo). Controlar sempre o tempo!',no:'❌ Errado. Aplicação excessiva pode remover fucsina até das BAAR, dando resultado falsamente negativo.'},
+  q7:{ok:'✅ Correcto! 2+ = 1-10 BAAR por campo (leitura em média de 50 campos). Carga bacilar moderada.',no:'❌ Errado. Pela escala OMS: 2+ = 1-10 BAAR/campo médio.'},
+  q8:{ok:'✅ Correcto! Mycobacterium tuberculosis é o principal alvo do ZN, muito relevante em Moçambique e Portugal.',no:'❌ Errado. O alvo principal é Mycobacterium tuberculosis — agente da Tuberculose.'},
+  q9:{ok:'✅ Correcto! Sem fixação: amostra desprende durante coloração E há risco biológico (bactérias vivas no bancada!)',no:'❌ Errado. Dois problemas: a amostra cai durante a coloração E representa risco biológico.'},
+  q10:{ok:'✅ Correcto! O fenol é um solvente lipídico que amolece a parede cerosa permitindo à fucsina penetrar no interior bacteriano.',no:'❌ Errado. O fenol actua como solvente lipídico — dissolve os lípidos da parede, abrindo caminho para a fucsina.'}
+};
+
+let quizAnswers={};
+function checkQ(btn,qId,isCorrect){
+  if(quizAnswers[qId]!==undefined)return;
+  quizAnswers[qId]=isCorrect;
+  btn.closest('.qq-options').querySelectorAll('.qq-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  const fb=document.getElementById(qId+'-fb');
+  fb.className='qq-feedback '+(isCorrect?'ok':'no');
+  fb.textContent=qFeedback[qId][isCorrect?'ok':'no'];
+
+  if(Object.keys(quizAnswers).length===10){
+    const score=Object.values(quizAnswers).filter(Boolean).length;
+    const sd=document.getElementById('score-display');
+    sd.style.display='block';
+    document.getElementById('final-score').textContent=score+'/10';
+    const msgs=[
+      'Não desistas! Revê os simuladores 📚',
+      'Continua a praticar!',
+      'Bom esforço — quase a meio!',
+      'Passável — podes melhorar',
+      'Bom! Mais uns ensaios.',
+      'Muito bom! Só um ou dois erros.',
+      'Excelente! Quase perfeito!',
+      'Fantástico! Grande desempenho!',
+      'Excepcional! Estás pronto para o lab!',
+      'PERFEITO! Mestre do Ziehl-Neelsen! 🏆',
+      'PERFEITO! Mestre do Ziehl-Neelsen! 🏆'
+    ];
+    document.getElementById('score-msg').textContent=msgs[score];
+    sd.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
+function resetQuiz(){
+  quizAnswers={};
+  document.querySelectorAll('.qq-opt').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong');});
+  document.querySelectorAll('.qq-feedback').forEach(f=>{f.className='qq-feedback';});
+  document.getElementById('score-display').style.display='none';
+  gotoSec('sec-test');
+  notify('🔄 Quiz reiniciado!');
+}
+
+// ═══════════════════════════════════════ INIT ═══════════════════════════════
+window.addEventListener('load',()=>{
+  initCanvas1();initCanvas2();initCanvas3();initCanvas4();initCanvas5();initCanvas6();
+  // Initial draw states
+  setTimeout(()=>{
+    drawC4('carbolfixed');
+    drawC5('afterAcid');
+    drawC6();
+  },200);
+});
+window.addEventListener('resize',()=>{
+  ['micro-canvas-1','micro-canvas-2','micro-canvas-3','micro-canvas-4','micro-canvas-5','micro-canvas-6'].forEach(id=>{
+    const c=document.getElementById(id);
+    if(c&&c.parentElement){c.width=c.parentElement.offsetWidth;c.height=c.parentElement.offsetHeight;}
+  });
+  const c6=document.getElementById('micro-canvas-6');
+  if(c6) generateBaarPositions(c6.width,c6.height);
+  drawC6();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | O Sangue e o Oxigénio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;900&family=Share+Tech+Mono&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --surface: #12121e;
+    --card: #1a1a2e;
+    --border: #2a2a4a;
+    --red: #ff3860;
+    --orange: #ff6b35;
+    --yellow: #ffd700;
+    --green: #00ff88;
+    --cyan: #00d4ff;
+    --purple: #bf5fff;
+    --pink: #ff4db8;
+    --white: #f0f0ff;
+    --muted: #888aaa;
+    --manga: 'Bangers', cursive;
+    --body: 'Nunito', sans-serif;
+    --mono: 'Share Tech Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: var(--body);
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* ---- SCROLLBAR ---- */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+    background: rgba(10,10,18,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid var(--cyan);
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 16px; overflow-x: auto;
+  }
+  nav a {
+    color: var(--cyan); text-decoration: none; font-size: 0.7rem; font-weight: 700;
+    white-space: nowrap; padding: 4px 10px;
+    border: 1px solid var(--cyan); border-radius: 20px;
+    transition: all 0.2s;
+  }
+  nav a:hover { background: var(--cyan); color: #000; }
+  nav .logo { font-family: var(--manga); font-size: 1rem; color: var(--yellow); margin-right: 8px; white-space: nowrap; }
+
+  /* ---- HERO ---- */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+    padding: 80px 20px 40px;
+    text-align: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(0,212,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(255,56,96,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(191,95,255,0.06) 0%, transparent 50%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+  .hero-title {
+    font-family: var(--manga); font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height: 1.1; position: relative;
+    text-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan);
+    color: var(--cyan);
+    animation: titlePulse 3s ease-in-out infinite;
+  }
+  @keyframes titlePulse {
+    0%,100% { text-shadow: 0 0 20px var(--cyan), 0 0 40px var(--cyan); }
+    50% { text-shadow: 0 0 40px var(--cyan), 0 0 80px var(--cyan), 0 0 120px var(--cyan); }
+  }
+  .hero-sub {
+    font-family: var(--manga); font-size: clamp(1rem, 4vw, 2rem);
+    color: var(--yellow); margin-top: 10px; letter-spacing: 2px;
+  }
+  .hero-desc {
+    max-width: 600px; margin: 24px auto;
+    color: var(--muted); font-size: 1rem; line-height: 1.8;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--red), var(--purple));
+    padding: 6px 18px; border-radius: 30px;
+    font-size: 0.8rem; font-weight: 700; margin: 4px;
+  }
+  .hero-scroll {
+    margin-top: 40px; animation: bounce 2s ease-in-out infinite;
+    cursor: pointer; color: var(--cyan); font-size: 2rem;
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* ---- FLOATING MOLECULES ---- */
+  .molecule-canvas {
+    position: absolute; inset: 0; pointer-events: none;
+  }
+
+  /* ---- CHAPTER DIVIDER ---- */
+  .chapter-divider {
+    display: flex; align-items: center; gap: 16px;
+    padding: 60px 20px 30px; max-width: 900px; margin: 0 auto;
+  }
+  .chapter-divider .line { flex: 1; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+  .chapter-num { font-family: var(--manga); font-size: 1.5rem; color: var(--cyan); white-space: nowrap; }
+
+  /* ---- SECTION ---- */
+  .section { padding: 20px 20px 60px; max-width: 900px; margin: 0 auto; }
+
+  /* ---- MANGA PANEL ---- */
+  .manga-panel {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 24px 0;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .manga-panel:hover { transform: translateY(-4px); }
+  .manga-panel.red { border-color: var(--red); }
+  .manga-panel.cyan { border-color: var(--cyan); }
+  .manga-panel.green { border-color: var(--green); }
+  .manga-panel.yellow { border-color: var(--yellow); }
+  .manga-panel.purple { border-color: var(--purple); }
+  .manga-panel.orange { border-color: var(--orange); }
+  .manga-panel.pink { border-color: var(--pink); }
+  .manga-panel::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, currentColor, transparent);
+    opacity: 0.5;
+  }
+  .manga-panel.red::before { color: var(--red); background: linear-gradient(90deg, transparent, var(--red), transparent); }
+  .manga-panel.cyan::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+  .manga-panel.green::before { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+
+  /* ---- SPEECH BUBBLE ---- */
+  .speech {
+    background: var(--white); color: #111;
+    border-radius: 20px; padding: 16px 20px;
+    margin: 16px 0; position: relative;
+    font-weight: 700; font-size: 0.95rem;
+    display: inline-block; max-width: 100%;
+  }
+  .speech.left::after {
+    content: ''; position: absolute;
+    bottom: -12px; left: 24px;
+    border: 12px solid transparent;
+    border-top-color: var(--white);
+    border-bottom: 0;
+  }
+  .speech.right::after {
+    content: ''; position: absolute;
+    bottom: -12px; right: 24px;
+    border: 12px solid transparent;
+    border-top-color: var(--white);
+    border-bottom: 0;
+  }
+  .speech.cyan-bubble { background: var(--cyan); color: #000; }
+  .speech.cyan-bubble::after { border-top-color: var(--cyan); }
+  .speech.red-bubble { background: var(--red); color: #fff; }
+  .speech.red-bubble::after { border-top-color: var(--red); }
+  .speech.yellow-bubble { background: var(--yellow); color: #000; }
+  .speech.yellow-bubble::after { border-top-color: var(--yellow); }
+  .speech.green-bubble { background: var(--green); color: #000; }
+  .speech.green-bubble::after { border-top-color: var(--green); }
+
+  /* ---- CHARACTER ---- */
+  .character-row {
+    display: flex; align-items: flex-end; gap: 16px; margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .character-row.flip { flex-direction: row-reverse; }
+  .char-svg { flex-shrink: 0; width: 80px; height: 80px; }
+  .char-text { flex: 1; min-width: 200px; }
+
+  /* ---- STAT BOX ---- */
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 16px 0; }
+  .stat-box {
+    flex: 1; min-width: 120px;
+    background: var(--surface); border-radius: 12px;
+    padding: 16px; text-align: center; border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .stat-box:hover { transform: scale(1.05); }
+  .stat-num { font-family: var(--manga); font-size: 2rem; line-height: 1; }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+  .stat-box.red .stat-num { color: var(--red); }
+  .stat-box.cyan .stat-num { color: var(--cyan); }
+  .stat-box.green .stat-num { color: var(--green); }
+  .stat-box.yellow .stat-num { color: var(--yellow); }
+  .stat-box.purple .stat-num { color: var(--purple); }
+
+  /* ---- FORMULA BOX ---- */
+  .formula-box {
+    background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(191,95,255,0.1));
+    border: 2px solid var(--cyan); border-radius: 16px;
+    padding: 24px; margin: 24px 0; text-align: center;
+  }
+  .formula { font-family: var(--mono); font-size: clamp(0.8rem, 2.5vw, 1.1rem); color: var(--cyan); line-height: 2; }
+  .formula-title { font-family: var(--manga); font-size: 1.3rem; color: var(--yellow); margin-bottom: 12px; }
+  .formula-explain { font-size: 0.85rem; color: var(--muted); margin-top: 12px; }
+
+  /* ---- TIMELINE ---- */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 12px; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(180deg, var(--cyan), var(--purple), var(--red));
+    border-radius: 2px;
+  }
+  .timeline-item { position: relative; margin: 28px 0; }
+  .timeline-dot {
+    position: absolute; left: -26px; top: 4px;
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 3px solid var(--bg);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { transform: scale(1); box-shadow: 0 0 0 0 currentColor; }
+    50% { transform: scale(1.2); box-shadow: 0 0 0 6px transparent; }
+  }
+  .timeline-dot.cyan { background: var(--cyan); color: var(--cyan); }
+  .timeline-dot.red { background: var(--red); color: var(--red); }
+  .timeline-dot.green { background: var(--green); color: var(--green); }
+  .timeline-dot.yellow { background: var(--yellow); color: var(--yellow); }
+  .timeline-dot.purple { background: var(--purple); color: var(--purple); }
+  .timeline-dot.orange { background: var(--orange); color: var(--orange); }
+  .timeline-step { font-family: var(--manga); font-size: 0.8rem; color: var(--muted); }
+  .timeline-title { font-weight: 900; font-size: 1rem; margin: 2px 0; }
+  .timeline-body { font-size: 0.9rem; color: #ccc; }
+
+  /* ---- HIGHLIGHT ---- */
+  .highlight { display: inline; background: rgba(0,212,255,0.15); color: var(--cyan); padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+  .highlight.red { background: rgba(255,56,96,0.15); color: var(--red); }
+  .highlight.green { background: rgba(0,255,136,0.15); color: var(--green); }
+  .highlight.yellow { background: rgba(255,215,0,0.15); color: var(--yellow); }
+  .highlight.purple { background: rgba(191,95,255,0.15); color: var(--purple); }
+  .highlight.orange { background: rgba(255,107,53,0.15); color: var(--orange); }
+
+  /* ---- EXPLODE BOX ---- */
+  .explode-box {
+    background: var(--surface); border-radius: 12px; padding: 20px;
+    margin: 16px 0; border-left: 4px solid var(--yellow);
+    font-size: 0.9rem;
+  }
+  .explode-box h4 { color: var(--yellow); font-size: 1rem; margin-bottom: 8px; }
+
+  /* ---- INFO BOX ---- */
+  .info-box {
+    background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 0.88rem;
+  }
+  .info-box.warning { background: rgba(255,215,0,0.06); border-color: rgba(255,215,0,0.3); }
+  .info-box.danger { background: rgba(255,56,96,0.06); border-color: rgba(255,56,96,0.3); }
+  .info-box.success { background: rgba(0,255,136,0.06); border-color: rgba(0,255,136,0.3); }
+  .info-icon { font-size: 1.2rem; margin-right: 8px; }
+
+  /* ---- INTERACTIVE CALCULATOR ---- */
+  .calc-box {
+    background: var(--card); border: 2px solid var(--green); border-radius: 16px;
+    padding: 24px; margin: 24px 0;
+  }
+  .calc-title { font-family: var(--manga); font-size: 1.3rem; color: var(--green); margin-bottom: 16px; }
+  .calc-row { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0; align-items: center; }
+  .calc-label { font-size: 0.85rem; color: var(--muted); min-width: 180px; }
+  .calc-input {
+    background: var(--surface); border: 1px solid var(--border); color: var(--white);
+    border-radius: 8px; padding: 8px 12px; font-size: 1rem; width: 100px;
+    font-family: var(--mono); transition: border-color 0.2s;
+  }
+  .calc-input:focus { outline: none; border-color: var(--green); }
+  .calc-unit { color: var(--muted); font-size: 0.8rem; }
+  .calc-btn {
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    color: #000; font-weight: 900; padding: 10px 24px;
+    border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+    transition: transform 0.2s, box-shadow 0.2s; font-family: var(--body);
+  }
+  .calc-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(0,255,136,0.4); }
+  .calc-result {
+    margin-top: 16px; padding: 16px; border-radius: 10px;
+    background: var(--surface); font-family: var(--mono);
+    font-size: 0.9rem; display: none; border: 1px solid var(--green);
+  }
+  .calc-result.show { display: block; }
+  .result-num { font-family: var(--manga); font-size: 2rem; color: var(--green); }
+
+  /* ---- CURVE SVG ---- */
+  .curve-container {
+    background: var(--surface); border-radius: 12px; padding: 20px;
+    margin: 20px 0; overflow: hidden;
+  }
+  .curve-title { text-align: center; font-family: var(--manga); color: var(--cyan); margin-bottom: 12px; }
+
+  /* ---- TOGGLE ACCORDION ---- */
+  .accordion { margin: 12px 0; }
+  .accordion-btn {
+    width: 100%; text-align: left; background: var(--card);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--white); padding: 14px 18px; cursor: pointer;
+    font-family: var(--body); font-size: 0.9rem; font-weight: 700;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: all 0.2s;
+  }
+  .accordion-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .accordion-btn .arrow { transition: transform 0.3s; font-size: 1.2rem; }
+  .accordion-btn.open .arrow { transform: rotate(180deg); }
+  .accordion-btn.open { border-color: var(--cyan); color: var(--cyan); }
+  .accordion-content {
+    overflow: hidden; max-height: 0; transition: max-height 0.4s ease;
+    background: var(--surface); border-radius: 0 0 10px 10px;
+    border: 1px solid transparent;
+  }
+  .accordion-content.open {
+    max-height: 800px; border-color: var(--border); border-top: none;
+  }
+  .accordion-inner { padding: 16px 18px; font-size: 0.88rem; color: #ccc; line-height: 1.8; }
+
+  /* ---- PROGRESS BAR ---- */
+  .progress-container { margin: 16px 0; }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.8rem; }
+  .progress-bar {
+    height: 12px; border-radius: 6px; background: var(--surface);
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%; border-radius: 6px;
+    animation: fillAnim 2s ease-out forwards;
+    transform-origin: left;
+  }
+  @keyframes fillAnim { from { width: 0; } }
+  .progress-fill.red { background: linear-gradient(90deg, var(--red), var(--orange)); }
+  .progress-fill.cyan { background: linear-gradient(90deg, var(--cyan), var(--purple)); }
+  .progress-fill.green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+  .progress-fill.yellow { background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+
+  /* ---- TABS ---- */
+  .tab-container { margin: 20px 0; }
+  .tab-btns { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0; }
+  .tab-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); padding: 8px 16px; border-radius: 8px 8px 0 0;
+    cursor: pointer; font-size: 0.8rem; font-weight: 700;
+    transition: all 0.2s; border-bottom: none;
+  }
+  .tab-btn.active { background: var(--card); color: var(--cyan); border-color: var(--cyan); }
+  .tab-content {
+    background: var(--card); border: 1px solid var(--border); border-radius: 0 8px 8px 8px;
+    padding: 20px; display: none;
+  }
+  .tab-content.active { display: block; }
+
+  /* ---- QUIZ ---- */
+  .quiz-box {
+    background: var(--card); border: 2px solid var(--purple); border-radius: 16px;
+    padding: 24px; margin: 24px 0;
+  }
+  .quiz-title { font-family: var(--manga); font-size: 1.3rem; color: var(--purple); margin-bottom: 16px; }
+  .quiz-q { font-weight: 700; font-size: 0.95rem; margin-bottom: 14px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 16px; cursor: pointer;
+    font-size: 0.88rem; transition: all 0.2s; text-align: left;
+    color: var(--white); font-family: var(--body);
+  }
+  .quiz-opt:hover { border-color: var(--purple); color: var(--purple); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(0,255,136,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--red); background: rgba(255,56,96,0.1); color: var(--red); }
+  .quiz-feedback {
+    margin-top: 14px; padding: 12px; border-radius: 8px; display: none;
+    font-size: 0.88rem; font-weight: 700;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid var(--green); }
+  .quiz-feedback.nok { background: rgba(255,56,96,0.1); color: var(--red); border: 1px solid var(--red); }
+  .quiz-next {
+    margin-top: 12px; background: var(--purple); color: white;
+    border: none; border-radius: 8px; padding: 8px 20px; cursor: pointer;
+    font-family: var(--body); font-weight: 700; font-size: 0.9rem; display: none;
+  }
+  .quiz-next.show { display: inline-block; }
+
+  /* ---- COMPARISON TABLE ---- */
+  .compare-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.85rem; }
+  .compare-table th {
+    background: var(--surface); color: var(--cyan); padding: 10px 14px;
+    text-align: left; border: 1px solid var(--border);
+    font-family: var(--manga); font-size: 1rem;
+  }
+  .compare-table td { padding: 10px 14px; border: 1px solid var(--border); }
+  .compare-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .compare-table tr:hover td { background: rgba(0,212,255,0.05); }
+
+  /* ---- FOOTNOTE ---- */
+  .footnote { font-size: 0.75rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 12px; margin-top: 20px; line-height: 1.6; }
+
+  /* ---- FOOTER ---- */
+  footer {
+    background: var(--surface); border-top: 2px solid var(--cyan);
+    text-align: center; padding: 30px 20px;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  footer strong { color: var(--yellow); font-family: var(--manga); font-size: 1.1rem; }
+  footer p { margin: 4px 0; }
+
+  /* ---- GLOW TEXT ---- */
+  .glow-red { color: var(--red); text-shadow: 0 0 10px var(--red); }
+  .glow-cyan { color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
+  .glow-green { color: var(--green); text-shadow: 0 0 10px var(--green); }
+  .glow-yellow { color: var(--yellow); text-shadow: 0 0 10px var(--yellow); }
+
+  /* ---- MANGA TITLE ---- */
+  .manga-title {
+    font-family: var(--manga); font-size: clamp(1.4rem, 5vw, 2.2rem);
+    line-height: 1.2; margin-bottom: 16px;
+  }
+  .panel-intro { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; font-style: italic; }
+
+  /* ---- MOLECULE ANIMATION ---- */
+  .o2-float {
+    display: inline-block;
+    animation: floatMol 3s ease-in-out infinite;
+    font-size: 1.5rem;
+  }
+  @keyframes floatMol {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(10deg); }
+  }
+  .pulse-dot {
+    display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+    animation: pulseDot 1.5s ease-in-out infinite;
+  }
+  .pulse-dot.red { background: var(--red); }
+  .pulse-dot.cyan { background: var(--cyan); }
+  @keyframes pulseDot {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.5; }
+  }
+
+  /* ---- COMIC ZOOM ---- */
+  .zoom-in { animation: zoomIn 0.5s ease-out; }
+  @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ---- SECTION BADGE ---- */
+  .section-badge {
+    display: inline-block; padding: 4px 14px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .section-badge.cyan { background: rgba(0,212,255,0.15); color: var(--cyan); border: 1px solid var(--cyan); }
+  .section-badge.red { background: rgba(255,56,96,0.15); color: var(--red); border: 1px solid var(--red); }
+  .section-badge.green { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid var(--green); }
+  .section-badge.yellow { background: rgba(255,215,0,0.15); color: var(--yellow); border: 1px solid var(--yellow); }
+  .section-badge.purple { background: rgba(191,95,255,0.15); color: var(--purple); border: 1px solid var(--purple); }
+  .section-badge.orange { background: rgba(255,107,53,0.15); color: var(--orange); border: 1px solid var(--orange); }
+
+  /* ---- TWO COL ---- */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ---- SVG HEMOGLOBIN ---- */
+  .hemo-svg { width: 100%; max-width: 340px; display: block; margin: 0 auto; }
+
+  /* ---- LOADING ---- */
+  .page-loader {
+    position: fixed; inset: 0; background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column; gap: 20px;
+    transition: opacity 0.5s;
+  }
+  .loader-ring {
+    width: 60px; height: 60px; border-radius: 50%;
+    border: 4px solid var(--border); border-top-color: var(--cyan);
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-family: var(--manga); font-size: 1.2rem; color: var(--cyan); }
+</style>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">A carregar... 🔬</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <span class="logo">🩸 DemilMed</span>
+  <a href="#intro">Intro</a>
+  <a href="#transporte">Transporte</a>
+  <a href="#hemoglobina">Hemoglobina</a>
+  <a href="#formula">Fórmula CaO₂</a>
+  <a href="#curva">Curva ODC</a>
+  <a href="#modificadores">Modificadores</a>
+  <a href="#clinica">Clínica</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <canvas class="molecule-canvas" id="molCanvas"></canvas>
+
+  <div style="position:relative; z-index:2;">
+    <div class="hero-sub">📖 Capítulo Épico</div>
+    <div class="hero-title">O SANGUE<br>& O OXIGÉNIO</div>
+    <div class="hero-sub" style="color:var(--red)">A Batalha pela Sobrevivência Celular</div>
+    <div class="hero-desc">
+      Como é que o sangue transporta o gás da vida até cada célula do teu corpo?
+      Descobre a física, a química e a fisiologia por trás de um dos mecanismos mais elegantes da natureza.
+    </div>
+    <div>
+      <span class="hero-badge">🎓 2º Ano Medicina</span>
+      <span class="hero-badge">🫁 Fisiologia Respiratória</span>
+      <span class="hero-badge">⚗️ DemilMed-UL 2026</span>
+    </div>
+    <div class="hero-scroll" onclick="document.getElementById('intro').scrollIntoView()">▼</div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 1: INTRODUÇÃO ======================= -->
+<div class="chapter-divider" id="intro">
+  <div class="line"></div>
+  <div class="chapter-num">🌟 CAPÍTULO 1 — O PROBLEMA</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel cyan">
+    <span class="section-badge cyan">Prólogo</span>
+    <div class="manga-title glow-cyan">Por que o corpo precisa de O₂?</div>
+    <div class="panel-intro">Imagina que és uma célula muscular. Estás a trabalhar a todo o gás. Mas sem combustível, vais parar. Esse combustível chama-se oxigénio.</div>
+
+    <div class="character-row">
+      <svg class="char-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="25" r="18" fill="#1a1a2e" stroke="#00d4ff" stroke-width="2"/>
+        <text x="40" y="31" text-anchor="middle" font-size="20">🧠</text>
+        <rect x="20" y="45" width="40" height="30" rx="8" fill="#12121e" stroke="#00d4ff" stroke-width="2"/>
+        <text x="40" y="65" text-anchor="middle" font-size="10" fill="#00d4ff" font-weight="bold">Prof. Hemo</text>
+      </svg>
+      <div class="char-text">
+        <div class="speech left cyan-bubble">O oxigénio é o combustível que permite às tuas células produzir ATP — a moeda energética da vida! Sem ele, em minutos o cérebro morre.</div>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <span class="info-icon">⚡</span>
+      <strong>ATP</strong> = Adenosine Triphosphate (Trifosfato de Adenosina). É a molécula que armazena e liberta energia em TODAS as células. O O₂ é essencial para produzir ATP de forma eficiente — via fosforilação oxidativa nas mitocôndrias.
+    </div>
+
+    <p style="font-size:0.9rem; color:#ccc; line-height:1.8;">
+      O problema é simples: o O₂ é um gás. O corpo é sólido e líquido. Como se transporta um gás de forma eficiente por todo o organismo?<br><br>
+      A resposta está no sangue — e é uma solução de engenharia molecular brilhante, com dois mecanismos combinados:
+    </p>
+
+    <div class="stat-row" style="margin-top:16px;">
+      <div class="stat-box red">
+        <div class="stat-num">~98%</div>
+        <div class="stat-label">Ligado à Hemoglobina (dentro dos glóbulos vermelhos)</div>
+      </div>
+      <div class="stat-box cyan">
+        <div class="stat-num">~2%</div>
+        <div class="stat-label">Dissolvido no plasma sanguíneo (livre)</div>
+      </div>
+    </div>
+
+    <div class="info-box warning">
+      <span class="info-icon">⚠️</span>
+      <strong>Etimologia:</strong> "Oxigénio" vem do grego <em>oxys</em> (ácido/azedo) + <em>genes</em> (que gera). Lavoisier pensava que era necessário para formar ácidos. Estava errado nisso, mas o nome ficou!
+    </div>
+  </div>
+
+  <!-- TIMELINE: JORNADA DO O2 -->
+  <div class="manga-panel yellow">
+    <span class="section-badge yellow">Cronologia</span>
+    <div class="manga-title" style="color:var(--yellow)">🗺️ A Jornada do Oxigénio — do Ar ao Tecido</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot cyan"></div>
+        <div class="timeline-step">PASSO 1 — Pulmão</div>
+        <div class="timeline-title" style="color:var(--cyan)">Inspiração → O₂ chega aos alvéolos</div>
+        <div class="timeline-body">O ar inspirado (21% de O₂) chega aos alvéolos pulmonares. A pressão parcial de O₂ alveolar (PAO₂) é ~100 mmHg. O O₂ difunde-se passivamente do alvéolo para o sangue capilar pulmonar, seguindo a <strong class="highlight">Lei de Fick</strong> — vai de onde tem mais pressão para onde tem menos.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot red"></div>
+        <div class="timeline-step">PASSO 2 — Sangue</div>
+        <div class="timeline-title" style="color:var(--red)">O₂ entra no sangue → dois destinos</div>
+        <div class="timeline-body">O O₂ que entrou no sangue tem dois destinos:<br>
+        🔴 <strong>98%</strong> liga-se à hemoglobina nos eritrócitos (glóbulos vermelhos)<br>
+        💧 <strong>2%</strong> dissolve-se no plasma (água do sangue)</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot green"></div>
+        <div class="timeline-step">PASSO 3 — Coração</div>
+        <div class="timeline-title" style="color:var(--green)">Sangue arterial bombeado pelo coração</div>
+        <div class="timeline-body">O coração esquerdo bombeia o sangue rico em O₂ (sangue arterial) para toda a circulação sistémica via aorta. Cada litro de sangue normal transporta ~200 mL de O₂.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot yellow"></div>
+        <div class="timeline-step">PASSO 4 — Tecidos</div>
+        <div class="timeline-title" style="color:var(--yellow)">O₂ liberta-se e entra nas células</div>
+        <div class="timeline-body">Nos capilares dos tecidos, a pO₂ é baixa (~40 mmHg) — as células consumiram O₂. Isso provoca a libertação do O₂ da hemoglobina. O₂ difunde-se para as células → mitocôndrias → produção de ATP.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot purple"></div>
+        <div class="timeline-step">PASSO 5 — De volta</div>
+        <div class="timeline-title" style="color:var(--purple)">Sangue venoso retorna ao pulmão</div>
+        <div class="timeline-body">O sangue "gasto" (venoso, SvO₂ ≈ 75%) volta ao coração direito → pulmão → recarrega O₂ → ciclo recomeça.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 2: TRANSPORTE ======================= -->
+<div class="chapter-divider" id="transporte">
+  <div class="line"></div>
+  <div class="chapter-num">💧 CAPÍTULO 2 — AS DUAS FORMAS DE TRANSPORTE</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <!-- FORMA 1: DISSOLVIDO -->
+  <div class="manga-panel cyan">
+    <span class="section-badge cyan">Forma 1 de 2</span>
+    <div class="manga-title glow-cyan">💧 O₂ Dissolvido no Plasma — O Vagabundo Livre</div>
+
+    <div class="character-row flip">
+      <svg class="char-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="25" r="18" fill="#1a1a2e" stroke="#ff3860" stroke-width="2"/>
+        <text x="40" y="31" text-anchor="middle" font-size="18">💧</text>
+        <rect x="20" y="45" width="40" height="30" rx="8" fill="#12121e" stroke="#ff3860" stroke-width="2"/>
+        <text x="40" y="65" text-anchor="middle" font-size="9" fill="#ff3860" font-weight="bold">Plasma Pete</text>
+      </svg>
+      <div class="char-text">
+        <div class="speech right red-bubble">Eu sou o O₂ livre! Nado pelo plasma sozinho. Mas sou muito pouco... só represento 2% do total!</div>
+      </div>
+    </div>
+
+    <div class="explode-box">
+      <h4>🔬 Lei de Henry — Por que o O₂ se dissolve?</h4>
+      <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">A quantidade de gás que se dissolve num líquido é <strong>directamente proporcional</strong> à pressão parcial desse gás sobre o líquido. É por isso que uma garrafa de água com gás, quando abres (diminuis a pressão), solta bolhas — o CO₂ já não consegue ficar dissolvido.<br><br>
+      No sangue: <strong class="highlight">O₂ dissolvido = PaO₂ × 0.003</strong><br>
+      PaO₂ = pressão parcial de O₂ arterial (mmHg) | 0.003 = coeficiente de solubilidade do O₂ no sangue a 37°C (mL/dL/mmHg).</p>
+    </div>
+
+    <div class="formula-box">
+      <div class="formula-title">Fórmula — O₂ Dissolvido</div>
+      <div class="formula">O₂ dissolvido = PaO₂ × 0.003<br>
+      Com PaO₂ normal = 100 mmHg:<br>
+      <span style="color:var(--yellow)">= 100 × 0.003 = 0.3 mL O₂ / 100 mL sangue</span></div>
+      <div class="formula-explain">
+        PaO₂ = Partial pressure of arterial Oxygen (Pressão Parcial de O₂ no Sangue Arterial)<br>
+        0.003 = constante de solubilidade do O₂ no sangue a 37°C
+      </div>
+    </div>
+
+    <div class="info-box danger">
+      <span class="info-icon">⚡</span>
+      <strong>Perspectiva clínica:</strong> 0.3 mL/dL é muito pouco! Um adulto em repouso precisa de ~250 mL de O₂/min. Se dependesse SÓ do O₂ dissolvido, precisaria bombear ~83 litros de sangue por minuto (o coração bombeia ≈5 L/min). Inviável sem hemoglobina!
+    </div>
+
+    <div class="info-box">
+      <span class="info-icon">💡</span>
+      <strong>Curiosidade clínica — Oxigenação Hiperbárica:</strong> Em câmaras hiperbáricas (pressão > 1 atm), o PaO₂ pode subir muito. A mais pressão → mais O₂ dissolve → pode ser suficiente para manter a vida mesmo sem hemoglobina funcional. Usado em intoxicação por CO (monóxido de carbono).
+    </div>
+
+    <!-- PROGRESS VISUAL -->
+    <div class="progress-container">
+      <div class="progress-label">
+        <span style="color:var(--cyan)">O₂ Dissolvido (2% do total)</span>
+        <span style="color:var(--cyan)">0.3 mL/dL</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill cyan" style="width:2%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMA 2: HEMOGLOBINA -->
+  <div class="manga-panel red" id="hemoglobina">
+    <span class="section-badge red">Forma 2 de 2 — A Principal!</span>
+    <div class="manga-title glow-red">🔴 O₂ Ligado à Hemoglobina — O Transportador Épico</div>
+
+    <div class="character-row">
+      <svg class="char-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="25" r="18" fill="#1a1a2e" stroke="#ff3860" stroke-width="2"/>
+        <text x="40" y="31" text-anchor="middle" font-size="18">🔴</text>
+        <rect x="20" y="45" width="40" height="30" rx="8" fill="#12121e" stroke="#ff3860" stroke-width="2"/>
+        <text x="40" y="65" text-anchor="middle" font-size="9" fill="#ff3860" font-weight="bold">Hemo-kun</text>
+      </svg>
+      <div class="char-text">
+        <div class="speech left red-bubble">Eu sou a Hemoglobina! Posso carregar 98% de todo o O₂ do sangue. Sou a estrela desta história! Cada molécula de mim carrega ATÉ 4 moléculas de O₂!</div>
+      </div>
+    </div>
+
+    <div class="manga-panel" style="background:rgba(255,56,96,0.05); border-color:rgba(255,56,96,0.3); margin-top:16px;">
+      <div style="font-family:var(--manga); font-size:1.1rem; color:var(--red); margin-bottom:12px;">🧬 Anatomia da Hemoglobina</div>
+
+      <!-- SVG HEMOGLOBIN STRUCTURE -->
+      <svg viewBox="0 0 340 200" class="hemo-svg">
+        <!-- Background -->
+        <rect width="340" height="200" fill="#0a0a12" rx="12"/>
+        <!-- Title -->
+        <text x="170" y="20" text-anchor="middle" fill="#ff3860" font-size="11" font-family="Bangers">Estrutura da Hemoglobina (Hb)</text>
+        <!-- 4 subunidades -->
+        <!-- Alpha 1 -->
+        <ellipse cx="100" cy="80" rx="40" ry="30" fill="#1a1a2e" stroke="#ff3860" stroke-width="2"/>
+        <text x="100" y="77" text-anchor="middle" fill="#ff8899" font-size="9" font-weight="bold">α₁ globina</text>
+        <!-- Heme no alpha 1 -->
+        <rect x="82" y="85" width="36" height="18" rx="4" fill="#2a1010" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="100" cy="94" r="5" fill="#ffd700"/>
+        <text x="100" y="97" text-anchor="middle" fill="#000" font-size="6" font-weight="bold">Fe²⁺</text>
+        <text x="100" y="110" text-anchor="middle" fill="#ffd700" font-size="7">heme</text>
+        <!-- O2 on alpha1 -->
+        <circle cx="125" cy="80" r="7" fill="#00d4ff" opacity="0.8"/>
+        <text x="125" y="84" text-anchor="middle" fill="#000" font-size="7" font-weight="bold">O₂</text>
+
+        <!-- Beta 1 -->
+        <ellipse cx="240" cy="80" rx="40" ry="30" fill="#1a1a2e" stroke="#ff6b35" stroke-width="2"/>
+        <text x="240" y="77" text-anchor="middle" fill="#ffaa88" font-size="9" font-weight="bold">β₁ globina</text>
+        <rect x="222" y="85" width="36" height="18" rx="4" fill="#2a1010" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="240" cy="94" r="5" fill="#ffd700"/>
+        <text x="240" y="97" text-anchor="middle" fill="#000" font-size="6" font-weight="bold">Fe²⁺</text>
+        <text x="240" y="110" text-anchor="middle" fill="#ffd700" font-size="7">heme</text>
+        <circle cx="215" cy="80" r="7" fill="#00d4ff" opacity="0.8"/>
+        <text x="215" y="84" text-anchor="middle" fill="#000" font-size="7" font-weight="bold">O₂</text>
+
+        <!-- Alpha 2 -->
+        <ellipse cx="100" cy="160" rx="40" ry="30" fill="#1a1a2e" stroke="#bf5fff" stroke-width="2"/>
+        <text x="100" y="157" text-anchor="middle" fill="#cc99ff" font-size="9" font-weight="bold">α₂ globina</text>
+        <rect x="82" y="165" width="36" height="18" rx="4" fill="#2a1010" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="100" cy="174" r="5" fill="#ffd700"/>
+        <text x="100" y="177" text-anchor="middle" fill="#000" font-size="6" font-weight="bold">Fe²⁺</text>
+        <text x="100" y="190" text-anchor="middle" fill="#ffd700" font-size="7">heme</text>
+        <circle cx="125" cy="160" r="7" fill="#00d4ff" opacity="0.8"/>
+        <text x="125" y="164" text-anchor="middle" fill="#000" font-size="7" font-weight="bold">O₂</text>
+
+        <!-- Beta 2 -->
+        <ellipse cx="240" cy="160" rx="40" ry="30" fill="#1a1a2e" stroke="#00ff88" stroke-width="2"/>
+        <text x="240" y="157" text-anchor="middle" fill="#88ffcc" font-size="9" font-weight="bold">β₂ globina</text>
+        <rect x="222" y="165" width="36" height="18" rx="4" fill="#2a1010" stroke="#ffd700" stroke-width="1.5"/>
+        <circle cx="240" cy="174" r="5" fill="#ffd700"/>
+        <text x="240" y="177" text-anchor="middle" fill="#000" font-size="6" font-weight="bold">Fe²⁺</text>
+        <text x="240" y="190" text-anchor="middle" fill="#ffd700" font-size="7">heme</text>
+        <circle cx="215" cy="160" r="7" fill="#00d4ff" opacity="0.8"/>
+        <text x="215" y="164" text-anchor="middle" fill="#000" font-size="7" font-weight="bold">O₂</text>
+
+        <!-- Connections -->
+        <line x1="140" y1="80" x2="200" y2="80" stroke="#444" stroke-width="2" stroke-dasharray="4"/>
+        <line x1="140" y1="160" x2="200" y2="160" stroke="#444" stroke-width="2" stroke-dasharray="4"/>
+        <line x1="100" y1="110" x2="100" y2="130" stroke="#444" stroke-width="2" stroke-dasharray="4"/>
+        <line x1="240" y1="110" x2="240" y2="130" stroke="#444" stroke-width="2" stroke-dasharray="4"/>
+
+        <!-- Label 4 O2 -->
+        <text x="170" y="125" text-anchor="middle" fill="#888" font-size="8">4 subunidades | 4 grupos heme | 4 Fe²⁺ | 4 O₂</text>
+      </svg>
+
+      <div style="font-size:0.85rem; color:#ccc; line-height:1.8; margin-top:12px;">
+        A hemoglobina (Hb) é uma proteína tetramérica — tem <strong class="highlight red">4 subunidades</strong> (2 cadeias alfa + 2 cadeias beta no adulto). Cada subunidade possui um grupo <strong class="highlight yellow">heme</strong> — um anel porfirínico com um átomo de ferro no centro (<strong class="highlight">Fe²⁺ — ferro ferroso</strong>). É este Fe²⁺ que liga reversivelmente o O₂.
+      </div>
+
+      <div class="info-box">
+        <span class="info-icon">⚗️</span>
+        <strong>Etimologia:</strong> "Hemo" vem do grego <em>haima</em> (sangue). "Globina" vem do latim <em>globus</em> (esfera). O heme é o grupo prostético (não proteico) que contém o ferro. A cor vermelha do sangue vem exactamente do heme!
+      </div>
+    </div>
+
+    <div class="explode-box">
+      <h4>⚡ Capacidade de Ligação: O "1.34" Mágico</h4>
+      <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+        Cada grama de hemoglobina pode ligar até <strong class="highlight">1.34 mL de O₂</strong> (alguns textos usam 1.36 ou 1.39 mL/g, dependendo do método experimental). Este valor foi determinado empiricamente — é a capacidade máxima de transporte de O₂ da hemoglobina pura.<br><br>
+        <em>Porquê não 1.39?</em> Em condições fisiológicas, cerca de 1–3% da hemoglobina existe como meta-hemoglobina (Fe³⁺), que não consegue ligar O₂. Por isso o valor efectivo é ~1.34 mL/g.
+      </p>
+    </div>
+
+    <div class="formula-box">
+      <div class="formula-title">O₂ ligado à Hemoglobina</div>
+      <div class="formula">O₂-Hb = Hb (g/dL) × 1.34 × SaO₂<br>
+      <span style="color:var(--muted); font-size:0.8rem;">Exemplo normal: 15 g/dL × 1.34 × 0.98</span><br>
+      <span style="color:var(--yellow)">= 19.7 mL O₂ / 100 mL sangue</span></div>
+      <div class="formula-explain">
+        Hb = concentração de hemoglobina (g/dL) | 1.34 = mL O₂ por grama de Hb | SaO₂ = saturação arterial de O₂ (fracção, não %)
+      </div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-label">
+        <span style="color:var(--red)">O₂-Hemoglobina (98% do total)</span>
+        <span style="color:var(--red)">~19.7 mL/dL</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill red" style="width:98%"></div>
+      </div>
+    </div>
+
+    <div class="info-box success">
+      <span class="info-icon">🩸</span>
+      <strong>Valores normais de hemoglobina:</strong><br>
+      Homem adulto: 13–17 g/dL | Mulher adulta: 12–15 g/dL | Criança: ~11–14 g/dL
+    </div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 3: FÓRMULA CaO2 ======================= -->
+<div class="chapter-divider" id="formula">
+  <div class="line"></div>
+  <div class="chapter-num">⚗️ CAPÍTULO 3 — A FÓRMULA ÉPICA: CaO₂</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel green">
+    <span class="section-badge green">A Grande Equação</span>
+    <div class="manga-title glow-green">CaO₂ = A Grande Batalha dos Dois Guerreiros</div>
+    <div class="panel-intro">A quantidade total de O₂ no sangue arterial (CaO₂ — Arterial Oxygen Content / Conteúdo Arterial de Oxigénio) é a SOMA dos dois transportadores:</div>
+
+    <div class="formula-box">
+      <div class="formula-title">🏆 A Fórmula do Conteúdo Arterial de O₂</div>
+      <div class="formula">
+        CaO₂ = <span style="color:var(--red)">(Hb × 1.34 × SaO₂)</span> + <span style="color:var(--cyan)">(PaO₂ × 0.003)</span><br><br>
+        <span style="color:var(--muted); font-size:0.75rem;">mL O₂ / 100 mL sangue (vol%)</span>
+      </div>
+      <div class="formula-explain" style="font-size:0.9rem;">
+        <span style="color:var(--red)">Componente 1:</span> O₂ ligado à Hb (dominante — ~98%)<br>
+        <span style="color:var(--cyan)">Componente 2:</span> O₂ dissolvido no plasma (~2%)<br><br>
+        CaO₂ = Arterial oxygen Content = Conteúdo Arterial de Oxigénio<br>
+        Hb = Hemoglobin (Hemoglobina) em g/dL<br>
+        SaO₂ = Arterial O₂ Saturation (Saturação Arterial de O₂) — usar como fracção (ex: 0.98, não 98%)<br>
+        PaO₂ = Partial pressure of arterial O₂ (Pressão Parcial arterial de O₂) em mmHg
+      </div>
+    </div>
+
+    <div class="character-row">
+      <svg class="char-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="25" r="18" fill="#1a1a2e" stroke="#00ff88" stroke-width="2"/>
+        <text x="40" y="31" text-anchor="middle" font-size="18">🧮</text>
+        <rect x="20" y="45" width="40" height="30" rx="8" fill="#12121e" stroke="#00ff88" stroke-width="2"/>
+        <text x="40" y="65" text-anchor="middle" font-size="9" fill="#00ff88" font-weight="bold">Calc-chan</text>
+      </svg>
+      <div class="char-text">
+        <div class="speech left green-bubble">Com um adulto normal: Hb=15 g/dL, SaO₂=98%, PaO₂=100mmHg → CaO₂ = (15 × 1.34 × 0.98) + (100 × 0.003) = 19.7 + 0.3 = 20 mL O₂/dL! Quase tudo é hemoglobina!</div>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE CALCULATOR -->
+    <div class="calc-box">
+      <div class="calc-title">🧪 Calculadora Interactiva de CaO₂</div>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:16px;">Experimenta diferentes valores e vê como muda o conteúdo de O₂!</p>
+
+      <div class="calc-row">
+        <span class="calc-label">Hemoglobina (Hb)</span>
+        <input type="number" class="calc-input" id="hb" value="15" min="0" max="25" step="0.5">
+        <span class="calc-unit">g/dL</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Saturação Arterial (SaO₂)</span>
+        <input type="number" class="calc-input" id="sao2" value="98" min="0" max="100" step="1">
+        <span class="calc-unit">%</span>
+      </div>
+      <div class="calc-row">
+        <span class="calc-label">Pressão Parcial O₂ (PaO₂)</span>
+        <input type="number" class="calc-input" id="pao2" value="100" min="0" max="700" step="5">
+        <span class="calc-unit">mmHg</span>
+      </div>
+      <button class="calc-btn" onclick="calcCaO2()">⚡ Calcular CaO₂</button>
+
+      <div class="calc-result" id="calcResult">
+        <div style="display:flex; gap:16px; flex-wrap:wrap;">
+          <div>
+            <div style="font-size:0.75rem; color:var(--muted);">O₂-Hb (componente principal)</div>
+            <div class="result-num" id="resHb" style="color:var(--red)">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:var(--muted);">O₂ dissolvido</div>
+            <div class="result-num" id="resDis" style="color:var(--cyan)">—</div>
+          </div>
+          <div>
+            <div style="font-size:0.75rem; color:var(--muted);">CaO₂ TOTAL</div>
+            <div class="result-num" id="resTotal" style="color:var(--green)">—</div>
+          </div>
+        </div>
+        <div id="resInterpret" style="margin-top:12px; font-size:0.85rem; color:#ccc;"></div>
+        <div id="resBar" style="margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div style="overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Condição</th>
+            <th>Hb (g/dL)</th>
+            <th>SaO₂</th>
+            <th>PaO₂</th>
+            <th>CaO₂ (mL/dL)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--green)">✅ Normal</td>
+            <td>15</td><td>98%</td><td>100</td><td style="color:var(--green); font-weight:bold;">~20</td>
+          </tr>
+          <tr>
+            <td style="color:var(--red)">🩸 Anemia grave</td>
+            <td>7</td><td>98%</td><td>100</td><td style="color:var(--red); font-weight:bold;">~9.5</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">😮‍💨 Hipoxemia</td>
+            <td>15</td><td>75%</td><td>40</td><td style="color:var(--orange); font-weight:bold;">~15.2</td>
+          </tr>
+          <tr>
+            <td style="color:var(--purple)">🔴 Anemia + Hipoxemia</td>
+            <td>7</td><td>75%</td><td>40</td><td style="color:var(--purple); font-weight:bold;">~7.1</td>
+          </tr>
+          <tr>
+            <td style="color:var(--cyan)">💨 100% O₂ (UCI)</td>
+            <td>15</td><td>100%</td><td>500</td><td style="color:var(--cyan); font-weight:bold;">~21.6</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box warning">
+      <span class="info-icon">💡</span>
+      <strong>Lição clínica fundamental:</strong> Olha para a tabela. A anemia grave (Hb=7) reduz o CaO₂ a metade! Enquanto dar 100% de O₂ (aumentar PaO₂ de 100→500) só aumenta o CaO₂ em ~1.2 mL/dL. Conclusão: <strong>a hemoglobina é muito mais importante que a PaO₂ para o conteúdo total de O₂!</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 4: HEMOGLOBINA E CURVA ======================= -->
+<div class="chapter-divider" id="curva">
+  <div class="line"></div>
+  <div class="chapter-num">📈 CAPÍTULO 4 — A CURVA DE DISSOCIAÇÃO DO O₂</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel purple">
+    <span class="section-badge purple">Fisiologia Avançada</span>
+    <div class="manga-title" style="color:var(--purple)">🌀 A Curva Sigmóide — O Segredo da Hemoglobina</div>
+    <div class="panel-intro">Porque é que a hemoglobina não liberta todo o O₂ de uma vez? A resposta está numa curva em forma de "S" — a curva de dissociação oxi-hemoglobina (ODC — Oxygen Dissociation Curve).</div>
+
+    <div class="character-row flip">
+      <svg class="char-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="25" r="18" fill="#1a1a2e" stroke="#bf5fff" stroke-width="2"/>
+        <text x="40" y="31" text-anchor="middle" font-size="18">📈</text>
+        <rect x="20" y="45" width="40" height="30" rx="8" fill="#12121e" stroke="#bf5fff" stroke-width="2"/>
+        <text x="40" y="65" text-anchor="middle" font-size="9" fill="#bf5fff" font-weight="bold">Sigma-chan</text>
+      </svg>
+      <div class="char-text">
+        <div class="speech right" style="background:var(--purple); color:white;">Sou uma curva em S! Isso significa que a hemoglobina carrega bem o O₂ nos pulmões (alta pO₂) e liberta-o facilmente nos tecidos (baixa pO₂). Perfeição evolutiva!</div>
+      </div>
+    </div>
+
+    <!-- CURVA SVG INTERACTIVA -->
+    <div class="curve-container">
+      <div class="curve-title">Curva de Dissociação Oxi-Hemoglobina (ODC)</div>
+      <svg id="curveSVG" viewBox="0 0 360 240" style="width:100%; max-width:500px; display:block; margin:0 auto;">
+        <!-- Grid -->
+        <defs>
+          <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
+            <polygon points="0 0, 6 2, 0 4" fill="#888"/>
+          </marker>
+        </defs>
+        <rect width="360" height="240" fill="#0a0a12"/>
+        <!-- Axes -->
+        <line x1="40" y1="200" x2="340" y2="200" stroke="#888" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <line x1="40" y1="200" x2="40" y2="20" stroke="#888" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+        <!-- Axis labels -->
+        <text x="190" y="218" text-anchor="middle" fill="#aaa" font-size="9">pO₂ (mmHg)</text>
+        <text x="12" y="110" text-anchor="middle" fill="#aaa" font-size="9" transform="rotate(-90,12,110)">SaO₂ (%)</text>
+        <!-- X ticks -->
+        <text x="40" y="214" text-anchor="middle" fill="#666" font-size="8">0</text>
+        <text x="100" y="214" text-anchor="middle" fill="#666" font-size="8">20</text>
+        <text x="160" y="214" text-anchor="middle" fill="#666" font-size="8">40</text>
+        <text x="220" y="214" text-anchor="middle" fill="#666" font-size="8">60</text>
+        <text x="280" y="214" text-anchor="middle" fill="#666" font-size="8">80</text>
+        <text x="330" y="214" text-anchor="middle" fill="#666" font-size="8">100</text>
+        <!-- Y ticks -->
+        <text x="34" y="200" text-anchor="end" fill="#666" font-size="8">0</text>
+        <text x="34" y="164" text-anchor="end" fill="#666" font-size="8">25</text>
+        <text x="34" y="128" text-anchor="end" fill="#666" font-size="8">50</text>
+        <text x="34" y="92" text-anchor="end" fill="#666" font-size="8">75</text>
+        <text x="34" y="56" text-anchor="end" fill="#666" font-size="8">100</text>
+        <!-- Grid lines -->
+        <line x1="40" y1="164" x2="330" y2="164" stroke="#1a1a2e" stroke-width="1"/>
+        <line x1="40" y1="128" x2="330" y2="128" stroke="#1a1a2e" stroke-width="1"/>
+        <line x1="40" y1="92" x2="330" y2="92" stroke="#1a1a2e" stroke-width="1"/>
+        <line x1="160" y1="200" x2="160" y2="20" stroke="#1a1a2e" stroke-width="1"/>
+        <line x1="280" y1="200" x2="280" y2="20" stroke="#1a1a2e" stroke-width="1"/>
+        <!-- Normal Curve (sigmoid) -->
+        <path d="M40,200 C60,198 80,193 100,182 C120,171 130,158 150,138 C165,122 175,105 195,88 C210,75 225,65 250,57 C275,50 300,48 330,46"
+              stroke="#bf5fff" stroke-width="2.5" fill="none"/>
+        <!-- Right shift (red) -->
+        <path d="M40,200 C65,198 90,192 115,178 C140,164 150,148 170,126 C185,109 198,92 218,76 C240,60 268,52 330,49"
+              stroke="#ff3860" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+        <!-- Left shift (cyan) -->
+        <path d="M40,200 C55,197 70,190 85,175 C100,160 112,142 132,120 C150,102 165,85 185,72 C210,57 250,50 330,46"
+              stroke="#00d4ff" stroke-width="1.5" fill="none" stroke-dasharray="5,3"/>
+        <!-- P50 marker -->
+        <line x1="40" y1="128" x2="190" y2="128" stroke="#ffd700" stroke-width="1" stroke-dasharray="3"/>
+        <line x1="190" y1="128" x2="190" y2="200" stroke="#ffd700" stroke-width="1" stroke-dasharray="3"/>
+        <circle cx="190" cy="128" r="4" fill="#ffd700"/>
+        <text x="195" y="145" fill="#ffd700" font-size="8">P₅₀ ≈ 27</text>
+        <!-- Lung point -->
+        <circle cx="310" cy="47" r="5" fill="#00ff88"/>
+        <text x="312" y="40" fill="#00ff88" font-size="8">Pulmão</text>
+        <text x="312" y="50" fill="#00ff88" font-size="7">pO₂≈100</text>
+        <!-- Tissue point -->
+        <circle cx="160" cy="137" r="5" fill="#ff6b35"/>
+        <text x="100" y="132" fill="#ff6b35" font-size="8">Tecidos</text>
+        <text x="104" y="142" fill="#ff6b35" font-size="7">pO₂≈40</text>
+        <!-- Legend -->
+        <line x1="42" y1="30" x2="62" y2="30" stroke="#bf5fff" stroke-width="2.5"/>
+        <text x="66" y="34" fill="#bf5fff" font-size="8">Normal</text>
+        <line x1="100" y1="30" x2="120" y2="30" stroke="#ff3860" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="124" y="34" fill="#ff3860" font-size="8">Desvio direita</text>
+        <line x1="200" y1="30" x2="220" y2="30" stroke="#00d4ff" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="224" y="34" fill="#00d4ff" font-size="8">Desvio esquerda</text>
+      </svg>
+    </div>
+
+    <div class="explode-box">
+      <h4>🔍 O que é o P₅₀?</h4>
+      <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+        O <strong class="highlight purple">P₅₀</strong> é a pressão parcial de O₂ à qual a hemoglobina está 50% saturada. Normal = ~27 mmHg. É um marcador de afinidade: quanto MENOR o P₅₀, MAIOR a afinidade da hemoglobina pelo O₂ (desvio para a esquerda). Quanto MAIOR o P₅₀, MENOR a afinidade (desvio para a direita = mais libertação nos tecidos).
+      </p>
+    </div>
+
+    <div class="manga-panel" style="background:rgba(191,95,255,0.05); border-color:rgba(191,95,255,0.2);">
+      <div style="font-family:var(--manga); color:var(--purple); margin-bottom:12px; font-size:1.1rem;">💡 Por que a Curva tem Forma de "S"? — Cooperatividade!</div>
+      <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+        A hemoglobina tem 4 subunidades. Quando a <strong>primeira molécula de O₂</strong> se liga a uma subunidade, ela muda a forma da proteína inteira → as outras 3 subunidades ficam com <strong>maior afinidade</strong> para o O₂. Isso chama-se <strong class="highlight purple">cooperatividade positiva</strong>.
+      </p>
+      <div class="timeline" style="margin-top:12px;">
+        <div class="timeline-item">
+          <div class="timeline-dot red"></div>
+          <div class="timeline-title" style="color:var(--red); font-size:0.9rem;">Estado T (Tenso / Deoxi)</div>
+          <div class="timeline-body" style="font-size:0.82rem;">Sem O₂ ligado. A Hb está "fechada" — baixa afinidade. Precisa de mais pressão de O₂ para ligar o 1º.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot purple"></div>
+          <div class="timeline-title" style="color:var(--purple); font-size:0.9rem;">1º O₂ liga → transição</div>
+          <div class="timeline-body" style="font-size:0.82rem;">A proteína muda de forma. Salta para o estado R (Relaxado). As outras 3 subunidades ficam muito mais receptivas ao O₂.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot green"></div>
+          <div class="timeline-title" style="color:var(--green); font-size:0.9rem;">Estado R (Relaxado / Oxi)</div>
+          <div class="timeline-body" style="font-size:0.82rem;">Com O₂ ligado. Alta afinidade. O 2º, 3º e 4º O₂ ligam-se facilmente. Isso cria a porção "S" da curva (rápida saturação).</div>
+        </div>
+      </div>
+      <div class="info-box" style="margin-top:12px;">
+        <span class="info-icon">🎯</span>
+        <strong>Vantagem clínica:</strong> A cooperatividade permite que a Hb sature quase completamente nos pulmões (pO₂ alta → estado R → absorve rapidamente 4 O₂) e liberte O₂ rapidamente nos tecidos (pO₂ baixa → estado T → liberta O₂ facilmente).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 5: MODIFICADORES ======================= -->
+<div class="chapter-divider" id="modificadores">
+  <div class="line"></div>
+  <div class="chapter-num">⚗️ CAPÍTULO 5 — OS MODIFICADORES DA CURVA</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel orange">
+    <span class="section-badge orange">Regulação Fisiológica</span>
+    <div class="manga-title" style="color:var(--orange)">🎮 Os Controlos da Hemoglobina — Desvios da Curva ODC</div>
+    <div class="panel-intro">A curva ODC não é fixa! O corpo tem formas de ajustar a afinidade da Hb pelo O₂ conforme as necessidades. Estes são os 5 grandes modificadores:</div>
+
+    <div class="tab-container">
+      <div class="tab-btns">
+        <button class="tab-btn active" onclick="showTab('tab-ph')">pH / CO₂ (Bohr)</button>
+        <button class="tab-btn" onclick="showTab('tab-dpg')">2,3-DPG</button>
+        <button class="tab-btn" onclick="showTab('tab-temp')">Temperatura</button>
+        <button class="tab-btn" onclick="showTab('tab-co')">Monóxido CO</button>
+        <button class="tab-btn" onclick="showTab('tab-met')">MetHb</button>
+      </div>
+
+      <div id="tab-ph" class="tab-content active">
+        <h3 style="color:var(--orange); font-family:var(--manga); margin-bottom:12px;">🧪 Efeito de Bohr — pH e CO₂</h3>
+        <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+          O <strong class="highlight orange">Efeito de Bohr</strong> (descrito por Christian Bohr em 1904) descreve como o pH e o CO₂ afectam a afinidade da Hb:<br><br>
+          ↓ pH (mais ácido) ou ↑ CO₂ → <strong style="color:var(--red)">desvio para a DIREITA</strong> → menos afinidade → mais libertação de O₂ nos tecidos<br>
+          ↑ pH (mais alcalino) ou ↓ CO₂ → <strong style="color:var(--cyan)">desvio para a ESQUERDA</strong> → mais afinidade → retém mais O₂
+        </p>
+        <div class="info-box warning" style="margin-top:12px;">
+          <span class="info-icon">🩺</span>
+          <strong>Porquê?</strong> H⁺ liga-se a resíduos histidina da Hb (principalmente His-146 da cadeia beta), estabilizando o estado T (desoxi). A acidose dos tecidos que trabalham (ex.: músculo em exercício produz ácido láctico + CO₂) promove libertação de O₂ exactamente onde é mais necessário! Génio!
+        </div>
+        <div class="info-box success" style="margin-top:8px;">
+          <strong>Mnemónica CADET:</strong> CO₂, Acid (ácido), DPG, Exercise (exercício), Temperature (temperatura) → todos causam desvio para a Direita. "CADET, face Right!"
+        </div>
+      </div>
+
+      <div id="tab-dpg" class="tab-content">
+        <h3 style="color:var(--purple); font-family:var(--manga); margin-bottom:12px;">🔬 2,3-DPG (Difosfoglicerato)</h3>
+        <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+          O <strong class="highlight purple">2,3-DPG</strong> (2,3-Diphosphoglycerate / 2,3-Difosfoglicerato) — também chamado 2,3-BPG (Bisphosphoglycerate / Bisfosfoglicerato) — é uma molécula produzida nos glóbulos vermelhos via glicólise (via rapoport-Luebering).<br><br>
+          Liga-se ao centro da Hb, entre as duas cadeias beta, no estado T. Estabiliza o estado desoxi → reduz a afinidade → <strong style="color:var(--red)">desvio para a DIREITA</strong> → mais libertação de O₂.
+        </p>
+        <div class="info-box" style="margin-top:12px;">
+          <strong>↑ 2,3-DPG quando:</strong> anemia, altitude elevada, hipóxia crónica — o corpo adapta-se libertando mais O₂ nos tecidos!
+        </div>
+        <div class="info-box danger" style="margin-top:8px;">
+          <strong>⚠️ Sangue armazenado para transfusão:</strong> Após 2-3 semanas de armazenamento, o 2,3-DPG diminui muito → a Hb não liberta bem o O₂ nos tecidos → sangue "novo" tem mais capacidade funcional que sangue armazenado.
+        </div>
+        <div class="info-box warning" style="margin-top:8px;">
+          <strong>Hb Fetal (HbF):</strong> A hemoglobina fetal não interage com o 2,3-DPG (as cadeias gamma substituem as beta). Logo, HbF tem MAIOR afinidade por O₂ → desvia para a esquerda → consegue "roubar" O₂ da Hb materna na placenta. Adaptação evolutiva perfeita!
+        </div>
+      </div>
+
+      <div id="tab-temp" class="tab-content">
+        <h3 style="color:var(--red); font-family:var(--manga); margin-bottom:12px;">🌡️ Temperatura</h3>
+        <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+          ↑ Temperatura → <strong style="color:var(--red)">desvio para a DIREITA</strong> → menos afinidade → mais libertação de O₂<br>
+          ↓ Temperatura → <strong style="color:var(--cyan)">desvio para a ESQUERDA</strong> → mais afinidade → retém O₂
+        </p>
+        <div class="info-box" style="margin-top:12px;">
+          <strong>Lógica fisiológica:</strong> Um músculo a fazer exercício intenso aquece. A temperatura local aumenta → Hb liberta mais O₂ exactamente aí! No frio, os tecidos precisam de menos O₂ (metabolismo mais lento) → faz sentido a Hb reter mais.
+        </div>
+        <div class="info-box warning" style="margin-top:8px;">
+          <strong>UCI / Cirurgia Cardíaca:</strong> Em hipotermia induzida (ex: bypass cardiopulmonar a 28°C), a Hb fica com alta afinidade pelo O₂ → liberta menos. Deve-se ajustar a PaO₂ ou corrigir os valores gasométricos para a temperatura real do doente (gestão alpha-stat vs pH-stat).
+        </div>
+      </div>
+
+      <div id="tab-co" class="tab-content">
+        <h3 style="color:var(--red); font-family:var(--manga); margin-bottom:12px;">☠️ Monóxido de Carbono (CO)</h3>
+        <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+          O CO (Monóxido de Carbono / Carbon Monoxide) é um inimigo mortal. Liga-se ao ferro da Hb com uma afinidade <strong class="highlight red">~240× maior</strong> que o O₂. Forma a Carboxi-Hemoglobina (COHb — Carboxyhemoglobin).
+        </p>
+        <div class="timeline" style="margin-top:12px;">
+          <div class="timeline-item">
+            <div class="timeline-dot red"></div>
+            <div class="timeline-title" style="color:var(--red); font-size:0.9rem;">Problema 1 — Bloqueia locais de ligação</div>
+            <div class="timeline-body" style="font-size:0.82rem;">CO ocupa os locais de ligação do O₂ → a Hb não consegue carregar O₂ → anemia funcional.</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot orange"></div>
+            <div class="timeline-title" style="color:var(--orange); font-size:0.9rem;">Problema 2 — Desvio para a ESQUERDA</div>
+            <div class="timeline-body" style="font-size:0.82rem;">CO estabiliza o estado R → os locais que ainda têm O₂ não o libertam facilmente → dupla tragédia: menos O₂ carregado E menos O₂ libertado.</div>
+          </div>
+        </div>
+        <div class="info-box danger" style="margin-top:12px;">
+          <strong>⚠️ Engano diagnóstico:</strong> O oxímetro de pulso NÃO distingue HbO₂ de COHb! Um doente com intoxicação por CO pode ter SaO₂ de 99% no oxímetro mas estar em hipóxia grave. É preciso co-oxímetro ou gasometria arterial para medir COHb!<br><br>
+          <strong>Tratamento:</strong> O₂ a 100% (comprime o CO — lei de acção de massas) ou câmara hiperbárica.
+        </div>
+      </div>
+
+      <div id="tab-met" class="tab-content">
+        <h3 style="color:var(--cyan); font-family:var(--manga); margin-bottom:12px;">🔵 Meta-Hemoglobina (MetHb)</h3>
+        <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+          Na MetHb (Methemoglobin / Meta-Hemoglobina), o ferro no heme é oxidado de Fe²⁺ (ferroso) para <strong class="highlight red">Fe³⁺ (férrico)</strong>. O Fe³⁺ NÃO consegue ligar O₂.
+        </p>
+        <div class="info-box" style="margin-top:12px;">
+          <strong>Causas:</strong> nitratos, nitritos, dapsona, anestésicos locais (benzocaína, prilocaína), água com nitratos (bebés — "síndrome do bebé azul").<br><br>
+          <strong>Efeito:</strong> Desvio para a ESQUERDA nos locais de Hb normal restante → menos libertação de O₂.<br><br>
+          <strong>Sinal:</strong> cianose que não melhora com O₂! Sangue cor de chocolate.<br><br>
+          <strong>Tratamento:</strong> Azul de metileno (doa electrões para reduzir Fe³⁺ → Fe²⁺).
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMO DESVIOS -->
+    <div style="overflow-x:auto; margin-top:20px;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>↑ causa...</th>
+            <th>↓ causa...</th>
+            <th>Significado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--orange)">pH</td>
+            <td style="color:var(--cyan)">Esquerda ↑ afinidade</td>
+            <td style="color:var(--red)">Direita ↓ afinidade</td>
+            <td>Acidose → liberta O₂ nos tecidos</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">CO₂</td>
+            <td style="color:var(--red)">Direita ↓ afinidade</td>
+            <td style="color:var(--cyan)">Esquerda ↑ afinidade</td>
+            <td>↑CO₂ (tecidos) → liberta O₂</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">2,3-DPG</td>
+            <td style="color:var(--red)">Direita ↓ afinidade</td>
+            <td style="color:var(--cyan)">Esquerda ↑ afinidade</td>
+            <td>Anemia/altitude → adapta libertação</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">Temperatura</td>
+            <td style="color:var(--red)">Direita ↓ afinidade</td>
+            <td style="color:var(--cyan)">Esquerda ↑ afinidade</td>
+            <td>Músculo quente → recebe mais O₂</td>
+          </tr>
+          <tr>
+            <td style="color:var(--orange)">CO</td>
+            <td colspan="2" style="color:var(--red); text-align:center;">Esquerda (+ bloqueia locais)</td>
+            <td>Tóxico — impede ligação E libertação</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= CAPÍTULO 6: CLÍNICA ======================= -->
+<div class="chapter-divider" id="clinica">
+  <div class="line"></div>
+  <div class="chapter-num">🏥 CAPÍTULO 6 — APLICAÇÃO CLÍNICA</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel red">
+    <span class="section-badge red">Leito Clínico</span>
+    <div class="manga-title glow-red">🏥 Da Molécula ao Doente — O que fazer quando o O₂ está em falta?</div>
+
+    <!-- DO2 -->
+    <div class="explode-box" style="border-left-color:var(--red);">
+      <h4 style="color:var(--red);">🚑 DO₂ — Transporte de Oxigénio (Delivery of Oxygen)</h4>
+      <p style="font-size:0.88rem; color:#ccc; line-height:1.8;">
+        O conteúdo de O₂ (CaO₂) por si só não basta. O que importa clinicamente é quanto O₂ chega aos tecidos por minuto:<br><br>
+        <strong class="highlight red">DO₂ = CaO₂ × Débito Cardíaco (DC) × 10</strong><br><br>
+        DO₂ = Oxygen Delivery (Transporte/Entrega de Oxigénio) | DC em L/min | ×10 para converter dL → L<br><br>
+        Normal: ~1000 mL O₂/min (em repouso os tecidos consomem ~250 mL/min → reserva de 750 mL/min!)
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-box red">
+        <div class="stat-num">CaO₂</div>
+        <div class="stat-label">Conteúdo arterial O₂ (~20 mL/dL)</div>
+      </div>
+      <div class="stat-box cyan">
+        <div class="stat-num">×DC</div>
+        <div class="stat-label">Débito Cardíaco (~5 L/min)</div>
+      </div>
+      <div class="stat-box green">
+        <div class="stat-num">DO₂</div>
+        <div class="stat-label">~1000 mL O₂/min ao corpo todo</div>
+      </div>
+    </div>
+
+    <div class="info-box warning">
+      <span class="info-icon">🎯</span>
+      <strong>Triângulo de Ouro da UCI:</strong> Para melhorar DO₂ tens 3 opções:<br>
+      1. ↑ Hb (transfusão de glóbulos vermelhos)<br>
+      2. ↑ SaO₂ (O₂ suplementar, ventilação)<br>
+      3. ↑ Débito Cardíaco (fluidos, inotrópicos)<br><br>
+      <em>Em anemia grave, a opção 1 é muito mais eficaz que a opção 2!</em>
+    </div>
+
+    <!-- ACCORDION: CONDIÇÕES CLÍNICAS -->
+    <div style="margin-top:20px;">
+      <div style="font-family:var(--manga); color:var(--yellow); font-size:1.1rem; margin-bottom:12px;">🩺 Condições Clínicas que Reduzem o CaO₂</div>
+
+      <div class="accordion">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          🩸 Anemia — ↓ Hb <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <strong>Mecanismo:</strong> ↓ Hb → ↓ O₂-Hb → ↓ CaO₂. Em anemia grave (Hb = 7 g/dL), o CaO₂ cai para ~9.5 mL/dL (vs 20 normal).<br><br>
+            <strong>Adaptações:</strong> ↑ 2,3-DPG (melhora libertação de O₂), ↑ débito cardíaco (compensa com mais flow), ↑ extracção de O₂.<br><br>
+            <strong>Clínica:</strong> palidez, taquicardia, dispneia de esforço, sopro funcional. Hb &lt; 7-8 g/dL geralmente requer transfusão em doentes sintomáticos.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          😮‍💨 Hipoxemia — ↓ PaO₂ e ↓ SaO₂ <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <strong>Mecanismo:</strong> ↓ PaO₂ → ↓ SaO₂ (via curva ODC) → ↓ CaO₂. Causas: hipoventilação, shunt intrapulmonar, mismatch V/Q, difusão alterada, altitude.<br><br>
+            <strong>Porquê a SaO₂ cai mais lentamente?</strong> Parte superior da curva (plateau). Quando PaO₂ cai de 100→60 mmHg, SaO₂ cai apenas de 98%→90%. Abaixo de 60 mmHg (zona steep da curva), pequenas quedas de PaO₂ causam grandes quedas de SaO₂.<br><br>
+            <strong>Clínica:</strong> cianose (↓ HbO₂), confusão, taquicardia. Oxímetro útil mas tem limitações (CO, MetHb).
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          ☠️ Intoxicação por CO — Hb bloqueada <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <strong>Mecanismo:</strong> CO desloca o O₂ da Hb (afinidade 240×). COHb não transporta O₂. A SaO₂ pelo oxímetro está falsamente normal!<br><br>
+            <strong>Clínica:</strong> cefaleias, confusão, síncope, cor cor-de-rosa/cereja (não cianose). CO &gt; 25-30% → grave; &gt; 60% → fatal.<br><br>
+            <strong>Tratamento:</strong> O₂ a 100% reduz meia-vida do COHb de 5h → 90min. Câmara hiperbárica (3 atm) → 20-30 min. Indicado em COHb &gt; 25%, grávidas, sintomas neurológicos.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion">
+        <button class="accordion-btn" onclick="toggleAcc(this)">
+          🔵 Methemoglobinemia — Fe²⁺ → Fe³⁺ <span class="arrow">▼</span>
+        </button>
+        <div class="accordion-content">
+          <div class="accordion-inner">
+            <strong>Mecanismo:</strong> Oxidação do ferro → Fe³⁺ não liga O₂. ↓ CaO₂ + desvio esquerda na Hb restante.<br><br>
+            <strong>Clínica:</strong> cianose que não melhora com O₂! Sangue cor de chocolate. SaO₂ ~85% no oxímetro (não sobe com O₂).<br><br>
+            <strong>Causas comuns:</strong> nitratos em neonatos (água de poço), dapsona, prilocaína/benzocaína (anestesia local), nitrito de sódio (antídoto do cianeto).<br><br>
+            <strong>Tratamento:</strong> Azul de metileno 1-2 mg/kg IV → doa electrões → reduz MetHb. Cuidado: não funciona em défice de G6PD!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box success" style="margin-top:20px;">
+      <span class="info-icon">📚</span>
+      <strong>Referências:</strong> StatPearls — "Physiology, Oxygen Transport" (NCBI NBK538336); Deranged Physiology — "Oxygen Carrying Capacity of Whole Blood"; West's Respiratory Physiology, 11ª ed.; Nunn's Applied Respiratory Physiology, 8ª ed.
+    </div>
+  </div>
+</div>
+
+<!-- ======================= QUIZ ======================= -->
+<div class="chapter-divider" id="quiz">
+  <div class="line"></div>
+  <div class="chapter-num">🎯 DESAFIO FINAL — QUIZ</div>
+  <div class="line"></div>
+</div>
+
+<div class="section">
+  <div class="manga-panel purple">
+    <span class="section-badge purple">Testa-te!</span>
+    <div class="manga-title" style="color:var(--purple)">🏆 Prova dos Campeões</div>
+    <div id="quizContainer"></div>
+    <div id="quizScore" style="display:none; text-align:center; padding:20px;">
+      <div style="font-family:var(--manga); font-size:2rem; color:var(--yellow);" id="scoreText"></div>
+      <button onclick="restartQuiz()" style="margin-top:16px; background:var(--purple); color:white; border:none; border-radius:8px; padding:10px 24px; cursor:pointer; font-family:var(--body); font-weight:700;">🔄 Recomeçar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======================= RESUMO FINAL ======================= -->
+<div class="section" style="padding-top:0;">
+  <div class="manga-panel cyan">
+    <span class="section-badge cyan">Resumo Épico</span>
+    <div class="manga-title glow-cyan">📋 Tudo numa Página — O Que Precisas de Saber</div>
+
+    <div class="formula-box" style="text-align:left;">
+      <div class="formula-title" style="text-align:center;">🏆 A Fórmula Mestre</div>
+      <div class="formula" style="text-align:center;">CaO₂ = (Hb × 1.34 × SaO₂) + (PaO₂ × 0.003)</div>
+      <div style="margin-top:16px; font-size:0.85rem; color:#ccc; line-height:2;">
+        <strong style="color:var(--red)">Componente Hb (98%):</strong> domina completamente o CaO₂<br>
+        <strong style="color:var(--cyan)">Componente dissolvido (2%):</strong> insignificante em condições normais<br>
+        <strong style="color:var(--green)">Valor normal CaO₂:</strong> ~20 mL O₂/dL sangue<br>
+        <strong style="color:var(--yellow)">DO₂ = CaO₂ × DC × 10:</strong> ~1000 mL O₂/min
+      </div>
+    </div>
+
+    <div class="two-col" style="margin-top:16px;">
+      <div class="info-box success">
+        <strong>↑ CaO₂ quando:</strong><br>
+        ↑ Hb (policitemia)<br>
+        ↑ SaO₂ (O₂ suplementar)<br>
+        ↑ PaO₂ (hiperbárico)
+      </div>
+      <div class="info-box danger">
+        <strong>↓ CaO₂ quando:</strong><br>
+        ↓ Hb (anemia)<br>
+        ↓ SaO₂ (hipoxemia)<br>
+        COHb, MetHb (Hb disfuncional)
+      </div>
+    </div>
+
+    <div class="info-box warning" style="margin-top:16px;">
+      <span class="info-icon">⭐</span>
+      <strong>Regra de Ouro da UCI:</strong> Para ↑ DO₂, a transfusão de eritrócitos (↑Hb) é muito mais eficaz do que apenas ↑ FiO₂ (↑ PaO₂), pois o O₂ dissolvido representa apenas 2% do total. Exceção: anemia extrema + FiO₂ 1.0 + hiperbárica.
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <strong>DemilMed-UL</strong>
+  <p>Universidade Licungo (UL) — Faculdade de Ciências de Saúde</p>
+  <p>2º Ano de Medicina · Fisiologia Respiratória · 2026</p>
+  <p style="margin-top:8px; font-size:0.7rem;">
+    Fontes: StatPearls/NCBI; Deranged Physiology; West's Respiratory Physiology; Nunn's Applied Respiratory Physiology; Wikipedia ODC
+  </p>
+  <p style="margin-top:8px; color:var(--cyan); font-size:0.75rem;">
+    Feito com 🔬 por DemilMed-UL · Todo o conteúdo é educacional
+  </p>
+</footer>
+
+<script>
+// ---- LOADER ----
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const l = document.getElementById('loader');
+    l.style.opacity = '0';
+    setTimeout(() => l.style.display = 'none', 500);
+  }, 800);
+});
+
+// ---- MOLECULE CANVAS ----
+const canvas = document.getElementById('molCanvas');
+const ctx = canvas.getContext('2d');
+let mols = [];
+
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.offsetWidth;
+  canvas.height = canvas.parentElement.offsetHeight;
+}
+
+function initMols() {
+  mols = [];
+  for (let i = 0; i < 30; i++) {
+    mols.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 6 + 3,
+      vx: (Math.random() - 0.5) * 0.6,
+      vy: (Math.random() - 0.5) * 0.6,
+      color: ['#ff3860','#00d4ff','#ffd700','#00ff88','#bf5fff'][Math.floor(Math.random()*5)],
+      alpha: Math.random() * 0.4 + 0.15,
+      type: Math.random() > 0.5 ? 'O2' : 'dot'
+    });
+  }
+}
+
+function animMols() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  mols.forEach(m => {
+    m.x += m.vx; m.y += m.vy;
+    if (m.x < 0) m.x = canvas.width;
+    if (m.x > canvas.width) m.x = 0;
+    if (m.y < 0) m.y = canvas.height;
+    if (m.y > canvas.height) m.y = 0;
+    ctx.save();
+    ctx.globalAlpha = m.alpha;
+    if (m.type === 'O2') {
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI*2);
+      ctx.fillStyle = m.color;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(m.x + m.r*1.4, m.y, m.r, 0, Math.PI*2);
+      ctx.fillStyle = m.color;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(m.x + m.r, m.y - m.r*0.5);
+      ctx.lineTo(m.x + m.r, m.y + m.r*0.5);
+      ctx.strokeStyle = m.color;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(m.x, m.y, m.r, 0, Math.PI*2);
+      ctx.fillStyle = m.color;
+      ctx.fill();
+    }
+    ctx.restore();
+  });
+  requestAnimationFrame(animMols);
+}
+
+resizeCanvas(); initMols(); animMols();
+window.addEventListener('resize', () => { resizeCanvas(); initMols(); });
+
+// ---- CALCULATOR ----
+function calcCaO2() {
+  const hb = parseFloat(document.getElementById('hb').value) || 0;
+  const sao2 = parseFloat(document.getElementById('sao2').value) / 100 || 0;
+  const pao2 = parseFloat(document.getElementById('pao2').value) || 0;
+  const hbO2 = hb * 1.34 * sao2;
+  const dis = pao2 * 0.003;
+  const total = hbO2 + dis;
+  document.getElementById('resHb').textContent = hbO2.toFixed(1) + ' mL/dL';
+  document.getElementById('resDis').textContent = dis.toFixed(2) + ' mL/dL';
+  document.getElementById('resTotal').textContent = total.toFixed(1) + ' mL/dL';
+  let interp = '';
+  let color = 'var(--green)';
+  if (total >= 17) { interp = '✅ CaO₂ Normal — boa capacidade de transporte de O₂.'; color = 'var(--green)'; }
+  else if (total >= 12) { interp = '⚠️ CaO₂ Reduzido — capacidade comprometida. Avalia a causa!'; color = 'var(--yellow)'; }
+  else { interp = '🚨 CaO₂ Gravemente Reduzido — hipóxia tecidual em risco! Intervenção urgente.'; color = 'var(--red)'; }
+  document.getElementById('resInterpret').innerHTML = `<span style="color:${color}; font-weight:700;">${interp}</span>`;
+  const pct = Math.min((hbO2 / total * 100), 100).toFixed(1);
+  document.getElementById('resBar').innerHTML = `
+    <div class="progress-label"><span style="color:var(--red)">O₂-Hb: ${pct}%</span><span style="color:var(--cyan)">Dissolvido: ${(100-parseFloat(pct)).toFixed(1)}%</span></div>
+    <div class="progress-bar"><div class="progress-fill red" style="width:${pct}%"></div></div>`;
+  const res = document.getElementById('calcResult');
+  res.classList.add('show');
+}
+
+// ---- TABS ----
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ---- ACCORDION ----
+function toggleAcc(btn) {
+  const content = btn.nextElementSibling;
+  btn.classList.toggle('open');
+  content.classList.toggle('open');
+}
+
+// ---- QUIZ ----
+const questions = [
+  {
+    q: "Qual é a fórmula correcta para o Conteúdo Arterial de O₂ (CaO₂)?",
+    opts: [
+      "CaO₂ = (Hb × 1.34 × SaO₂) + (PaO₂ × 0.003)",
+      "CaO₂ = Hb × PaO₂ × SaO₂",
+      "CaO₂ = PaO₂ × 0.003",
+      "CaO₂ = Hb × 1.34 + PaO₂"
+    ],
+    correct: 0,
+    explain: "Correcto! CaO₂ = (Hb × 1.34 × SaO₂) + (PaO₂ × 0.003). Componente ligada à Hb (~98%) + componente dissolvida (~2%)."
+  },
+  {
+    q: "Num adulto normal com Hb=15 g/dL, SaO₂=98%, PaO₂=100 mmHg, qual é aproximadamente o CaO₂?",
+    opts: ["5 mL/dL", "10 mL/dL", "20 mL/dL", "50 mL/dL"],
+    correct: 2,
+    explain: "Correcto! (15 × 1.34 × 0.98) + (100 × 0.003) = 19.7 + 0.3 ≈ 20 mL/dL."
+  },
+  {
+    q: "Um doente com intoxicação por CO tem SaO₂ de 99% no oxímetro de pulso. O que podes concluir?",
+    opts: [
+      "Está bem oxigenado, não há problema",
+      "O oxímetro de pulso não distingue COHb de HbO₂ — a leitura é enganosa!",
+      "Precisa de apenas um pouco mais de O₂",
+      "A SaO₂ elevada confirma que o CO não está a causar problema"
+    ],
+    correct: 1,
+    explain: "Correcto! O oxímetro de pulso não consegue distinguir carboxi-hemoglobina (COHb) de oxi-hemoglobina (HbO₂). É necessário co-oxímetro ou gasometria com medição de COHb."
+  },
+  {
+    q: "O que provoca um desvio para a DIREITA da curva de dissociação O₂-Hb?",
+    opts: [
+      "↑ pH, ↓ CO₂, ↓ temperatura",
+      "↓ pH, ↑ CO₂, ↑ 2,3-DPG, ↑ temperatura",
+      "↑ 2,3-DPG apenas",
+      "Hb fetal"
+    ],
+    correct: 1,
+    explain: "Correcto! CADET: CO₂ ↑, Acid (pH↓), DPG ↑, Exercise/Temperature ↑ → desvio direita → ↓ afinidade → mais O₂ libertado nos tecidos. Mnemónica: 'CADET, face Right!'"
+  },
+  {
+    q: "Qual componente do transporte de O₂ é mais eficaz para aumentar o CaO₂ num doente com Hb=6 g/dL?",
+    opts: [
+      "Aumentar FiO₂ (fracção de O₂ inspirado) para 100%",
+      "Câmara hiperbárica a 3 atm",
+      "Transfusão de concentrado de eritrócitos (↑ Hb)",
+      "Ventilação não invasiva"
+    ],
+    correct: 2,
+    explain: "Correcto! Com Hb=6 g/dL, o CaO₂ é ~8 mL/dL. Dar 100% O₂ aumenta o PaO₂ de 100→500 mmHg, mas o O₂ dissolvido só sobe 0.003×400 = 1.2 mL/dL. A transfusão de Hb para 12 g/dL aumenta o CaO₂ em ~8 mL/dL. Muito mais eficaz!"
+  },
+  {
+    q: "Qual é a capacidade máxima de ligação de O₂ por grama de hemoglobina?",
+    opts: ["0.003 mL O₂/g Hb", "1.0 mL O₂/g Hb", "1.34 mL O₂/g Hb", "20 mL O₂/g Hb"],
+    correct: 2,
+    explain: "Correcto! Cada grama de hemoglobina pode ligar até 1.34 mL de O₂ (empiricamente determinado). Alguns textos usam 1.36 ou 1.39 mL/g. A diferença reflecte a presença de uma pequena fracção de MetHb em condições fisiológicas."
+  },
+  {
+    q: "O que é o P₅₀ da hemoglobina?",
+    opts: [
+      "A PO₂ a que a Hb está 100% saturada",
+      "A PO₂ a que a Hb está 50% saturada (~27 mmHg normal)",
+      "A pressão de O₂ no sangue venoso",
+      "A percentagem de Hb que carrega O₂"
+    ],
+    correct: 1,
+    explain: "Correcto! O P₅₀ é a pO₂ à qual a hemoglobina está 50% saturada. Normal ≈ 27 mmHg. ↓ P₅₀ = maior afinidade (curva esquerda). ↑ P₅₀ = menor afinidade, mais libertação (curva direita)."
+  },
+  {
+    q: "Uma criança com cianose que NÃO melhora com O₂, sangue cor de chocolate. Qual o diagnóstico mais provável?",
+    opts: [
+      "Pneumonia com hipoxemia",
+      "Intoxicação por CO",
+      "Methemoglobinemia",
+      "Anemia grave"
+    ],
+    correct: 2,
+    explain: "Correcto! Cianose que não melhora com O₂ + sangue cor de chocolate = methemoglobinemia. O Fe³⁺ não liga O₂. Tratamento: azul de metileno IV."
+  }
+];
+
+let qIndex = 0, score = 0, answered = false;
+
+function renderQuiz() {
+  if (qIndex >= questions.length) {
+    document.getElementById('quizContainer').style.display = 'none';
+    const s = document.getElementById('quizScore');
+    s.style.display = 'block';
+    const pct = Math.round(score/questions.length*100);
+    let emoji = pct >= 80 ? '🏆' : pct >= 60 ? '👍' : '📚';
+    document.getElementById('scoreText').innerHTML = `${emoji} ${score}/${questions.length} (${pct}%)<br><span style="font-size:1rem; color:var(--muted);">${pct>=80?'Excelente! Dominas o tema!':pct>=60?'Bom! Revê os conceitos que erraste.':'Revê o material e tenta novamente!'}</span>`;
+    return;
+  }
+  const q = questions[qIndex];
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-box">
+      <div class="quiz-title">❓ Questão ${qIndex+1} de ${questions.length}</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-options">
+        ${q.opts.map((o,i) => `<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+      </div>
+      <div class="quiz-feedback" id="qFeedback"></div>
+      <button class="quiz-next" id="qNext" onclick="nextQuestion()">Próxima →</button>
+    </div>`;
+  answered = false;
+}
+
+function answerQuiz(i) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIndex];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((o,idx) => {
+    if (idx === q.correct) o.classList.add('correct');
+    else if (idx === i) o.classList.add('wrong');
+    o.disabled = true;
+  });
+  const fb = document.getElementById('qFeedback');
+  if (i === q.correct) {
+    score++;
+    fb.innerHTML = `✅ Correcto! ${q.explain}`;
+    fb.className = 'quiz-feedback show ok';
+  } else {
+    fb.innerHTML = `❌ Errado. ${q.explain}`;
+    fb.className = 'quiz-feedback show nok';
+  }
+  document.getElementById('qNext').classList.add('show');
+}
+
+function nextQuestion() {
+  qIndex++;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  qIndex = 0; score = 0;
+  document.getElementById('quizContainer').style.display = 'block';
+  document.getElementById('quizScore').style.display = 'none';
+  renderQuiz();
+}
+
+renderQuiz();
+
+// ---- INTERSECTION OBSERVER for animations ----
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.manga-panel').forEach(p => {
+  p.style.opacity = '0';
+  p.style.transform = 'translateY(30px)';
+  p.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(p);
+});
+</script>
+</body>
+</html>

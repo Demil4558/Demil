@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | Sistema Respiratório</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a12;
+  --surface: #0d1526;
+  --surface2: #111e35;
+  --accent: #00d4ff;
+  --accent2: #ff6b35;
+  --accent3: #7fff6b;
+  --accent4: #ff3d9a;
+  --gold: #ffd700;
+  --text: #e8f4fd;
+  --textmuted: #7a9bbf;
+  --correct: #00ff88;
+  --wrong: #ff3d3d;
+  --border: rgba(0,212,255,0.2);
+  --glow: 0 0 20px rgba(0,212,255,0.4);
+  --glow2: 0 0 30px rgba(255,107,53,0.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Exo 2',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:default;
+}
+
+/* STARS */
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) infinite alternate;}
+@keyframes twinkle{0%{opacity:0.1;transform:scale(0.8);}100%{opacity:0.9;transform:scale(1.2);}}
+
+/* PARTICLES */
+#particles-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+.particle{position:absolute;border-radius:50%;animation:float linear infinite;}
+@keyframes float{0%{transform:translateY(100vh) rotate(0deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-10vh) rotate(720deg);opacity:0;}}
+
+/* LAYOUT */
+.wrapper{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:0 20px 80px;}
+
+/* HEADER */
+header{
+  text-align:center;
+  padding:30px 20px 20px;
+  position:relative;
+}
+.author-tag{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.75rem;
+  color:var(--accent);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  margin-bottom:8px;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.6;};}
+.title-main{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.4rem,4vw,2.4rem);
+  font-weight:900;
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent4));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.2;
+  margin-bottom:6px;
+  text-shadow:none;
+}
+.title-sub{
+  font-size:0.85rem;
+  color:var(--textmuted);
+  letter-spacing:2px;
+  font-family:'Share Tech Mono',monospace;
+}
+
+/* HAMBURGER MENU */
+.menu-btn{
+  position:fixed;top:18px;right:18px;z-index:9999;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;cursor:pointer;
+  transition:all 0.3s;
+}
+.menu-btn:hover{background:var(--accent);border-color:var(--accent);}
+.menu-btn span{display:block;width:22px;height:2px;background:var(--text);margin:5px 0;transition:all 0.3s;border-radius:2px;}
+.menu-btn.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px);}
+.menu-btn.open span:nth-child(2){opacity:0;}
+.menu-btn.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px);}
+
+/* SIDEBAR */
+.sidebar{
+  position:fixed;top:0;right:-300px;width:280px;height:100vh;
+  background:rgba(13,21,38,0.98);backdrop-filter:blur(20px);
+  border-left:1px solid var(--border);z-index:9998;
+  padding:80px 20px 20px;
+  transition:right 0.4s cubic-bezier(0.4,0,0.2,1);
+  overflow-y:auto;
+}
+.sidebar.open{right:0;}
+.sidebar h3{
+  font-family:'Orbitron',sans-serif;font-size:0.85rem;
+  color:var(--accent);letter-spacing:3px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:10px;
+}
+.nav-chapter{
+  padding:10px 12px;margin:4px 0;border-radius:8px;cursor:pointer;
+  font-size:0.82rem;color:var(--textmuted);transition:all 0.2s;
+  border:1px solid transparent;
+}
+.nav-chapter:hover{color:var(--accent);border-color:var(--border);background:var(--surface);}
+.nav-chapter.done{color:var(--correct);}
+.nav-chapter.active{color:var(--accent);background:var(--surface2);border-color:var(--accent);}
+.sidebar-stats{margin-top:20px;padding:15px;background:var(--surface);border-radius:10px;border:1px solid var(--border);}
+.sidebar-stats p{font-size:0.8rem;color:var(--textmuted);margin-bottom:5px;}
+.sidebar-stats .stat-val{color:var(--accent);font-weight:700;font-family:'Share Tech Mono',monospace;}
+
+/* PROGRESS BAR */
+.progress-outer{
+  position:fixed;top:0;left:0;width:100%;height:4px;z-index:9997;
+  background:rgba(255,255,255,0.05);
+}
+.progress-inner{height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.5s ease;box-shadow:0 0 10px var(--accent);}
+
+/* SCORE DISPLAY */
+.score-bar{
+  display:flex;gap:15px;flex-wrap:wrap;justify-content:center;
+  padding:15px;margin:20px 0;
+}
+.score-chip{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:50px;padding:8px 16px;font-family:'Share Tech Mono',monospace;font-size:0.82rem;
+}
+.score-chip .label{color:var(--textmuted);}
+.score-chip .value{color:var(--accent);font-weight:700;}
+.score-chip.correct .value{color:var(--correct);}
+.score-chip.wrong .value{color:var(--wrong);}
+
+/* STORY SECTION */
+.story-card{
+  background:linear-gradient(135deg,var(--surface),var(--surface2));
+  border:1px solid var(--border);border-radius:16px;
+  padding:28px;margin:25px 0;position:relative;overflow:hidden;
+  animation:slideIn 0.5s ease;
+}
+.story-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent4));
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.story-icon{font-size:2rem;margin-bottom:12px;display:block;}
+.story-title{
+  font-family:'Orbitron',sans-serif;font-size:1rem;
+  color:var(--accent2);letter-spacing:2px;margin-bottom:12px;
+}
+.story-text{
+  font-size:0.95rem;line-height:1.8;color:var(--textmuted);
+}
+.story-text strong{color:var(--text);}
+
+/* CHAPTER HEADER */
+.chapter-header{
+  display:flex;align-items:center;gap:15px;
+  padding:20px 0 15px;margin:20px 0 5px;
+}
+.chapter-num{
+  font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;
+  color:var(--accent);opacity:0.3;line-height:1;
+  min-width:60px;
+}
+.chapter-info h2{
+  font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;
+  color:var(--text);letter-spacing:2px;margin-bottom:4px;
+}
+.chapter-info p{font-size:0.78rem;color:var(--textmuted);font-family:'Share Tech Mono',monospace;}
+
+/* QUESTION CARD */
+.q-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:24px;margin:12px 0;
+  transition:border-color 0.3s;position:relative;
+  animation:slideIn 0.4s ease both;
+}
+.q-card:hover{border-color:rgba(0,212,255,0.4);}
+.q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px;}
+.q-num{
+  font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:700;
+  color:var(--accent);background:rgba(0,212,255,0.1);
+  border:1px solid var(--accent);border-radius:6px;
+  padding:4px 8px;white-space:nowrap;margin-top:2px;
+}
+.q-type-badge{
+  font-size:0.65rem;font-family:'Share Tech Mono',monospace;
+  padding:3px 8px;border-radius:20px;margin-top:3px;
+  white-space:nowrap;
+}
+.badge-mc{background:rgba(0,212,255,0.15);color:var(--accent);border:1px solid rgba(0,212,255,0.3);}
+.badge-tf{background:rgba(127,255,107,0.15);color:var(--accent3);border:1px solid rgba(127,255,107,0.3);}
+.badge-match{background:rgba(255,107,53,0.15);color:var(--accent2);border:1px solid rgba(255,107,53,0.3);}
+.badge-fill{background:rgba(255,61,154,0.15);color:var(--accent4);border:1px solid rgba(255,61,154,0.3);}
+.badge-order{background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.3);}
+.q-text{font-size:0.95rem;line-height:1.7;flex:1;}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:8px;}
+.opt{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;border-radius:10px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;transition:all 0.2s;font-size:0.9rem;
+  user-select:none;
+}
+.opt:hover:not(.disabled){
+  background:rgba(0,212,255,0.08);
+  border-color:rgba(0,212,255,0.4);
+  transform:translateX(4px);
+}
+.opt-letter{
+  width:28px;height:28px;min-width:28px;
+  border-radius:6px;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif;font-size:0.7rem;font-weight:700;
+  transition:all 0.2s;
+}
+.opt.selected{background:rgba(0,212,255,0.12);border-color:var(--accent);}
+.opt.selected .opt-letter{background:var(--accent);color:var(--bg);}
+.opt.correct-ans{background:rgba(0,255,136,0.12);border-color:var(--correct);}
+.opt.correct-ans .opt-letter{background:var(--correct);color:var(--bg);}
+.opt.wrong-ans{background:rgba(255,61,61,0.12);border-color:var(--wrong);}
+.opt.wrong-ans .opt-letter{background:var(--wrong);color:var(--bg);}
+.opt.disabled{cursor:default;}
+
+/* TRUE/FALSE */
+.tf-options{display:flex;gap:12px;}
+.tf-btn{
+  flex:1;padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.03);cursor:pointer;
+  font-family:'Orbitron',sans-serif;font-size:0.8rem;font-weight:700;
+  letter-spacing:2px;transition:all 0.3s;text-align:center;
+}
+.tf-btn.true-btn:hover:not(.disabled){background:rgba(0,255,136,0.12);border-color:var(--correct);color:var(--correct);}
+.tf-btn.false-btn:hover:not(.disabled){background:rgba(255,61,61,0.12);border-color:var(--wrong);color:var(--wrong);}
+.tf-btn.selected-true{background:rgba(0,255,136,0.18);border-color:var(--correct);color:var(--correct);}
+.tf-btn.selected-false{background:rgba(255,61,61,0.18);border-color:var(--wrong);color:var(--wrong);}
+.tf-btn.correct-ans{background:rgba(0,255,136,0.25);border-color:var(--correct);color:var(--correct);box-shadow:0 0 15px rgba(0,255,136,0.3);}
+.tf-btn.wrong-ans{background:rgba(255,61,61,0.25);border-color:var(--wrong);color:var(--wrong);}
+.tf-btn.disabled{cursor:default;}
+
+/* FILL IN THE BLANK */
+.fill-container{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:5px;}
+.fill-input{
+  background:rgba(0,212,255,0.05);border:1px solid var(--border);
+  border-radius:8px;padding:10px 14px;color:var(--text);
+  font-family:'Exo 2',sans-serif;font-size:0.9rem;min-width:180px;
+  transition:border-color 0.3s;outline:none;flex:1;
+}
+.fill-input:focus{border-color:var(--accent);box-shadow:0 0 10px rgba(0,212,255,0.2);}
+.fill-input.correct-ans{border-color:var(--correct);background:rgba(0,255,136,0.08);color:var(--correct);}
+.fill-input.wrong-ans{border-color:var(--wrong);background:rgba(255,61,61,0.08);color:var(--wrong);}
+.fill-input:disabled{cursor:default;}
+
+/* ORDERING */
+.order-list{display:flex;flex-direction:column;gap:6px;}
+.order-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);
+  cursor:grab;font-size:0.88rem;transition:all 0.2s;
+  user-select:none;
+}
+.order-item:hover{background:rgba(255,215,0,0.08);border-color:rgba(255,215,0,0.3);}
+.order-item.dragging{opacity:0.5;cursor:grabbing;}
+.order-handle{color:var(--textmuted);font-size:1.1rem;}
+.order-pos{
+  width:24px;height:24px;min-width:24px;border-radius:50%;
+  background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.72rem;font-weight:700;color:var(--gold);font-family:'Orbitron',sans-serif;
+}
+.order-list.correct-ans .order-item{border-color:var(--correct);background:rgba(0,255,136,0.05);}
+.order-list.wrong-ans .order-item{border-color:var(--wrong);background:rgba(255,61,61,0.05);}
+
+/* FEEDBACK */
+.feedback{
+  margin-top:14px;padding:14px 16px;border-radius:10px;
+  font-size:0.88rem;line-height:1.6;display:none;
+  animation:slideIn 0.3s ease;
+}
+.feedback.correct{
+  background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.3);
+  display:block;
+}
+.feedback.wrong{
+  background:rgba(255,61,61,0.08);border:1px solid rgba(255,61,61,0.3);
+  display:block;
+}
+.feedback-icon{font-size:1.1rem;margin-right:6px;}
+.feedback-correct{color:var(--correct);}
+.feedback-wrong{color:var(--wrong);}
+
+/* CONFIRM BUTTON */
+.confirm-btn{
+  display:none;margin-top:14px;padding:12px 24px;
+  border-radius:10px;border:1px solid var(--accent);
+  background:rgba(0,212,255,0.1);color:var(--accent);
+  font-family:'Orbitron',sans-serif;font-size:0.75rem;
+  letter-spacing:2px;cursor:pointer;transition:all 0.3s;
+  width:100%;font-weight:700;
+}
+.confirm-btn:hover{background:var(--accent);color:var(--bg);box-shadow:var(--glow);}
+.confirm-btn.show{display:block;}
+
+/* CHECKPOINT */
+.checkpoint{
+  background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(255,107,53,0.08));
+  border:2px solid var(--gold);border-radius:20px;
+  padding:30px;margin:30px 0;text-align:center;
+  position:relative;overflow:hidden;
+  animation:checkpointPulse 2s ease infinite;
+}
+@keyframes checkpointPulse{0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.2);}50%{box-shadow:0 0 40px rgba(255,215,0,0.5);}}
+.checkpoint::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle,rgba(255,215,0,0.04) 0%,transparent 60%);
+  animation:rotate 10s linear infinite;
+}
+@keyframes rotate{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.checkpoint-icon{font-size:3rem;margin-bottom:15px;display:block;}
+.checkpoint h3{
+  font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:900;
+  color:var(--gold);letter-spacing:3px;margin-bottom:10px;
+}
+.checkpoint p{color:var(--textmuted);font-size:0.9rem;margin-bottom:5px;}
+.checkpoint .cp-score{
+  font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;
+  color:var(--gold);margin:10px 0;
+}
+.checkpoint-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;margin:12px 0;overflow:hidden;}
+.checkpoint-bar-fill{height:100%;border-radius:4px;transition:width 1s ease;background:linear-gradient(90deg,var(--gold),var(--accent2));}
+.checkpoint-msg{font-size:1rem;color:var(--text);font-weight:600;margin:10px 0;}
+
+/* CONTINUE BTN */
+.continue-btn{
+  margin:20px auto;display:block;padding:14px 40px;
+  border-radius:50px;border:2px solid var(--accent);
+  background:transparent;color:var(--accent);
+  font-family:'Orbitron',sans-serif;font-size:0.8rem;
+  letter-spacing:3px;cursor:pointer;transition:all 0.3s;font-weight:700;
+}
+.continue-btn:hover{background:var(--accent);color:var(--bg);box-shadow:var(--glow);transform:scale(1.05);}
+.continue-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+
+/* FINAL SCREEN */
+.final-screen{
+  text-align:center;padding:40px 20px;
+  animation:slideIn 0.8s ease;
+}
+.final-trophy{font-size:5rem;display:block;margin-bottom:20px;animation:bounce 1s ease infinite alternate;}
+@keyframes bounce{from{transform:translateY(0);}to{transform:translateY(-15px);}}
+.final-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,4vw,2rem);font-weight:900;
+  color:var(--gold);margin-bottom:15px;
+}
+.final-grade{
+  font-family:'Orbitron',sans-serif;font-size:clamp(3rem,10vw,5rem);font-weight:900;
+  background:linear-gradient(135deg,var(--gold),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin:10px 0;
+}
+.final-subtitle{color:var(--textmuted);font-size:0.95rem;margin-bottom:25px;}
+.final-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:15px;
+  max-width:600px;margin:0 auto 30px;
+}
+.final-stat{
+  background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:18px;
+}
+.final-stat .fs-label{font-size:0.72rem;color:var(--textmuted);font-family:'Share Tech Mono',monospace;margin-bottom:6px;}
+.final-stat .fs-value{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;color:var(--accent);}
+.restart-btn{
+  margin-top:20px;padding:16px 50px;border-radius:50px;
+  border:2px solid var(--accent2);background:transparent;color:var(--accent2);
+  font-family:'Orbitron',sans-serif;font-size:0.85rem;letter-spacing:3px;
+  cursor:pointer;transition:all 0.3s;font-weight:700;
+}
+.restart-btn:hover{background:var(--accent2);color:var(--bg);box-shadow:var(--glow2);transform:scale(1.05);}
+
+/* HIDDEN CLASS */
+.hidden{display:none;}
+.q-card.hidden{display:none;}
+
+/* OVERLAY */
+.overlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.5);z-index:9990;
+  opacity:0;pointer-events:none;transition:opacity 0.3s;
+}
+.overlay.open{opacity:1;pointer-events:all;}
+
+/* FOOTER */
+footer{
+  text-align:center;padding:20px;
+  font-family:'Share Tech Mono',monospace;font-size:0.72rem;
+  color:var(--textmuted);border-top:1px solid var(--border);
+  position:relative;z-index:1;
+}
+
+/* MATCH QUESTION */
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:5px;}
+.match-left,.match-right{display:flex;flex-direction:column;gap:6px;}
+.match-item{
+  padding:9px 13px;border-radius:8px;font-size:0.82rem;
+  border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);
+  cursor:pointer;transition:all 0.2s;text-align:center;
+}
+.match-item:hover{border-color:var(--accent4);background:rgba(255,61,154,0.06);}
+.match-item.selected{border-color:var(--accent4);background:rgba(255,61,154,0.12);color:var(--accent4);}
+.match-item.matched{border-color:var(--correct);background:rgba(0,255,136,0.1);color:var(--correct);cursor:default;}
+.match-item.wrong-match{border-color:var(--wrong);background:rgba(255,61,61,0.1);color:var(--wrong);}
+.match-line{
+  font-size:0.7rem;color:var(--textmuted);font-family:'Share Tech Mono',monospace;
+  text-align:center;padding:3px 0;
+}
+
+/* ANIM DELAYS */
+.q-card:nth-child(1){animation-delay:0.05s;}
+.q-card:nth-child(2){animation-delay:0.1s;}
+.q-card:nth-child(3){animation-delay:0.15s;}
+.q-card:nth-child(4){animation-delay:0.2s;}
+.q-card:nth-child(5){animation-delay:0.25s;}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .match-grid{grid-template-columns:1fr;}
+  .tf-options{flex-direction:column;}
+  .q-header{flex-wrap:wrap;}
+}
+
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:5px;}
+
+/* LEVEL BADGE */
+.level-badge{
+  display:inline-block;padding:4px 12px;border-radius:20px;
+  font-size:0.68rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px;
+  margin-left:8px;
+}
+.level-easy{background:rgba(0,255,136,0.12);color:var(--correct);border:1px solid rgba(0,255,136,0.3);}
+.level-medium{background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.3);}
+.level-hard{background:rgba(255,61,61,0.12);color:var(--wrong);border:1px solid rgba(255,61,61,0.3);}
+
+/* HINT */
+.hint{font-size:0.78rem;color:var(--textmuted);font-style:italic;margin-top:6px;padding-left:4px;}
+
+/* PULSE GLOW ON HOVER */
+.q-card:hover .q-num{animation:pulse 1.5s infinite;}
+
+/* COMBO COUNTER */
+.combo{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;
+  color:var(--gold);z-index:9996;pointer-events:none;
+  text-shadow:0 0 20px rgba(255,215,0,0.8);
+  animation:comboAnim 1.5s ease forwards;
+  display:none;
+}
+@keyframes comboAnim{0%{opacity:0;transform:translateX(-50%) scale(0.5);}30%{opacity:1;transform:translateX(-50%) scale(1.2);}60%{opacity:1;transform:translateX(-50%) scale(1);}100%{opacity:0;transform:translateX(-50%) translateY(-30px) scale(0.8);}}
+
+/* MATCH RESULT */
+.match-result{
+  margin-top:10px;padding:10px 14px;border-radius:8px;
+  font-size:0.85rem;display:none;
+}
+.match-result.correct{background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.3);color:var(--correct);display:block;}
+.match-result.wrong{background:rgba(255,61,61,0.1);border:1px solid rgba(255,61,61,0.3);color:var(--wrong);display:block;}
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<div id="stars"></div>
+<div id="particles-container"></div>
+
+<!-- Progress Bar -->
+<div class="progress-outer"><div class="progress-inner" id="progressBar" style="width:0%"></div></div>
+
+<!-- Combo Display -->
+<div class="combo" id="comboDisplay"></div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Menu Button -->
+<button class="menu-btn" id="menuBtn" aria-label="Menu" title="Menu de Navegação">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <h3>⚡ NAVEGAÇÃO</h3>
+  <div id="navChapters"></div>
+  <div class="sidebar-stats">
+    <p>Respostas Correctas: <span class="stat-val" id="sb-correct">0</span></p>
+    <p>Respostas Erradas: <span class="stat-val" id="sb-wrong">0</span></p>
+    <p>Progresso: <span class="stat-val" id="sb-progress">0%</span></p>
+    <p>Combo Actual: <span class="stat-val" id="sb-combo">0</span>🔥</p>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="wrapper">
+  <header>
+    <div class="author-tag">⚡ DemilMed-UL ⚡</div>
+    <h1 class="title-main">SISTEMA RESPIRATÓRIO</h1>
+    <p class="title-sub">100 Questões · Missão Científica · 2026</p>
+  </header>
+
+  <!-- Score Bar -->
+  <div class="score-bar">
+    <div class="score-chip correct"><span class="label">✅ Certas:</span><span class="value" id="scoreCorrect">0</span></div>
+    <div class="score-chip wrong"><span class="label">❌ Erradas:</span><span class="value" id="scoreWrong">0</span></div>
+    <div class="score-chip"><span class="label">📊 Progresso:</span><span class="value" id="scoreProgress">0/100</span></div>
+    <div class="score-chip"><span class="label">🔥 Combo:</span><span class="value" id="scoreCombo">0</span></div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div id="quizContent"></div>
+
+  <!-- Final Screen (hidden initially) -->
+  <div class="final-screen hidden" id="finalScreen">
+    <span class="final-trophy" id="finalTrophy">🏆</span>
+    <h2 class="final-title" id="finalTitle">MISSÃO COMPLETA!</h2>
+    <div class="final-grade" id="finalGrade">--%</div>
+    <p class="final-subtitle" id="finalSubtitle">O Sistema Respiratório revelou todos os seus segredos!</p>
+    <div class="final-stats" id="finalStats"></div>
+    <button class="restart-btn" onclick="restartQuiz()">🔄 RECOMEÇAR A MISSÃO</button>
+  </div>
+</div>
+
+<footer>
+  <p>⚡ DemilMed-UL &nbsp;·&nbsp; Sistema Respiratório &nbsp;·&nbsp; 2026 ⚡</p>
+</footer>
+
+<script>
+// ===================== STARS & PARTICLES =====================
+(function(){
+  const sc=document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=Math.random()*2.5+0.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*4}s;`;
+    sc.appendChild(s);
+  }
+  const pc=document.getElementById('particles-container');
+  const pColors=['rgba(0,212,255,0.6)','rgba(255,107,53,0.6)','rgba(127,255,107,0.6)','rgba(255,215,0,0.6)'];
+  function makeParticle(){
+    const p=document.createElement('div');
+    p.className='particle';
+    const sz=Math.random()*4+2;
+    const dur=15+Math.random()*20;
+    p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${pColors[Math.floor(Math.random()*pColors.length)]};animation-duration:${dur}s;animation-delay:${Math.random()*dur}s;`;
+    pc.appendChild(p);
+    setTimeout(()=>{try{pc.removeChild(p);}catch(e){}},dur*1000+1000);
+  }
+  for(let i=0;i<15;i++) makeParticle();
+  setInterval(makeParticle,2000);
+})();
+
+// ===================== QUIZ DATA =====================
+const chapters = [
+  {
+    id:1, title:"ANATOMIA — A Grande Arquitetura", icon:"🫁",
+    range:[1,10],
+    story: {
+      icon:"🔬",
+      title:"CAPÍTULO 1: O Edifício do Ar",
+      text:`Imagine que és um engenheiro e o teu projeto é o edifício mais elegante do universo: o <strong>pulmão humano</strong>. São dois órgãos esponjosos, cor-de-rosa, que cabem na palma das mãos — mas são tão complexos que até hoje a ciência não parou de os admirar. Cada pulmão tem cerca de <strong>1.500 km de vias aéreas</strong>, área de superfície de <strong>70-80 m²</strong> (um apartamento inteiro!) e <strong>300 a 500 milhões de alvéolos</strong>. Bem-vindo à missão: desvendar este edifício respiratório!`
+    }
+  },
+  {
+    id:2, title:"ZONAS DE WEIBEL — O Mapa das Gerações", icon:"🗺️",
+    range:[11,20],
+    story: {
+      icon:"🌳",
+      title:"CAPÍTULO 2: A Árvore das 23 Gerações",
+      text:`Em 1963, o anatomista suíço <strong>Ewald Weibel</strong> fez algo revolucionário: numerou cada ramificação das vias aéreas, como um cartógrafo numerando os andares de um edifício. Descobriu que existem exactamente <strong>23 gerações</strong> de ramificações — da traqueia até ao alvéolo. As primeiras 16 são a <strong>zona de condução</strong> (transporte de ar), as últimas 7 são a <strong>zona respiratória</strong> (onde o oxigénio entra de verdade no sangue). A estrutura fractal deste sistema é tão perfeita que até os matemáticos ficam boquiabertos.`
+    }
+  },
+  {
+    id:3, title:"ZONAS DE WEST — O Efeito da Gravidade", icon:"⬇️",
+    range:[21,30],
+    story: {
+      icon:"🌍",
+      title:"CAPÍTULO 3: A Gravidade Manda no Pulmão",
+      text:`O pulmão não é igual de cima a baixo. Em 1964, <strong>John B. West</strong> — um dos maiores fisiologistas respiratórios de sempre — descobriu que a gravidade cria uma hierarquia no pulmão: <strong>3 zonas</strong> com comportamentos completamente diferentes. Na zona do topo, os capilares podem entrar em colapso. No meio, a perfusão depende da pressão arterial. Na base, há perfusão abundante mas menos ventilação relativa. Este desequilíbrio explica porque os raios-X de pneumonias são diferentes consoante o doente está deitado ou sentado!`
+    }
+  },
+  {
+    id:4, title:"VOLUMES E CAPACIDADES — Medindo o Ar", icon:"📏",
+    range:[31,42],
+    story: {
+      icon:"📐",
+      title:"CAPÍTULO 4: O Espirômetro Conta a História",
+      text:`Em 1846, o médico inglês <strong>John Hutchinson</strong> inventou o espirômetro e começou a medir o ar que os humanos respiram. Descobriu que não é tudo igual: há ar que entra e sai normalmente, ar de reserva, ar residual que <strong>nunca sai</strong>. Estas medições — volumes e capacidades — são hoje a espinha dorsal da pneumologia moderna. Um simples espirômetro pode diagnosticar asma, DPOC, fibrose pulmonar... e salvou milhões de vidas. Vamos aprender a ler este código!`
+    }
+  },
+  {
+    id:5, title:"VENTILAÇÃO ALVEOLAR — O Que Conta de Verdade", icon:"💨",
+    range:[43,52],
+    story: {
+      icon:"🎯",
+      title:"CAPÍTULO 5: Nem Todo o Ar Chega ao Alvéolo",
+      text:`Aqui vem uma revelação surpreendente: nem todo o ar que inspiras chega ao sítio onde o oxigénio passa para o sangue! Uma parte fica "presa" nas vias aéreas — a <strong>traqueia, brônquios, bronquíolos</strong> — sem participar nas trocas gasosas. Esta área chama-se <strong>espaço morto anatómico</strong> e tem cerca de <strong>150 mL</strong>. Então, se respiras 500 mL de cada vez, <strong>apenas 350 mL chegam aos alvéolos</strong>. O resto é "ventilação perdida". Perceber isto é crucial para perceber porque é que respiração rápida e superficial pode matar!`
+    }
+  },
+  {
+    id:6, title:"PRESSÕES DE GASES — A Física do Ar", icon:"⚗️",
+    range:[53,64],
+    story: {
+      icon:"🔵",
+      title:"CAPÍTULO 6: O Oxigénio Tem Pressão Própria",
+      text:`Cada gás numa mistura comporta-se como se estivesse sozinho — esta é a <strong>Lei de Dalton</strong>, de 1801. E cada gás tem a sua própria "pressão parcial": uma espécie de endereço numérico no sangue e nos pulmões. O oxigénio na artéria tem <strong>PaO₂ = 100 mmHg</strong>, o CO₂ arterial é <strong>PaCO₂ = 40 mmHg</strong>. Estes números são literalmente a diferença entre a vida e a morte. Uma gasometria arterial lê estes valores e, em 5 minutos, o médico sabe se o doente precisa de ventilação mecânica ou apenas de um pouco de oxigénio suplementar.`
+    }
+  },
+  {
+    id:7, title:"MÚSCULOS DA RESPIRAÇÃO — Os Motores", icon:"💪",
+    range:[65,75],
+    story: {
+      icon:"⚡",
+      title:"CAPÍTULO 7: O Diafragma é o Herói Silencioso",
+      text:`Enquanto lês estas palavras, um músculo trabalha sem parar desde que nasceste: o <strong>diafragma</strong>. É o principal motor da respiração e sozinho é responsável por <strong>70-80%</strong> do trabalho inspiratório em repouso. Mas não trabalha sozinho — tem aliados: os músculos intercostais, o esternocleidomastóideo, os escalenos, e nos momentos de crise respiratória entram em cena músculos que normalmente estão em repouso. Quando o doente usa o pescoço para respirar, é sinal de alarme máximo: o diafragma já não chega.`
+    }
+  },
+  {
+    id:8, title:"TROCA GASOSA & CLÍNICA — Do Lab ao Leito", icon:"🏥",
+    range:[76,86],
+    story: {
+      icon:"🩺",
+      title:"CAPÍTULO 8: Da Física à Beira do Doente",
+      text:`Aqui tudo se une: a anatomia, as pressões, os volumes, os músculos — tudo converge na <strong>troca gasosa alveolar</strong>, o momento sagrado em que o oxigénio passa do ar para o sangue e o CO₂ faz o caminho inverso. E quando esta troca falha? Surge a <strong>insuficiência respiratória</strong>: Tipo I (hipoxémica, sem retenção de CO₂) e Tipo II (hipercápnica, com retenção de CO₂). Cada mecanismo de falha — shunt, alteração V/Q, hipoventilação, defeito de difusão — tem uma causa e um tratamento específico.`
+    }
+  },
+  {
+    id:9, title:"CLÍNICA AVANÇADA — Diagnóstico e Tratamento", icon:"💊",
+    range:[87,100],
+    story: {
+      icon:"🔬",
+      title:"CAPÍTULO 9: MISSÃO FINAL — Integração Clínica Total",
+      text:`Chegaste ao último capítulo. Aqui não há teorias isoladas — só pensamento clínico integrado. Um doente entra com dispneia, hipoxémia e sons crepitantes na base. Tens 3 minutos para decidir. Precisas de saber: gasometria, espirometria, raio-X, e os mecanismos fisiológicos que estão por trás de cada achado. Esta última missão testa não apenas o que sabes — mas como <strong>pensas</strong>. Bem-vindo à medicina de verdade.`
+    }
+  }
+];
+
+const allQuestions = [
+  // ========== CAPÍTULO 1: ANATOMIA ==========
+  {id:1,ch:1,type:'mc',level:'easy',
+   text:'Quantos lobos tem o pulmão direito?',
+   opts:['Dois lobos','Três lobos','Quatro lobos','Um único lobo'],
+   answer:1,
+   feedback:'O pulmão DIREITO tem 3 lobos: superior, médio e inferior, separados pelas fissuras horizontal e oblíqua. O pulmão esquerdo tem apenas 2 lobos (superior e inferior), pois o coração "rouba" espaço no hemitórax esquerdo!'},
+
+  {id:2,ch:1,type:'tf',level:'easy',
+   text:'A traqueia tem anéis cartilaginosos COMPLETOS (fechados em círculo) na sua parede posterior.',
+   answer:false,
+   feedback:'FALSO! Os anéis cartilaginosos da traqueia são INCOMPLETOS — têm forma de "C" ou ferradura, abertos na face posterior. A parede posterior é membranosa (músculo traquealis). Esta abertura permite que o esófago se expanda durante a deglutição!'},
+
+  {id:3,ch:1,type:'mc',level:'medium',
+   text:'A carina traqueal, ponto de bifurcação da traqueia, encontra-se ao nível de qual vértebra?',
+   opts:['T2','T4-T5','T6','L1'],
+   answer:1,
+   feedback:'A carina situa-se ao nível de T4-T5, correspondendo ao ângulo de Louis (ângulo esternal) na superfície anterior do tórax. É um marco anatómico importante em broncoscopia — quando o broncoscópio passa a carina, estamos a entrar nos brônquios principais!'},
+
+  {id:4,ch:1,type:'mc',level:'medium',
+   text:'Qual destas estruturas NÃO faz parte do hilo pulmonar?',
+   opts:['Artéria pulmonar','Veias pulmonares','Nervo frénco','Brônquio principal'],
+   answer:2,
+   feedback:'O nervo frénico NÃO passa pelo hilo pulmonar! Ele corre lateralmente ao pericárdio para inervar o diafragma. O hilo contém: artéria pulmonar, veias pulmonares (2 de cada lado), brônquio principal, artérias e veias brônquicas, vasos linfáticos e nervos autonómicos.'},
+
+  {id:5,ch:1,type:'fill',level:'medium',
+   text:'A pleura que reveste directamente a superfície do pulmão chama-se pleura _______, enquanto a que reveste a parede interna do tórax chama-se pleura _______.',
+   answers:['visceral','parietal'],
+   hint:'Pensa: visceral = órgão, parietal = parede.',
+   feedback:'Pleura VISCERAL (cobre o pulmão, aderente ao parênquima) e pleura PARIETAL (cobre a parede torácica, diafragma e mediastino). Entre as duas existe a cavidade pleural com ~10-15 mL de líquido que age como lubrificante. Pressão negativa neste espaço mantém o pulmão expandido!'},
+
+  {id:6,ch:1,type:'mc',level:'hard',
+   text:'O brônquio lobar médio direito irriga o lobo médio direito, que corresponde a quais segmentos brônquicos?',
+   opts:['Segmentos 1 e 2','Segmentos 4 e 5','Segmentos 7 e 8','Segmentos 9 e 10'],
+   answer:1,
+   feedback:'O lobo médio direito corresponde aos segmentos 4 (lateral) e 5 (medial). A nomenclatura de Boyden-Jackson divide os pulmões em 10 segmentos à direita e 8-10 à esquerda. Cada segmento é autónomo: tem o seu brônquio, artéria e veia próprios — pode ser ressecado cirurgicamente sem afectar os outros!'},
+
+  {id:7,ch:1,type:'tf',level:'easy',
+   text:'A epiglote é um osso que protege as vias aéreas durante a deglutição.',
+   answer:false,
+   feedback:'FALSO! A epiglote é uma cartilagem (não um osso) elástica com forma de folha. Durante a deglutição, o músculo tireo-hioideu eleva a laringe, a epiglote inclina-se e fecha a glote, impedindo a aspiração de alimentos. É cartilagem elástica, não hialina como a maioria das cartilagens laríngeas!'},
+
+  {id:8,ch:1,type:'mc',level:'medium',
+   text:'Qual é a função principal das células caliciformes (goblet cells) presentes no epitélio respiratório?',
+   opts:['Absorção de oxigénio','Produção de muco','Batimento ciliar','Síntese de surfactante'],
+   answer:1,
+   feedback:'As células caliciformes produzem MUCO — glicoproteínas que formam um tapete pegajoso sobre o epitélio. Este muco captura partículas, bactérias e vírus. Os cílios das células ciliadas batem ~1.000 vezes/minuto movendo este tapete mucoso em direcção à faringe (escada mucociliar). Na bronquite crónica, há hipertrofia das células caliciformes com excesso de muco!'},
+
+  {id:9,ch:1,type:'order',level:'hard',
+   text:'Ordena as seguintes estruturas da via aérea, da maior para a menor (proximal → distal):',
+   items:['Bronquíolo terminal','Traqueia','Brônquio segmentar','Brônquio lobar','Alvéolo'],
+   correct:[1,3,2,0,4],
+   feedback:'A ordem correcta é: Traqueia → Brônquio Lobar → Brônquio Segmentar → Bronquíolo Terminal → Alvéolo. O diâmetro vai reduzindo: traqueia ~18mm, brônquios lobares ~10-14mm, segmentares ~4-8mm, bronquíolos terminais ~0.5-1mm, alvéolos ~200-300 μm de diâmetro!'},
+
+  {id:10,ch:1,type:'mc',level:'hard',
+   text:'Qual é o tipo celular responsável pela síntese de SURFACTANTE pulmonar?',
+   opts:['Pneumócito Tipo I','Pneumócito Tipo II','Células de Clara','Macrófago alveolar'],
+   answer:1,
+   feedback:'Os PNEUMÓCITOS TIPO II (células granulares) sintetizam o surfactante — uma mistura de fosfolípidos (principalmente DPPC: dipalmitoilfosfatidilcolina) e proteínas. Representam apenas 15% da superfície alveolar mas são vitais. O surfactante reduz a tensão superficial alveolar, prevenindo o colapso dos alvéolos pequenos. A sua ausência causa Síndrome de Dificuldade Respiratória Neonatal (SDRN)!'},
+
+  // ========== CAPÍTULO 2: ZONAS DE WEIBEL ==========
+  {id:11,ch:2,type:'mc',level:'medium',
+   text:'Segundo o modelo de Weibel, quantas gerações de ramificações existem no total desde a traqueia até ao alvéolo?',
+   opts:['16 gerações','23 gerações','30 gerações','10 gerações'],
+   answer:1,
+   feedback:'Weibel descreveu 23 GERAÇÕES de ramificações (geração 0 = traqueia). As gerações 1-16 formam a zona de condução; as gerações 17-23 formam a zona de transição e respiratória. Este modelo fractal garante que a resistência ao fluxo diminui progressivamente e a área de secção total aumenta exponencialmente!'},
+
+  {id:12,ch:2,type:'tf',level:'medium',
+   text:'A zona de condução inclui os bronquíolos respiratórios.',
+   answer:false,
+   feedback:'FALSO! Os bronquíolos RESPIRATÓRIOS já pertencem à zona RESPIRATÓRIA (gerações 17-19). A zona de condução vai da traqueia (geração 0) até aos bronquíolos TERMINAIS (geração 16). A diferença fundamental: os bronquíolos respiratórios já têm alvéolos nas suas paredes, participando directamente nas trocas gasosas!'},
+
+  {id:13,ch:2,type:'mc',level:'easy',
+   text:'Qual é a função principal da zona de condução das vias aéreas?',
+   opts:['Troca de O₂ e CO₂','Transporte e condicionamento do ar','Produção de surfactante','Fagocitose de bactérias'],
+   answer:1,
+   feedback:'A zona de CONDUÇÃO transporta o ar, mas também o condiciona: aquece até 37°C, humidifica até 100% de saturação, e filtra partículas. É graças a este condicionamento que os alvéolos nunca recebem ar frio ou seco — o que seria catastrófico para as delicadas membranas de troca gasosa!'},
+
+  {id:14,ch:2,type:'mc',level:'hard',
+   text:'O "volume de espaço morto anatómico" corresponde ao volume de ar contido em qual estrutura de Weibel?',
+   opts:['Apenas nos alvéolos (geração 23)','Apenas nos bronquíolos terminais (geração 16)','Nas vias da zona de condução (gerações 0-16)','Em todas as 23 gerações'],
+   answer:2,
+   feedback:'O espaço morto anatómico (~150 mL no adulto) corresponde exactamente ao volume de ar contido na ZONA DE CONDUÇÃO (gerações 0-16) — todo o ar que NÃO participa em trocas gasosas. O espaço morto fisiológico adiciona ainda os alvéolos que são ventilados mas não perfundidos (V/Q = ∞). Na DPOC e embolia pulmonar, o espaço morto fisiológico está muito aumentado!'},
+
+  {id:15,ch:2,type:'fill',level:'medium',
+   text:'A última geração de Weibel (geração 23) corresponde ao _______, que é o local definitivo de troca gasosa.',
+   answers:['alvéolo','saco alveolar','alveolo'],
+   hint:'É a estrutura onde o O₂ entra no sangue.',
+   feedback:'A geração 23 de Weibel corresponde aos ALVÉOLOS (ou sacos alveolares). São câmaras microscópicas com paredes extremamente finas (~0.2 μm) revestidas por pneumócitos I e II, em íntimo contacto com os capilares. A distância de difusão total é de apenas 0.5-1 μm — por isso a difusão é ultra-rápida!'},
+
+  {id:16,ch:2,type:'mc',level:'medium',
+   text:'Qual é a área de secção transversal TOTAL das vias aéreas nas gerações mais distais (alvéolos) em comparação com a traqueia?',
+   opts:['É aproximadamente igual','É 10x maior','É 500-700x maior','É mais pequena'],
+   answer:2,
+   feedback:'A área de secção total aumenta exponencialmente com as gerações: a traqueia tem ~2.5 cm², mas nas vias alveolares a área total chega a ~70-80 m² (o equivalente a um apartamento!). Este aumento enorme faz com que a velocidade do ar diminua de ~100 cm/s na traqueia para <0.001 cm/s nos alvéolos — tornando a difusão (não o fluxo) o mecanismo de transporte dominante!'},
+
+  {id:17,ch:2,type:'tf',level:'hard',
+   text:'As células de Clara (agora chamadas células secretoras dos bronquíolos) produzem surfactante, tal como os pneumócitos tipo II.',
+   answer:false,
+   feedback:'FALSO! As células de Clara NÃO produzem surfactante. Elas secretam proteínas de defesa (CC16/CC10), têm actividade de detoxificação (citocromo P450), e são percursoras das células epiteliais dos bronquíolos. O surfactante é exclusivamente produzido pelos pneumócitos TIPO II no alvéolo. Esta distinção é importante no diagnóstico diferencial de lesões bronquiolares vs. alveolares!'},
+
+  {id:18,ch:2,type:'mc',level:'hard',
+   text:'No modelo de Weibel, a partir de que geração começam a aparecer alvéolos nas paredes das vias aéreas?',
+   opts:['Geração 5','Geração 12','Geração 17','Geração 20'],
+   answer:2,
+   feedback:'A partir da GERAÇÃO 17 (bronquíolos respiratórios) começam a aparecer alvéolos nas paredes das vias aéreas. Esta é a linha divisória entre zona de condução (0-16) e zona respiratória (17-23). Anatomicamente, a geração 17 tem poucos alvéolos, mas progressivamente as gerações 18-23 têm cada vez mais, até aos sacos alveolares puros da geração 23.'},
+
+  {id:19,ch:2,type:'mc',level:'medium',
+   text:'Qual destes valores aproxima melhor o número total de alvéolos num adulto saudável?',
+   opts:['30 milhões','150 milhões','300-500 milhões','5 mil milhões'],
+   answer:2,
+   feedback:'Um pulmão adulto saudável tem entre 300 e 500 MILHÕES de alvéolos! Este número pode diminuir com enfisema (destruição alveolar) ou com o envelhecimento. Em recém-nascidos existem apenas ~50 milhões — a alveolização completa só termina por volta dos 8 anos. O tabagismo destrói alvéolos irreversivelmente — cada cigarro é irreversível!'},
+
+  {id:20,ch:2,type:'match',level:'medium',
+   text:'Liga cada geração de Weibel à estrutura correspondente:',
+   left:['Geração 0','Geração 4','Geração 16','Geração 23'],
+   right:['Bronquíolo terminal','Brônquio segmentar','Traqueia','Alvéolo'],
+   correct:[2,1,0,3],
+   feedback:'Geração 0 = Traqueia | Geração 4 = Brônquio segmentar (aproximadamente) | Geração 16 = Bronquíolo terminal (último da zona de condução) | Geração 23 = Alvéolo. Este modelo é uma simplificação — na realidade as vias não se dividem exactamente em 23 gerações iguais, mas é um excelente modelo de trabalho!'},
+
+  // ========== CAPÍTULO 3: ZONAS DE WEST ==========
+  {id:21,ch:3,type:'mc',level:'medium',
+   text:'Na Zona 1 de West, qual é a relação entre pressão alveolar (PA), pressão arterial pulmonar (Pa) e pressão venosa pulmonar (Pv)?',
+   opts:['Pa > Pv > PA','PA > Pa > Pv','Pa > PA > Pv','Pv > Pa > PA'],
+   answer:1,
+   feedback:'Na Zona 1 de West: PA > Pa > Pv. Isto significa que a pressão alveolar é maior que a pressão arterial pulmonar — os capilares são comprimidos pelos alvéolos e COLAPSAM. Na prática, a Zona 1 quase não existe em condições normais (a pressão arterial chega ao topo do pulmão), mas surge em estados de choque ou hemorragia! É "espaço morto alveolar".'},
+
+  {id:22,ch:3,type:'mc',level:'medium',
+   text:'Em qual zona de West é a perfusão mais abundante e relativamente independente da pressão alveolar?',
+   opts:['Zona 1','Zona 2','Zona 3','Zona 4'],
+   answer:2,
+   feedback:'Na ZONA 3 de West (bases pulmonares): Pa > Pv > PA. A pressão arterial e venosa superam a pressão alveolar — os capilares estão sempre abertos e a perfusão é máxima e contínua. É por isso que as bases pulmonares têm mais perfusão que os ápices. Quando um doente tem pneumonia, costuma ser nas bases (mais perfundidas = mais expostas a bactérias do sangue)!'},
+
+  {id:23,ch:3,type:'tf',level:'medium',
+   text:'O rácio ventilação/perfusão (V/Q) é mais alto nos ápices do que nas bases pulmonares em posição ereta.',
+   answer:true,
+   feedback:'VERDADEIRO! Nos ápices: menos ventilação e MUITO menos perfusão (por efeito gravitacional), mas a perfusão diminui mais do que a ventilação → V/Q > 1 (típico ~3.3). Nas bases: muita ventilação e muita perfusão, mas a perfusão é relativamente maior → V/Q < 1 (típico ~0.63). Esta heterogeneidade V/Q é a causa mais comum de hipoxémia na prática clínica!'},
+
+  {id:24,ch:3,type:'mc',level:'hard',
+   text:'Qual é o valor "ideal" do rácio ventilação-perfusão (V̇/Q̇) global nos pulmões?',
+   opts:['0.5','0.8','1.0','2.0'],
+   answer:1,
+   feedback:'O rácio V̇/Q̇ global ideal é ~0.8 (não 1.0!). Isto acontece porque a ventilação alveolar total (~4 L/min) é ligeiramente menor que o débito cardíaco (~5 L/min). V̇/Q̇ = 4/5 = 0.8. Este valor reflecte o facto de que, em média, há ligeiramente mais sangue do que ar — o que é fisiologicamente normal e eficiente!'},
+
+  {id:25,ch:3,type:'mc',level:'hard',
+   text:'Uma embolia pulmonar maciça que obstrua artérias da zona superior cria uma unidade alveolar com V/Q = ?',
+   opts:['0 (shunt)','0.8 (normal)','Infinito (espaço morto)','0.5'],
+   answer:2,
+   feedback:'Com embolia pulmonar: o alvéolo é VENTILADO (V > 0) mas NÃO é perfundido (Q = 0) → V/Q = INFINITO (espaço morto alveolar). O ar entra mas o sangue não chega — não há troca gasosa possível. A resposta fisiológica é broncoconstrição local (para redistribuir ventilação) e queda de CO₂ expirado. A gasometria mostra hipoxémia com hipocapnia!'},
+
+  {id:26,ch:3,type:'fill',level:'medium',
+   text:'Na Zona 2 de West, o fluxo sanguíneo é determinado pela diferença entre pressão _______ e pressão _______.',
+   answers:['arterial','alveolar'],
+   hint:'É a "válvula de água" da zona intermédia.',
+   feedback:'Na Zona 2: o fluxo depende de Pa - PA (pressão arterial MENOS pressão alveolar). É como uma "válvula Starling" — o fluxo aumenta progressivamente da base para o ápice desta zona, pois a Pa aumenta com a gravidade mas a PA permanece constante. É a zona com maior heterogeneidade de fluxo!'},
+
+  {id:27,ch:3,type:'mc',level:'medium',
+   text:'O efeito da gravidade nas zonas de West pode ser INVERTIDO artificialmente em qual situação clínica?',
+   opts:['Durante o exercício','Em decúbito dorsal (deitado de costas)','Na altitude','Durante a apneia'],
+   answer:1,
+   feedback:'Em DECÚBITO DORSAL, a gravidade redistribui: as bases posteriores passam a ser as mais dependentes e perfundidas (equivalente às "bases" normais), enquanto as regiões anteriores têm menos perfusão. É por isso que, em doentes com SDRA (Síndrome de Dificuldade Respiratória Aguda), a posição PRONA (de bruços) melhora a oxigenação — redistribui a perfusão para alvéolos não colapsados!'},
+
+  {id:28,ch:3,type:'mc',level:'hard',
+   text:'Qual mecanismo explica por que a PaO₂ alveolar é MAIOR nos ápices do que nas bases?',
+   opts:['Maior produção de O₂ nos ápices','Maior V/Q nos ápices, menos consumo local de O₂','Mais surfactante nos ápices','Menor espessura da membrana alveolo-capilar nos ápices'],
+   answer:1,
+   feedback:'Nos ápices, o V/Q elevado significa que há relativamente mais ar que sangue → menos O₂ é extraído por unidade de ar → PO₂ alveolar MAIS ALTA (~130 mmHg nos ápices vs. ~89 mmHg nas bases). Esta diferença tem implicações clínicas importantes: o Mycobacterium tuberculosis adora os ápices exactamente porque ali há mais O₂ e menos perfusão (menos defesas imunitárias)!'},
+
+  {id:29,ch:3,type:'tf',level:'easy',
+   text:'Em condições normais de repouso, a Zona 1 de West existe em indivíduos saudáveis.',
+   answer:false,
+   feedback:'FALSO! Em condições normais, a ZONA 1 de West PRATICAMENTE NÃO EXISTE em pessoas saudáveis — a pressão arterial pulmonar é suficiente para perfundir mesmo o ápice pulmonar. A Zona 1 só aparece patologicamente: em choque hipovolémico (Pa cai), com ventilação mecânica de alta pressão (PA sobe), ou em hemorragia grave. É uma "zona potencial"!'},
+
+  {id:30,ch:3,type:'match',level:'hard',
+   text:'Liga cada condição patológica ao efeito esperado no V/Q:',
+   left:['Embolia pulmonar','Atelectasia (alvéolo colapsado)','Pneumonia lobar','DPOC com enfisema'],
+   right:['V/Q = 0 (shunt)','V/Q heterogéneo, globalmente elevado','V/Q = infinito (espaço morto)','V/Q baixo (pus obstrui alvéolos)'],
+   correct:[2,0,3,1],
+   feedback:'Embolia pulmonar → V/Q = ∞ (ventilação sem perfusão). Atelectasia → V/Q = 0 (sangue sem ventilação = shunt puro). Pneumonia → V/Q muito baixo (exsudato preenche alvéolos). DPOC com enfisema → destruição alveolar e capilar, criando heterogeneidade V/Q global. Cada padrão tem gasometria característica!'},
+
+  // ========== CAPÍTULO 4: VOLUMES E CAPACIDADES ==========
+  {id:31,ch:4,type:'mc',level:'easy',
+   text:'O Volume Corrente (VC) é o volume de ar que entra e sai em cada respiração NORMAL. Qual é o seu valor típico num adulto em repouso?',
+   opts:['150 mL','500 mL','1200 mL','2500 mL'],
+   answer:1,
+   feedback:'O Volume Corrente (VC) ou Tidal Volume é ~500 mL em repouso. É o volume "base" da respiração tranquila. Desses 500 mL, ~150 mL ficam no espaço morto anatómico e apenas ~350 mL chegam aos alvéolos (ventilação alveolar por respiração). Com exercício intenso, o VC pode subir até 3000 mL!'},
+
+  {id:32,ch:4,type:'mc',level:'medium',
+   text:'O Volume de Reserva Expiratório (VRE) é o ar que se consegue expirar FORÇADAMENTE após uma expiração normal. Qual é o valor típico?',
+   opts:['150 mL','500 mL','1100-1200 mL','3000 mL'],
+   answer:2,
+   feedback:'O VRE é ~1100-1200 mL. É o ar que "reservamos" para expirações forçadas — como quando cantamos, tocamos um instrumento de sopro, ou fazemos esforço. Na DPOC e enfisema, o VRE está muito aumentado porque os pulmões estão hiperinsuflados e a CRF (Capacidade Residual Funcional) sobe.'},
+
+  {id:33,ch:4,type:'mc',level:'medium',
+   text:'Qual é o volume que NUNCA pode ser expirado, mesmo com esforço máximo?',
+   opts:['Volume Corrente','Volume de Reserva Inspiratório','Volume Residual','Capacidade Vital'],
+   answer:2,
+   feedback:'O VOLUME RESIDUAL (VR) ~1200 mL é o ar que permanece nos pulmões APÓS expiração máxima forçada. Não pode ser expirado voluntariamente porque as vias aéreas pequenas colapsam antes dos alvéolos esvaziarem (closing volume). O VR NÃO pode ser medido por espirometria simples — necessita de técnicas especiais como diluição de hélio ou pletismografia!'},
+
+  {id:34,ch:4,type:'fill',level:'medium',
+   text:'A Capacidade Pulmonar Total (CPT) é a soma de todos os volumes pulmonares. O valor típico no adulto é aproximadamente _______ litros.',
+   answers:['6','6 litros','seis'],
+   hint:'É a soma do VC + VRI + VRE + VR.',
+   feedback:'CPT ≈ 6 litros (ou 6000 mL). CPT = VC (500) + VRI (3100) + VRE (1200) + VR (1200) = ~6000 mL. A CPT é medida por pletismografia corporal (o "corpo inteiro" é medido numa câmara pressurizada). Doenças restritivas (fibrose) reduzem a CPT; a DPOC pode aumentá-la por hiperinsuflação!'},
+
+  {id:35,ch:4,type:'mc',level:'hard',
+   text:'A Capacidade Residual Funcional (CRF) representa o ponto de equilíbrio entre duas forças opostas. Quais são essas forças?',
+   opts:['Força do diafragma vs. peso dos pulmões','Tendência de retracção elástica dos pulmões (para dentro) vs. tendência de expansão da parede torácica (para fora)','Pressão alveolar vs. pressão atmosférica','Tensão superficial vs. pressão de surfactante'],
+   answer:1,
+   feedback:'A CRF (~2300-2500 mL) é o volume ao qual as forças elásticas dos pulmões (tendência a colapsar) e da parede torácica (tendência a expandir) se EQUILIBRAM. É o ponto de repouso natural do sistema respiratório. Em decúbito, a CRF diminui ~500-800 mL (o diafragma sobe). Na DPOC, a CRF sobe (pulmões com menos retracção elástica). Fundamental para anestesistas!'},
+
+  {id:36,ch:4,type:'mc',level:'easy',
+   text:'A Capacidade Vital (CV) é a quantidade máxima de ar que pode ser EXPIRADA após uma inspiração máxima. Qual o valor típico num homem adulto jovem?',
+   opts:['1.5 L','2.5 L','4.5-5 L','8 L'],
+   answer:2,
+   feedback:'A CV é ~4.5-5 litros no homem adulto jovem, ~3.5-4 litros na mulher. CV = VC + VRI + VRE = 500 + 3100 + 1200 = 4800 mL. A CV depende de: sexo (homem > mulher), altura (maior → CV maior), idade (diminui com o envelhecimento), posição corporal e doença pulmonar. É a medição fundamental da espirometria!'},
+
+  {id:37,ch:4,type:'tf',level:'medium',
+   text:'O VEMS (Volume Expiratório Máximo no 1.º Segundo) mede a VELOCIDADE de expiração forçada, não apenas o volume.',
+   answer:true,
+   feedback:'VERDADEIRO! O VEMS (ou FEV1 em inglês: Forced Expiratory Volume in 1 second) mede o volume expirado FORÇADAMENTE no PRIMEIRO SEGUNDO. É uma medida que reflecte simultaneamente volume E velocidade de fluxo. Normal: >80% do previsto. Na asma/DPOC (padrão obstrutivo), o VEMS cai porque as vias aéreas estreitas limitam o fluxo. Na fibrose (padrão restritivo), o VEMS cai proporcionalmente à CVF!'},
+
+  {id:38,ch:4,type:'mc',level:'hard',
+   text:'Um doente tem VEMS/CVF = 0.6 (60%). Este padrão espirométrico é característico de qual tipo de distúrbio?',
+   opts:['Padrão restritivo (ex: fibrose pulmonar)','Padrão obstrutivo (ex: DPOC, asma)','Padrão misto','Espirometria normal'],
+   answer:1,
+   feedback:'VEMS/CVF < 0.7 (70%) = PADRÃO OBSTRUTIVO! O VEMS cai mais do que a CVF, porque as vias aéreas estreitadas limitam o fluxo. Causas: DPOC, asma, bronquiectasias, bronquiolite. No padrão RESTRITIVO (fibrose, obesidade, cifoscoliose), o VEMS e a CVF caem proporcionalmente → VEMS/CVF NORMAL ou até elevado, mas CPT reduzida. O rácio VEMS/CVF é o divisor de águas diagnóstico!'},
+
+  {id:39,ch:4,type:'order',level:'medium',
+   text:'Ordena estas capacidades pulmonares, da MENOR para a MAIOR:',
+   items:['Capacidade Pulmonar Total (CPT)','Volume Corrente (VC)','Capacidade Residual Funcional (CRF)','Capacidade Vital (CV)'],
+   correct:[1,2,3,0],
+   feedback:'Do menor para o maior: VC (~0.5L) < CRF (~2.5L) < CV (~4.8L) < CPT (~6L). Memoriza: CPT = CV + VR; CRF = VRE + VR; CI (Capacidade Inspiratória) = VC + VRI. Estas relações são usadas constantemente em espirometria clínica!'},
+
+  {id:40,ch:4,type:'mc',level:'hard',
+   text:'O "closing volume" (volume de encerramento das vias aéreas) é clinicamente importante porque explica qual fenómeno?',
+   opts:['A razão do espaço morto','O colapso das vias aéreas pequenas durante a expiração, causando aprisionamento de ar','A hiperventilação durante o exercício','A produção de ruídos respiratórios'],
+   answer:1,
+   feedback:'O "closing volume" é o volume pulmonar abaixo do qual as vias aéreas pequenas (<1mm) começam a COLAPSAR durante a expiração. Em jovens saudáveis, o closing volume está abaixo da CRF — só ocorre no fim da expiração máxima. Com o envelhecimento ou doença, o closing volume sobe acima da CRF → as vias colapsam durante a respiração normal, causando aprisionamento de ar, shunts e hipoxémia. Explica a hipoxémia do idoso!'},
+
+  {id:41,ch:4,type:'fill',level:'hard',
+   text:'A equação que relaciona ventilação alveolar (V̇A), frequência respiratória (f) e volumes pulmonares é: V̇A = f × (VC - _______ )',
+   answers:['VD','espaço morto','Vd','espaço morto anatómico'],
+   hint:'É o volume que "desperdiça" cada respiração.',
+   feedback:'V̇A = f × (VC - VD), onde VD é o volume do espaço morto (~150 mL). Exemplo: f=15 rpm, VC=500 mL → V̇A = 15 × (500-150) = 15 × 350 = 5.250 mL/min = ~5.25 L/min. Se o doente respira rápido e superficial: f=30, VC=200 mL → V̇A = 30 × (200-150) = 30 × 50 = 1500 mL/min — apenas 1.5 L/min de ventilação alveolar útil! A respiração superficial rápida é perigosa!'},
+
+  {id:42,ch:4,type:'mc',level:'medium',
+   text:'Qual destes volumes NÃO pode ser medido directamente por espirometria simples?',
+   opts:['Volume Corrente','Volume de Reserva Inspiratório','Volume Residual','Volume de Reserva Expiratório'],
+   answer:2,
+   feedback:'O VOLUME RESIDUAL não pode ser medido por espirometria convencional porque é o ar que fica nos pulmões após expiração máxima — não consegue ser expirado para dentro do espirômetro. Para o medir são necessárias técnicas especiais: diluição de hélio (He), washout de azoto (N₂), ou pletismografia corporal. O VR é essencial para calcular a CPT e CRF verdadeiras!'},
+
+  // ========== CAPÍTULO 5: VENTILAÇÃO ALVEOLAR ==========
+  {id:43,ch:5,type:'mc',level:'medium',
+   text:'Se um doente tem frequência respiratória de 20 rpm e volume corrente de 400 mL, e o espaço morto é 150 mL, qual é a ventilação alveolar?',
+   opts:['4000 mL/min','5000 mL/min','8000 mL/min','2500 mL/min'],
+   answer:1,
+   feedback:'V̇A = f × (VC - VD) = 20 × (400 - 150) = 20 × 250 = 5000 mL/min = 5 L/min. Este é um valor limítrofe — o normal é ~4-5 L/min. Repara que a ventilação total seria 20 × 400 = 8000 mL/min, mas 3000 mL/min são "desperdiçados" no espaço morto. Esta diferença é crucial: a ventilação total não reflete a eficiência da troca gasosa!'},
+
+  {id:44,ch:5,type:'tf',level:'medium',
+   text:'Respirar muito rapidamente e com pequenos volumes (taquipneia superficial) é tão eficaz como respirar lentamente com volumes maiores.',
+   answer:false,
+   feedback:'FALSO! Respiração superficial e rápida é MUITO MENOS EFICAZ. Exemplo: Pessoa A: f=15, VC=500 → VA=15×350=5250 mL/min. Pessoa B: f=30, VC=250 → VA=30×100=3000 mL/min. Mesma ventilação total (7500 vs. 7500 mL/min), mas a ventilação ALVEOLAR é 43% menor! É por isso que a taquipneia superficial progride para insuficiência respiratória — o doente trabalha muito mas ventila pouco!'},
+
+  {id:45,ch:5,type:'mc',level:'hard',
+   text:'A equação dos gases alveolares (equação do alvéolo) diz que PAO₂ = PiO₂ - (PaCO₂/QR). O que representa "QR" (ou R)?',
+   opts:['Frequência respiratória','Quociente Respiratório (CO₂ produzido / O₂ consumido)','Resistência das vias aéreas','Pressão de vapor de água'],
+   answer:1,
+   feedback:'QR (ou R) é o QUOCIENTE RESPIRATÓRIO = VCO₂ / VO₂. Em repouso com dieta mista, R ≈ 0.8. A equação completa: PAO₂ = PiO₂ - (PaCO₂/R) = [FiO₂ × (Patm - PH₂O)] - (PaCO₂/0.8). Com FiO₂=21%, Patm=760mmHg: PAO₂ = 0.21×(760-47) - (40/0.8) = 0.21×713 - 50 = 149.7 - 50 ≈ 100 mmHg. Perfeito — exatamente o valor normal da PO₂ alveolar!'},
+
+  {id:46,ch:5,type:'mc',level:'medium',
+   text:'O gradiente alvéolo-arterial de O₂ [P(A-a)O₂] em adultos jovens saudáveis a respirar ar ambiente é aproximadamente:',
+   opts:['0 mmHg (sem gradiente)','5-15 mmHg','30-40 mmHg','50-60 mmHg'],
+   answer:1,
+   feedback:'O gradiente P(A-a)O₂ normal é ~5-15 mmHg em jovens. Aumenta com a idade (fórmula aproximada: 2.5 + 0.21 × idade). PAO₂ ≈ 100 mmHg, PaO₂ ≈ 95 mmHg → gradiente ≈ 5 mmHg. Este gradiente existe porque: 1) há desequilíbrio V/Q fisiológico, 2) há um pequeno shunt fisiológico (veias brônquicas e de Thebésio descarregam no lado esquerdo). Um gradiente >20-25 mmHg indica doença pulmonar!'},
+
+  {id:47,ch:5,type:'fill',level:'hard',
+   text:'A hipoventilação alveolar pura (sem doença pulmonar intrínseca) produz um gradiente P(A-a)O₂ _______.',
+   answers:['normal','0','igual ao normal','inalterado'],
+   hint:'Se os pulmões estão saudáveis, apenas a ventilação está reduzida.',
+   feedback:'Na hipoventilação PURA, o gradiente P(A-a)O₂ é NORMAL (~5-15 mmHg). Porquê? Porque os pulmões estão saudáveis — a difusão e o V/Q são normais. A hipoxémia ocorre porque a PAO₂ cai (menos ventilação = menos O₂ no alvéolo), e a PaO₂ acompanha essa queda proporcionalmente. Causas: depressão do centro respiratório por opioides, lesão medular, síndrome de obesidade-hipoventilação.'},
+
+  {id:48,ch:5,type:'mc',level:'medium',
+   text:'A ventilação alveolar e a PaCO₂ têm uma relação:',
+   opts:['Directamente proporcional (quando uma sobe a outra sobe)','Inversamente proporcional (quando uma sobe a outra desce)','Independente','Logarítmica'],
+   answer:1,
+   feedback:'PaCO₂ é INVERSAMENTE proporcional à ventilação alveolar: PaCO₂ = (VCO₂ × k) / V̇A. Se V̇A duplica → PaCO₂ fica metade. Se V̇A cai 50% → PaCO₂ duplica! É por isso que a PaCO₂ é o MELHOR indicador de ventilação alveolar: PaCO₂ normal (35-45 mmHg) = ventilação adequada; PaCO₂ alto = hipoventilação; PaCO₂ baixo = hiperventilação. O CO₂ é o "termómetro" da ventilação!'},
+
+  {id:49,ch:5,type:'mc',level:'hard',
+   text:'Um doente tem: PaCO₂ = 80 mmHg, PAO₂ = 50 mmHg, PaO₂ = 45 mmHg. O gradiente P(A-a)O₂ é ~5 mmHg. Qual é o mecanismo principal de hipoxémia?',
+   opts:['Shunt intrapulmonar','Hipoventilação alveolar pura','Desequilíbrio V/Q','Defeito de difusão'],
+   answer:1,
+   feedback:'Gradiente P(A-a)O₂ NORMAL + PaCO₂ muito elevado = HIPOVENTILAÇÃO PURA! Os pulmões estão saudáveis (gradiente normal), mas a ventilação está criticamente reduzida. A PaCO₂=80 mmHg confirma hipoventilação grave (normal: 35-45). Causas a pensar: overdose de opioides, crise miasténica, síndrome de Guillan-Barré. Tratamento: reverter a causa + suporte ventilatório (VNPP ou entubação)!'},
+
+  {id:50,ch:5,type:'tf',level:'hard',
+   text:'A administração de oxigénio a 100% (FiO₂=1.0) corrige completamente a hipoxémia causada por shunt intrapulmonar puro.',
+   answer:false,
+   feedback:'FALSO! O shunt puro (V/Q=0: alvéolo não ventilado com sangue a passar) é a única causa de hipoxémia que NÃO responde ao oxigénio a 100%! Porquê? O sangue que passa pelo shunt nunca entra em contacto com o ar alveolar, por mais rico em O₂ que seja. Apenas shunts >30% causam hipoxémia refractária ao O₂. Causas: SDRA, atelectasia maciça, malformações arteriovenosas. Contraste: todas as outras causas de hipoxémia MELHORAM com O₂!'},
+
+  {id:51,ch:5,type:'mc',level:'medium',
+   text:'O espaço morto FISIOLÓGICO difere do espaço morto ANATÓMICO porque inclui:',
+   opts:['O volume dos bronquíolos terminais','Os alvéolos ventilados mas não perfundidos (alvéolos com V/Q elevado)','O volume corrente','As vias aéreas superiores'],
+   answer:1,
+   feedback:'Espaço morto FISIOLÓGICO = espaço morto ANATÓMICO (vias de condução, ~150 mL) + espaço morto ALVEOLAR (alvéolos ventilados mas não perfundidos). Em pessoas saudáveis, o espaço morto alveolar é mínimo (~0-5 mL). Mas em embolia pulmonar, DPOC grave ou choque, o espaço morto alveolar pode aumentar dramaticamente, tornando o espaço morto fisiológico muito maior que o anatómico. A equação de Bohr calcula-o!'},
+
+  {id:52,ch:5,type:'mc',level:'hard',
+   text:'A equação de Bohr para calcular o espaço morto fisiológico (VD/VT) usa qual medição do CO₂?',
+   opts:['PaCO₂ arterial e PETCO₂ do gás expirado final','PaO₂ e PAO₂','PaCO₂ e PvCO₂','FiO₂ e FeCO₂'],
+   answer:0,
+   feedback:'A equação de Bohr modificada: VD/VT = (PaCO₂ - PETCO₂) / PaCO₂. Onde PaCO₂ = CO₂ arterial (reflecte alvéolos perfundidos) e PETCO₂ = CO₂ no gás expirado final (mistura de alvéolos com e sem perfusão). Se PaCO₂ = PETCO₂ → sem espaço morto alveolar (VD/VT = 0). Normal: VD/VT ~0.3. Na embolia: VD/VT pode subir para 0.5-0.6! É usada em UCI para monitorizar doentes ventilados.'},
+
+  // ========== CAPÍTULO 6: PRESSÕES DE GASES ==========
+  {id:53,ch:6,type:'mc',level:'easy',
+   text:'A PaO₂ (pressão parcial de O₂ arterial) normal num adulto jovem a respirar ar ambiente ao nível do mar é:',
+   opts:['60 mmHg','80 mmHg','95-100 mmHg','150 mmHg'],
+   answer:2,
+   feedback:'PaO₂ normal = 80-100 mmHg (mais especificamente ~95 mmHg em jovens). Decresce com a idade: ~80-85 mmHg aos 70 anos. Abaixo de 60 mmHg = HIPOXÉMIA clinicamente significativa (corresponde ao joelho da curva de dissociação da hemoglobina — saturação cai abruptamente!). Acima de 500 mmHg (com FiO₂ alto) = risco de toxicidade pelo oxigénio!'},
+
+  {id:54,ch:6,type:'mc',level:'easy',
+   text:'O valor normal da PaCO₂ (pressão parcial de CO₂ arterial) é:',
+   opts:['20-25 mmHg','35-45 mmHg','50-60 mmHg','70-80 mmHg'],
+   answer:1,
+   feedback:'PaCO₂ normal = 35-45 mmHg. PaCO₂ < 35 = hipocapnia/alcalose respiratória (hiperventilação). PaCO₂ > 45 = hipercapnia/acidose respiratória (hipoventilação). O CO₂ é o principal regulador do pH sanguíneo e do drive respiratório central. Um aumento de apenas 1 mmHg de PaCO₂ aumenta a ventilação em ~1-3 L/min — o quimiorreceptor central é extremamente sensível ao CO₂!'},
+
+  {id:55,ch:6,type:'tf',level:'medium',
+   text:'A lei de Henry afirma que a quantidade de gás dissolvido num líquido é directamente proporcional à pressão parcial desse gás.',
+   answer:true,
+   feedback:'VERDADEIRO! Lei de Henry (1803): [gás dissolvido] = K × P. Para o O₂: 0.003 mL/dL/mmHg. Então, a PaO₂ de 100 mmHg dissolve 0.3 mL O₂/dL sangue. Mas o sangue transporta ~20 mL O₂/dL (quase tudo ligado à hemoglobina)! É por isso que a hemoglobina é vital — sem ela, precisaríamos de PO₂ de 6000 mmHg para transportar O₂ suficiente. A lei de Henry também explica a doença de descompressão nos mergulhadores (N₂ dissolvido sob alta pressão)!'},
+
+  {id:56,ch:6,type:'mc',level:'medium',
+   text:'A pressão total do ar atmosférico ao nível do mar é 760 mmHg. Qual é a pressão parcial de O₂ (PiO₂) no ar INSPIRADO (depois de humidificado)?',
+   opts:['160 mmHg','150 mmHg','100 mmHg','40 mmHg'],
+   answer:1,
+   feedback:'PiO₂ = FiO₂ × (Patm - PH₂O) = 0.21 × (760 - 47) = 0.21 × 713 = ~150 mmHg. Subtrai-se 47 mmHg porque o vapor de água nas vias aéreas humidificadas tem pressão de 47 mmHg a 37°C, "diluindo" o O₂. Na altitude (Everest, 8848m, Patm≈253 mmHg): PiO₂ = 0.21 × (253-47) = 43 mmHg — quase impossível manter vida sem aclimatação!'},
+
+  {id:57,ch:6,type:'fill',level:'hard',
+   text:'A lei de Dalton (lei das pressões parciais) afirma que a pressão total de uma mistura de gases é igual à _______ das pressões parciais de cada gás.',
+   answers:['soma','adição','somatório'],
+   hint:'P_total = P_O₂ + P_N₂ + P_CO₂ + ...',
+   feedback:'Lei de Dalton: P_total = ΣP_parciais. No ar atmosférico: 760 = PO₂(160) + PN₂(600) + PCO₂(0.3) + PH₂O(5.7 mmHg ambiente). Cada gás comporta-se INDEPENDENTEMENTE dos outros. Esta lei é fundamental em anestesia (cálculo de gases anestésicos), medicina hiperbárica e fisiologia do mergulho. John Dalton formulou-a em 1801 — e ainda é diariamente usada em UCI!'},
+
+  {id:58,ch:6,type:'mc',level:'hard',
+   text:'Na curva de dissociação da hemoglobina-O₂ (curva de Barcroft), quando a curva se DESLOCA PARA A DIREITA significa que:',
+   opts:['A hemoglobina liberta menos O₂ nos tecidos','A hemoglobina liberta MAIS O₂ nos tecidos (menor afinidade para O₂)','A saturação aumenta para a mesma PO₂','Há mais hemoglobina no sangue'],
+   answer:1,
+   feedback:'Desvio PARA A DIREITA = menor afinidade da Hb para O₂ = mais O₂ libertado nos tecidos (P50 aumenta). Causas: ↑temperatura, ↑CO₂ (efeito Bohr), ↑H+ (acidose), ↑2,3-DPG. Faz sentido fisiologicamente: nos tecidos activos (↑temp, ↑CO₂, ↑H+), queremos que a Hb liberte mais O₂. Desvio para a ESQUERDA = maior afinidade = menos libertação (fetal HbF, CO, hipotermia, alcalose).'},
+
+  {id:59,ch:6,type:'mc',level:'medium',
+   text:'Qual é a PO₂ aproximada à qual a hemoglobina está saturada a 50% (P50)?',
+   opts:['20 mmHg','27 mmHg','50 mmHg','80 mmHg'],
+   answer:1,
+   feedback:'P50 = 27 mmHg nas condições normais (pH 7.4, 37°C, 2,3-DPG normal). É um marcador padrão da posição da curva de dissociação. À PaO₂ de 100 mmHg (sangue arterial), a SaO₂ é ~97%. À PvO₂ de 40 mmHg (sangue venoso), a SvO₂ é ~75%. Isto significa que os tecidos "extraem" ~22% do O₂ transportado (diferença arteriovenosa normal). No exercício intenso, SvO₂ pode cair para 20%!'},
+
+  {id:60,ch:6,type:'tf',level:'medium',
+   text:'O dióxido de carbono (CO₂) é transportado no sangue principalmente como CO₂ dissolvido.',
+   answer:false,
+   feedback:'FALSO! O CO₂ é transportado maioritariamente como BICARBONATO (HCO₃⁻) — ~70% do total. CO₂ + H₂O → H₂CO₃ → H⁺ + HCO₃⁻ (catalisado pela anidrase carbónica nos eritrócitos). ~23% transportado ligado à hemoglobina (carbamino-hemoglobina). Apenas ~7% dissolvido directamente. Esta distribuição é fundamental para entender o sistema tampão do sangue e a gasometria arterial!'},
+
+  {id:61,ch:6,type:'mc',level:'hard',
+   text:'A "tensão de superfície" nos alvéolos tende a colapsar os alvéolos mais pequenos. Qual lei física explica por que um alvéolo pequeno tem maior pressão de colapso que um alvéolo grande?',
+   opts:['Lei de Fick','Lei de Laplace','Lei de Henry','Lei de Boyle'],
+   answer:1,
+   feedback:'Lei de LAPLACE: P = 2T/r (para esferas com duas superfícies) ou P = 4T/r (para bolhas). Pressão = 2 × Tensão superficial / raio. Quanto MENOR o raio, MAIOR a pressão interna → tendência maior a colapsar para o alvéolo maior (instabilidade de Laplace)! O surfactante resolve isto: reduz T de forma não linear — é mais eficaz nos alvéolos pequenos (quando comprimido, reduz mais a T). Sem surfactante (SDRN), todos os alvéolos pequenos colapsam!'},
+
+  {id:62,ch:6,type:'mc',level:'hard',
+   text:'Qual é o valor aproximado do pH sanguíneo arterial normal?',
+   opts:['7.25-7.30','7.35-7.45','7.50-7.60','6.80-6.90'],
+   answer:1,
+   feedback:'pH arterial normal = 7.35-7.45 (média 7.40). pH < 7.35 = acidemia; pH > 7.45 = alcalemia. Esta faixa estreita é mantida pelo sistema tampão bicarbonato/CO₂ (pKa≈6.1): pH = 6.1 + log([HCO₃⁻] / 0.03 × PaCO₂) — equação de Henderson-Hasselbalch. Variações de apenas 0.1 unidades de pH alteram radicalmente a actividade enzimática, função cardíaca e coagulação!'},
+
+  {id:63,ch:6,type:'fill',level:'medium',
+   text:'A lei de Fick para difusão diz que o fluxo de gás é proporcional à área de superfície, à diferença de pressão parcial, e INVERSAMENTE proporcional à _______.',
+   answers:['espessura','distância','espessura da membrana'],
+   hint:'Quanto mais grossa a parede, mais difícil difundir.',
+   feedback:'Lei de Fick: Fluxo = (A × D × ΔP) / ESPESSURA. D = coeficiente de difusão (CO₂ difunde 20× mais fácil que O₂, apesar da menor pressão parcial!). Na fibrose pulmonar, a espessura da membrana alveolo-capilar aumenta drasticamente → difusão diminui → hipoxémia (piora com exercício). Na pneumonia, exsudato preenche os alvéolos, aumentando a "distância" de difusão.'},
+
+  {id:64,ch:6,type:'match',level:'hard',
+   text:'Liga cada valor gasométrico ao seu significado clínico:',
+   left:['PaCO₂ = 60 mmHg','pH = 7.25, HCO₃⁻ = 10 mEq/L','PaO₂ = 50 mmHg','pH = 7.55, PaCO₂ = 28 mmHg'],
+   right:['Alcalose respiratória (ex: ansiedade, TEP)','Acidose metabólica (ex: CAD, choque)','Hipercapnia / hipoventilação','Hipoxémia moderada-grave'],
+   correct:[2,1,3,0],
+   feedback:'PaCO₂=60 = hipercapnia = hipoventilação (insuficiência respiratória tipo II). pH=7.25+HCO₃⁻=10 = acidose METABÓLICA (bicarbonato muito baixo). PaO₂=50 = hipoxémia grave (≤60 = insuficiência respiratória tipo I). pH=7.55+PaCO₂=28 = alcalose RESPIRATÓRIA por hiperventilação. Reconhecer estes padrões gasométricos é uma competência clínica fundamental!'},
+
+  // ========== CAPÍTULO 7: MÚSCULOS DA RESPIRAÇÃO ==========
+  {id:65,ch:7,type:'mc',level:'easy',
+   text:'Qual é o principal músculo da inspiração?',
+   opts:['Esternocleidomastóideo','Diafragma','Músculo recto abdominal','Grande peitoral'],
+   answer:1,
+   feedback:'O DIAFRAGMA é o motor principal da respiração, responsável por 70-80% do trabalho inspiratório em repouso. Em contracção, o diafragma DESCE (aplana-se), aumentando o volume torácico → pressão intrapleural fica mais negativa → pulmões expandem → ar entra (lei de Boyle). Inervado pelo nervo frénico (C3, C4, C5). "C3,4,5 keep the diaphragm alive" — rima clínica essencial!'},
+
+  {id:66,ch:7,type:'mc',level:'medium',
+   text:'Os músculos intercostais EXTERNOS têm qual papel na respiração?',
+   opts:['São músculos exclusivamente expiratórios','São músculos acessórios da inspiração (elevam as costelas)','São músculos que apenas estabilizam o tórax','Não participam na respiração normal'],
+   answer:1,
+   feedback:'Os intercostais EXTERNOS são INSPIRATÓRIOS: elevam as costelas durante a inspiração forçada, expandindo o tórax antero-posteriormente (movimento em "alça de balde"). Os intercostais INTERNOS são expiratórios: deprimem as costelas na expiração forçada. Em repouso, a expiração é PASSIVA (retracção elástica dos pulmões) — os intercostais internos só actuam activamente no exercício ou na tosse!'},
+
+  {id:67,ch:7,type:'tf',level:'medium',
+   text:'A expiração em repouso é um processo ACTIVO que requer contracção muscular.',
+   answer:false,
+   feedback:'FALSO! A expiração em repouso é PASSIVA — resulta apenas da retracção elástica dos pulmões e da parede torácica quando os músculos inspiratórios relaxam. Não precisa de contracção muscular activa! A expiração só se torna ACTIVA durante: exercício intenso, tosse, espirros, fala, canto, e em doentes com DPOC que têm de usar músculos abdominais e intercostais internos para expirar contra a obstrução das vias aéreas.'},
+
+  {id:68,ch:7,type:'mc',level:'medium',
+   text:'Qual é o nervo que inerva o diafragma?',
+   opts:['Nervo vago (X par craniano)','Nervo frénico (C3-C5)','Nervo intercostal (T1-T12)','Nervo hipoglosso'],
+   answer:1,
+   feedback:'O nervo FRÉNICO (C3, C4, C5) inerva o diafragma. Origem na medula cervical C3-C5. Percorre o mediastino ao longo do pericárdio para chegar ao diafragma. Lesão cervical acima de C3 = apneia (necessita ventilação mecânica permanente). Lesão entre C3-C5 = paresia ou paralisia diafragmática. A paralisia unilateral do frénico eleva o hemidiafragma no Rx tórax — sinal diagnóstico importante!'},
+
+  {id:69,ch:7,type:'mc',level:'hard',
+   text:'Os músculos escalenos têm papel na respiração. O que fazem especificamente?',
+   opts:['Deprimem a 1.ª e 2.ª costelas na expiração','Elevam as 1.ª e 2.ª costelas durante a inspiração forçada','Rodam a coluna cervical durante a respiração','Comprimem o abdómen durante a expiração forçada'],
+   answer:1,
+   feedback:'Os ESCALENOS (anterior, médio e posterior) originam-se nas vértebras cervicais C3-C7 e inserem-se nas 1.ª e 2.ª costelas. Na inspiração FORÇADA, elevam as primeiras costelas, expandindo o ápice do tórax. São músculos ACESSÓRIOS da inspiração — activos durante o exercício intenso, dispneia ou insuficiência respiratória aguda. Quando se vê uso dos escalenos em repouso, é sinal de trabalho respiratório aumentado (alarme clínico)!'},
+
+  {id:70,ch:7,type:'mc',level:'easy',
+   text:'O sinal clínico de "uso de músculos acessórios" na dispneia indica:',
+   opts:['Que o doente respira normalmente','Que o diafragma está sobrecarregado e outros músculos são recrutados','Que o doente está em apneia','Que há obstipação intestinal'],
+   answer:1,
+   feedback:'Uso de músculos ACESSÓRIOS (esternocleidomastóideo, escalenos, trapézio) visíveis durante a respiração = sinal de sofrimento respiratório grave! Indica que o diafragma e intercostais já não são suficientes — o corpo recrutou músculos extra para manter a ventilação. É um sinal de alarme clínico: o doente pode entrar em fadiga respiratória e parar de respirar! Avalia-se a necessidade de suporte ventilatório urgente.'},
+
+  {id:71,ch:7,type:'fill',level:'medium',
+   text:'O músculo _______ é visível no pescoço durante a dispneia grave e é o mais importante dos músculos acessórios da inspiração.',
+   answers:['esternocleidomastóideo','ECM','esternocleidoastóideo'],
+   hint:'Está no lado do pescoço, da orelha ao esterno.',
+   feedback:'O ESTERNOCLEIDOMASTÓIDEO (ECM) é o principal músculo acessório da inspiração visível clinicamente. Vai do processo mastóide (atrás da orelha) ao esterno e clavícula. Em contracção bilateral, eleva o esterno e expande o tórax superior. Quando se vê o ECM a "bombar" com cada respiração, é emergência respiratória. Também serve de referência para cateterização da veia jugular interna!'},
+
+  {id:72,ch:7,type:'mc',level:'hard',
+   text:'Na respiração PARADOXAL (movimento paradoxal do tórax/abdómen), o abdómen retrai durante a inspiração em vez de expandir. Que estrutura está provavelmente comprometida?',
+   opts:['Músculos intercostais','Diafragma (paralisia bilateral)','Músculos escalenos','Músculos abdominais'],
+   answer:1,
+   feedback:'Respiração PARADOXAL com abdómen retraindo na inspiração = PARALISIA DO DIAFRAGMA BILATERAL! Normalmente, o diafragma desce na inspiração → empurra o abdómen para fora. Com paralisia diafragmática bilateral, os músculos acessórios criam pressão negativa intrapleural, mas o diafragma flácido é EMPURRADO PARA CIMA (como um balão vazio) → o abdómen retrai. É uma emergência ventilatória — o doente precisa de ventilação mecânica!'},
+
+  {id:73,ch:7,type:'mc',level:'medium',
+   text:'Durante uma TOSSE eficaz, qual é a sequência correcta de eventos musculares?',
+   opts:['Inspiração → glote fecha → músculos expiratórios contraem com glote fechada → glote abre abruptamente','Glote abre → expiração passiva → inspiração','Expiração forçada com glote aberta desde o início','Contracção diafragmática continua durante toda a tosse'],
+   answer:0,
+   feedback:'Sequência da tosse: 1) Inspiração profunda (VC aumentado), 2) Fecho glótico reflexo, 3) Contracção explosiva dos músculos expiratórios (intercostais internos + abdominais) → pressão intrapleural sobe até 300 mmHg! 4) Abertura abrupta da glote → ar explode a velocidades de 300-400 km/h (a velocidade de um avião!). Esta velocidade arrasta muco e corpos estranhos. Doentes com paralisia glótica ou fraqueza muscular têm tosse ineficaz → risco de pneumonia de aspiração!'},
+
+  {id:74,ch:7,type:'tf',level:'hard',
+   text:'Os músculos abdominais (recto abdominal, oblíquos) participam na expiração forçada mas não na respiração normal em repouso.',
+   answer:true,
+   feedback:'VERDADEIRO! Os músculos abdominais são expiratórios acessórios — activos apenas na expiração FORÇADA (tosse, espirro, exercício intenso, vómito, parto). Em repouso, a expiração é passiva. No doente com DPOC grave, os músculos abdominais são visíveis a contrair em cada expiração — tentam esvaziar os pulmões hiperinsuflados contra as vias aéreas colapsadas. É sinal de trabalho respiratório muito aumentado.'},
+
+  {id:75,ch:7,type:'match',level:'medium',
+   text:'Liga cada músculo ao seu papel principal na respiração:',
+   left:['Diafragma','Intercostais internos','Esternocleidomastóideo','Músculos abdominais'],
+   right:['Expiração forçada (comprimem abdómen)','Principal músculo inspiratório (70-80% do trabalho)','Músculo acessório inspiratório (urgência)','Expiração activa forçada (deprimem costelas)'],
+   correct:[1,3,2,0],
+   feedback:'Diafragma → principal inspiratório. Intercostais internos → expiração forçada activa. ECM → músculo acessório inspiratório (só activo em dispneia). Abdominais → expiração forçada (comprimem vísceras e empurram diafragma para cima). Esta hierarquia muscular é importante para planear a ventilação mecânica e avaliar a probabilidade de desmame ventilatório!'},
+
+  // ========== CAPÍTULO 8: TROCA GASOSA & CLÍNICA ==========
+  {id:76,ch:8,type:'mc',level:'medium',
+   text:'A insuficiência respiratória TIPO I (hipoxémica) caracteriza-se por:',
+   opts:['PaO₂ baixa com PaCO₂ ALTA','PaO₂ baixa com PaCO₂ NORMAL ou BAIXA','PaO₂ normal com PaCO₂ alta','PaO₂ alta com PaCO₂ normal'],
+   answer:1,
+   feedback:'Insuficiência respiratória TIPO I: PaO₂ < 60 mmHg + PaCO₂ ≤ 45 mmHg. O pulmão "falha" na oxigenação mas não na ventilação (elimina CO₂ normalmente ou mesmo em excesso por hiperventilação compensatória). Causas: pneumonia, SDRA, edema pulmonar, TEP. Mecanismos: shunt, desequilíbrio V/Q, defeito de difusão. Responde ao O₂ suplementar (excepto shunt puro).'},
+
+  {id:77,ch:8,type:'mc',level:'medium',
+   text:'A insuficiência respiratória TIPO II (hipercápnica) caracteriza-se por:',
+   opts:['PaO₂ normal com PaCO₂ alta','PaO₂ baixa com PaCO₂ ALTA (> 45 mmHg)','PaO₂ alta com PaCO₂ alta','Apenas hipercapnia sem alteração do pH'],
+   answer:1,
+   feedback:'Insuficiência respiratória TIPO II: PaO₂ < 60 mmHg + PaCO₂ > 45 mmHg. O pulmão falha na VENTILAÇÃO (bomba ventilatória insuficiente ou vias aéreas obstruídas). Causas: DPOC exacerbada, crise asmática grave, exaustão muscular, depressão do SNC, fraqueza neuromuscular (Guillan-Barré, miastenia). Tratamento: corrigir a causa + suporte ventilatório (VNPP ou entubação traqueal)!'},
+
+  {id:78,ch:8,type:'tf',level:'medium',
+   text:'A DPOC (Doença Pulmonar Obstrutiva Crónica) é caracterizada por uma espirometria com padrão RESTRITIVO.',
+   answer:false,
+   feedback:'FALSO! A DPOC tem padrão OBSTRUTIVO: VEMS/CVF < 0.7 após broncodilatação. A obstrução é causada por: enfisema (destruição dos alvéolos e perda de retracção elástica → colapso precoce das vias aéreas) + bronquite crónica (inflamação e hipersecreção mucosa nas vias aéreas). O padrão RESTRITIVO (CPT reduzida) é da fibrose pulmonar, obesidade, doenças pleurais. Esta distinção orienta completamente o tratamento!'},
+
+  {id:79,ch:8,type:'mc',level:'hard',
+   text:'Na SDRA (Síndrome de Dificuldade Respiratória Aguda), o mecanismo principal de hipoxémia é:',
+   opts:['Hipoventilação','Shunt intrapulmonar por colapso alveolar difuso','Defeito de difusão isolado','Espaço morto alveolar aumentado'],
+   answer:1,
+   feedback:'Na SDRA, o mecanismo principal é o SHUNT: inflamação grave → lesão da membrana alveolo-capilar → exsudato proteico inunda os alvéolos → colapso alveolar difuso → V/Q = 0 em zonas extensas. A hipoxémia refractária ao O₂ é marca da SDRA. Critérios de Berlim: PaO₂/FiO₂ < 300 + opacidades bilaterais no RX + início agudo. Tratamento inclui posição prona, ventilação protetora e, em casos graves, ECMO!'},
+
+  {id:80,ch:8,type:'mc',level:'medium',
+   text:'O índice PaO₂/FiO₂ (P/F ratio) é usado para classificar a gravidade da SDRA. Um valor de PaO₂/FiO₂ < 100 indica:',
+   opts:['SDRA leve','SDRA moderada','SDRA grave','Ausência de SDRA'],
+   answer:2,
+   feedback:'Classificação de Berlim da SDRA: Leve: PaO₂/FiO₂ 200-300 mmHg. Moderada: PaO₂/FiO₂ 100-200 mmHg. GRAVE: PaO₂/FiO₂ < 100 mmHg. Exemplo: PaO₂=60, FiO₂=1.0 → P/F=60 = SDRA grave. Estes doentes têm mortalidade >40% e frequentemente necessitam de ECMO (Oxigenação por Membrana Extracorpórea). O índice P/F é medido com PEEP ≥5 cmH₂O em ventilação mecânica!'},
+
+  {id:81,ch:8,type:'mc',level:'hard',
+   text:'O teste de administração de oxigénio a 100% (teste de hiperoxia) é útil para distinguir hipoxémia por:',
+   opts:['Distúrbio V/Q vs. Shunt puro','Hipoventilação vs. Hiperventilação','Fibrose vs. DPOC','Pneumonia vs. TEP'],
+   answer:0,
+   feedback:'Com O₂ a 100%: desequilíbrio V/Q → PaO₂ sobe muito (>400 mmHg), shunt puro → PaO₂ sobe pouco (<300 mmHg mesmo com FiO₂=1.0). Regra prática: se PaO₂ < 300 mmHg com FiO₂=100%, o shunt é >15-20% do débito cardíaco. Causas de shunt puro: SDRA, atelectasia maciça, malformações arteriovenosas, síndrome hepatopulmonar. O teste não é perfeito mas é rápido e clinicamente útil!'},
+
+  {id:82,ch:8,type:'tf',level:'medium',
+   text:'Na embolia pulmonar maciça, a gasometria típica mostra hipoxémia COM hipercapnia (PaCO₂ elevada).',
+   answer:false,
+   feedback:'FALSO! Na embolia pulmonar AGUDA, o padrão típico é: hipoxémia (PaO₂ baixa) + HIPOCAPNIA (PaCO₂ baixa) + alcalose respiratória. Porquê? A embolia cria espaço morto alveolar → o sensor de CO₂ detecta aumento do CO₂ → drive respiratório aumenta → hiperventilação compensatória → CO₂ desce. A hipercapnia só aparece em fases terminais quando o doente entra em exaustão e fadiga muscular. Hipoxémia + hipocapnia = sinal de alerta para TEP!'},
+
+  {id:83,ch:8,type:'mc',level:'hard',
+   text:'Qual mecanismo explica a hipoxémia na pneumonia bacteriana lobar?',
+   opts:['Espaço morto alveolar','Shunt intrapulmonar (V/Q = 0 na área consolidada)','Defeito de difusão','Hipoventilação central'],
+   answer:1,
+   feedback:'Na pneumonia lobar, os alvéolos estão preenchidos com pus e exsudato → V/Q = 0 (sangue passa mas não há ventilação) = SHUNT. O sangue que passa pelos alvéolos consolidados não é oxigenado → mistura com sangue oxigenado → PaO₂ cai. Por isso a pneumonia lobar causa hipoxémia que pode ser refractária ao O₂ (shunt). Adicionalmente, a febre aumenta o consumo de O₂ → pior situação. Antibióticos + O₂ suplementar ± suporte ventilatório!'},
+
+  {id:84,ch:8,type:'mc',level:'medium',
+   text:'O trombo emboligénico mais comum na embolia pulmonar tem origem em:',
+   opts:['Artérias coronárias','Veias profundas dos membros inferiores (TVP)','Artérias pulmonares','Câmaras direitas do coração em doentes com fibrilhação auricular'],
+   answer:1,
+   feedback:'~90% dos êmbolos pulmonares têm origem em TVP (Trombose Venosa Profunda) dos membros inferiores — especialmente veias poplíteas, femorais e ilíacas. A tríade de Virchow (estase, hipercoagulabilidade, lesão endotelial) predispõe à TVP → trombo emboliza para pulmão. Factores de risco: cirurgia ortopédica major, imobilização prolongada, neoplasia, gravidez, trombofilia. Profilaxia com HBPM (Heparina de Baixo Peso Molecular) é mandatória no doente cirúrgico!'},
+
+  {id:85,ch:8,type:'fill',level:'hard',
+   text:'O "gradiente alvéolo-arterial" aumentado (>20 mmHg) indica que a hipoxémia tem origem numa causa _______ (não é mera hipoventilação).',
+   answers:['pulmonar','intrapulmonar','dentro do pulmão'],
+   hint:'O pulmão em si tem um problema.',
+   feedback:'Gradiente P(A-a)O₂ aumentado = problema INTRAPULMONAR: shunt, desequilíbrio V/Q, ou defeito de difusão. Gradiente NORMAL = hipoventilação pura (os pulmões estão sãos). Esta distinção é feita à beira do doente com uma simples gasometria! Exemplo: doente sedado com opioides (gradiente normal → hipoventilação central) vs. doente com pneumonia (gradiente aumentado → shunt intrapulmonar).'},
+
+  {id:86,ch:8,type:'match',level:'hard',
+   text:'Liga cada doença ao seu padrão espirométrico:',
+   left:['DPOC','Fibrose pulmonar idiopática','Asma grave não reversível','Obesidade mórbida'],
+   right:['Restritivo (CPT reduzida, VEMS/CVF normal/alto)','Obstrutivo irreversível pós-BD (VEMS/CVF < 0.7)','Obstrutivo reversível pós-BD','Restritivo extratorácico (CPT diminuída por limitação mecânica)'],
+   correct:[1,0,2,3],
+   feedback:'DPOC → obstrutivo irreversível (VEMS/CVF <0.7 que não reverte com broncodilatador). Fibrose → restritivo (CPT<80%, VEMS/CVF alto). Asma → obstrutivo REVERSÍVEL (melhora ≥12% do VEMS e ≥200mL após broncodilatador). Obesidade → pseudo-restrição (peso limita expansão torácica, mas parênquima pulmonar está saudável). Esta classificação é o pilar da pneumologia!'},
+
+  // ========== CAPÍTULO 9: CLÍNICA AVANÇADA ==========
+  {id:87,ch:9,type:'mc',level:'medium',
+   text:'A escala de dispneia do MRC (Medical Research Council) vai de grau 0 a 4. Em que grau o doente fica com falta de ar ao FALAR ou ao VESTIR-SE?',
+   opts:['Grau 0','Grau 1','Grau 3','Grau 4'],
+   answer:2,
+   feedback:'MRC Grau 3: falta de ar ao caminhar em superfície plana ao ritmo próprio, tendo de parar frequentemente. MRC Grau 4: falta de ar a realizar actividades básicas (vestir, falar). MRC Grau 5 (em algumas escalas): falta de ar em repouso. Esta escala estratifica rapidamente a limitação funcional do doente respiratório e guia decisões terapêuticas (início de reabilitação respiratória, indicação de oxigenoterapia crónica domiciliária)!'},
+
+  {id:88,ch:9,type:'mc',level:'hard',
+   text:'Os critérios de BERLIN para SDRA incluem todos EXCEPTO:',
+   opts:['Início agudo em < 7 dias','Opacidades bilaterais no RX/TC não explicadas por derrame','PaO₂/FiO₂ < 300 com PEEP ≥ 5 cmH₂O','PaCO₂ > 50 mmHg'],
+   answer:3,
+   feedback:'PaCO₂ elevada NÃO é critério de Berlin para SDRA! Os critérios de Berlim (2012) são: 1) Início agudo <7 dias após insulto clínico. 2) Opacidades bilaterais no RX/TC (não explicadas por derrame, colapso ou nódulos). 3) Origem não cardíaca (não explicada por sobrecarga hídrica — BPCAP < 18 mmHg ou ausência de causa cardíaca). 4) PaO₂/FiO₂ < 300 com PEEP ≥5 cmH₂O. A hipercapnia pode ocorrer mas não é critério diagnóstico!'},
+
+  {id:89,ch:9,type:'mc',level:'hard',
+   text:'Na ventilação mecânica protetora da SDRA, qual é o volume corrente recomendado (protocolo ARDSnet)?',
+   opts:['10-12 mL/kg de peso corporal previsto','6 mL/kg de peso corporal previsto','15-20 mL/kg de peso corporal previsto','Qualquer volume que mantenha SpO₂ > 95%'],
+   answer:1,
+   feedback:'ARDSnet (2000): Volume corrente de 6 mL/kg de PESO CORPORAL PREVISTO (não real!) — ventilação protetora que reduziu mortalidade de 39.8% para 31%. Altos volumes de ar nos pulmões lesados da SDRA causam volotrauma/biotrauma (lesão adicional por distensão). Associado a: pressão de plateau < 30 cmH₂O, PEEP adequada, hipercapnia permissiva. É o trial mais importante da medicina intensiva respiratória!'},
+
+  {id:90,ch:9,type:'tf',level:'medium',
+   text:'A oximetria de pulso (SpO₂) mede directamente a PaO₂ (pressão parcial de O₂).',
+   answer:false,
+   feedback:'FALSO! A oximetria mede a SATURAÇÃO de hemoglobina (SpO₂), não a PaO₂. Usa absorção diferencial de luz infravermelha entre Hb oxigenada e desoxigenada. Normal: SpO₂ ≥ 95%. A relação SpO₂-PaO₂ segue a curva de dissociação: SpO₂ de 90% ≈ PaO₂ de ~60 mmHg (joelho da curva). Limitações: falsa leitura com intoxicação por CO (a HbCO lê como Hb oxigenada!), anemia grave, hipoperfusão periférica, verniz de unhas preto!'},
+
+  {id:91,ch:9,type:'mc',level:'medium',
+   text:'A DPOC é definida espirometricamente por VEMS/CVF < 0.70 após broncodilatação. Qual a causa mais importante de DPOC no mundo?',
+   opts:['Asma não tratada','Infecções respiratórias repetidas na infância','Tabagismo','Poluição doméstica por queima de biomassa (mais prevalente em países em desenvolvimento)'],
+   answer:2,
+   feedback:'O TABAGISMO é a causa responsável por ~80-90% dos casos de DPOC nos países ocidentais. 1 em cada 4 fumadores desenvolverá DPOC clinicamente significativa. Mas nos países em desenvolvimento, a poluição doméstica por queima de biomassa (lenha, carvão vegetal para cozinhar) é a segunda causa global e primeira em mulheres rurais! O tabaco destrói os alvéolos por inflamação crónica e desequilíbrio protease/antiprotease (α1-antitripsina vs. elastase dos neutrófilos)!'},
+
+  {id:92,ch:9,type:'mc',level:'hard',
+   text:'A radiografia de tórax de um doente com DPOC grave mostra "pulmões hiperinsuflados". Qual sinal específico NÃO se observa tipicamente?',
+   opts:['Horizontalização das costelas','Aplanamento do diafragma','Aumento do espaço aéreo retroesternal','Derrame pleural bilateral maciço'],
+   answer:3,
+   feedback:'Na DPOC com hiperinsuflação, o RX mostra: horizontalização das costelas (expansão crónica do tórax), diafragma aplanado (pulmões empurram o diafragma para baixo), aumento do espaço aéreo retroesternal no perfil, coração em gota (estreito verticalmente). Derrame pleural maciço bilateral NÃO é típico de DPOC — é mais característico de insuficiência cardíaca congestiva, síndrome nefrótico ou malignidade. Na DPOC pode haver pequenos derrames, mas não maciços bilaterais!'},
+
+  {id:93,ch:9,type:'fill',level:'hard',
+   text:'Na intoxicação por MONÓXIDO DE CARBONO (CO), a SpO₂ por oximetria de pulso convencional é artificialmente _______ (comparada com o valor real).',
+   answers:['alta','elevada','normal','falsamente elevada'],
+   hint:'O oxímetro confunde HbCO com HbO₂.',
+   feedback:'A SpO₂ convencional é FALSAMENTE ALTA (normal ou quase normal) na intoxicação por CO! O CO-oxímetro de pulso convencional usa apenas 2 comprimentos de onda e NÃO distingue HbCO (carboxihemoglobina) de HbO₂ — ambas absorvem a luz de forma semelhante. Resultado: o oxímetro "lê" a HbCO como se fosse Hb saturada com O₂. Um doente com HbCO de 40% pode ter SpO₂ de 99% e estar em coma! Diagnóstico correcto: co-oximetria venosa/arterial no laboratório.'},
+
+  {id:94,ch:9,type:'mc',level:'hard',
+   text:'Qual é o mecanismo pelo qual o tabagismo predispõe ao ENFISEMA?',
+   opts:['Aumento da produção de surfactante','Desequilíbrio protease/antiprotease: o fumo activa neutrófilos que libertam elastase, destruindo as paredes alveolares enquanto inibe a α1-antitripsina','Espasmo dos brônquios levando a hiperinsuflação','Estimulação do centro respiratório no tronco cerebral'],
+   answer:1,
+   feedback:'O tabaco activa macrófagos e neutrófilos nos pulmões → libertação de ELASTASE (protease que degrada a elastina das paredes alveolares) → destruição dos alvéolos → enfisema. Normalmente, a α1-ANTITRIPSINA (AAT) inibe a elastase — mas o tabaco OXIDA a AAT, tornando-a ineficaz. Na deficiência hereditária de AAT (genótipo PiZZ), o enfisema surge nas bases e em jovens não fumadores. Fisiopatologia dupla: inflamação + desequilíbrio proteolítico!'},
+
+  {id:95,ch:9,type:'mc',level:'medium',
+   text:'A oxigenoterapia de longa duração (OLCD) está indicada em doentes com DPOC que têm PaO₂ em repouso:',
+   opts:['< 80 mmHg','< 60 mmHg (ou SpO₂ ≤ 88%)','< 70 mmHg','< 50 mmHg'],
+   answer:1,
+   feedback:'Critérios de OLCD: PaO₂ ≤ 55 mmHg em repouso, OU PaO₂ 56-60 mmHg com policitemia, hipertensão pulmonar ou cor pulmonale. Em termos de SpO₂: ≤88% em repouso. A OLCD (≥15 horas/dia, idealmente 18-20 horas) é a ÚNICA intervenção (além da cessação tabágica) que demonstrou reduzir a mortalidade na DPOC com hipoxémia grave (estudos MRC e NOTT, 1981). Reduz hipertensão pulmonar e policitemia secundária!'},
+
+  {id:96,ch:9,type:'tf',level:'hard',
+   text:'Na crise de asma grave, a hipercapnia (PaCO₂ > 45 mmHg) num doente em dispneia intensa é sinal tranquilizador.',
+   answer:false,
+   feedback:'FALSO! Na asma aguda grave, o doente inicialmente HIPERVENTIILA (PaCO₂ baixa por esforço respiratório aumentado). Se a PaCO₂ SOBE para 45+ mmHg num asmático em crise, é sinal de FADIGA MUSCULAR RESPIRATÓRIA IMINENTE — o doente está a deixar de conseguir manter o esforço. É sinal de alarme máximo: entubação urgente pode ser necessária nos minutos seguintes. PaCO₂ "normal" num asmático grave = alerta de paragem respiratória!'},
+
+  {id:97,ch:9,type:'mc',level:'hard',
+   text:'A "auto-PEEP" (PEEP intrínseca ou air-trapping) é um problema clínico importante em doentes ventilados mecanicamente com DPOC. Qual é o mecanismo?',
+   opts:['O ventilador aplica PEEP excessiva por erro','O expiraccão incompleta entre ciclos cria pressão positiva residual nos pulmões (hiperinsuflação dinâmica)','Oclusão do tubo endotraqueal','Pneumotórax bilateral'],
+   answer:1,
+   feedback:'Auto-PEEP (PEEP intrínseca): na DPOC, as vias aéreas obstruídas dificultam a expiração → o pulmão não esvazia completamente antes do próximo ciclo → acumula ar progressivamente → hiperinsuflação dinâmica → pressão residual positiva (auto-PEEP). Consequências: compromisso hemodinâmico (comprime grandes veias), barotrauma, dificuldade de trigger do ventilador. Tratamento: aumentar o tempo expiratório (↓FR, ↓Ti/Te ratio), broncodilatadores!'},
+
+  {id:98,ch:9,type:'mc',level:'medium',
+   text:'O sinal clínico de "baqueteamento digital" (clubbing) está classicamente associado a qual condição respiratória?',
+   opts:['Asma brônquica','DPOC por tabagismo simples','Fibrose pulmonar, bronquiectasias, carcinoma broncogénico e empiema crónico','Rinite alérgica'],
+   answer:2,
+   feedback:'O BAQUETEAMENTO DIGITAL (perda do ângulo de Lovibond, aumento do ângulo de Schamroth) está associado a: fibrose pulmonar idiopática, bronquiectasias, empiema crónico, carcinoma broncogénico (especialmente adenocarcinoma), cardiopatias congénitas cianóticas, endocardite infecciosa, cirrose hepática. Curiosamente, a DPOC NÃO causa baqueteamento! Mecanismo: hipóxia crónica + factores de crescimento (VEGF, PDGF) → proliferação do tecido conjuntivo distal!'},
+
+  {id:99,ch:9,type:'order',level:'hard',
+   text:'Ordena os passos da interpretação de uma GASOMETRIA ARTERIAL:',
+   items:['Avaliar compensação (é adequada?)','Ver o pH (acidemia ou alcalemia?)','Identificar a desordem primária (respiratória ou metabólica?)','Calcular o gradiente P(A-a)O₂'],
+   correct:[1,2,0,3],
+   feedback:'Sequência correcta: 1) pH (acidemia/alcalemia?). 2) Desordem primária (se PaCO₂ anormal = respiratória; se HCO₃⁻ anormal = metabólica; se ambos = mista ou com compensação). 3) Compensação (é proporcional ao esperado? Fórmulas de Winter para acidose metabólica, etc.). 4) Gradiente P(A-a)O₂ (causa de hipoxémia é pulmonar ou extrapulmonar?). Esta sequência de 4 passos permite resolver qualquer gasometria em <2 minutos!'},
+
+  {id:100,ch:9,type:'mc',level:'hard',
+   text:'Um doente de 65 anos, fumador de 40 maços-ano, apresenta-se com tosse produtiva há 3 meses/ano por mais de 2 anos consecutivos, sem obstrução espirométrica. Qual é o diagnóstico?',
+   opts:['DPOC em estadio precoce','Bronquite crónica (definição clínica, sem obstrução = sem DPOC ainda)','Asma do adulto','Bronquiectasias por deficiência de IgA'],
+   answer:1,
+   feedback:'BRONQUITE CRÓNICA tem definição CLÍNICA: tosse produtiva por ≥3 meses/ano, durante ≥2 anos consecutivos, sem outra causa identificável. Se não há obstrução espirométrica (VEMS/CVF ≥0.70), é bronquite crónica SEM DPOC — um diagnóstico de risco elevado (pode evoluir para DPOC). Se a espirometria mostrar obstrução → DPOC com bronquite crónica. Esta distinção é crucial: o estadiamento GOLD (Global initiative for Obstructive Lung Disease) baseia-se na espirometria, não nos sintomas!'}
+];
+
+// ===================== STATE =====================
+let state = {
+  answered: {},
+  correct: 0,
+  wrong: 0,
+  combo: 0,
+  maxCombo: 0,
+  startTime: Date.now(),
+  matchState: {}
+};
+
+// ===================== RENDER =====================
+function renderQuiz() {
+  const content = document.getElementById('quizContent');
+  content.innerHTML = '';
+  
+  let chIdx = 0;
+  for (const ch of chapters) {
+    // Story card + chapter
+    const storyDiv = document.createElement('div');
+    storyDiv.className = 'story-card';
+    storyDiv.id = `ch-story-${ch.id}`;
+    storyDiv.innerHTML = `
+      <span class="story-icon">${ch.story.icon}</span>
+      <div class="story-title">${ch.story.title}</div>
+      <div class="story-text">${ch.story.text}</div>
+    `;
+    content.appendChild(storyDiv);
+
+    const chHeader = document.createElement('div');
+    chHeader.className = 'chapter-header';
+    chHeader.id = `ch-${ch.id}`;
+    chHeader.innerHTML = `
+      <div class="chapter-num">0${ch.id}</div>
+      <div class="chapter-info">
+        <h2>${ch.icon} ${ch.title}</h2>
+        <p>QUESTÕES ${ch.range[0]} A ${ch.range[1]}</p>
+      </div>
+    `;
+    content.appendChild(chHeader);
+
+    // Questions for this chapter
+    const qs = allQuestions.filter(q => q.ch === ch.id);
+    for (const q of qs) {
+      content.appendChild(renderQuestion(q));
+    }
+
+    // CHECKPOINT
+    const cpDiv = document.createElement('div');
+    cpDiv.className = 'checkpoint';
+    cpDiv.id = `cp-${ch.id}`;
+    cpDiv.innerHTML = `
+      <span class="checkpoint-icon">🛑</span>
+      <h3>CHECKPOINT ${ch.id < 9 ? ch.id : 'FINAL'}</h3>
+      <p>Capítulo concluído: <strong>${ch.title}</strong></p>
+      <div class="cp-score" id="cp-score-${ch.id}">-- / ${qs.length}</div>
+      <div class="checkpoint-bar"><div class="checkpoint-bar-fill" id="cp-bar-${ch.id}" style="width:0%"></div></div>
+      <div class="checkpoint-msg" id="cp-msg-${ch.id}">Responde a todas as questões para desbloquear!</div>
+      <button class="continue-btn" id="cp-btn-${ch.id}" disabled onclick="unlockNext(${ch.id})">
+        ${ch.id < 9 ? '⚡ CONTINUAR PARA O CAPÍTULO ' + (ch.id+1) : '🏆 VER RESULTADO FINAL'}
+      </button>
+    `;
+    content.appendChild(cpDiv);
+    chIdx++;
+  }
+
+  buildNav();
+  updateProgress();
+}
+
+function renderQuestion(q) {
+  const div = document.createElement('div');
+  div.className = 'q-card';
+  div.id = `q-${q.id}`;
+
+  const typeLabel = {mc:'ESCOLHA MÚLTIPLA',tf:'VERDADEIRO/FALSO',fill:'PREENCHER',order:'ORDENAR',match:'ASSOCIAR'};
+  const typeBadge = {mc:'badge-mc',tf:'badge-tf',fill:'badge-fill',order:'badge-order',match:'badge-match'};
+  const levelLabel = {easy:'FÁCIL',medium:'MÉDIO',hard:'DIFÍCIL'};
+  const levelBadge = {easy:'level-easy',medium:'level-medium',hard:'level-hard'};
+
+  let inner = `
+    <div class="q-header">
+      <div class="q-num">Q${q.id}</div>
+      <span class="q-type-badge ${typeBadge[q.type]}">${typeLabel[q.type]}</span>
+      <span class="level-badge ${levelBadge[q.level]}">${levelLabel[q.level]}</span>
+    </div>
+    <div class="q-text">${q.text}</div>
+  `;
+
+  if (q.type === 'mc') {
+    inner += `<div class="options" id="opts-${q.id}">`;
+    const letters = ['A','B','C','D','E'];
+    for (let i=0; i<q.opts.length; i++) {
+      inner += `<div class="opt" onclick="selectMC(${q.id},${i})" id="opt-${q.id}-${i}">
+        <div class="opt-letter">${letters[i]}</div>
+        <span>${q.opts[i]}</span>
+      </div>`;
+    }
+    inner += `</div>`;
+    inner += `<button class="confirm-btn" id="confirm-${q.id}" onclick="confirmMC(${q.id})">✓ CONFIRMAR RESPOSTA</button>`;
+  } else if (q.type === 'tf') {
+    inner += `<div class="tf-options">
+      <div class="tf-btn true-btn" id="tf-${q.id}-true" onclick="answerTF(${q.id},true)">✅ VERDADEIRO</div>
+      <div class="tf-btn false-btn" id="tf-${q.id}-false" onclick="answerTF(${q.id},false)">❌ FALSO</div>
+    </div>`;
+  } else if (q.type === 'fill') {
+    if (q.hint) inner += `<div class="hint">💡 Dica: ${q.hint}</div>`;
+    const fields = q.answers.length;
+    inner += `<div class="fill-container">`;
+    for (let i=0; i<fields; i++) {
+      inner += `<input class="fill-input" id="fill-${q.id}-${i}" placeholder="Escreve aqui..." oninput="checkFillReady(${q.id})" onkeypress="handleFillKey(event,${q.id})">`;
+    }
+    inner += `</div>`;
+    inner += `<button class="confirm-btn" id="confirm-${q.id}" onclick="confirmFill(${q.id})">✓ CONFIRMAR</button>`;
+  } else if (q.type === 'order') {
+    inner += `<div class="order-list" id="order-${q.id}">`;
+    // Shuffle items
+    const shuffled = shuffleArray([...q.items.map((item,i)=>({item,origIdx:i}))]);
+    for (let i=0; i<shuffled.length; i++) {
+      inner += `<div class="order-item" draggable="true" data-orig="${shuffled[i].origIdx}" id="oi-${q.id}-${i}"
+        ondragstart="dragStart(event,${q.id})" ondragover="dragOver(event)" ondrop="drop(event,${q.id})" ondragend="dragEnd(event)">
+        <span class="order-handle">⠿</span>
+        <span class="order-pos">${i+1}</span>
+        <span>${shuffled[i].item}</span>
+      </div>`;
+    }
+    inner += `</div>`;
+    inner += `<button class="confirm-btn show" id="confirm-${q.id}" onclick="confirmOrder(${q.id})">✓ CONFIRMAR ORDEM</button>`;
+  } else if (q.type === 'match') {
+    inner += `<div class="match-grid" id="match-${q.id}">
+      <div class="match-left">`;
+    for (let i=0; i<q.left.length; i++) {
+      inner += `<div class="match-item" id="ml-${q.id}-${i}" onclick="selectMatchLeft(${q.id},${i})">${q.left[i]}</div>`;
+    }
+    inner += `</div><div class="match-right">`;
+    const rightOrder = shuffleArray([...q.right.map((r,i)=>({r,i}))]);
+    inner += `</div></div>`;
+    inner += `<div id="match-result-${q.id}" class="match-result"></div>`;
+    // Store shuffled right
+    div.dataset.rightOrder = JSON.stringify(rightOrder);
+    setTimeout(()=>{
+      const rightCol = document.querySelector(`#match-${q.id} .match-right`);
+      if (rightCol) {
+        rightCol.innerHTML = '';
+        for (let i=0; i<rightOrder.length; i++) {
+          const el = document.createElement('div');
+          el.className = 'match-item';
+          el.id = `mr-${q.id}-${rightOrder[i].i}`;
+          el.dataset.rightIdx = rightOrder[i].i;
+          el.textContent = rightOrder[i].r;
+          el.onclick = () => selectMatchRight(q.id, rightOrder[i].i);
+          rightCol.appendChild(el);
+        }
+      }
+      state.matchState[q.id] = {selectedLeft: null, matched: {}, total: q.left.length};
+    }, 50);
+  }
+
+  inner += `<div class="feedback" id="feedback-${q.id}"></div>`;
+  div.innerHTML = inner;
+  return div;
+}
+
+// ===================== MC LOGIC =====================
+let mcSelected = {};
+function selectMC(qid, idx) {
+  if (state.answered[qid]) return;
+  mcSelected[qid] = idx;
+  const q = allQuestions.find(q=>q.id===qid);
+  for (let i=0; i<q.opts.length; i++) {
+    const el = document.getElementById(`opt-${qid}-${i}`);
+    if (el) el.classList.toggle('selected', i===idx);
+  }
+  const btn = document.getElementById(`confirm-${qid}`);
+  if (btn) btn.classList.add('show');
+}
+
+function confirmMC(qid) {
+  if (state.answered[qid] || mcSelected[qid] === undefined) return;
+  const q = allQuestions.find(q=>q.id===qid);
+  const sel = mcSelected[qid];
+  const correct = sel === q.answer;
+  state.answered[qid] = correct ? 'correct' : 'wrong';
+
+  for (let i=0; i<q.opts.length; i++) {
+    const el = document.getElementById(`opt-${qid}-${i}`);
+    if (!el) continue;
+    el.classList.add('disabled');
+    if (i === q.answer) el.classList.add('correct-ans');
+    else if (i === sel && !correct) el.classList.add('wrong-ans');
+  }
+  showFeedback(qid, correct, q.feedback);
+  updateScores(correct);
+  checkChapterDone(q.ch);
+}
+
+// ===================== TF LOGIC =====================
+function answerTF(qid, val) {
+  if (state.answered[qid]) return;
+  const q = allQuestions.find(q=>q.id===qid);
+  const correct = val === q.answer;
+  state.answered[qid] = correct ? 'correct' : 'wrong';
+
+  const trueEl = document.getElementById(`tf-${qid}-true`);
+  const falseEl = document.getElementById(`tf-${qid}-false`);
+  trueEl.classList.add('disabled');
+  falseEl.classList.add('disabled');
+
+  if (val === true) trueEl.classList.add(correct ? 'correct-ans' : 'wrong-ans');
+  else falseEl.classList.add(correct ? 'correct-ans' : 'wrong-ans');
+
+  if (!correct) {
+    (q.answer ? trueEl : falseEl).classList.add('correct-ans');
+  }
+  showFeedback(qid, correct, q.feedback);
+  updateScores(correct);
+  checkChapterDone(q.ch);
+}
+
+// ===================== FILL LOGIC =====================
+function checkFillReady(qid) {
+  const q = allQuestions.find(q=>q.id===qid);
+  let allFilled = true;
+  for (let i=0; i<q.answers.length; i++) {
+    const inp = document.getElementById(`fill-${qid}-${i}`);
+    if (!inp || inp.value.trim() === '') { allFilled = false; break; }
+  }
+  const btn = document.getElementById(`confirm-${qid}`);
+  if (btn) btn.classList.toggle('show', allFilled);
+}
+
+function handleFillKey(e, qid) {
+  if (e.key === 'Enter') confirmFill(qid);
+}
+
+function confirmFill(qid) {
+  if (state.answered[qid]) return;
+  const q = allQuestions.find(q=>q.id===qid);
+  let allCorrect = true;
+  for (let i=0; i<q.answers.length; i++) {
+    const inp = document.getElementById(`fill-${qid}-${i}`);
+    if (!inp) continue;
+    const userVal = inp.value.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    const anyMatch = q.answers.some(a => {
+      const norm = a.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+      return userVal === norm || norm.includes(userVal) || userVal.includes(norm);
+    });
+    if (!anyMatch) { allCorrect = false; inp.classList.add('wrong-ans'); }
+    else inp.classList.add('correct-ans');
+    inp.disabled = true;
+  }
+  state.answered[qid] = allCorrect ? 'correct' : 'wrong';
+  showFeedback(qid, allCorrect, q.feedback);
+  updateScores(allCorrect);
+  checkChapterDone(q.ch);
+}
+
+// ===================== ORDER LOGIC =====================
+let dragItem = null, dragQid = null;
+function dragStart(e, qid) {
+  dragItem = e.currentTarget;
+  dragQid = qid;
+  setTimeout(()=>dragItem.classList.add('dragging'),0);
+}
+function dragOver(e) { e.preventDefault(); }
+function drop(e, qid) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (target === dragItem || dragQid !== qid) return;
+  const list = document.getElementById(`order-${qid}`);
+  const items = [...list.querySelectorAll('.order-item')];
+  const from = items.indexOf(dragItem);
+  const to = items.indexOf(target);
+  if (from < to) list.insertBefore(dragItem, target.nextSibling);
+  else list.insertBefore(dragItem, target);
+  // Update position numbers
+  updateOrderPositions(qid);
+}
+function dragEnd(e) { if(dragItem) dragItem.classList.remove('dragging'); dragItem=null; }
+function updateOrderPositions(qid) {
+  const list = document.getElementById(`order-${qid}`);
+  if (!list) return;
+  const items = list.querySelectorAll('.order-item');
+  items.forEach((item,i)=>{ const pos=item.querySelector('.order-pos'); if(pos) pos.textContent=i+1; });
+}
+
+function confirmOrder(qid) {
+  if (state.answered[qid]) return;
+  const q = allQuestions.find(q=>q.id===qid);
+  const list = document.getElementById(`order-${qid}`);
+  const items = [...list.querySelectorAll('.order-item')];
+  const userOrder = items.map(item=>parseInt(item.dataset.orig));
+  const correct = JSON.stringify(userOrder) === JSON.stringify(q.correct);
+  state.answered[qid] = correct ? 'correct' : 'wrong';
+  list.classList.add(correct ? 'correct-ans' : 'wrong-ans');
+  const btn = document.getElementById(`confirm-${qid}`);
+  if (btn) { btn.disabled = true; btn.style.opacity='0.4'; }
+  showFeedback(qid, correct, q.feedback);
+  updateScores(correct);
+  checkChapterDone(q.ch);
+}
+
+// ===================== MATCH LOGIC =====================
+function selectMatchLeft(qid, idx) {
+  if (state.answered[qid]) return;
+  if (!state.matchState[qid]) return;
+  if (state.matchState[qid].matched[idx] !== undefined) return;
+  state.matchState[qid].selectedLeft = idx;
+  // Deselect others
+  const q = allQuestions.find(q=>q.id===qid);
+  for (let i=0; i<q.left.length; i++) {
+    const el = document.getElementById(`ml-${qid}-${i}`);
+    if (el && state.matchState[qid].matched[i] === undefined) el.classList.toggle('selected', i===idx);
+  }
+}
+
+function selectMatchRight(qid, rightIdx) {
+  if (state.answered[qid]) return;
+  if (!state.matchState[qid]) return;
+  const leftIdx = state.matchState[qid].selectedLeft;
+  if (leftIdx === null || leftIdx === undefined) return;
+  
+  const q = allQuestions.find(q=>q.id===qid);
+  const isCorrect = q.correct[leftIdx] === rightIdx;
+  
+  const leftEl = document.getElementById(`ml-${qid}-${leftIdx}`);
+  const rightEl = document.getElementById(`mr-${qid}-${rightIdx}`);
+  
+  if (isCorrect) {
+    leftEl && leftEl.classList.replace('selected','matched');
+    rightEl && rightEl.classList.add('matched');
+    state.matchState[qid].matched[leftIdx] = rightIdx;
+    state.matchState[qid].selectedLeft = null;
+    
+    // Check all matched
+    if (Object.keys(state.matchState[qid].matched).length === state.matchState[qid].total) {
+      state.answered[qid] = 'correct';
+      showFeedback(qid, true, q.feedback);
+      updateScores(true);
+      checkChapterDone(q.ch);
+    }
+  } else {
+    leftEl && leftEl.classList.add('wrong-match');
+    rightEl && rightEl.classList.add('wrong-match');
+    setTimeout(()=>{
+      leftEl && leftEl.classList.remove('wrong-match','selected');
+      rightEl && rightEl.classList.remove('wrong-match');
+    }, 800);
+    state.matchState[qid].selectedLeft = null;
+    // Deselect
+    for (let i=0; i<q.left.length; i++) {
+      const el = document.getElementById(`ml-${qid}-${i}`);
+      if (el && state.matchState[qid].matched[i] === undefined) el.classList.remove('selected');
+    }
+  }
+}
+
+// ===================== FEEDBACK & SCORES =====================
+function showFeedback(qid, correct, text) {
+  const fb = document.getElementById(`feedback-${qid}`);
+  if (!fb) return;
+  fb.className = `feedback ${correct ? 'correct' : 'wrong'}`;
+  fb.innerHTML = `<span class="feedback-icon">${correct ? '🧠' : '💡'}</span>
+    <span class="${correct ? 'feedback-correct' : 'feedback-wrong'}">${correct ? 'CORRECTO!' : 'INCORRECTP!'}</span> ${text}`;
+  fb.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function updateScores(correct) {
+  if (correct) {
+    state.correct++;
+    state.combo++;
+    if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+    if (state.combo >= 3) showCombo();
+  } else {
+    state.wrong++;
+    state.combo = 0;
+  }
+  document.getElementById('scoreCorrect').textContent = state.correct;
+  document.getElementById('scoreWrong').textContent = state.wrong;
+  document.getElementById('scoreCombo').textContent = state.combo;
+  document.getElementById('sb-correct').textContent = state.correct;
+  document.getElementById('sb-wrong').textContent = state.wrong;
+  document.getElementById('sb-combo').textContent = state.combo;
+  updateProgress();
+}
+
+function showCombo() {
+  const el = document.getElementById('comboDisplay');
+  el.textContent = `🔥 COMBO x${state.combo}!`;
+  el.style.display = 'block';
+  el.style.animation = 'none';
+  void el.offsetWidth;
+  el.style.animation = 'comboAnim 1.5s ease forwards';
+  setTimeout(()=>{ el.style.display='none'; }, 1500);
+}
+
+function updateProgress() {
+  const total = allQuestions.length;
+  const done = Object.keys(state.answered).length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('scoreProgress').textContent = `${done}/${total}`;
+  document.getElementById('sb-progress').textContent = pct + '%';
+}
+
+// ===================== CHAPTER CHECKPOINT =====================
+function checkChapterDone(chId) {
+  const ch = chapters.find(c=>c.id===chId);
+  const qs = allQuestions.filter(q=>q.ch===chId);
+  const done = qs.filter(q=>state.answered[q.id]);
+  const correct = qs.filter(q=>state.answered[q.id]==='correct');
+  
+  if (done.length === qs.length) {
+    const pct = Math.round((correct.length/qs.length)*100);
+    const btn = document.getElementById(`cp-btn-${chId}`);
+    const scoreEl = document.getElementById(`cp-score-${chId}`);
+    const barEl = document.getElementById(`cp-bar-${chId}`);
+    const msgEl = document.getElementById(`cp-msg-${chId}`);
+    
+    if (scoreEl) scoreEl.textContent = `${correct.length} / ${qs.length}`;
+    if (barEl) setTimeout(()=>{ barEl.style.width = pct+'%'; }, 200);
+    if (btn) btn.disabled = false;
+    
+    let msg = '';
+    if (pct >= 90) msg = '🏆 EXCELENTE! Domínio total!';
+    else if (pct >= 70) msg = '⭐ Muito bom! Continua!';
+    else if (pct >= 50) msg = '👍 Bom esforço! Revê os erros!';
+    else msg = '📚 Precisas de rever este capítulo!';
+    if (msgEl) msgEl.textContent = `${pct}% de acertos — ${msg}`;
+    
+    updateNav();
+  }
+}
+
+function unlockNext(chId) {
+  if (chId >= 9) {
+    showFinal();
+    return;
+  }
+  const nextChStory = document.getElementById(`ch-story-${chId+1}`);
+  if (nextChStory) {
+    nextChStory.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+}
+
+// ===================== FINAL =====================
+function showFinal() {
+  document.getElementById('finalScreen').classList.remove('hidden');
+  const pct = Math.round((state.correct/allQuestions.length)*100);
+  const elapsed = Math.round((Date.now()-state.startTime)/60000);
+  
+  let grade='', trophy='';
+  if (pct>=90){grade='A+';trophy='🏆';}
+  else if(pct>=80){grade='A';trophy='🥇';}
+  else if(pct>=70){grade='B';trophy='🥈';}
+  else if(pct>=60){grade='C';trophy='🥉';}
+  else{grade='D';trophy='📚';}
+  
+  document.getElementById('finalTrophy').textContent = trophy;
+  document.getElementById('finalGrade').textContent = pct+'%';
+  document.getElementById('finalTitle').textContent = pct>=70 ? 'MISSÃO COMPLETA!' : 'CONTINUA A TREINAR!';
+  document.getElementById('finalSubtitle').textContent = `Nota: ${grade} · ${state.correct}/100 correctas · ${elapsed} minutos`;
+  
+  const statsEl = document.getElementById('finalStats');
+  statsEl.innerHTML = `
+    <div class="final-stat"><div class="fs-label">CORRECTAS</div><div class="fs-value" style="color:var(--correct)">${state.correct}</div></div>
+    <div class="final-stat"><div class="fs-label">ERRADAS</div><div class="fs-value" style="color:var(--wrong)">${state.wrong}</div></div>
+    <div class="final-stat"><div class="fs-label">PERCENTAGEM</div><div class="fs-value">${pct}%</div></div>
+    <div class="final-stat"><div class="fs-label">COMBO MAX</div><div class="fs-value" style="color:var(--gold)">${state.maxCombo}🔥</div></div>
+    <div class="final-stat"><div class="fs-label">TEMPO</div><div class="fs-value">${elapsed}min</div></div>
+    <div class="final-stat"><div class="fs-label">NOTA</div><div class="fs-value" style="color:var(--gold)">${grade}</div></div>
+  `;
+  
+  document.getElementById('finalScreen').scrollIntoView({behavior:'smooth'});
+}
+
+function restartQuiz() {
+  state = {answered:{},correct:0,wrong:0,combo:0,maxCombo:0,startTime:Date.now(),matchState:{}};
+  mcSelected = {};
+  document.getElementById('finalScreen').classList.add('hidden');
+  document.getElementById('scoreCorrect').textContent='0';
+  document.getElementById('scoreWrong').textContent='0';
+  document.getElementById('scoreCombo').textContent='0';
+  renderQuiz();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===================== NAVIGATION =====================
+function buildNav() {
+  const nav = document.getElementById('navChapters');
+  nav.innerHTML = '';
+  for (const ch of chapters) {
+    const el = document.createElement('div');
+    el.className = 'nav-chapter';
+    el.id = `nav-ch-${ch.id}`;
+    el.textContent = `${ch.icon} ${ch.id}. ${ch.title}`;
+    el.onclick = () => {
+      const target = document.getElementById(`ch-${ch.id}`);
+      if (target) { target.scrollIntoView({behavior:'smooth'}); closeSidebar(); }
+    };
+    nav.appendChild(el);
+  }
+}
+
+function updateNav() {
+  for (const ch of chapters) {
+    const el = document.getElementById(`nav-ch-${ch.id}`);
+    if (!el) continue;
+    const qs = allQuestions.filter(q=>q.ch===ch.id);
+    const done = qs.filter(q=>state.answered[q.id]);
+    if (done.length === qs.length) el.classList.add('done');
+  }
+}
+
+// ===================== MENU =====================
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('menuBtn').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+document.getElementById('menuBtn').addEventListener('click', ()=>{
+  const s = document.getElementById('sidebar');
+  const b = document.getElementById('menuBtn');
+  const o = document.getElementById('overlay');
+  s.classList.toggle('open');
+  b.classList.toggle('open');
+  o.classList.toggle('open');
+});
+document.getElementById('overlay').addEventListener('click', closeSidebar);
+
+// ===================== UTILS =====================
+function shuffleArray(arr) {
+  for (let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+
+// ===================== INIT =====================
+renderQuiz();
+</script>
+</body>
+</html>

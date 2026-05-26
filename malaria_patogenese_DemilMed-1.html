@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MALÁRIA: A Invasão Molecular | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blood-red: #ff1744;
+  --parasite-green: #00e676;
+  --plasma-yellow: #ffea00;
+  --fever-orange: #ff6d00;
+  --ice-blue: #00b0ff;
+  --dark-bg: #050a0f;
+  --dark-card: #0a1628;
+  --dark-panel: #0d1f35;
+  --glow-red: 0 0 20px #ff174480, 0 0 40px #ff174440;
+  --glow-green: 0 0 20px #00e67680, 0 0 40px #00e67640;
+  --glow-blue: 0 0 20px #00b0ff80, 0 0 40px #00b0ff40;
+  --glow-yellow: 0 0 20px #ffea0080, 0 0 40px #ffea0040;
+  --text-main: #e8f4f8;
+  --text-dim: #8baab8;
+  --border-glow: 1px solid rgba(0,176,255,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark-bg);
+  color: var(--text-main);
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 300;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ─── PARTICLE BACKGROUND ─── */
+#particles-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(5,10,15,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,23,68,0.3);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.nav-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  color: var(--blood-red);
+  text-shadow: var(--glow-red);
+  letter-spacing: 2px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.65rem;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover {
+  color: var(--ice-blue);
+  border-color: var(--ice-blue);
+  text-shadow: var(--glow-blue);
+}
+
+/* ─── MAIN WRAPPER ─── */
+main {
+  position: relative;
+  z-index: 1;
+  padding-top: 56px;
+}
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(255,23,68,0.08) 0%, transparent 70%);
+}
+
+.hero-rbc {
+  width: min(280px, 70vw);
+  height: min(280px, 70vw);
+  margin: 0 auto 2rem;
+  position: relative;
+}
+
+.rbc-svg {
+  width: 100%; height: 100%;
+  animation: rbc-pulse 3s ease-in-out infinite;
+}
+
+@keyframes rbc-pulse {
+  0%,100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(255,23,68,0.5)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(255,23,68,0.9)); }
+}
+
+.parasite-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--parasite-green);
+  box-shadow: var(--glow-green);
+  animation: parasite-orbit 4s linear infinite;
+}
+
+.hero-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.8rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, var(--blood-red), var(--fever-orange), var(--plasma-yellow));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  animation: title-flicker 5s ease-in-out infinite;
+}
+
+@keyframes title-flicker {
+  0%,100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.7; }
+  94% { opacity: 1; }
+}
+
+.hero-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  color: var(--parasite-green);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow: var(--glow-green);
+  margin-bottom: 1.5rem;
+}
+
+.hero-desc {
+  max-width: 600px;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: var(--text-dim);
+  margin: 0 auto 2rem;
+  line-height: 1.9;
+}
+
+.hero-scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--ice-blue);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: bounce 2s ease-in-out infinite;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ─── SECTION WRAPPER ─── */
+.section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+/* ─── CHAPTER HEADER ─── */
+.chapter-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,23,68,0.2);
+}
+
+.chapter-num {
+  font-family: 'Orbitron', monospace;
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--blood-red);
+  text-shadow: var(--glow-red);
+  line-height: 1;
+  min-width: 60px;
+}
+
+.chapter-title-block {}
+
+.chapter-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--parasite-green);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.chapter-title {
+  font-family: 'Orbitron', monospace;
+  font-size: clamp(1.1rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--dark-card);
+  border: var(--border-glow);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(to bottom, var(--blood-red), var(--fever-orange));
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,176,255,0.15);
+}
+
+.card-green::before { background: linear-gradient(to bottom, var(--parasite-green), #00acc1); }
+.card-yellow::before { background: linear-gradient(to bottom, var(--plasma-yellow), var(--fever-orange)); }
+.card-blue::before { background: linear-gradient(to bottom, var(--ice-blue), #7c4dff); }
+
+.card h3 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ice-blue);
+  margin-bottom: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.card p, .card li {
+  font-size: clamp(0.85rem, 2.2vw, 0.98rem);
+  color: var(--text-main);
+  line-height: 1.85;
+}
+
+.card ul { padding-left: 1.2rem; }
+.card ul li { margin-bottom: 0.4rem; }
+
+/* ─── HIGHLIGHT BOX ─── */
+.highlight {
+  background: rgba(255,23,68,0.06);
+  border: 1px solid rgba(255,23,68,0.25);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0;
+  font-size: clamp(0.85rem, 2.2vw, 0.97rem);
+}
+
+.highlight-green {
+  background: rgba(0,230,118,0.06);
+  border-color: rgba(0,230,118,0.25);
+}
+
+.highlight-yellow {
+  background: rgba(255,234,0,0.06);
+  border-color: rgba(255,234,0,0.25);
+}
+
+.highlight strong, .tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--plasma-yellow);
+  letter-spacing: 1px;
+}
+
+/* ─── MOLECULE BADGE ─── */
+.mol-badge {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin: 2px;
+  background: rgba(0,176,255,0.12);
+  border: 1px solid rgba(0,176,255,0.4);
+  color: var(--ice-blue);
+}
+
+.mol-badge.red {
+  background: rgba(255,23,68,0.12);
+  border-color: rgba(255,23,68,0.4);
+  color: var(--blood-red);
+}
+
+.mol-badge.green {
+  background: rgba(0,230,118,0.12);
+  border-color: rgba(0,230,118,0.4);
+  color: var(--parasite-green);
+}
+
+.mol-badge.yellow {
+  background: rgba(255,234,0,0.12);
+  border-color: rgba(255,234,0,0.4);
+  color: var(--plasma-yellow);
+}
+
+/* ─── TIMELINE ─── */
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--blood-red), var(--parasite-green), var(--ice-blue));
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.65rem;
+  top: 6px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--blood-red);
+  box-shadow: var(--glow-red);
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+.timeline-item:nth-child(2n)::before { background: var(--parasite-green); box-shadow: var(--glow-green); }
+.timeline-item:nth-child(3n)::before { background: var(--ice-blue); box-shadow: var(--glow-blue); }
+
+.timeline-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--plasma-yellow);
+  letter-spacing: 2px;
+  margin-bottom: 0.3rem;
+}
+
+.timeline-content h4 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.timeline-content p {
+  font-size: clamp(0.82rem, 2vw, 0.94rem);
+  color: var(--text-dim);
+  line-height: 1.8;
+}
+
+/* ─── ACCORDION ─── */
+.accordion {
+  margin-bottom: 0.8rem;
+  border: 1px solid rgba(0,176,255,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  background: var(--dark-panel);
+  padding: 1rem 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.3s;
+  user-select: none;
+}
+
+.accordion-header:hover { background: rgba(0,176,255,0.08); }
+
+.accordion-header h4 {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.82rem;
+  color: var(--ice-blue);
+  letter-spacing: 0.5px;
+}
+
+.accordion-icon {
+  color: var(--ice-blue);
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+  font-family: monospace;
+}
+
+.accordion.open .accordion-icon { transform: rotate(45deg); }
+
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease;
+  background: var(--dark-card);
+}
+
+.accordion.open .accordion-body { max-height: 2000px; }
+
+.accordion-inner {
+  padding: 1.2rem;
+  font-size: clamp(0.83rem, 2.2vw, 0.95rem);
+  line-height: 1.85;
+  color: var(--text-main);
+}
+
+/* ─── CYCLE ANIMATION ─── */
+.cycle-container {
+  background: var(--dark-panel);
+  border: var(--border-glow);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.cycle-svg-wrap {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: block;
+}
+
+.cycle-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 1rem;
+  text-transform: uppercase;
+}
+
+/* ─── GRID 2 ─── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin: 1.5rem 0;
+}
+
+/* ─── FORMULA BOX ─── */
+.formula-box {
+  background: rgba(0,230,118,0.05);
+  border: 1px solid rgba(0,230,118,0.2);
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(0.8rem, 2vw, 0.95rem);
+  color: var(--parasite-green);
+  margin: 1rem 0;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+/* ─── WARNING BOX ─── */
+.warning-box {
+  background: rgba(255,109,0,0.08);
+  border-left: 4px solid var(--fever-orange);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  font-size: clamp(0.83rem, 2vw, 0.94rem);
+  color: #ffccaa;
+}
+
+.warning-box strong {
+  color: var(--fever-orange);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* ─── PROGRESS BAR ─── */
+.progress-wrap {
+  margin: 1.5rem 0;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.progress-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  animation: fill-anim 2s ease forwards;
+}
+@keyframes fill-anim { from { width: 0; } }
+
+/* ─── QUIZ ─── */
+.quiz-box {
+  background: var(--dark-panel);
+  border: 1px solid rgba(255,234,0,0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+.quiz-question {
+  font-family: 'Orbitron', monospace;
+  font-size: 0.85rem;
+  color: var(--plasma-yellow);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.quiz-option {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  transition: all 0.25s;
+  text-align: left;
+  color: var(--text-main);
+}
+
+.quiz-option:hover { background: rgba(0,176,255,0.1); border-color: var(--ice-blue); }
+.quiz-option.correct { background: rgba(0,230,118,0.15); border-color: var(--parasite-green); color: var(--parasite-green); }
+.quiz-option.wrong { background: rgba(255,23,68,0.15); border-color: var(--blood-red); color: var(--blood-red); }
+
+.quiz-feedback {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  padding: 0.8rem;
+  border-radius: 6px;
+  display: none;
+  line-height: 1.7;
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,23,68,0.3), rgba(0,176,255,0.3), transparent);
+  margin: 3rem 0;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  background: #020508;
+  border-top: 1px solid rgba(255,23,68,0.2);
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-logo {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--blood-red), var(--fever-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.5rem;
+}
+
+.footer-info {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  line-height: 2;
+}
+
+/* ─── SCROLL PROGRESS ─── */
+#scroll-progress {
+  position: fixed;
+  top: 56px; left: 0;
+  height: 3px;
+  background: linear-gradient(to right, var(--blood-red), var(--fever-orange), var(--parasite-green));
+  z-index: 999;
+  width: 0%;
+  transition: width 0.1s;
+  box-shadow: 0 0 8px rgba(255,23,68,0.6);
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .chapter-num { font-size: 2rem; min-width: 40px; }
+  .chapter-title { font-size: 1rem; }
+  .card { padding: 1rem; }
+  .cycle-container { padding: 1rem; }
+  .section { padding: 3rem 1rem; }
+}
+
+/* ─── SECTION COLORS ─── */
+.section-red { background: radial-gradient(ellipse 100% 50% at 50% 0, rgba(255,23,68,0.05) 0%, transparent 70%); }
+.section-green { background: radial-gradient(ellipse 100% 50% at 50% 0, rgba(0,230,118,0.05) 0%, transparent 70%); }
+.section-blue { background: radial-gradient(ellipse 100% 50% at 50% 0, rgba(0,176,255,0.05) 0%, transparent 70%); }
+.section-yellow { background: radial-gradient(ellipse 100% 50% at 50% 0, rgba(255,234,0,0.05) 0%, transparent 70%); }
+.section-orange { background: radial-gradient(ellipse 100% 50% at 50% 0, rgba(255,109,0,0.05) 0%, transparent 70%); }
+
+/* ─── TOOLTIP ─── */
+.tip {
+  position: relative;
+  border-bottom: 1px dashed rgba(0,176,255,0.5);
+  cursor: help;
+  color: var(--ice-blue);
+}
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark-panel);
+  border: 1px solid rgba(0,176,255,0.4);
+  color: var(--text-main);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  max-width: 220px;
+  white-space: normal;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  font-family: 'Exo 2', sans-serif;
+  line-height: 1.5;
+}
+.tip:hover::after { opacity: 1; }
+
+/* molecule animation */
+@keyframes float-mol {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-8px) rotate(5deg); }
+  66% { transform: translateY(4px) rotate(-3deg); }
+}
+
+.mol-anim { animation: float-mol 4s ease-in-out infinite; display: inline-block; }
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+<div id="scroll-progress"></div>
+
+<nav>
+  <div class="nav-logo">DEMILMED · UL</div>
+  <ul class="nav-links">
+    <li><a href="#parasite">Parasita</a></li>
+    <li><a href="#cycle">Ciclo</a></li>
+    <li><a href="#invasion">Invasão</a></li>
+    <li><a href="#fever">Febre</a></li>
+    <li><a href="#complications">Complicações</a></li>
+    <li><a href="#treatment">Tratamento</a></li>
+  </ul>
+</nav>
+
+<main>
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                        HERO                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-rbc">
+    <svg class="rbc-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="rbcGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#ff5252" stop-opacity="0.9"/>
+          <stop offset="60%" stop-color="#c62828" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#880000" stop-opacity="0.5"/>
+        </radialGradient>
+        <radialGradient id="rbcCenter" cx="50%" cy="50%" r="40%">
+          <stop offset="0%" stop-color="#050a0f" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <filter id="glow-red">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- RBC biconcave -->
+      <ellipse cx="140" cy="140" rx="110" ry="75" fill="url(#rbcGrad)" filter="url(#glow-red)"/>
+      <ellipse cx="140" cy="140" rx="65" ry="35" fill="url(#rbcCenter)" opacity="0.6"/>
+      <!-- Parasita dentro -->
+      <circle cx="155" cy="138" r="18" fill="#00e676" opacity="0.9" filter="url(#glow-red)">
+        <animate attributeName="r" values="18;22;18" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="155" cy="138" r="8" fill="#004d25"/>
+      <circle cx="158" cy="135" r="3" fill="#00ff88"/>
+      <!-- Knobs na membrana -->
+      <circle cx="80" cy="110" r="5" fill="#ffea00" opacity="0.8">
+        <animate attributeName="r" values="5;7;5" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="200" cy="125" r="5" fill="#ffea00" opacity="0.8">
+        <animate attributeName="r" values="5;7;5" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="140" cy="80" r="4" fill="#ffea00" opacity="0.8">
+        <animate attributeName="r" values="4;6;4" dur="1.3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="100" cy="165" r="4" fill="#ffea00" opacity="0.7">
+        <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="185" cy="170" r="5" fill="#ffea00" opacity="0.8">
+        <animate attributeName="r" values="5;7;5" dur="1.6s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+
+  <div class="hero-subtitle">── A Invasão Molecular ──</div>
+  <h1 class="hero-title">MALÁRIA<br>Patogênese</h1>
+  <p class="hero-desc">
+    Uma jornada molecular pela guerra travada dentro de cada glóbulo vermelho.
+    Da picada do mosquito até as complicações mais letais — entenda cada etapa
+    com precisão molecular, lógica fisiológica e clareza total.
+  </p>
+  <a class="hero-scroll" href="#parasite">▼ INICIAR JORNADA</a>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 0: O VILÃO — PLASMODIUM                           -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="parasite" class="section-red">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">00</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// PERSONAGEM PRINCIPAL</div>
+      <div class="chapter-title">O Vilão: Plasmodium</div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>🧬 Etimologia & Taxonomia</h3>
+    <p>
+      A palavra <strong>Plasmodium</strong> vem do grego <em>plasma</em> (πλάσμα = "algo moldado/formado") + <em>eidos</em> (forma). Ou seja: "uma forma moldada" — referindo-se à aparência ameboide do parasita.
+      Pertence ao filo <strong>Apicomplexa</strong> (<em>apex</em> = ponta em latim, referindo-se ao <span class="tip" data-tip="Complexo apical: conjunto de organelas na ponta do parasita usadas para invadir células hospedeiras">complexo apical</span>), ordem <em>Haemosporida</em> (parasitas do sangue com esporos).
+    </p>
+    <br>
+    <p><strong>Espécies que infectam humanos (5 espécies):</strong></p>
+    <div class="grid-2" style="margin-top:0.8rem;">
+      <div class="highlight highlight-green">
+        <strong>P. falciparum</strong><br>
+        Mais letal. Causa malária cerebral. Única espécie com citoadesão maciça. Ciclo eritrocítico: 48h (terçã maligna).
+      </div>
+      <div class="highlight">
+        <strong>P. vivax</strong><br>
+        Causa hipnozoítos (formas latentes no fígado). Ciclo 48h (terçã benigna). Recaídas meses/anos depois.
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>P. malariae</strong><br>
+        Ciclo 72h (quartã). Causa síndrome nefrótica crónica. Pode persistir décadas no sangue.
+      </div>
+      <div class="highlight highlight-green">
+        <strong>P. ovale</strong><br>
+        Similar ao vivax. Hipnozoítos. Raro. Ciclo 48h.
+      </div>
+    </div>
+    <div class="highlight" style="margin-top:0.8rem;">
+      <strong>P. knowlesi</strong> — Zoonose (primatas → humanos). Sudeste Asiático. Ciclo de 24h! (mais rápido — mais perigoso).
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔬 Estrutura Molecular do Parasita</h3>
+    <p>O <em>Plasmodium</em> é um eucariota unicelular com organelas sofisticadas que serão alvos terapêuticos:</p>
+    <br>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">ORGANELA #1</div>
+        <div class="timeline-content">
+          <h4>Apicoplasto (Apicoplast)</h4>
+          <p>Organela derivada de um cloroplasto de alga vermelha incorporado por endossimbiose secundária. Tem DNA próprio de 35 kb. Sintetiza ácidos graxos (via <span class="mol-badge green">FAS-II</span>), isoprenos e grupos heme precursores. <strong>Alvo de doxiciclina e fosmidomicina.</strong> Sem apicoplasto funcional, o parasita morre.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">ORGANELA #2</div>
+        <div class="timeline-content">
+          <h4>Vacúolo Digestivo (DV — Digestive Vacuole)</h4>
+          <p>Equivalente ao lisossomo. pH ácido (~5,0–5,5). Local onde a hemoglobina é digerida. Contém proteases: <span class="mol-badge red">Plasmepsina I/II</span>, <span class="mol-badge red">Falcipaína</span>, <span class="mol-badge red">Falcisilina</span>. Produz <strong>heme livre</strong> tóxico → cristalizado em <strong>hemozoína</strong>. Alvo da cloroquina.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">ORGANELA #3</div>
+        <div class="timeline-content">
+          <h4>Complexo Apical</h4>
+          <p>Conjunto de organelas secretoras na ponta anterior: <strong>Micronemas</strong> (secretam ligantes de adesão como <span class="mol-badge">EBA-175</span>), <strong>Roptrias</strong> (formam vacúolo parasitóforo + injetam proteínas RHOP), <strong>Grânulos densos</strong> (modificam a célula hospedeira após invasão).</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">ORGANELA #4</div>
+        <div class="timeline-content">
+          <h4>Mitocôndria Modificada</h4>
+          <p>Tem morfologia tubular, não discoide. Cadeia de transporte de elétrons usa <span class="mol-badge">Citocromo bc1</span> e <span class="mol-badge">DHODH</span> (dihidroorotato desidrogenase). Não usa Complexo I (NADH desidrogenase) para gerar ATP — usa via anaeróbia do glicose. A mitocôndria serve principalmente para regenerar <span class="mol-badge yellow">CoQ</span> e sintetizar pirimidinas. Alvo: atovaquona (bloqueia bc1).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <h3>⚡ Metabolismo Energético do Parasita — A Lógica</h3>
+    <p>
+      Por que o Plasmodium consume tanta glicose do hospedeiro?
+    </p>
+    <br>
+    <div class="highlight highlight-green">
+      O parasita é um <strong>glicólito obrigatório</strong>: gera quase todo seu ATP via <strong>glicólise anaeróbia</strong> no citoplasma (Embden-Meyerhof). Uma hemácia infectada consome glicose 75× mais rápido que uma normal!
+    </div>
+    <div class="formula-box">
+      Glicose → 2 Piruvato → 2 Lactato + 2 ATP (via LDH parasitária)
+    </div>
+    <p>
+      A <span class="mol-badge green">LDH (Lactato Desidrogenase do Plasmodium — pLDH)</span> é usada nos testes rápidos de diagnóstico (RDT)! É diferente da LDH humana — tem uma inserção de 5 aminoácidos → detectável por anticorpos específicos.
+    </p>
+    <br>
+    <p>
+      O parasita também importa isoleucina do plasma sanguíneo — único aminoácido que não consegue extrair da hemoglobina (a Hb tem muito pouca isoleucina). Isso cria uma <strong>dependência de isoleucina plasmática</strong> — potencial alvo terapêutico.
+    </p>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-question">🧠 CHECKPOINT RÁPIDO: Por que P. falciparum é mais letal que P. vivax?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" onclick="checkQuiz(this, false)">A) Tem ciclo mais longo (72h) e destrói mais hemácias</button>
+      <button class="quiz-option" onclick="checkQuiz(this, true)">B) Infeta hemácias de qualquer idade + causa citoadesão + sequestro nos capilares</button>
+      <button class="quiz-option" onclick="checkQuiz(this, false)">C) Produz mais hipnozoítos e causa mais recaídas</button>
+      <button class="quiz-option" onclick="checkQuiz(this, false)">D) Tem metabolismo mais lento e é resistente a mais drogas</button>
+    </div>
+    <div class="quiz-feedback" id="qfb1"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 1: CICLO DE VIDA — A CRONOLOGIA DA INVASÃO        -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="cycle" class="section-green">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">01</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// CRONOLOGIA DA INVASÃO</div>
+      <div class="chapter-title">O Ciclo de Vida: Da Picada ao Parasita</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📍 Visão Geral — Dois Hospedeiros, Dois Mundos</h3>
+    <p>O ciclo do Plasmodium ocorre em <strong>dois hospedeiros obrigatórios</strong>:</p>
+    <ul style="margin-top:0.8rem;">
+      <li><span class="mol-badge green">Hospedeiro definitivo</span>: Mosquito fêmea <em>Anopheles</em> sp. — onde ocorre reprodução sexual (<strong>esporogonia</strong>)</li>
+      <li><span class="mol-badge red">Hospedeiro intermediário</span>: Humano — onde ocorre reprodução assexuada (<strong>esquizogonia</strong>)</li>
+    </ul>
+    <br>
+    <div class="highlight highlight-yellow">
+      <strong>NOTA CLÍNICA:</strong> Chamamos o humano de "hospedeiro intermediário" mas somos nós que ficamos doentes! O mosquito é o "definitivo" porque é onde ocorre a fase sexual. Paradoxal, mas é a nomenclatura parasitológica.
+    </div>
+  </div>
+
+  <!-- Animated cycle -->
+  <div class="cycle-container">
+    <h3 style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--ice-blue); margin-bottom:1.5rem; letter-spacing:1px;">
+      ── CICLO INTERATIVO ──
+    </h3>
+    <svg class="cycle-svg-wrap" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg" id="cycle-svg">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#00b0ff" opacity="0.7"/>
+        </marker>
+        <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="6" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#ff1744" opacity="0.7"/>
+        </marker>
+        <filter id="node-glow">
+          <feGaussianBlur stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Background regions -->
+      <rect x="0" y="0" width="500" height="200" rx="0" fill="rgba(0,230,118,0.04)"/>
+      <rect x="0" y="200" width="500" height="200" rx="0" fill="rgba(255,23,68,0.04)"/>
+      <text x="10" y="20" font-family="Share Tech Mono" font-size="9" fill="#00e676" opacity="0.6">MOSQUITO (ESPOROGONIA)</text>
+      <text x="10" y="380" font-family="Share Tech Mono" font-size="9" fill="#ff1744" opacity="0.6">HUMANO (ESQUIZOGONIA)</text>
+
+      <!-- Arrows connecting nodes -->
+      <!-- Mosquito saliva → Hepatócito -->
+      <line x1="100" y1="195" x2="100" y2="255" stroke="#00b0ff" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,2" opacity="0.7"/>
+      <!-- Hepatócito → Merozoíto -->
+      <line x1="150" y1="290" x2="215" y2="310" stroke="#ff1744" stroke-width="1.5" marker-end="url(#arrow-red)" opacity="0.7"/>
+      <!-- Merozoíto → Eritrócito infectado -->
+      <line x1="290" y1="310" x2="345" y2="295" stroke="#ff1744" stroke-width="1.5" marker-end="url(#arrow-red)" opacity="0.7"/>
+      <!-- Eritrócito → Gametócito -->
+      <line x1="395" y1="265" x2="410" y2="195" stroke="#ffea00" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.7"/>
+      <!-- Gametócito → Ookineto -->
+      <line x1="390" y1="130" x2="320" y2="95" stroke="#00e676" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.7"/>
+      <!-- Ookineto → Oocisto -->
+      <line x1="255" y1="80" x2="185" y2="80" stroke="#00e676" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.7"/>
+      <!-- Oocisto → Esporozoíto (mosquito glândula salivar) -->
+      <line x1="130" y1="95" x2="100" y2="155" stroke="#00e676" stroke-width="1.5" marker-end="url(#arrow)" opacity="0.7"/>
+
+      <!-- Node 1: Esporozoíto na saliva -->
+      <g id="node-sporo" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('sporo')">
+        <circle cx="100" cy="175" r="28" fill="#0a1628" stroke="#00b0ff" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="100" y="170" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00b0ff">ESPOROZOÍTO</text>
+        <text x="100" y="181" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00b0ff">PICADA</text>
+        <circle cx="100" cy="175" r="28" fill="transparent" stroke="#00b0ff" stroke-width="1" opacity="0.3">
+          <animate attributeName="r" values="28;36;28" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0;0.3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Node 2: Hepatócito -->
+      <g id="node-hep" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('hep')">
+        <circle cx="100" cy="280" r="28" fill="#0a1628" stroke="#ff6d00" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="100" y="275" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff6d00">HEPATÓCITO</text>
+        <text x="100" y="286" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff6d00">ESQUIZ.</text>
+      </g>
+
+      <!-- Node 3: Merozoíto -->
+      <g id="node-mero" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('mero')">
+        <circle cx="250" cy="320" r="28" fill="#0a1628" stroke="#ff1744" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="250" y="315" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff1744">MEROZOÍTO</text>
+        <text x="250" y="326" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff1744">LIVRE</text>
+        <circle cx="250" cy="320" r="5" fill="#ff1744" opacity="0.8">
+          <animateTransform attributeName="transform" type="rotate" from="0 250 320" to="360 250 320" dur="3s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+
+      <!-- Node 4: Eritrócito infectado -->
+      <g id="node-eryt" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('eryt')">
+        <ellipse cx="380" cy="280" rx="35" ry="22" fill="#0a1628" stroke="#ff1744" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="380" y="275" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff1744">ERITRÓCITO</text>
+        <text x="380" y="286" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ff1744">INFECTADO</text>
+      </g>
+
+      <!-- Node 5: Gametócito -->
+      <g id="node-gam" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('gam')">
+        <circle cx="415" cy="165" r="25" fill="#0a1628" stroke="#ffea00" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="415" y="160" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ffea00">GAMETO</text>
+        <text x="415" y="171" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#ffea00">CITO</text>
+      </g>
+
+      <!-- Node 6: Oocineto/Oocisto -->
+      <g id="node-oo" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('oo')">
+        <circle cx="305" cy="80" r="25" fill="#0a1628" stroke="#00e676" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="305" y="75" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00e676">OOCINETO</text>
+        <text x="305" y="86" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00e676">OOOCISTO</text>
+      </g>
+
+      <!-- Node 7: Esporozoíto formado (glândula salivar) -->
+      <g id="node-sal" class="cycle-node" style="cursor:pointer" onclick="showCycleInfo('sal')">
+        <circle cx="155" cy="80" r="25" fill="#0a1628" stroke="#00e676" stroke-width="2" filter="url(#node-glow)"/>
+        <text x="155" y="75" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00e676">GLÂND.</text>
+        <text x="155" y="86" text-anchor="middle" font-family="Share Tech Mono" font-size="7" fill="#00e676">SALIVAR</text>
+      </g>
+    </svg>
+
+    <!-- Info panel -->
+    <div id="cycle-info-panel" style="
+      background: var(--dark-panel);
+      border: 1px solid rgba(0,176,255,0.3);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      min-height: 60px;
+      transition: all 0.3s;
+      display: none;
+    ">
+      <div id="cycle-info-text"></div>
+    </div>
+    <p class="cycle-label">↑ Clique em cada nó para ver detalhes moleculares</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>⏱ FASE 1 — Esporogonia no Mosquito (10–14 dias)</h3>
+    <p>
+      A fêmea de <em>Anopheles</em> ingere sangue contendo <strong>gametócitos maduros</strong>. No estômago do mosquito, os gametócitos são ativados por:
+    </p>
+    <div class="timeline" style="margin-top:1rem;">
+      <div class="timeline-item">
+        <div class="timeline-time">MINUTO 0–15</div>
+        <div class="timeline-content">
+          <h4>Ativação dos Gametócitos</h4>
+          <p>Temperatura cai (~37°C → ~26°C) + pH sobe + ácido xanthurênico (do mosquito) → ativa <span class="mol-badge">GC-α (guanilato ciclase α)</span> → ↑cGMP intracelular → ativa PKG (proteína quinase G) → exflagelação do microgametócito (macho) produz 8 microgametas em 15 minutos.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">HORA 1–24</div>
+        <div class="timeline-content">
+          <h4>Fertilização e Oocineto</h4>
+          <p>Microgameta + macrogameta (fêmea) → <strong>zigoto</strong> diploide → sofre meiose → <strong>oocineto</strong> (móvel, fusiforme). O oocineto atravessa as células epiteliais do estômago do mosquito usando <span class="mol-badge green">CTRP (circumsporozoite-related protein)</span> e <span class="mol-badge green">WARP</span> (proteínas de motilidade via glideossomo).</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">DIA 8–14</div>
+        <div class="timeline-content">
+          <h4>Oocisto → Esporozoítos</h4>
+          <p>Oocineto para sob a membrana basal do estômago → forma <strong>oocisto</strong> → mitoses múltiplas → produz 10.000–100.000 <strong>esporozoítos</strong> por oocisto → oocisto estoura → esporozoítos migram ativamente até as glândulas salivares do mosquito (ficam ali aguardando a próxima picada).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ FASE 2 — Fase Pré-eritrocítica (Hepática) — Dias 7–10 no Humano</h3>
+    <div class="warning-box">
+      <strong>⚠ JANELA SILENCIOSA</strong>
+      Durante esta fase, o paciente não tem sintomas. A malária ainda não foi "ativada". Esta é a fase onde a quimioprofilaxia atua mais eficazmente!
+    </div>
+    <div class="timeline" style="margin-top:1rem;">
+      <div class="timeline-item">
+        <div class="timeline-time">SEGUNDOS APÓS PICADA</div>
+        <div class="timeline-content">
+          <h4>Inoculação de Esporozoítos</h4>
+          <p>O mosquito injeta 10–100 esporozoítos na derme. ~80% ficam presos localmente (capturados por células dendríticas e macrófagos). Os restantes entram na circulação linfática ou venosa e chegam ao fígado em minutos.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">MINUTOS APÓS PICADA</div>
+        <div class="timeline-content">
+          <h4>Travessia Hepática — A Magia da CSP</h4>
+          <p>
+            Na superfície do esporozoíto: <span class="mol-badge blue">CSP (Circumsporozoite Protein)</span> — proteína mais abundante, cobre toda a superfície. A região N-terminal da CSP liga-se a proteoglicanos de heparano-sulfato (<span class="mol-badge">HSPGs</span>) nos sinusoides hepáticos → direciona o parasita para o fígado.
+            <br><br>
+            O esporozoíto atravessa várias células de Kupffer e hepatócitos (por um processo chamado <strong>"cell traversal"</strong>, usando a proteína <span class="mol-badge green">SPECT-1/2</span> e <span class="mol-badge green">PLP-1</span>) até encontrar o hepatócito ideal para invasão definitiva.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">MINUTOS–HORAS</div>
+        <div class="timeline-content">
+          <h4>Invasão do Hepatócito — Formação do PV</h4>
+          <p>
+            Invasão definitiva: complexo apical do esporozoíto libera conteúdo de roptrias → forma <strong>vacúolo parasitóforo (PV — Parasitophorous Vacuole)</strong>. 
+            Este vacúolo é uma "bolha" membranosa que isola o parasita do citoplasma do hepatócito → o sistema imune não consegue detectá-lo facilmente!
+            <br><br>
+            Receptor do hepatócito usado: <span class="mol-badge">CD81</span> e <span class="mol-badge">SR-B1</span> (receptor de lipoproteínas) + <span class="mol-badge">EphA2</span> (só para P. falciparum e P. vivax).
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">DIAS 5–15 (VARIÁVEL POR ESPÉCIE)</div>
+        <div class="timeline-content">
+          <h4>Esquizogonia Hepática — Amplificação Silenciosa</h4>
+          <p>
+            Dentro do PV, o esporozoíto se transforma em <strong>trofozoíto hepático</strong> → esquizonte hepático → divide-se intensamente (10.000–30.000 divisões mitóticas!) → cada hepatócito infectado produz 10.000–30.000 <strong>merozoítos</strong>.
+            <br><br>
+            Os merozoítos são libertados em vesículas chamadas <span class="mol-badge red">merossomas</span> → entram na circulação sanguínea → invadem eritrócitos.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight highlight-yellow" style="margin-top:1rem;">
+      <strong>P. VIVAX e P. OVALE — O Hipnozoíto (do gr. ὕπνος, hypnos = sono):</strong><br>
+      Alguns esporozoítos, ao chegar ao hepatócito, param em estado dormente → <strong>hipnozoíto</strong>. Permanecem silenciosos por meses a anos. Quando reativados (por febre, stress, imunossupressão) → causam RECAÍDA clínica. A primaquina e tafenoquina eliminam hipnozoítos. O P. falciparum NÃO forma hipnozoítos.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 2: INVASÃO DO ERITRÓCITO — MOLECULARMENTE         -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="invasion" class="section-blue">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">02</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// NÍVEL MOLECULAR</div>
+      <div class="chapter-title">A Invasão do Eritrócito: 60 Segundos de Perfeição Molecular</div>
+    </div>
+  </div>
+
+  <div class="card card-red" style="border-color: rgba(255,23,68,0.3);">
+    <h3>❓ Por que o Plasmodium escolhe o Glóbulo Vermelho?</h3>
+    <p>Razões moleculares para esta escolha "inteligente":</p>
+    <br>
+    <ul>
+      <li>🩸 <strong>Hemoglobina abundante</strong> → fonte de aminoácidos e heme (precursor de porfirinas)</li>
+      <li>🛡 <strong>Sem MHC-I</strong> (o eritrócito maduro perde o núcleo e não apresenta antígenos via MHC classe I) → célula T citotóxica não consegue matar diretamente</li>
+      <li>⚡ <strong>Rica em glicose</strong> via GLUT-1 → combustível para glicólise parasitária</li>
+      <li>🌊 <strong>Ambiente osmótico controlado</strong> → estável para replicação</li>
+    </ul>
+  </div>
+
+  <!-- Invasion animation -->
+  <div class="cycle-container">
+    <h3 style="font-family:'Orbitron',monospace; font-size:0.85rem; color:var(--blood-red); margin-bottom:1rem; letter-spacing:1px;">
+      ── INVASÃO EM TEMPO REAL (~60 SEGUNDOS) ──
+    </h3>
+    <div style="position:relative; width:100%; max-width:480px; height:220px; margin:0 auto; background: rgba(255,23,68,0.04); border-radius:12px; overflow:hidden; border:1px solid rgba(255,23,68,0.2);">
+      <svg width="100%" height="100%" viewBox="0 0 480 220" id="invasion-svg">
+        <!-- RBC -->
+        <ellipse cx="320" cy="110" rx="140" ry="90" fill="rgba(198,40,40,0.4)" stroke="#ff1744" stroke-width="1.5"/>
+        <ellipse cx="320" cy="110" rx="80" ry="45" fill="rgba(5,10,15,0.6)" opacity="0.5"/>
+        
+        <!-- Merozoíto -->
+        <g id="mero-anim">
+          <ellipse cx="100" cy="110" rx="22" ry="12" fill="#00e676" stroke="#00ff88" stroke-width="1"/>
+          <!-- complexo apical na ponta -->
+          <polygon points="122,110 140,105 140,115" fill="#00ff88" opacity="0.8"/>
+          <circle cx="115" cy="110" r="4" fill="#004d25"/>
+          <animateTransform attributeName="transform" type="translate" values="0,0; 90,0; 90,0; 90,0; 90,0" keyTimes="0;0.3;0.5;0.8;1" dur="6s" repeatCount="indefinite"/>
+        </g>
+        
+        <!-- Step labels -->
+        <text x="60" y="30" font-family="Share Tech Mono" font-size="8" fill="#00e676" opacity="0.8">1. MEROZOÍTO LIVRE</text>
+        <text x="200" y="30" font-family="Share Tech Mono" font-size="8" fill="#ffea00" opacity="0.8">2. RECONHECIMENTO</text>
+        <text x="340" y="30" font-family="Share Tech Mono" font-size="8" fill="#ff1744" opacity="0.8">3. INVASÃO</text>
+        
+        <!-- Ligand arrows -->
+        <line x1="240" y1="75" x2="200" y2="55" stroke="#ffea00" stroke-width="0.8" stroke-dasharray="3,2" opacity="0.5"/>
+        <text x="205" y="50" font-family="Share Tech Mono" font-size="7" fill="#ffea00" opacity="0.7">EBA-175 ↔ GPA</text>
+        
+        <!-- Parasite inside (appears later) -->
+        <g opacity="0">
+          <circle cx="320" cy="110" r="18" fill="#00e676" stroke="#00ff88" stroke-width="1">
+            <animate attributeName="opacity" values="0;0;0;0;1" keyTimes="0;0.3;0.5;0.7;1" dur="6s" repeatCount="indefinite"/>
+          </circle>
+          <animate attributeName="opacity" values="0;0;0;0;1" keyTimes="0;0.3;0.5;0.7;1" dur="6s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- Knob appearing -->
+        <circle cx="260" cy="60" r="4" fill="#ffea00">
+          <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.4;0.6;0.8;1" dur="6s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="0;0;0;4;6" keyTimes="0;0.4;0.6;0.8;1" dur="6s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+    <p class="cycle-label" style="margin-top:0.8rem;">Animação: merozoíto reconhece, se orienta e invade o eritrócito</p>
+  </div>
+
+  <div class="card">
+    <h3>🔬 Os 5 Passos da Invasão — Detalhe Molecular</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 1 — 0–5 seg</div>
+        <div class="timeline-content">
+          <h4>Reconhecimento & Adesão Inicial (Fraca)</h4>
+          <p>
+            Múltiplas interações fraco-valência entre proteínas de superfície do merozoíto (<span class="mol-badge green">MSP-1/2/3 — Merozoite Surface Proteins</span>) e a membrana do eritrócito. Esta adesão é reversível — o merozoíto pode "sair" e tentar outra célula.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 2 — 5–15 seg</div>
+        <div class="timeline-content">
+          <h4>Reorientação Apical</h4>
+          <p>
+            O merozoíto se reorienta para que o <strong>complexo apical</strong> fique voltado para a membrana do eritrócito. Micronemas são secretados → liberam <span class="mol-badge blue">EBA-175 (Erythrocyte Binding Antigen-175)</span> que se liga ao receptor <span class="mol-badge red">Glicoforina A (GPA)</span> do eritrócito. Esta ligação é mais forte (alta afinidade).
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 3 — 15–25 seg</div>
+        <div class="timeline-content">
+          <h4>Junção Justa (Tight Junction) — A Chave da Invasão</h4>
+          <p>
+            Roptrias secretam <span class="mol-badge blue">RON2</span> (inserido na membrana do eritrócito) + <span class="mol-badge blue">RON4/5</span> (intracelular no eritrócito). O merozoíto então secreta <span class="mol-badge green">AMA-1 (Apical Membrane Antigen-1)</span> que liga-se ao RON2 → forma a <strong>junção justa (tight junction)</strong> — uma estrutura molecular que "ancora" o merozoíto ao eritrócito durante a invasão.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 4 — 25–50 seg</div>
+        <div class="timeline-content">
+          <h4>Motor Molecular: Glideossomo (Glideosome)</h4>
+          <p>
+            A invasão é ativa — o parasita entra por propulsão própria! O <strong>glideossomo</strong> é o motor molecular do Plasmodium:
+          </p>
+          <div class="formula-box" style="margin:0.8rem 0; text-align:left; font-size:0.75rem;">
+            Miosina-A (MyoA) → ancorада no IMC (Inner Membrane Complex)<br>
+            ↓<br>
+            Liga-se a Actina filamentosa (F-actina curta, ~100 monômeros)<br>
+            ↓<br>
+            Actina conectada a proteínas de junção justa no eritrócito<br>
+            ↓<br>
+            MyoA + ATP → força propulsora → parasita "desliza" para dentro
+          </div>
+          <p>É como uma correia transportadora: o parasita fica fixo na junção e "puxa" a membrana do eritrócito sobre si mesmo!</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 5 — 50–60 seg</div>
+        <div class="timeline-content">
+          <h4>Selamento do Vacúolo Parasitóforo</h4>
+          <p>
+            A membrana do eritrócito se fecha atrás do parasita, formando o <strong>vacúolo parasitóforo (PV)</strong>. Grânulos densos são secretados → modificam o PV e a membrana do eritrócito. A membrana do PV é chamada <span class="mol-badge">PVM (Parasitophorous Vacuole Membrane)</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <h3>🧬 Ciclo Intraeritrocítico — O Ciclo dos 48h (P. falciparum)</h3>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>ANEL (0–24h)</span><span>TROFOZOÍTO (24–36h)</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(to right,#00e676,#ffea00,#ff1744);"></div></div>
+    </div>
+    <div class="grid-2">
+      <div class="highlight highlight-green">
+        <strong>Estágio de Anel (0–24h)</strong><br>
+        O parasita parece um "anel" no microscópio (vacúolo alimentar + núcleo). Metabolismo baixo. Importa isoleucina e glicose do plasma. Pouca digestão de Hb. O parasita está "se instalando".
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>Trofozoíto (24–36h)</strong><br>
+        Digestão intensa de Hb. Produção de hemozoína. Modificação da membrana do eritrócito: exporta proteínas — PfEMP1, SERA, RESA. O eritrócito começa a ficar rígido e "cheio de saliências" (knobs).
+      </div>
+      <div class="highlight">
+        <strong>Esquizonte (36–44h)</strong><br>
+        O trofozoíto divide o núcleo múltiplas vezes → 16–32 merozoítos filhos. O eritrócito incha, fica distorcido. O esquizonte maduro é chamado de "rosácea" (rosette-like).
+      </div>
+      <div class="highlight" style="border-color:rgba(255,23,68,0.25); background:rgba(255,23,68,0.06);">
+        <strong>Ruptura & Libertação (44–48h)</strong><br>
+        Proteases do parasita + pressão osmótica → eritrócito rompe! Liberta 16–32 novos merozoítos + toxinas + hemozoína + debris celulares → pico febril! Os merozoítos invadem novos eritrócitos e o ciclo recomeça.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 3: FEBRE — A EXPLOSÃO MOLECULAR                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="fever" class="section-orange">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">03</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// SINTOMATOLOGIA MOLECULAR</div>
+      <div class="chapter-title">A Febre: Quando 16 Parasitas Explodem ao Mesmo Tempo</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌡 Por que a febre é PERIÓDICA?</h3>
+    <p>
+      Este é um conceito fundamental: a febre da malária não é contínua — é <strong>cíclica e sincronizada</strong>. Mas por quê?
+    </p>
+    <br>
+    <div class="highlight highlight-yellow">
+      <strong>SINCRONIZAÇÃO PARASITÁRIA:</strong> Ao longo da infecção, as populações de parasitas sincronizam seus ciclos (provavelmente por temperaturas oscilantes do hospedeiro, que atuam como "relógio biológico"). Quando uma coorte enorme de eritrócitos estoura simultaneamente → <strong>pico maciço de pirógenos</strong> → febre súbita e intensa.
+    </div>
+    <br>
+    <div class="grid-2">
+      <div class="card card-blue" style="margin-bottom:0;">
+        <h3 style="font-size:0.8rem;">P. falciparum / P. vivax / P. ovale</h3>
+        <p style="font-size:0.85rem;">Ciclo 48h → <strong>Febre Terçã</strong> (a cada 48h = "terceiro dia" na contagem antiga)</p>
+      </div>
+      <div class="card" style="margin-bottom:0;">
+        <h3 style="font-size:0.8rem;">P. malariae</h3>
+        <p style="font-size:0.85rem;">Ciclo 72h → <strong>Febre Quartã</strong> (a cada 72h = "quarto dia")</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-red" style="border-color:rgba(255,23,68,0.3);">
+    <h3>🔥 Cascade de Pirógenos — Molecular Step-by-Step</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">T = 0 — RUPTURA DO ERITRÓCITO</div>
+        <div class="timeline-content">
+          <h4>Libertação de GPI, Hemozoína e Debris</h4>
+          <p>
+            A ruptura liberta no plasma:
+            <span class="mol-badge red">GPI (Glycosylphosphatidylinositol)</span> — âncoras de lipídeos da superfície do parasita. São os principais pirógenos e ativadores imunes.
+            <span class="mol-badge yellow">Hemozoína</span> — cristais de heme polimerizado (= malária pigment).
+            Debris de eritrócito + proteínas parasitárias.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">T = 0–30 min</div>
+        <div class="timeline-content">
+          <h4>Ativação de Macrófagos e Monócitos via TLRs</h4>
+          <p>
+            <span class="mol-badge red">GPI</span> liga-se a <span class="mol-badge blue">TLR-2/TLR-4</span> (Toll-Like Receptors 2 e 4) nos macrófagos/monócitos → ativa via <span class="mol-badge">MyD88</span> → <span class="mol-badge">NF-κB</span> (Nuclear Factor kappa B — fator de transcrição pró-inflamatório).
+            <br><br>
+            Hemozoína liga-se a <span class="mol-badge blue">TLR-9</span> (reconhece DNA parasitário associado) e ativa o <span class="mol-badge yellow">NLRP3 inflamassoma</span>.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">T = 30–90 min</div>
+        <div class="timeline-content">
+          <h4>Explosão de Citocinas — O "Cocktail Inflamatório"</h4>
+          <p>
+            NF-κB ativado → transcrição de genes inflamatórios → liberação de:
+            <span class="mol-badge red">TNF-α</span> (Tumor Necrosis Factor-alfa) — pirógeno potente, causa febre e caquexia.
+            <span class="mol-badge red">IL-1β</span> (Interleucina-1β) — pirógeno endógeno clássico.
+            <span class="mol-badge red">IL-6</span> — amplifica resposta de fase aguda.
+            <span class="mol-badge red">IL-12</span> — ativa células NK e linfócitos T.
+            <span class="mol-badge yellow">IFN-γ</span> (Interferon-gama) — ativa macrófagos.
+          </p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">T = 90–120 min</div>
+        <div class="timeline-content">
+          <h4>COX-2 → PGE2 → Hipotálamo → FEBRE</h4>
+          <p>
+            TNF-α e IL-1β ativam <span class="mol-badge">COX-2 (Ciclooxigenase-2)</span> → converte ácido araquidônico em <span class="mol-badge yellow">PGE2 (Prostaglandina E2)</span> → PGE2 atravessa a BHE (Barreira Hematoencefálica) → liga-se a receptores EP3 no <span class="mol-badge blue">POAH (Área Pré-Óptica Anterior do Hipotálamo)</span> → ↑cAMP → inibe neurônios "anti-febre" → <strong>termostato corporal reajustado para ~40–41°C</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:1rem;">
+      <strong>TRÍADE CLÍNICA DA FEBRE MALÁRICA:</strong><br>
+      <strong>1. Calafrio</strong> (vasoconstricção periférica + tremores musculares para gerar calor → atingir novo set-point febril)<br>
+      <strong>2. Febre Alta</strong> (~40–41°C — pico quando se atinge o set-point)<br>
+      <strong>3. Sudorese profusa</strong> (set-point volta ao normal → evaporação para dissipar calor)
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>💔 Anemia da Malária — Três Mecanismos em Paralelo</h3>
+    <div class="grid-2">
+      <div class="highlight" style="border-color:rgba(255,23,68,0.25); background:rgba(255,23,68,0.05);">
+        <strong>1. DESTRUIÇÃO DIRETA</strong><br>
+        Eritrócito infectado → ruptura a cada 48h. P. falciparum pode infectar qualquer eritrócito → até 30–50% dos eritrócitos circulantes podem ser parasitados em casos graves.
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>2. DESTRUIÇÃO IMUNE (Bystander Hemolysis)</strong><br>
+        Macrófagos esplênicos hiperativados reconhecem eritrócitos NÃO infectados (mas com depósito de Ig e complemento) → os destroem. Anemia desproporcional ao grau de parasitemia!
+      </div>
+      <div class="highlight highlight-green">
+        <strong>3. SUPRESSÃO DA ERITROPOIESE</strong><br>
+        TNF-α e IFN-γ suprimem a medula óssea → inibem EPO (eritropoietina) e progenitores eritróides. Ferro sequestrado em macrófagos (hepcidina↑ → ferroportina↓ → ferro intracelular ↑ → indisponível para eritropoiese).
+      </div>
+    </div>
+    <div class="warning-box" style="margin-top:1rem;">
+      <strong>⚠ IMPLICAÇÃO CLÍNICA</strong>
+      A anemia da malária piora rapidamente mesmo após tratamento (lise imune continua). Monitorar Hb seriadamente. Em crianças, Hb &lt;5 g/dL = critério de malária grave → transfusão considerada.
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-question">🧠 CHECKPOINT: Por que a febre da malária pioraria se dessemos apenas paracetamol e não tratarmos o parasita?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" onclick="checkQuiz2(this, false)">A) O paracetamol estimula o parasita a se replicar mais rapidamente</button>
+      <button class="quiz-option" onclick="checkQuiz2(this, true)">B) O paracetamol bloqueia COX-2/PGE2 (febre) mas não elimina o GPI/hemozoína que continuam sendo produzidos a cada 48h com nova ruptura eritrocitária</button>
+      <button class="quiz-option" onclick="checkQuiz2(this, false)">C) O paracetamol inibe a imunidade e deixa o parasita crescer</button>
+      <button class="quiz-option" onclick="checkQuiz2(this, false)">D) Febre alta na malária não tem relação com prostaglandinas</button>
+    </div>
+    <div class="quiz-feedback" id="qfb2"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 4: CITOADESÃO & SEQUESTRO — O GRANDE VILÃO DO P. FALCIPARUM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="section-red">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">04</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// PATOGÊNESE CENTRAL</div>
+      <div class="chapter-title">Citoadesão & Sequestro: Por que o P. falciparum é Diferente</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📌 O Conceito de Citoadesão</h3>
+    <p>
+      <em>Cyto</em> (grego: κύτος = célula) + <em>adhesio</em> (latim = fixação). Literalmente: "fixação à célula".
+      <br><br>
+      A partir do estágio de trofozoíto maduro (~20–24h de infecção), o P. falciparum <strong>modifica radicalmente a membrana do eritrócito</strong> — tornando-o capaz de aderir ao endotélio vascular. Esta propriedade é EXCLUSIVA do P. falciparum e explica sua maior letalidade.
+    </p>
+  </div>
+
+  <div class="card card-red" style="border-color:rgba(255,23,68,0.4);">
+    <h3>🔴 PfEMP1 — A Proteína Central da Citoadesão</h3>
+    <p>
+      <span class="mol-badge red">PfEMP1 (Plasmodium falciparum Erythrocyte Membrane Protein 1)</span>:
+    </p>
+    <br>
+    <ul>
+      <li>Proteína de alto peso molecular (~200–350 kDa)</li>
+      <li>Codificada pela família de genes <strong>var</strong> (~60 genes por genoma parasitário)</li>
+      <li>O parasita expressa apenas <strong>1 variante de PfEMP1 de cada vez</strong> (exclusão alélica) e pode mudar a variante a cada geração → escape imune!</li>
+      <li>Exportada para a superfície do eritrócito via sistema <span class="mol-badge blue">PEXEL/HT (Plasmodium Export Element/Host Targeting signal)</span> e translocon <span class="mol-badge blue">PTEX (Plasmodium Translocon of EXported proteins)</span></li>
+      <li>Concentrada nas protuberâncias da membrana chamadas <strong>knobs</strong> (botões)</li>
+    </ul>
+    <br>
+    <div class="highlight">
+      <strong>KNOBS</strong> — estruturas eletrondensas sob a membrana do eritrócito infectado. Compostos por <span class="mol-badge">KHARP (Knob-associated Histidine-rich Protein)</span>. Funcionam como "plataformas de lançamento" para a PfEMP1.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🩸 Receptores Endoteliais — Onde o Eritrócito se "Cola"</h3>
+    <p>PfEMP1 tem domínios extracelulares (DBL e CIDR) que se ligam a múltiplos receptores do endotélio e outras células:</p>
+    <br>
+    <div class="grid-2">
+      <div class="highlight" style="border-color:rgba(255,23,68,0.3);background:rgba(255,23,68,0.05);">
+        <strong>CD36</strong><br>
+        Principal receptor de citoadesão. Expresso em endotélio, monócitos, plaquetas. Liga-se ao domínio CIDR-α da PfEMP1. Medeia sequestro em praticamente todos os órgãos EXCETO cérebro.
+      </div>
+      <div class="highlight" style="border-color:rgba(255,23,68,0.3);background:rgba(255,23,68,0.05);">
+        <strong>ICAM-1 (CD54)</strong><br>
+        Intercellular Adhesion Molecule-1. Expresso em endotélio cerebral (BBB). Mediado pelo domínio DBL-β. → Sequestro CEREBRAL → malária cerebral!
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>EPCR (Endothelial Protein C Receptor)</strong><br>
+        Ligado aos genes <em>var2csa</em> e variantes DC8. Sequestro cerebral + formas graves. Bloqueia a proteína C (anticoagulante) → risco de CID (Coagulação Intravascular Disseminada).
+      </div>
+      <div class="highlight highlight-green">
+        <strong>CSA (Sulfato de Condroitina A)</strong><br>
+        Expresso na placenta. Ligado ao PfEMP1 codificado pelo gene <em>var2csa</em> → sequestro placentário → malária na gravidez.
+      </div>
+      <div class="highlight">
+        <strong>PECAM-1/CD31</strong><br>
+        Platelet/Endothelial Cell Adhesion Molecule. Sequestro adicional.
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>Plaquetas</strong><br>
+        Eritrócitos infectados ligam-se a plaquetas via CD36 → formam "rosetas mediadas por plaquetas" → mais entupimento microvascular.
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>🌀 Rosettamento (Rosetting)</h3>
+    <p>
+      O eritrócito infectado também se liga a <strong>eritrócitos NÃO infectados</strong> → formam "rosetas" (rosettes) — grupos de 5–10 eritrócitos em volta do eritrócito infectado. 
+      <br><br>
+      Mediado por: PfEMP1 (DBL-α) → liga-se a <span class="mol-badge">Complemento Receptor 1 (CR1)</span>, <span class="mol-badge">heparano-sulfato</span> e <span class="mol-badge">grupo sanguíneo A</span> no eritrócito não infectado.
+    </p>
+    <div class="warning-box" style="margin-top:1rem;">
+      <strong>⚠ IMPACTO CLÍNICO</strong>
+      Citoadesão + rosettamento + sequestro → eritrócitos infectados ficam PRESOS nos capilares (especialmente no cérebro, pulmão, rim) → <strong>obstrução microvascular</strong> → hipóxia tecidual localizada → MALÁRIA GRAVE.
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 5: COMPLICAÇÕES — MALÁRIA GRAVE                   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="complications" class="section-yellow">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">05</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// COMPLICAÇÕES AGUDAS E CRÓNICAS</div>
+      <div class="chapter-title">Malária Grave: Quando a Guerra se Torna Caos</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Critérios OMS de Malária Grave (WHO 2015)</h3>
+    <p>Qualquer um dos seguintes em paciente com parasitemia confirmada:</p>
+    <br>
+    <div class="grid-2">
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Prostração / Fraqueza extrema</div>
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Alteração do nível de consciência</div>
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Convulsões repetidas (≥2/24h)</div>
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Coma (Glasgow ≤11, BCS &lt;3)</div>
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Distress respiratório / SDRA</div>
+        <div class="mol-badge red" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Anemia grave (Hb &lt;5 g/dL)</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:0.5rem;">
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Hipoglicemia (&lt;2,2 mmol/L)</div>
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Choque circulatório</div>
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Hemorragia anormal</div>
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">IRA (creatinina &gt;265 μmol/L)</div>
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Icterícia (bilirrubina &gt;50 μmol/L)</div>
+        <div class="mol-badge yellow" style="display:block; padding:6px 10px; text-align:left; font-size:0.7rem;">Hiperparasitemia (&gt;10%)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complications accordion -->
+  <h3 style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--fever-orange); margin:2rem 0 1rem; letter-spacing:1px;">── COMPLICAÇÕES DETALHADAS ──</h3>
+
+  <div class="accordion" id="acc1">
+    <div class="accordion-header" onclick="toggleAccordion('acc1')">
+      <h4>🧠 Malária Cerebral — A Mais Letal (Mortalidade 15–25%)</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p><strong>Definição OMS:</strong> Coma não atribuível a outra causa em paciente com P. falciparum (Glasgow ≤11 em adultos; BCS ≤2 em crianças).</p>
+        <br>
+        <p><strong>Patogênese — 3 Mecanismos em Sinergia:</strong></p>
+        <div class="timeline" style="margin-top:1rem;">
+          <div class="timeline-item">
+            <div class="timeline-time">MECANISMO 1</div>
+            <div class="timeline-content">
+              <h4>Obstrução Mecânica Microvascular</h4>
+              <p>Eritrócitos infectados com PfEMP1 ligam-se ao ICAM-1 do endotélio cerebral → eritrócitos acumulam-se nos capilares cerebrais → ocluem o fluxo → hipóxia local → necrose neuronal. Autopsia: cérebros de pacientes com malária cerebral mostram capilares repletos de eritrócitos infectados (<strong>sinal histológico patognomônico: "stagnant flow"</strong>).</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">MECANISMO 2</div>
+            <div class="timeline-content">
+              <h4>Disfunção da Barreira Hematoencefálica (BHE)</h4>
+              <p>TNF-α + IFN-γ + PfEMP1 → ativam endotélio cerebral → ↑expressão de ICAM-1 + ↑permeabilidade da BHE → edema cerebral vasogênico + citotóxico. Angiopoietina-2 (Ang-2, liberada por endotélio ativado) / Angiopoietina-1 (estabilizadora): ratio Ang-2/Ang-1 ↑ em malária cerebral → permeabilidade vascular ↑.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">MECANISMO 3</div>
+            <div class="timeline-content">
+              <h4>Neuroinflamação e Excitotoxicidade</h4>
+              <p>Microglias ativadas + astrócitos + leucócitos infiltrantes produzem: <span class="mol-badge red">NO (Óxido Nítrico) em excesso</span> (iNOS ativada por IFN-γ) → suprime a transmissão sináptica → confusão e coma. Mas: NO também causa vasodilatação protetora — duplo papel. <span class="mol-badge yellow">Glutamato</span> em excesso → excitotoxicidade → convulsões.</p>
+            </div>
+          </div>
+        </div>
+        <div class="warning-box">
+          <strong>⚠ NOTA EM CRIANÇAS</strong>
+          A malária cerebral em crianças sub-Saharianas é diferente de adultos: causa principalmente edema cerebral (aumento da PIC) → herniação → óbito. Uso de manitol e posicionamento são cruciais. Sequelas: 25% das crianças sobreviventes ficam com déficit cognitivo/epilepsia.
+        </div>
+        <div class="highlight highlight-green">
+          <strong>TRATAMENTO:</strong> Artesunato IV (1ª linha) → endovenoso, actua mais rápido, mais potente que quinina IV. Dexametasona: <strong>CONTRAINDICADA</strong> (não melhora e aumenta complicações – estudos WHO confirmam). Anticonvulsivantes se convulsões. Monitorar glicemia!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc2">
+    <div class="accordion-header" onclick="toggleAccordion('acc2')">
+      <h4>🌙 Hipoglicemia — O Inimigo Silencioso</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p><strong>Incidência:</strong> 8–31% dos casos graves. Particularmente perigosa em crianças e grávidas.</p>
+        <br>
+        <p><strong>Mecanismos Moleculares (3 simultâneos):</strong></p>
+        <br>
+        <p><strong>1. Consumo aumentado pelo parasita:</strong> O P. falciparum consome glicose 75× mais que o eritrócito normal (glicólise intensa). Em alta parasitemia, o consumo total é massivo.</p>
+        <br>
+        <p><strong>2. TNF-α inibe gliconeogênese:</strong> TNF-α suprime a expressão da PEPCK (Phosphoenolpyruvate Carboxykinase) hepática → bloqueia a síntese de glicose a partir de precursores não glucídicos → glicemia cai.</p>
+        <br>
+        <p><strong>3. Quinina → Hiperinsulinismo:</strong> Quinina (antimalárico) estimula células β pancreáticas → secreção excessiva de insulina → hipoglicemia paradoxal (paciente em tratamento fica mais hipoglicêmico!).</p>
+        <div class="warning-box">
+          <strong>⚠ ARMADILHA CLÍNICA</strong>
+          Hipoglicemia pode mimetizar malária cerebral (confusão, convulsão, coma). SEMPRE checar glicemia em paciente com alteração de consciência por malária! Glicose IV imediatamente se &lt;2,2 mmol/L.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc3">
+    <div class="accordion-header" onclick="toggleAccordion('acc3')">
+      <h4>💨 SDRA — Síndrome do Desconforto Respiratório Agudo</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p>A SDRA (em inglês ARDS — Acute Respiratory Distress Syndrome) na malária tem alta mortalidade (~80% se instalada).</p>
+        <br>
+        <p><strong>Patogênese Molecular:</strong></p>
+        <br>
+        <p>Sequestro de eritrócitos infectados nos capilares pulmonares → ativação do endotélio alveolar → neutrófilos marginados → NET (Neutrophil Extracellular Traps) → dano alveolar difuso. Paralelamente: TNF-α + IL-8 → ↑permeabilidade endotélio alveolar → exsudação de proteínas para o espaço alveolar → formação de membranas hialinas → difusão de O₂ comprometida.</p>
+        <br>
+        <p><strong>Achado paradoxal:</strong> A SDRA na malária pode aparecer ou PIORAR após início do tratamento! Razão: lise maciça de eritrócitos infectados → liberação súbita de citocinas e hemozoína → "storm" inflamatório pulmão.</p>
+        <div class="highlight highlight-yellow">
+          <strong>TRATAMENTO:</strong> Ventilação protetora (Volume corrente 6 mL/kg, PEEP moderada). Artesunato IV para eliminar parasita. Posição prona se PaO2/FiO2 &lt;150.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc4">
+    <div class="accordion-header" onclick="toggleAccordion('acc4')">
+      <h4>🩺 IRA — Insuficiência Renal Aguda ("Febre da Água Preta")</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p><strong>Hemoglobinúria:</strong> O clássico sinal da "febre da água preta" (blackwater fever) — urina muito escura (quase preta) por hemoglobina/mioglobina livre na urina.</p>
+        <br>
+        <p><strong>Mecanismos:</strong></p>
+        <br>
+        <p><strong>1. Obstrução tubular:</strong> Hemólise maciça → hemoglobina livre no plasma → filtração glomerular → hemoglobina precipita nos túbulos (pH ácido) → cilindros pigmentados → obstrução tubular → necrose tubular aguda (NTA).</p>
+        <br>
+        <p><strong>2. Hipoperfusão renal:</strong> Sequestro vascular + hipovolemia (por febre, anorexia, vômitos) → ↓fluxo renal → isquemia → NTA.</p>
+        <br>
+        <p><strong>3. Hemólise induzida por quinina:</strong> Reação imuno-alérgica rara (anticorpos anti-quinina + eritrócitos) → hemólise intravascular maciça.</p>
+        <div class="warning-box">
+          <strong>⚠ GESTÃO</strong>
+          Hidratação cautelosa (risco de edema pulmonar em contexto de SDRA concomitante). Evitar AINEs e nefrotóxicos. Diálise se oligúria persistente e K⁺ &gt;6,5 ou acidose refratária.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc5">
+    <div class="accordion-header" onclick="toggleAccordion('acc5')">
+      <h4>🤰 Malária na Gravidez — Duplo Perigo</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p><strong>Epidemiologia:</strong> Gravidez = fator de risco major para malária grave. Imunidade anti-malária é parcialmente suprimida na gravidez (tolerância imune para o feto).</p>
+        <br>
+        <p><strong>Patogênese Placentária:</strong> O gene <em>var2csa</em> codifica uma variante especial de PfEMP1 que liga-se ao CSA (Condroitin Sulfate A) da placenta → eritrócitos infectados acumulam no espaço interviloso placentário → histologicamente: "placenta repleta de eritrócitos infectados e macrófagos ativados (células de Hofbauer)".</p>
+        <br>
+        <p><strong>Consequências:</strong></p>
+        <ul style="margin-top:0.5rem;">
+          <li>Anemia materna severa → hipóxia materna</li>
+          <li>Inflamação placentária → ↓transferência de nutrientes → RCIU (Restrição do Crescimento Intrauterino)</li>
+          <li>Baixo peso ao nascer (&lt;2500g) → principal causa de mortalidade neonatal</li>
+          <li>Parto prematuro</li>
+          <li>Malária congênita (rara — passagem transplacentária)</li>
+        </ul>
+        <div class="highlight highlight-green">
+          <strong>PREVENÇÃO:</strong> TPI (Tratamento Preventivo Intermitente) com sulfadoxina-pirimetamina (SP) em grávidas em áreas endémicas — protocolo OMS. Redes mosquiteiras impregnadas com inseticida (ITN). Artesunato + clindamicina para tratamento (1º trimestre: quinina + clindamicina).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc6">
+    <div class="accordion-header" onclick="toggleAccordion('acc6')">
+      <h4>👶 Complicações Específicas em Crianças</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <p><strong>Crianças &lt;5 anos</strong> são o grupo mais vulnerável à malária grave na África Sub-Saariana (onde P. falciparum é endémico):</p>
+        <br>
+        <p><strong>Anemia Grave:</strong> Mais frequente que em adultos. Hb &lt;5 g/dL. O eritrócito fetal/infantil (com HbF — Hemoglobina Fetal) é <em>menos</em> facilmente invadido pelo parasita, mas crianças jovens têm imunidade adquirida menor → alta parasitemia.</p>
+        <br>
+        <p><strong>Convulsões Febris vs Malária Cerebral:</strong> Distinção difícil. Convulsões simples (breves, generalizadas, 1 episódio) → menos graves. Convulsões focais, prolongadas ou múltiplas → indicam malária cerebral.</p>
+        <br>
+        <p><strong>Síndrome de Resposta Inflamatória em Crianças:</strong> Hiperpirexia (temperatura &gt;40,5°C) → risco de convulsão → refrescar fisicamente + antipirético.</p>
+        <br>
+        <p><strong>Desnutrição como Co-fator:</strong> Desnutrição proteico-energética → imunidade celular comprometida → malária mais grave. Mas paradoxalmente: kwashiorkor pode reduzir proliferação parasitária (parasita precisa de proteínas!).</p>
+        <br>
+        <p><strong>Malária Não Imune em Crianças Migrantes:</strong> Crianças de áreas sem malária, quando visitam zonas endémicas, têm zero imunidade adquirida → risco máximo.</p>
+        <div class="warning-box">
+          <strong>⚠ SEQUELAS NEUROLÓGICAS</strong>
+          25% das crianças que sobrevivem à malária cerebral têm: déficit cognitivo, epilepsia, cegueira, surdo-mutismo. São necessários seguimento e reabilitação longos.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc7">
+    <div class="accordion-header" onclick="toggleAccordion('acc7')">
+      <h4>📅 Complicações Crónicas</h4>
+      <span class="accordion-icon">+</span>
+    </div>
+    <div class="accordion-body">
+      <div class="accordion-inner">
+        <div class="grid-2">
+          <div class="highlight">
+            <strong>Esplenomegalia Crónica (Malária Hiperreativa do Baço)</strong><br>
+            Infecções repetidas → baço estimulado cronicamente → esplenomegalia massiva (baço pode pesar >1kg). Hipersplenismo → pancitopenia. Risco de rotura esplênica.
+          </div>
+          <div class="highlight highlight-yellow">
+            <strong>GNF — Glomerulonefrite de P. malariae</strong><br>
+            P. malariae: imunocomplexos (Ag parasitário + IgG + C3) depositam-se no glomérulo → GNF membranoproliferativa → <strong>síndrome nefrótica crónica</strong>. Pode progredir para IRC mesmo sem parasitemia ativa.
+          </div>
+          <div class="highlight" style="border-color:rgba(255,23,68,0.3);background:rgba(255,23,68,0.05);">
+            <strong>Anemia Crónica</strong><br>
+            Infecções repetidas → anemia de doença crónica (ferro sequestrado + EPO relativa insuficiente + destruição eritrocitária recorrente). Afeta desenvolvimento cognitivo em crianças.
+          </div>
+          <div class="highlight highlight-green">
+            <strong>Imunossupressão Relativa</strong><br>
+            Infecções repetidas → exaustão de linfócitos T → ↓resposta a outras infecções. Associação com Linfoma de Burkitt (EBV + malária holo-endémica).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 6: BASES DO TRATAMENTO — MECANISMOS MOLECULARES   -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div id="treatment" class="section-green">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">06</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// FARMACOLOGIA MOLECULAR</div>
+      <div class="chapter-title">Bases do Tratamento: Como Matar um Parasita Molecular</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎯 Estratégia Geral — Atacar os Pontos Fracos do Parasita</h3>
+    <p>O tratamento da malária se baseia em atacar etapas específicas do ciclo de vida do parasita. Cada droga tem um alvo molecular preciso:</p>
+    <br>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>ARTEMISININAS (1ª LINHA GLOBAL)</span><span>MAIS EFICAZES</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:95%; background:var(--parasite-green);"></div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>CLOROQUINA (para P. vivax/malariae)</span><span>MODERADO</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:75%; background:var(--ice-blue);"></div></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>QUININA (reserva para casos graves)</span><span>TÓXICO, MENOS EFICAZ</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:60%; background:var(--plasma-yellow);"></div></div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>🌿 Artemisininas — O Grupo Mais Importante</h3>
+    <p>
+      Derivadas da planta <em>Artemisia annua</em> (Chinesa, usada há 2000 anos). <strong>Tu Youyou</strong> descobriu o princípio ativo (artemisinina/qinghaosu) em 1972 → Nobel de Fisiologia/Medicina 2015.
+    </p>
+    <br>
+    <p><strong>Membros:</strong> <span class="mol-badge green">Artemisinina</span>, <span class="mol-badge green">Artesunato</span> (IV/oral), <span class="mol-badge green">Artemeter</span> (IM), <span class="mol-badge green">Dihidroartemisinina (DHA)</span> — o metabolito ativo de todos.</p>
+    <br>
+    <p><strong>Mecanismo Molecular:</strong></p>
+    <div class="timeline" style="margin-top:0.8rem;">
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 1</div>
+        <div class="timeline-content">
+          <h4>Ativação pelo Heme Livre</h4>
+          <p>A artemisinina contém uma <strong>ponte endoperóxido (O-O)</strong> — a "espoleta" da bomba. O heme livre no vacúolo digestivo do parasita (Fe²⁺ — ferro ferroso) cliva esta ponte → gera <strong>radicais livres carbonilados altamente reativos</strong> (radicais carbono-centrados e de oxigênio).</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">PASSO 2</div>
+        <div class="timeline-content">
+          <h4>Alquilação de Proteínas Parasitárias</h4>
+          <p>Os radicais alquilam proteínas do parasita, incluindo: <span class="mol-badge red">PfATP6</span> (Ca²⁺-ATPase do retículo sarcoplasmático — SERCA) → ↑Ca²⁺ intracelular → morte parasitária. Também alquilam: proteínas do vacúolo digestivo, proteínas de transporte, ribossômicas e da mitocôndria.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">RESULTADO</div>
+        <div class="timeline-content">
+          <h4>Morte Rápida do Parasita</h4>
+          <p>As artemisininas têm <strong>início de ação mais rápido</strong> de qualquer antimalárico — reduzem a parasitemia em 90% em 48h. Ativas contra todos os estágios intraeritrocíticos. Meia-vida curta (~1–3h) → necessário combinar com droga de meia-vida longa (terapia combinada baseada em artemisinina = ACT — Artemisinin-based Combination Therapy).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="formula-box">
+      ACT = Artemisinina (curto efeito, rapidez) + Parceiro de longa duração (elimina parasitas residuais)
+    </div>
+
+    <div class="grid-2" style="margin-top:1rem;">
+      <div class="highlight highlight-green">
+        <strong>Artemeter + Lumefantrina (AL)</strong><br>
+        1ª linha OMS para malária não complicada. Lumefantrina: inibe polimerização da hemozoína (similar cloroquina). 3 dias de tratamento.
+      </div>
+      <div class="highlight highlight-green">
+        <strong>Artesunato + Amodiaquina (AS+AQ)</strong><br>
+        Alternativa. AQ: similar à cloroquina (inibe DV). Boa eficácia na África.
+      </div>
+      <div class="highlight">
+        <strong>DHA + Piperaquina (DP)</strong><br>
+        Alta eficácia. Piperaquina: bisBifenilo, meia-vida longa. Usado no Sudeste Asiático.
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>Artesunato IV</strong><br>
+        1ª linha para MALÁRIA GRAVE. Superior à quinina IV (menos toxicidade, mais eficaz). Dose: 2,4 mg/kg IV nos tempos 0, 12, 24h, depois 1×/dia.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>💊 Cloroquina — O Clássico (Agora Resistência)</h3>
+    <p>
+      Ainda 1ª linha para P. vivax, P. malariae e P. ovale (onde não há resistência). Para P. falciparum: <strong>resistência generalizada</strong> em África, Ásia e América do Sul.
+    </p>
+    <br>
+    <p><strong>Mecanismo Molecular:</strong></p>
+    <div class="highlight highlight-green">
+      <strong>Normal (vacúolo digestivo):</strong> Heme livre (FPIX — Ferriprotoporphyrin IX) → polimerizado em hemozoína (inócua) pela enzima HRP-II (Histidine Rich Protein II) + lípidos.
+    </div>
+    <div class="highlight" style="border-color:rgba(255,23,68,0.25); background:rgba(255,23,68,0.05); margin-top:0.5rem;">
+      <strong>Com Cloroquina:</strong> A cloroquina (base fraca, pKa ~8,1) é protonada no pH ácido do DV (pH 5,0) → fica "presa" no DV (ion trap) → acumula-se em alta concentração → liga-se ao heme livre → forma complexo cloroquina-FPIX → inibe a polimerização → heme livre acumula → tóxico para o parasita → morte.
+    </div>
+    <br>
+    <p><strong>Mecanismo de Resistência:</strong> Mutações no gene <span class="mol-badge red">PfCRT (Plasmodium falciparum Chloroquine Resistance Transporter)</span> → PfCRT mutante exporta a cloroquina para fora do DV → concentração no DV cai → não inibe hemozoína → parasita sobrevive.</p>
+  </div>
+
+  <div class="card card-yellow">
+    <h3>💡 Primaquina & Tafenoquina — Os Eliminadores dos Hipnozoítos</h3>
+    <p>
+      <strong>Alvo:</strong> Formas hepáticas latentes (hipnozoítos) de P. vivax e P. ovale. Também eliminam gametócitos de P. falciparum (ação gametocidal → reduz transmissão!).
+    </p>
+    <br>
+    <p><strong>Mecanismo:</strong> Pró-droga ativada por CYP2D6 hepático → metabolitos quinino-imina → geram <span class="mol-badge red">ROS (Reactive Oxygen Species — Espécies Reativas de Oxigênio)</span> na mitocôndria do parasita → dano oxidativo → morte.</p>
+    <div class="warning-box">
+      <strong>⚠ DEFICIÊNCIA DE G6PD (Glucose-6-Phosphate Dehydrogenase)</strong>
+      Primaquina e tafenoquina são CONTRAINDICADAS em pacientes com deficiência de G6PD! Razão: eritrócitos com G6PD deficiente não conseguem regenerar NADPH (via via das pentoses-fosfato) → sem NADPH → não conseguem neutralizar ROS → hemólise maciça intravascular. Testar G6PD ANTES de prescrever!
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>🔬 Outros Antimaláricos — Mecanismos Específicos</h3>
+    <div class="accordion" id="acc-mef">
+      <div class="accordion-header" onclick="toggleAccordion('acc-mef')">
+        <h4>Mefloquina — Mecanismo e Usos</h4>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          <p>Similar à quinina. Liga-se ao heme livre → inibe polimerização da hemozoína. Também pode inibir enzimas parasitárias. Meia-vida muito longa (~21 dias) → usada em profilaxia semanal. Efeitos psiquiátricos (pesadelos, ansiedade, psicose) em ~1/10.000 usuários.</p>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="acc-atv">
+      <div class="accordion-header" onclick="toggleAccordion('acc-atv')">
+        <h4>Atovaquona + Proguanil (Malarone) — Mecanismo Mitocondrial</h4>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          <p><strong>Atovaquona:</strong> Análogo da ubiquinona (CoQ). Liga-se ao complexo bc1 da cadeia de transporte de elétrons mitocondrial do parasita → bloqueia a regeneração de ubiquinol → ↓síntese de pirimidinas (que depende da DHODH + CoQ) → parasita não consegue replicar seu DNA. <strong>Proguanil:</strong> Inibe DHFR (Dihidrofolato Redutase) → bloqueia via folato → efeito sinérgico. Uso em profilaxia e tratamento.</p>
+        </div>
+      </div>
+    </div>
+    <div class="accordion" id="acc-doxy">
+      <div class="accordion-header" onclick="toggleAccordion('acc-doxy')">
+        <h4>Doxiciclina — O Antibiótico Antimalárico</h4>
+        <span class="accordion-icon">+</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-inner">
+          <p>Inibe a tradução proteica no <strong>apicoplasto</strong> do parasita (ribossoma 70S apicoplástico — similar ao bacteriano). Inibe RNA polimerase apicoplástica também. Efeito lento (não usar em monoterapia para tratamento). Usado como: profilaxia diária + combinado com quinina (tratamento de resgate). Contraindicado em grávidas e crianças &lt;8 anos (depósito nos ossos/dentes).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⚡ Resistência aos Antimaláricos — A Crise Molecular</h3>
+    <p><strong>Resistência à Artemisinina</strong> — O Maior Problema Atual:</p>
+    <br>
+    <div class="highlight" style="border-color:rgba(255,23,68,0.3); background:rgba(255,23,68,0.05);">
+      Mutações no gene <span class="mol-badge red">Kelch13 (K13)</span> → K13 normalmente regula a ubiquitinação de PfPI3K (fosfatidilinositol-3-quinase) → degradação via proteassoma. Com K13 mutante: PfPI3K escapa da degradação → ↑PI3P (fosfatidilinositol-3-fosfato) → ativa stress response do parasita → ativa mecanismos de reparo de DNA → parasita "sobrevive" ao dano oxidativo da artemisinina!
+    </div>
+    <br>
+    <p>Resistência ao K13 identificada primeiro no Sudeste Asiático (2008–2015) → agora aparecendo na África Oriental (Uganda, Rwanda) — ALERTA GLOBAL OMS 2023–2024.</p>
+    <div class="warning-box">
+      <strong>⚠ VIGILÂNCIA GENÔMICA</strong>
+      Sequenciamento genômico do parasita (marcadores moleculares: K13, PfCRT, PfMDR1, PfDHFR, PfDHPS) → monitorar resistência → guiar escolha terapêutica por região.
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <div class="quiz-question">🧠 CHECKPOINT FINAL: Por que as artemisininas precisam ser combinadas com outro antimalárico?</div>
+    <div class="quiz-options">
+      <button class="quiz-option" onclick="checkQuiz3(this, false)">A) Porque são muito tóxicas e o parceiro reduz os efeitos adversos</button>
+      <button class="quiz-option" onclick="checkQuiz3(this, false)">B) Porque não penetram no eritrócito sem ajuda de outra molécula</button>
+      <button class="quiz-option" onclick="checkQuiz3(this, true)">C) Porque têm meia-vida muito curta (1–3h) — eliminam parasitas rapidamente mas não duram o suficiente para erradicar todos. O parceiro de longa duração elimina os parasitas residuais e previne seleção de resistência</button>
+      <button class="quiz-option" onclick="checkQuiz3(this, false)">D) Porque P. falciparum é naturalmente resistente às artemisininas em monoterapia</button>
+    </div>
+    <div class="quiz-feedback" id="qfb3"></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- CAP 7: DIAGNÓSTICO & INTEGRAÇÃO CLÍNICA               -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="section-blue">
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">07</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// APLICAÇÃO CLÍNICA</div>
+      <div class="chapter-title">Diagnóstico: Ver o Invisível</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔬 Métodos Diagnósticos — Princípios e Aplicações</h3>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">GOLD STANDARD</div>
+        <div class="timeline-content">
+          <h4>Esfregaço de Sangue (Gota Espessa + Gota Fina)</h4>
+          <p><strong>Gota espessa:</strong> Concentra leucócitos e parasitas → mais sensível. <strong>Gota fina:</strong> Morfologia preservada → identifica espécie. Coloração Giemsa (corante básico que cora núcleo azul-roxo e citoplasma azul-claro do parasita). Sensibilidade: 50–100 parasitas/μL. Requer microscopia qualificada → limitado em áreas remotas.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">DIAGNÓSTICO RÁPIDO</div>
+        <div class="timeline-content">
+          <h4>RDT (Rapid Diagnostic Test — Teste Rápido)</h4>
+          <p>Detecta antígenos parasitários: <span class="mol-badge green">HRP-2 (Histidine-Rich Protein 2)</span> — específico de P. falciparum + <span class="mol-badge green">pLDH (Plasmodium LDH)</span> — pan-malária. Resultado em 15–20 min. Sem necessidade de eletricidade ou microscópio. Limitações: HRP-2 persiste semanas após tratamento (falso-positivo). Deleções do gene hrp2 no parasita → falso-negativo crescente na Eritreia/Índia.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">MAIS SENSÍVEL</div>
+        <div class="timeline-content">
+          <h4>PCR (Polymerase Chain Reaction)</h4>
+          <p>Detecta DNA do parasita. Sensibilidade: 1–5 parasitas/μL (ou menos). Identifica espécie e marcadores de resistência. Usado para: baixa parasitemia, diagnóstico de espécie mista, pesquisa de resistência, controle de cura. Limitação: custo, tempo, necessita laboratório.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card card-yellow">
+    <h3>🩺 Achados Laboratoriais Típicos — A Lógica de Cada Alteração</h3>
+    <div class="grid-2">
+      <div class="highlight" style="border-color:rgba(255,23,68,0.3); background:rgba(255,23,68,0.05);">
+        <strong>Anemia normocítica normocrómica</strong><br>
+        Hemólise → ↓Hb + eritrócitos normais (hemólise é destrutiva, não por deficiência).
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>Trombocitopenia</strong><br>
+        Consumo de plaquetas (citoadesão) + destruição esplênica + supressão medular. Muito comum — quase universal na malária.
+      </div>
+      <div class="highlight">
+        <strong>↑Bilirrubina indireta</strong><br>
+        Hemólise → Hb → heme → bilirrubina indireta (não conjugada). Icterícia hemolítica.
+      </div>
+      <div class="highlight highlight-green">
+        <strong>↑LDH</strong><br>
+        Hemólise + lesão celular → ↑LDH sérica (marcador de hemólise e dano tecidual).
+      </div>
+      <div class="highlight" style="border-color:rgba(255,23,68,0.3); background:rgba(255,23,68,0.05);">
+        <strong>↓Haptoglobina</strong><br>
+        Haptoglobina liga Hb livre → complex Hb-Hp → removido pelo fígado → haptoglobina sérica ↓ em hemólise intravascular.
+      </div>
+      <div class="highlight highlight-yellow">
+        <strong>PCR e Ferritina ↑</strong><br>
+        Resposta de fase aguda. Ferritina ↑ por inflamação (não reflete reservas de ferro — ao contrário da carência de ferro).
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- RESUMO FINAL & FOOTER                                 -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div class="divider"></div>
+<div class="section">
+  <div class="chapter-header">
+    <div class="chapter-num">∑</div>
+    <div class="chapter-title-block">
+      <div class="chapter-label">// SÍNTESE FINAL</div>
+      <div class="chapter-title">A Lógica Integrada da Malária</div>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>🧠 A Cronologia Molecular em 10 Passos</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-time">1</div><div class="timeline-content"><h4>Picada do Anopheles</h4><p>Esporozoítos entram na derme. CSP direciona ao fígado via HSPGs.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">2</div><div class="timeline-content"><h4>Invasão Hepática</h4><p>CD81 + EphA2 → entrada. Formação do PV. Esquizogonia silenciosa.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">3</div><div class="timeline-content"><h4>Libertação de Merozoítos</h4><p>Merossomas → circulação → invasão do eritrócito (EBA-175/GPA, AMA-1/RON, glideossomo).</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">4</div><div class="timeline-content"><h4>Ciclo Intraeritrocítico (48h)</h4><p>Anel → Trofozoíto (digestão de Hb + hemozoína) → Esquizonte → Ruptura.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">5</div><div class="timeline-content"><h4>Explosão de GPI + Hemozoína</h4><p>TLR-2/4/9 → NF-κB → TNF-α, IL-1β, IL-6 → COX-2 → PGE2 → FEBRE PERIÓDICA.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">6</div><div class="timeline-content"><h4>Modificação do Eritrócito</h4><p>PfEMP1 exportada para knobs → citoadesão (ICAM-1, CD36, EPCR) → sequestro.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">7</div><div class="timeline-content"><h4>Complicações</h4><p>Cérebro: oclusão + BHE rota → malária cerebral. Rim: hemólise + hipoperfusão → NTA. Pulmão: SDRA.</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">8</div><div class="timeline-content"><h4>Anemia</h4><p>Hemólise direta + bystander + supressão medular (TNF-α/EPO↓ + hepcidina↑).</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">9</div><div class="timeline-content"><h4>Tratamento</h4><p>ACT: artemisinina (radicais → PfATP6) + parceiro longa duração. Primaquina: elimina hipnozoítos (ROS mitocondrial). Verificar G6PD!</p></div></div>
+      <div class="timeline-item"><div class="timeline-time">10</div><div class="timeline-content"><h4>Prevenção</h4><p>ITN + IRS (inseticida residual intradomiciliar) + TPI (gravidez) + Vacina RTS,S/R21 (CSP) + profilaxia viajantes (ACT/mefloquina/atovaquona-proguanil).</p></div></div>
+    </div>
+  </div>
+
+  <div class="highlight highlight-yellow" style="text-align:center; padding: 1.5rem; margin-top:2rem;">
+    <strong style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--plasma-yellow); display:block; margin-bottom:0.5rem;">
+      "O Plasmodium não é apenas um parasita — é uma obra-prima molecular de 10.000 anos de co-evolução com o humano. Entender a sua biologia é entender a luta mais antiga da humanidade."
+    </strong>
+    <span style="font-size:0.8rem; color:var(--text-dim);">— DemilMed-UL, 2026</span>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div class="footer-logo">DemilMed · UL</div>
+  <div class="footer-info">
+    UNIVERSIDADE LICUNGO<br>
+    Faculdade de Medicina — 2º Ano<br>
+    Patogênese da Malária · Medicina Interna & Intensiva<br>
+    ANO 2026 · Todos os direitos reservados
+  </div>
+</footer>
+
+<script>
+// ── PARTICLES ──
+(function(){
+  const c = document.getElementById('particles-canvas');
+  const ctx = c.getContext('2d');
+  let W, H, particles = [];
+
+  function resize(){ W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+  window.addEventListener('resize', resize); resize();
+
+  const colors = ['rgba(255,23,68,', 'rgba(0,230,118,', 'rgba(0,176,255,', 'rgba(255,234,0,'];
+
+  for(let i=0; i<60; i++){
+    particles.push({
+      x: Math.random()*1920, y: Math.random()*1080,
+      r: Math.random()*2+0.5,
+      dx: (Math.random()-.5)*.4, dy: (Math.random()-.5)*.4,
+      col: colors[Math.floor(Math.random()*colors.length)],
+      a: Math.random()*.4+.1
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    particles.forEach(p=>{
+      ctx.beginPath();
+      ctx.arc(p.x%W, p.y%H, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.col + p.a + ')';
+      ctx.fill();
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll', ()=>{
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  document.getElementById('scroll-progress').style.width = pct + '%';
+});
+
+// ── ACCORDION ──
+function toggleAccordion(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ── CYCLE INFO ──
+const cycleData = {
+  sporo: {
+    title: '🦟 Esporozoíto (na saliva do mosquito)',
+    text: 'Forma infectante para o humano. Coberto de CSP (Circumsporozoite Protein). Injetado na derme durante a picada. Migra para o fígado usando HSPGs como guia. 50–200 esporozoítos por picada típica.'
+  },
+  hep: {
+    title: '🫀 Fase Hepática (Esquizogonia Exoeritrocítica)',
+    text: 'Esporozoíto invade hepatócito via CD81/EphA2. Forma vacúolo parasitóforo (PV). Em 7–14 dias → 10.000–30.000 merozoítos por hepatócito infectado. P. vivax/ovale → alguns ficam como HIPNOZOÍTOS (dormentes anos).'
+  },
+  mero: {
+    title: '⚡ Merozoíto Livre',
+    text: 'Libertado em merossomas → circulação. Invade eritrócito em 60 segundos! Usa: EBA-175/GPA para reconhecimento, AMA-1/RON2 para junção justa, glideossomo para propulsão. 16–32 merozoítos por eritrócito infectado.'
+  },
+  eryt: {
+    title: '🩸 Eritrócito Infectado',
+    text: 'Anel (0-24h) → Trofozoíto (24-36h) → Esquizonte (36-44h) → Ruptura (48h). No estágio de trofozoíto: exportação de PfEMP1 para knobs → citoadesão → sequestro. Digestão de hemoglobina → hemozoína (pigmento malárico).'
+  },
+  gam: {
+    title: '💛 Gametócitos',
+    text: 'Formas sexuadas. P. falciparum: gametócitos em forma de crescente (falciforme) — únicos! Surgem após vários ciclos eritrocíticos. São inócuos para o humano mas infectantes para o mosquito. Eliminados pela primaquina.'
+  },
+  oo: {
+    title: '🟢 Oocineto → Oocisto (no mosquito)',
+    text: 'Após fecundação, zigoto → oocineto (móvel) → atravessa parede do estômago do mosquito → oocisto. Dentro do oocisto: 10.000-100.000 esporozoítos em 8-14 dias. Temperatura ambiente afeta velocidade: &lt;16°C = impossível completar ciclo.'
+  },
+  sal: {
+    title: '🟢 Glândula Salivar do Mosquito',
+    text: 'Esporozoítos migram activamente para as glândulas salivares após ruptura do oocisto. Ficam ali até a próxima refeição de sangue. Mosquito Anopheles: voa ao anoitecer, preferência por humanos dormindo, não consegue voar &gt;2km.'
+  }
+};
+
+function showCycleInfo(key){
+  const panel = document.getElementById('cycle-info-panel');
+  const text = document.getElementById('cycle-info-text');
+  const d = cycleData[key];
+  text.innerHTML = '<strong style="color:var(--ice-blue);font-family:\'Orbitron\',monospace;font-size:0.8rem;">' + d.title + '</strong><br><br>' + d.text;
+  panel.style.display = 'block';
+}
+
+// ── QUIZ FUNCTIONS ──
+function checkQuiz(btn, correct){
+  const opts = btn.parentElement.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById('qfb1');
+  if(correct){
+    btn.classList.add('correct');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(0,230,118,0.1)';
+    fb.style.border = '1px solid rgba(0,230,118,0.3)';
+    fb.style.color = '#00e676';
+    fb.innerHTML = '✅ CORRETO! P. falciparum é único porque: (1) infecta eritrócitos de QUALQUER idade (vivax só infecta reticulócitos jovens → menor parasitemia máxima); (2) exporta PfEMP1 → knobs → citoadesão ao endotélio → sequestro nos capilares → malária cerebral, SDRA, IRA; (3) rosettamento → obstrução microvascular amplificada.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,23,68,0.1)';
+    fb.style.border = '1px solid rgba(255,23,68,0.3)';
+    fb.style.color = '#ff5252';
+    fb.innerHTML = '❌ Incorreto. A resposta correta é B. P. falciparum é mais letal pela combinação: infecta todos os eritrócitos (qualquer idade) + citoadesão mediada por PfEMP1/knobs + sequestro vascular nos órgãos vitais. Isso causa malária cerebral, SDRA, IRA — que os outros Plasmodium não causam com a mesma intensidade.';
+  }
+}
+
+function checkQuiz2(btn, correct){
+  const opts = btn.parentElement.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById('qfb2');
+  if(correct){
+    btn.classList.add('correct');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(0,230,118,0.1)';
+    fb.style.border = '1px solid rgba(0,230,118,0.3)';
+    fb.style.color = '#00e676';
+    fb.innerHTML = '✅ PERFEITO! O paracetamol (inibe COX-2 → ↓PGE2 → ↓febre) trata o SINTOMA mas não a CAUSA. A cada 48h, nova ruptura eritrocitária liberta GPI + hemozoína → novo ciclo de ativação de TLR/NF-κB → nova explosão de TNF-α/IL-1β/IL-6 → nova PGE2 → nova febre. Enquanto o parasita viver, a febre voltará.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,23,68,0.1)';
+    fb.style.border = '1px solid rgba(255,23,68,0.3)';
+    fb.style.color = '#ff5252';
+    fb.innerHTML = '❌ Incorreto. A resposta é B. O paracetamol alivia a febre ao inibir COX-2 → ↓PGE2. Mas a causa raiz (GPI + hemozoína liberados na ruptura eritrocitária a cada 48h) continua → nova ativação de macrófagos → nova cascata inflamatória → febre volta ciclicamente.';
+  }
+}
+
+function checkQuiz3(btn, correct){
+  const opts = btn.parentElement.querySelectorAll('.quiz-option');
+  opts.forEach(o => o.disabled = true);
+  const fb = document.getElementById('qfb3');
+  if(correct){
+    btn.classList.add('correct');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(0,230,118,0.1)';
+    fb.style.border = '1px solid rgba(0,230,118,0.3)';
+    fb.style.color = '#00e676';
+    fb.innerHTML = '✅ EXCELENTE! A lógica da ACT: Artemisinina (t½ ~1-3h) → mata rapidamente 90% dos parasitas em 48h (radicais livres por ativação pelo heme Fe²⁺). Parceiro (lumefantrina t½ ~4-6 dias, piperaquina t½ ~28 dias) → elimina os parasitas residuais nos dias 3-7 e previne que mutantes resistentes à artemisinina se selecionem e se multipliquem.';
+  } else {
+    btn.classList.add('wrong');
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,23,68,0.1)';
+    fb.style.border = '1px solid rgba(255,23,68,0.3)';
+    fb.style.color = '#ff5252';
+    fb.innerHTML = '❌ Incorreto. A resposta é C. A artemisinina é eficaz mas tem meia-vida muito curta (1-3h). Em monoterapia: mata os parasitas sensíveis rapidamente, mas os poucos mutantes com K13 mutante que "sobreviveram" aos primeiros dias agora se multiplicam sem competição → resistência selecionada. O parceiro de longa duração fecha esta janela.';
+  }
+}
+
+// Intersection observer for animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card, .timeline-item, .accordion').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plasmodium — O Invasor Invisível | DemilMed-UL</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg: #050a0e;
+  --bg2: #0a1520;
+  --bg3: #0d1f2d;
+  --accent-cyan: #00f5ff;
+  --accent-lime: #a8ff3e;
+  --accent-orange: #ff6b35;
+  --accent-pink: #ff2d78;
+  --accent-gold: #ffd700;
+  --accent-purple: #bf00ff;
+  --accent-red: #ff1744;
+  --text: #e8f4fd;
+  --text-dim: #7aa8c7;
+  --panel: rgba(0,245,255,0.04);
+  --border: rgba(0,245,255,0.15);
+  --glow-cyan: 0 0 20px rgba(0,245,255,0.4);
+  --glow-lime: 0 0 20px rgba(168,255,62,0.4);
+  --glow-orange: 0 0 20px rgba(255,107,53,0.4);
+  --glow-pink: 0 0 20px rgba(255,45,120,0.4);
+  --glow-gold: 0 0 20px rgba(255,215,0,0.4);
+  --glow-purple: 0 0 20px rgba(191,0,255,0.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* PARTÍCULAS DE FUNDO */
+#particles-canvas {
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+  opacity: 0.35;
+}
+
+.content-wrap { position: relative; z-index: 1; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  background: radial-gradient(ellipse at 50% 60%, rgba(0,245,255,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse at 20% 20%, rgba(191,0,255,0.04) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 80%, rgba(255,107,53,0.04) 0%, transparent 50%);
+  position: relative; overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,245,255,0.015) 60px, rgba(0,245,255,0.015) 61px),
+              repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,245,255,0.015) 60px, rgba(0,245,255,0.015) 61px);
+  pointer-events: none;
+}
+
+.hero-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  background: rgba(0,245,255,0.08);
+  border: 1px solid rgba(0,245,255,0.3);
+  padding: 6px 18px; border-radius: 2px;
+  margin-bottom: 30px;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.hero-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 7vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, var(--accent-cyan), #ffffff, var(--accent-lime));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 30px rgba(0,245,255,0.3));
+}
+
+.hero-subtitle {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(0.8rem, 2.5vw, 1.4rem);
+  color: var(--accent-orange);
+  letter-spacing: 3px;
+  margin-bottom: 25px;
+  font-weight: 400;
+}
+
+.hero-desc {
+  max-width: 700px;
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  margin-bottom: 50px;
+  line-height: 1.9;
+}
+
+.hero-desc strong { color: var(--accent-cyan); }
+
+/* PARASITA CENTRAL ANIMADO */
+.parasite-hero {
+  width: 200px; height: 200px;
+  position: relative;
+  margin: 0 auto 40px;
+}
+
+.parasite-core {
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at 35% 35%, #ff6b35, #ff1744, #8b0000);
+  border-radius: 50%;
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 30px rgba(255,107,53,0.7), 0 0 60px rgba(255,23,68,0.4);
+  animation: parasiteBreath 3s ease-in-out infinite;
+}
+
+.parasite-core::before {
+  content: '';
+  width: 25px; height: 25px;
+  background: radial-gradient(circle, rgba(255,215,0,0.9), rgba(255,107,53,0.5));
+  border-radius: 50%;
+  position: absolute; top: 15px; left: 15px;
+  animation: nucleusPulse 2s ease-in-out infinite;
+}
+
+.orbit-ring {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  animation: orbit 6s linear infinite;
+}
+
+.orbit-ring:nth-child(2) { border-color: rgba(0,245,255,0.3); animation-duration: 5s; }
+.orbit-ring:nth-child(3) { border-color: rgba(168,255,62,0.2); animation-duration: 8s; animation-direction: reverse; }
+.orbit-ring:nth-child(4) { border-color: rgba(191,0,255,0.2); animation-duration: 11s; width: 90%; height: 90%; top: 5%; left: 5%; }
+
+.orbiting-dot {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  top: -4px; left: calc(50% - 4px);
+}
+
+.orbit-ring:nth-child(2) .orbiting-dot { background: var(--accent-cyan); box-shadow: 0 0 8px var(--accent-cyan); }
+.orbit-ring:nth-child(3) .orbiting-dot { background: var(--accent-lime); box-shadow: 0 0 8px var(--accent-lime); }
+.orbit-ring:nth-child(4) .orbiting-dot { background: var(--accent-purple); box-shadow: 0 0 8px var(--accent-purple); }
+
+/* NAVEGAÇÃO DE CAPÍTULOS */
+.chapters-nav {
+  padding: 60px 20px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.chapters-nav h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 4px;
+  color: var(--accent-cyan);
+  margin-bottom: 30px;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.chapters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.chapter-btn {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: left;
+  transition: all 0.3s;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.chapter-btn:hover, .chapter-btn.active {
+  background: rgba(0,245,255,0.1);
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+  color: var(--accent-cyan);
+}
+
+.chapter-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent-orange);
+  min-width: 24px;
+}
+
+/* SEÇÕES */
+.section {
+  padding: 80px 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: none;
+}
+
+.section.active { display: block; }
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  color: var(--accent-orange);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.5rem, 4vw, 2.8rem);
+  font-weight: 900;
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.section-intro {
+  color: var(--text-dim);
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 1.05rem;
+  line-height: 1.9;
+}
+
+/* CARDS */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 24px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+.card.orange::before { background: var(--accent-orange); box-shadow: 0 0 10px var(--accent-orange); }
+.card.lime::before { background: var(--accent-lime); box-shadow: 0 0 10px var(--accent-lime); }
+.card.pink::before { background: var(--accent-pink); box-shadow: 0 0 10px var(--accent-pink); }
+.card.gold::before { background: var(--accent-gold); box-shadow: 0 0 10px var(--accent-gold); }
+.card.purple::before { background: var(--accent-purple); box-shadow: 0 0 10px var(--accent-purple); }
+.card.red::before { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
+
+.card:hover { transform: translateY(-2px); border-color: rgba(0,245,255,0.35); }
+
+.card-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.card p { color: var(--text-dim); line-height: 1.85; margin-bottom: 12px; }
+.card p:last-child { margin-bottom: 0; }
+.card strong { color: var(--accent-cyan); font-weight: 700; }
+.card em { color: var(--accent-gold); font-style: normal; }
+
+/* ANIMAÇÃO DO CICLO */
+.cycle-diagram {
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto;
+  position: relative;
+}
+
+.cycle-svg-wrap { width: 100%; overflow: visible; }
+
+/* TIMELINE */
+.timeline { position: relative; padding: 10px 0; }
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 24px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-orange), var(--accent-lime), var(--accent-pink));
+}
+
+@media (min-width: 600px) {
+  .timeline::before { left: 50%; transform: translateX(-50%); }
+}
+
+.timeline-item {
+  display: flex; gap: 20px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+@media (min-width: 600px) {
+  .timeline-item { width: 50%; padding-right: 40px; }
+  .timeline-item:nth-child(even) { margin-left: 50%; padding-right: 0; padding-left: 40px; }
+}
+
+.timeline-dot {
+  width: 48px; height: 48px; min-width: 48px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  position: relative; z-index: 2;
+  flex-shrink: 0;
+}
+
+.td-cyan { background: rgba(0,245,255,0.15); border: 2px solid var(--accent-cyan); color: var(--accent-cyan); box-shadow: var(--glow-cyan); }
+.td-orange { background: rgba(255,107,53,0.15); border: 2px solid var(--accent-orange); color: var(--accent-orange); box-shadow: var(--glow-orange); }
+.td-lime { background: rgba(168,255,62,0.15); border: 2px solid var(--accent-lime); color: var(--accent-lime); box-shadow: var(--glow-lime); }
+.td-pink { background: rgba(255,45,120,0.15); border: 2px solid var(--accent-pink); color: var(--accent-pink); box-shadow: var(--glow-pink); }
+.td-gold { background: rgba(255,215,0,0.15); border: 2px solid var(--accent-gold); color: var(--accent-gold); box-shadow: var(--glow-gold); }
+.td-purple { background: rgba(191,0,255,0.15); border: 2px solid var(--accent-purple); color: var(--accent-purple); box-shadow: var(--glow-purple); }
+.td-red { background: rgba(255,23,68,0.15); border: 2px solid var(--accent-red); color: var(--accent-red); box-shadow: 0 0 20px rgba(255,23,68,0.4); }
+
+.timeline-content { flex: 1; }
+
+.tl-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  color: var(--accent-orange);
+  margin-bottom: 4px;
+}
+
+.tl-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.tl-body { color: var(--text-dim); font-size: 0.95rem; line-height: 1.8; }
+.tl-body strong { color: var(--accent-cyan); }
+
+/* MOLECULA ANIMADA */
+.mol-container {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 30px 0;
+  overflow: hidden;
+}
+
+.mol-canvas { width: 100%; height: 200px; display: block; }
+
+/* QUIZ INLINE */
+.quiz-box {
+  background: rgba(0,245,255,0.04);
+  border: 1px solid rgba(0,245,255,0.2);
+  border-radius: 8px;
+  padding: 28px;
+  margin: 40px 0;
+}
+
+.quiz-box h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  color: var(--accent-cyan);
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.quiz-q { color: var(--text); font-weight: 600; margin-bottom: 16px; line-height: 1.6; }
+
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+
+.quiz-opt {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 4px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  transition: all 0.25s;
+  text-align: left;
+}
+
+.quiz-opt:hover { background: rgba(0,245,255,0.08); border-color: var(--accent-cyan); color: var(--text); }
+.quiz-opt.correct { background: rgba(168,255,62,0.12); border-color: var(--accent-lime); color: var(--accent-lime); }
+.quiz-opt.wrong { background: rgba(255,23,68,0.12); border-color: var(--accent-red); color: var(--accent-red); }
+
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  display: none;
+}
+
+.quiz-feedback.show { display: block; }
+.quiz-feedback.ok { background: rgba(168,255,62,0.08); border: 1px solid rgba(168,255,62,0.3); color: var(--accent-lime); }
+.quiz-feedback.fail { background: rgba(255,23,68,0.08); border: 1px solid rgba(255,23,68,0.3); color: #ff6b8a; }
+
+/* LÂMINA MODAL */
+.lamina-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 30px 0;
+}
+
+.lamina-card {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.lamina-card:hover { transform: scale(1.03); border-color: var(--accent-cyan); box-shadow: var(--glow-cyan); }
+
+.lamina-canvas { width: 100%; height: 150px; display: block; }
+
+.lamina-label {
+  padding: 10px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent-cyan);
+  letter-spacing: 2px;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.92);
+  z-index: 1000;
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: var(--bg2);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 8px;
+  max-width: 700px; width: 100%;
+  max-height: 85vh; overflow-y: auto;
+  padding: 32px;
+  box-shadow: var(--glow-cyan);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: rgba(255,45,120,0.1);
+  border: 1px solid var(--accent-pink);
+  color: var(--accent-pink);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close:hover { background: rgba(255,45,120,0.3); }
+
+.modal-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+  padding-right: 40px;
+}
+
+.modal-body { color: var(--text-dim); line-height: 1.85; }
+.modal-body strong { color: var(--accent-cyan); }
+.modal-body em { color: var(--accent-gold); font-style: normal; }
+.modal-body h4 { color: var(--accent-lime); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; margin: 16px 0 8px; }
+
+/* HIGHLIGHT BOX */
+.highlight {
+  background: rgba(255,215,0,0.06);
+  border-left: 3px solid var(--accent-gold);
+  padding: 16px 20px;
+  border-radius: 0 4px 4px 0;
+  margin: 20px 0;
+  color: var(--text-dim);
+  line-height: 1.85;
+}
+
+.highlight strong { color: var(--accent-gold); }
+
+.danger-box {
+  background: rgba(255,23,68,0.06);
+  border-left: 3px solid var(--accent-red);
+  padding: 16px 20px;
+  border-radius: 0 4px 4px 0;
+  margin: 20px 0;
+  color: var(--text-dim);
+  line-height: 1.85;
+}
+
+.danger-box strong { color: var(--accent-red); }
+
+/* STATS BAR */
+.stat-row {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 14px;
+}
+
+.stat-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  min-width: 140px;
+}
+
+.stat-bar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  border-radius: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+.stat-val {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  min-width: 50px;
+  text-align: right;
+}
+
+/* FOOTER */
+footer {
+  margin-top: 80px;
+  padding: 40px 20px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to bottom, transparent, rgba(0,245,255,0.02));
+}
+
+.footer-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--accent-cyan);
+  margin-bottom: 8px;
+}
+
+.footer-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+
+.footer-line { width: 60px; height: 1px; background: var(--accent-cyan); margin: 16px auto; opacity: 0.3; }
+
+/* ANIMAÇÕES GLOBAIS */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(0,245,255,0.2); }
+  50% { box-shadow: 0 0 25px rgba(0,245,255,0.5); }
+}
+
+@keyframes parasiteBreath {
+  0%, 100% { transform: translate(-50%,-50%) scale(1); }
+  50% { transform: translate(-50%,-50%) scale(1.12); }
+}
+
+@keyframes nucleusPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.fade-in { animation: floatUp 0.6s ease forwards; }
+
+/* SCROLL INDICATOR */
+.scroll-hint {
+  position: absolute; bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--text-dim);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  animation: floatUp 1s 1s both;
+}
+
+.scroll-arrow {
+  width: 20px; height: 20px;
+  border-right: 2px solid var(--accent-cyan);
+  border-bottom: 2px solid var(--accent-cyan);
+  transform: rotate(45deg);
+  animation: bounce 1.5s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(6px); }
+}
+
+/* PROGRESS BAR TOP */
+.progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-lime));
+  z-index: 999;
+  box-shadow: 0 0 8px var(--accent-cyan);
+  transition: width 0.3s;
+}
+
+/* TOOLTIP */
+.tooltip-wrap { position: relative; display: inline; }
+.tooltip-trigger {
+  color: var(--accent-cyan);
+  border-bottom: 1px dashed rgba(0,245,255,0.4);
+  cursor: help;
+}
+.tooltip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%; transform: translateX(-50%);
+  background: var(--bg2);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 0.8rem;
+  color: var(--text);
+  width: 250px;
+  z-index: 100;
+  line-height: 1.6;
+  box-shadow: var(--glow-cyan);
+  pointer-events: none;
+}
+.tooltip-wrap:hover .tooltip-box { display: block; }
+
+/* SPECIES TABS */
+.species-tabs {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 24px;
+}
+
+.sp-tab {
+  padding: 8px 18px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s;
+  color: var(--text-dim);
+  background: transparent;
+}
+
+.sp-tab.active, .sp-tab:hover { color: var(--text); }
+.sp-tab[data-sp="falciparum"].active { border-color: var(--accent-red); color: var(--accent-red); background: rgba(255,23,68,0.1); }
+.sp-tab[data-sp="vivax"].active { border-color: var(--accent-orange); color: var(--accent-orange); background: rgba(255,107,53,0.1); }
+.sp-tab[data-sp="malariae"].active { border-color: var(--accent-purple); color: var(--accent-purple); background: rgba(191,0,255,0.1); }
+.sp-tab[data-sp="ovale"].active { border-color: var(--accent-lime); color: var(--accent-lime); background: rgba(168,255,62,0.1); }
+
+.sp-panel { display: none; }
+.sp-panel.active { display: block; }
+
+/* ICON EMOJI WRAP */
+.icon { font-size: 1.4rem; }
+
+/* TABLE */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 0.9rem;
+}
+
+.data-table th {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,245,255,0.04);
+}
+
+.data-table td {
+  padding: 10px 14px;
+  color: var(--text-dim);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+  line-height: 1.6;
+}
+
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.data-table td strong { color: var(--text); }
+
+/* ACCORDION */
+.accordion-item {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.accordion-header:hover { background: rgba(0,245,255,0.04); }
+.accordion-header.open { color: var(--accent-cyan); background: rgba(0,245,255,0.06); }
+
+.accordion-arrow { font-size: 0.7rem; transition: transform 0.3s; color: var(--accent-cyan); }
+.accordion-header.open .accordion-arrow { transform: rotate(180deg); }
+
+.accordion-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s ease, padding 0.3s;
+  padding: 0 20px;
+  color: var(--text-dim);
+  line-height: 1.85;
+  font-size: 0.95rem;
+}
+
+.accordion-body.open { max-height: 800px; padding: 16px 20px 20px; }
+.accordion-body strong { color: var(--accent-cyan); }
+.accordion-body em { color: var(--accent-gold); font-style: normal; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .timeline::before { left: 22px; }
+  .timeline-item { width: 100% !important; margin-left: 0 !important; padding-right: 0 !important; padding-left: 0 !important; }
+  .chapters-grid { grid-template-columns: 1fr 1fr; }
+  .lamina-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<canvas id="particles-canvas"></canvas>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="content-wrap">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🔬 PARASITOLOGIA MÉDICA · DEMILMED-UL · 2026</div>
+
+  <div class="parasite-hero">
+    <div class="orbit-ring"><div class="orbiting-dot"></div></div>
+    <div class="orbit-ring"><div class="orbiting-dot"></div></div>
+    <div class="orbit-ring"><div class="orbiting-dot"></div></div>
+    <div class="parasite-core"></div>
+  </div>
+
+  <h1 class="hero-title">PLASMODIUM</h1>
+  <div class="hero-subtitle">O INVASOR INVISÍVEL — MALÁRIA</div>
+  <p class="hero-desc">
+    Uma <strong>narrativa interactiva</strong> completa sobre o ciclo de vida, patogénese molecular,<br>
+    diagnóstico em lâmina e correlação clínica do parasita mais letal da história humana.
+  </p>
+
+  <div class="scroll-hint">
+    EXPLORAR
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- NAVEGAÇÃO -->
+<nav class="chapters-nav">
+  <h2>// SELECCIONAR CAPÍTULO</h2>
+  <div class="chapters-grid">
+    <button class="chapter-btn active" onclick="showSection('intro',this)"><span class="chapter-num">01</span>O Parasita & as Espécies</button>
+    <button class="chapter-btn" onclick="showSection('mosquito',this)"><span class="chapter-num">02</span>No Mosquito — Fase Sexual</button>
+    <button class="chapter-btn" onclick="showSection('liver',this)"><span class="chapter-num">03</span>No Fígado — Fase Exo-eritrocítica</button>
+    <button class="chapter-btn" onclick="showSection('blood',this)"><span class="chapter-num">04</span>No Sangue — Fase Eritrocítica</button>
+    <button class="chapter-btn" onclick="showSection('patho',this)"><span class="chapter-num">05</span>Patogénese Molecular</button>
+    <button class="chapter-btn" onclick="showSection('laminas',this)"><span class="chapter-num">06</span>Diagnóstico em Lâmina</button>
+    <button class="chapter-btn" onclick="showSection('clinical',this)"><span class="chapter-num">07</span>Sintomas & Clínica</button>
+    <button class="chapter-btn" onclick="showSection('species',this)"><span class="chapter-num">08</span>Comparação de Espécies</button>
+  </div>
+</nav>
+
+<!-- ===== SEÇÃO 1: INTRODUÇÃO ===== -->
+<section class="section active" id="intro">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 01</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-cyan),var(--accent-lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">O Parasita & as Espécies</h2>
+    <p class="section-intro">Antes de entrar em batalha, conheça o inimigo. O <em>Plasmodium</em> é um protozoário do grupo Apicomplexa — um dos parasitas mais sofisticados e letais que a evolução já produziu.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧬</span> O Que é o Plasmodium? — Etimologia e Taxonomia</div>
+    <p><strong>Plasmodium</strong> vem do grego <em>plasma</em> (πλάσμα) = "algo moldado ou formado" + <em>eidos</em> = "aspecto, forma". O nome traduz a capacidade deste parasita de assumir formas radicalmente diferentes ao longo do seu ciclo de vida — uma forma para cada hospedeiro, cada tecido, cada fase.</p>
+    <p>Taxonomicamente, pertence ao <strong>Filo Apicomplexa</strong> — chamado assim pelo complexo apical de organelas (conóide, róptrias, micronemas) que usa para perfurar e invadir células hospedeiras. Outros membros deste filo são o <em>Toxoplasma gondii</em> e o <em>Cryptosporidium</em>.</p>
+    <p>É um <strong>protozoário</strong> (do grego: <em>protos</em> = primeiro + <em>zōon</em> = animal) — unicelular eucariota, com núcleo definido, mitocôndria, retículo endoplasmático. Não é uma bactéria nem um vírus — é um organismo completo que habita o interior das nossas células.</p>
+  </div>
+
+  <div class="card orange">
+    <div class="card-title"><span class="icon">🦟</span> Dois Hospedeiros — Uma Estratégia Milenar</div>
+    <p>O Plasmodium precisa de <strong>dois hospedeiros</strong> para completar o seu ciclo:</p>
+    <p><em>Hospedeiro definitivo</em> — o <strong>mosquito Anopheles fêmea</strong>: é aqui que ocorre a reprodução sexual (formação de oocistos, esporozoítos). Chama-se "definitivo" porque é onde ocorre a fase sexual.</p>
+    <p><em>Hospedeiro intermediário</em> — o <strong>ser humano</strong>: é aqui que o parasita se reproduz assexuadamente e causa doença. Chama-se "intermediário" porque a fase assexuada ocorre aqui.</p>
+    <div class="highlight">
+      <strong>⚡ Pérola clínica:</strong> Apenas a fêmea do Anopheles transmite malária — ela precisa de sangue humano rico em proteínas para madurar os ovos. O macho alimenta-se apenas de néctar vegetal.
+    </div>
+  </div>
+
+  <div class="card lime">
+    <div class="card-title"><span class="icon">🌍</span> As 5 Espécies que Afectam Humanos</div>
+    <p>Existem mais de 200 espécies de Plasmodium, mas apenas <strong>5</strong> infectam humanos regularmente:</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ESPÉCIE</th>
+          <th>MALÁRIA</th>
+          <th>PERIODICIDADE FEBRIL</th>
+          <th>GRAVIDADE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--accent-red)">P. falciparum</strong></td>
+          <td>Terçã maligna</td>
+          <td>36–48h (terciana)</td>
+          <td style="color:var(--accent-red)">GRAVE — mortal</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent-orange)">P. vivax</strong></td>
+          <td>Terçã benigna</td>
+          <td>48h (terciana)</td>
+          <td>Moderada</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent-purple)">P. malariae</strong></td>
+          <td>Quartã</td>
+          <td>72h (quartana)</td>
+          <td>Baixa (mas recidiva)</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent-lime)">P. ovale</strong></td>
+          <td>Terçã benigna</td>
+          <td>48–50h</td>
+          <td>Baixa-moderada</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--accent-cyan)">P. knowlesi</strong></td>
+          <td>Quartã símia</td>
+          <td>24h (quotidiana!)</td>
+          <td>Pode ser grave</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="highlight">
+      <strong>🔑 Por que periodicidades diferentes?</strong> Cada espécie tem um ciclo eritrocítico de duração diferente. O ciclo dura exactamente o tempo que o parasita precisa para amadurecer, romper o glóbulo e libertar merozoítos. Quando milhões de eritrócitos rompem simultaneamente → febre explosiva.
+    </div>
+  </div>
+
+  <div class="quiz-box">
+    <h3>🎯 CHECKPOINT — Teste Rápido</h3>
+    <div class="quiz-q">Qual espécie de Plasmodium é responsável pela forma mais grave de malária, com maior mortalidade?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">A) P. vivax — causa recidivas por hipnozoítos hepáticos</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q1')">B) P. falciparum — invade eritrócitos de qualquer idade e causa sequestro</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">C) P. malariae — periodicidade quartã e nefropatia crónica</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">D) P. knowlesi — ciclo de 24h mas raramente fatal</button>
+    </div>
+    <div class="quiz-feedback" id="fb-q1-correct" style="display:none">
+      ✅ Correcto! O <strong>P. falciparum</strong> é único: invade eritrócitos de QUALQUER maturidade (outros preferem jovens ou velhos), cresce a parasitemia até >50%, e produz proteínas de adesão (PfEMP1) que causam sequestro capilar cerebral — o mecanismo central da malária cerebral fatal.
+    </div>
+    <div class="quiz-feedback" id="fb-q1-wrong" style="display:none">
+      ❌ Não exactamente. Pense na espécie capaz de invadir eritrócitos de qualquer idade, atingir parasitemias explosivas, e causar malária cerebral por sequestro.
+    </div>
+  </div>
+</section>
+
+<!-- ===== SEÇÃO 2: MOSQUITO ===== -->
+<section class="section" id="mosquito">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 02</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-lime),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">No Mosquito — A Fase Sexual</h2>
+    <p class="section-intro">Tudo começa quando uma fêmea de Anopheles faminta faz a sua refeição de sangue. Nesse momento, absorve gametócitos do sangue humano — e dentro do seu intestino, o romance do parasita começa...</p>
+  </div>
+
+  <canvas class="mol-canvas" id="mosquitoCanvas" style="border:1px solid var(--border);border-radius:8px;background:#040a0f;margin-bottom:30px;"></canvas>
+
+  <div class="timeline">
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-lime">01</div>
+      <div class="timeline-content">
+        <div class="tl-label">MINUTO 0 — PICADA</div>
+        <div class="tl-title">Ingestão dos Gametócitos</div>
+        <div class="tl-body">
+          Ao sugar sangue humano infectado, a fêmea ingere <strong>gametócitos</strong> (do grego: <em>gametes</em> = cônjuge + <em>kytos</em> = célula) — formas sexualmente diferenciadas do parasita presentes nos eritrócitos. Existem dois tipos: <strong>macrogametócito</strong> (fêmea, maior, com núcleo compacto) e <strong>microgametócito</strong> (macho, menor, com núcleo difuso).
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-cyan">02</div>
+      <div class="timeline-content">
+        <div class="tl-label">MINUTOS 5–15 — INTESTINO MÉDIO</div>
+        <div class="tl-title">Exflagelação — O Momento Mais Espectacular</div>
+        <div class="tl-body">
+          No intestino do mosquito, a temperatura cai (~20–25°C vs 37°C humano), o pH sobe, e uma molécula chamada <strong>XF1 (xanthurenic acid)</strong> — derivada do metabolismo do mosquito — activa o microgametócito. Em 15 minutos, o microgametócito <strong>exflagela</strong>: emite 8 microgametas flagelados que nadam activamente em busca do macrogameta. Esta é a <strong>única fase flagelada</strong> de todo o ciclo!
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-pink">03</div>
+      <div class="timeline-content">
+        <div class="tl-label">~30 MIN — FERTILIZAÇÃO</div>
+        <div class="tl-title">Formação do Zigoto</div>
+        <div class="tl-body">
+          O microgameta penetra o macrogameta — fertilização completa. O resultado é um <strong>zigoto</strong> diploide (2n cromossomas). Mas o zigoto não fica estático: em horas transforma-se em <strong>oocineto</strong> (do grego: <em>oon</em> = ovo + <em>kinetos</em> = móvel) — uma forma alongada, móvel, que perfura as células do epitélio intestinal do mosquito.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-gold">04</div>
+      <div class="timeline-content">
+        <div class="tl-label">DIAS 1–10 — PAREDE INTESTINAL</div>
+        <div class="tl-title">Formação do Oocisto</div>
+        <div class="tl-body">
+          O oocineto atravessa o epitélio e instala-se sob a membrana basal do intestino médio, transformando-se em <strong>oocisto</strong>. Aqui ocorre divisão meiótica e depois múltiplas divisões mitóticas — num processo chamado <strong>esporogonia</strong> — produzindo até <strong>10.000 esporozoítos</strong> por oocisto. O oocisto cresce visivelmente (50–500 µm), parece uma bolinha verde-acastanhada na parede intestinal.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-orange">05</div>
+      <div class="timeline-content">
+        <div class="tl-label">DIAS 10–14 — RUPTURA</div>
+        <div class="tl-title">Libertação dos Esporozoítos</div>
+        <div class="tl-body">
+          O oocisto maduro rompe, libertando milhares de <strong>esporozoítos</strong> (do grego: <em>spora</em> = semente + <em>zōon</em> = animal) na hemolinfa do mosquito. Com os seus corpos alongados e o complexo apical, os esporozoítos migram activamente até às <strong>glândulas salivares</strong>, onde aguardam a próxima refeição de sangue — prontos para ser injectados no próximo humano.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card purple">
+    <div class="card-title"><span class="icon">⚡</span> O Complexo Apical — A Arma de Invasão</div>
+    <p>Os esporozoítos têm um <strong>complexo apical</strong> na extremidade anterior que é fundamental para a invasão:</p>
+    <p><strong>Róptrias</strong> (do grego: <em>rhoptron</em> = bastão): organelas secretoras longas que libertam proteínas de invasão (RON2, RON4, RON5) que formam a <em>junção móvel</em> entre o parasita e a célula hospedeira.</p>
+    <p><strong>Micronemas</strong>: organelas menores que libertam proteínas de adesão (TRAP — <em>Thrombospondin-Related Anonymous Protein</em>) essenciais para a motilidade e reconhecimento de células hepáticas.</p>
+    <p><strong>Gránulos Densos</strong>: libertam proteínas após a invasão para modificar o vacúolo parasitóforo (o "quarto" que o parasita cria dentro da célula).</p>
+  </div>
+</section>
+
+<!-- ===== SEÇÃO 3: FÍGADO ===== -->
+<section class="section" id="liver">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 03</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-orange),var(--accent-gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">No Fígado — Fase Exo-eritrocítica</h2>
+    <p class="section-intro">Quando o mosquito pica, injunta esporozoítos na pele com a saliva. O que acontece nos próximos 30 minutos decide o destino da infecção. O parasita vai directo ao fígado — e faz-se invisível durante semanas.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔬</span> Injecção e Viagem até ao Fígado</div>
+    <p>A picada do mosquito deposita <strong>10–100 esporozoítos</strong> na derme (não directamente no sangue). A maioria é destruída por macrófagos dérmicos. Os sobreviventes entram nos vasos linfáticos ou capilares.</p>
+    <p>Em <strong>30–60 minutos</strong>, os esporozoítos chegam ao fígado via circulação portal. Aqui, a proteína <strong>TRAP</strong> e as <strong>CSP</strong> (Circumsporozoite Proteins) reconhecem os <em>heparan sulfate proteoglycans</em> (HSPG) nas células de Kupffer e nos hepatócitos — é o receptor de entrada.</p>
+    <div class="highlight">
+      <strong>🎯 Estratégia de furtividade:</strong> Os esporozoítos primeiro atravessam várias células de Kupffer e hepatócitos (sem ficar nelas) — este trânsito dispara sinais de crescimento que preparam o hepatócito final para a invasão. É como testar portas antes de entrar pela porta certa.
+    </div>
+  </div>
+
+  <div class="card orange">
+    <div class="card-title"><span class="icon">🏠</span> O Vacúolo Parasitóforo — A Casa do Parasita</div>
+    <p>Uma vez dentro do hepatócito, o esporozoíto cria o <strong>Vacúolo Parasitóforo (VP)</strong> — uma membrana lipídica derivada do hepatócito que o envolve completamente. Esta membrana é o segredo da sobrevivência:</p>
+    <p>O VP <strong>não se funde com lisossomas</strong> (normalmente, qualquer vacúolo endocítico funde-se com lisossomas e é destruído). O parasita modifica activamente a membrana do VP inserindo proteínas próprias que impedem esta fusão — um mecanismo de evasão imune magistral.</p>
+    <p>Dentro do VP, começa a <strong>esquizogonia hepática</strong>: o parasita cresce, o núcleo divide-se repetidamente (sem divisão celular imediata — esta fase é chamada de <em>trofozoíto</em> hepático), resultando num <strong>esquizonte hepático</strong> gigante com até <strong>30.000 merozoítos</strong>.</p>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="icon">😴</span> Hipnozoítos — O Parasita que Dorme (P. vivax e P. ovale)</div>
+    <p>Nas infecções por <em>P. vivax</em> e <em>P. ovale</em>, alguns esporozoítos não se multiplicam imediatamente. Em vez disso, entram em estado de latência como <strong>hipnozoítos</strong> (do grego: <em>hypnos</em> = sono + <em>zōon</em> = animal).</p>
+    <p>O hipnozoíto é uma forma quiescente dentro do hepatócito — metabolicamente inactivo, invisível ao sistema imune, resistente a medicamentos esquizonticidas (como a cloroquina). Pode permanecer dormente por <strong>meses a anos</strong>.</p>
+    <p>Factores como stress, gravidez, imunossupressão, podem reactivar o hipnozoíto → nova esquizogonia hepática → nova onda de merozoítos → recaída clínica. Isto explica as <strong>recidivas</strong> de <em>P. vivax</em> sem nova picada.</p>
+    <div class="danger-box">
+      <strong>⚠️ Implicação terapêutica crucial:</strong> Para eliminar hipnozoítos, é necessária a <strong>primaquina</strong> (ou tafenoquina) — os únicos fármacos activos nesta fase. A cloroquina elimina a fase sanguínea mas NÃO os hipnozoítos. Sem primaquina, o doente terá recidivas. Antes de prescrever, testar G6PD (Glucose-6-Phosphate Dehydrogenase) — deficiência causa hemólise grave com primaquina.
+    </div>
+  </div>
+
+  <div class="card lime">
+    <div class="card-title"><span class="icon">💥</span> Ruptura do Esquizonte — Liberação dos Merozoítos</div>
+    <p>Após <strong>5–16 dias</strong> (dependendo da espécie), o esquizonte hepático está maduro. O hepatócito infectado morre por <strong>apoptose modificada</strong> — mas não da forma normal. Em vez de fragmentar-se em apoptotic bodies destruídos por fagócitos, o hepatócito forma <strong>merossomas</strong>: vesículas ricas em merozoítos que se desprendem e viajam pelo sinusoide hepático até aos pulmões, onde os merozoítos são libertados directamente para a circulação — evitando a detecção pelos macrófagos de Kupffer.</p>
+    <p>Cada merozoíto tem <strong>~2 µm</strong>, corpo ovoide, complexo apical funcional, e está pronto para o próximo alvo: o <strong>eritrócito</strong>.</p>
+  </div>
+
+  <div class="quiz-box">
+    <h3>🎯 CHECKPOINT — Fase Hepática</h3>
+    <div class="quiz-q">Um doente tratado de malária por P. vivax com cloroquina ficou sem febre por 4 meses, mas depois voltou a ter febre sem nova exposição ao mosquito. Qual a explicação correcta?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">A) Resistência à cloroquina — a droga não eliminou os merozoítos sanguíneos</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">B) Re-infecção por novo mosquito não detectado</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q2')">C) Reactivação de hipnozoítos hepáticos que a cloroquina não elimina</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">D) O P. vivax tem ciclo eritrocítico de 72h causando recidiva tardia</button>
+    </div>
+    <div class="quiz-feedback" id="fb-q2-correct" style="display:none">
+      ✅ Perfeito! Os <strong>hipnozoítos</strong> de P. vivax permanecem dormentes no fígado, invisíveis à cloroquina. A recidiva após meses sem exposição é a assinatura clínica clássica. O tratamento correcto exige adicionar <strong>primaquina</strong> (após testar G6PD).
+    </div>
+    <div class="quiz-feedback" id="fb-q2-wrong" style="display:none">
+      ❌ Reveja a fase hepática. A chave é a forma latente que a cloroquina não atinge. Qual forma dorme no fígado?
+    </div>
+  </div>
+</section>
+
+<!-- ===== SEÇÃO 4: SANGUE ===== -->
+<section class="section" id="blood">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 04</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-red),var(--accent-pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">No Sangue — Fase Eritrocítica</h2>
+    <p class="section-intro">Esta é a fase clínica da malária. Os merozoítos invadem os glóbulos vermelhos, crescem, destroem-nos, libertam mais merozoítos — e o ciclo repete com precisão relojoeira. Cada ruptura sincronizada de milhões de eritrócitos dispara um acesso febril.</p>
+  </div>
+
+  <canvas class="mol-canvas" id="bloodCanvas" style="border:1px solid rgba(255,23,68,0.3);border-radius:8px;background:#060005;margin-bottom:30px;height:250px;"></canvas>
+
+  <div class="timeline">
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-red">01</div>
+      <div class="timeline-content">
+        <div class="tl-label">SEGUNDOS — RECONHECIMENTO</div>
+        <div class="tl-title">O Merozoíto Encontra o Eritrócito</div>
+        <div class="tl-body">
+          O merozoíto tem <strong>~120 segundos</strong> para invadir um eritrócito antes de ser destruído por anticorpos ou complemento. Usa múltiplas famílias de ligandos: a proteína <strong>MSP-1</strong> (Merozoite Surface Protein 1) reconhece os eritrócitos inicialmente. Para <em>P. vivax</em>, a ligação essencial é à proteína <strong>Duffy antigen (DARC)</strong> — por isso indivíduos Duffy-negativos (comum na África subsaariana) são <strong>naturalmente resistentes ao P. vivax</strong>!
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-pink">02</div>
+      <div class="timeline-content">
+        <div class="tl-label">SEGUNDOS — ORIENTAÇÃO</div>
+        <div class="tl-title">Reorientação Apical</div>
+        <div class="tl-body">
+          O merozoíto toca o eritrócito em qualquer ponto, mas depois <strong>reorienta-se</strong> para apresentar o complexo apical perpendicular à membrana eritrocitária. As proteínas das <strong>róptrias</strong> (RON2, 4, 5) são injectadas no eritrócito, formando na membrana eritrocitária o complexo <strong>TJ</strong> (Tight Junction — Junção Rígida) — o ponto de ancoragem e entrada.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-orange">03</div>
+      <div class="timeline-content">
+        <div class="tl-label">~30 SEG — INVASÃO</div>
+        <div class="tl-title">Deslizamento para Dentro</div>
+        <div class="tl-body">
+          O merozoíto usa um <strong>motor de actina-miosina</strong> (Myosin A — MyoA) interno para se propulsionar para dentro do eritrócito através da Tight Junction. A membrana do eritrócito envolve progressivamente o parasita — formando o <strong>Vacúolo Parasitóforo</strong> eritrocítico. A TJ serve como "zíper" que sela o VP por trás do parasita enquanto ele entra. Todo o processo dura menos de <strong>30 segundos</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-gold">04</div>
+      <div class="timeline-content">
+        <div class="tl-label">HORAS 0–20 — CRESCIMENTO</div>
+        <div class="tl-title">Trofozoíto Jovem — O "Anel"</div>
+        <div class="tl-body">
+          Dentro do VP, o parasita começa como <strong>trofozoíto jovem</strong> — na lâmina corada com Giemsa aparece como um <strong>anel azul fino</strong> com núcleo vermelho (dot cromático). Chama-se "forma em anel" ou <em>ring form</em>. O parasita alimenta-se activamente de <strong>hemoglobina</strong> via digestão em vacúolo digestivo — importando-a pelo citóstoma e degradando-a com proteases (plasmepsinas, falcipaínas). O <strong>heme</strong> (grupo ferro-porfirina) libertado seria tóxico — mas o parasita o polimeriza em <strong>hemozoína</strong> (pigmento malárico) — cristais negros visíveis na lâmina!
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-purple">05</div>
+      <div class="timeline-content">
+        <div class="tl-label">HORAS 20–36 — MATURAÇÃO</div>
+        <div class="tl-title">Trofozoíto Maduro → Esquizonte</div>
+        <div class="tl-body">
+          O trofozoíto cresce, o eritrócito distende. O parasita entra em divisão nuclear (<strong>esquizogonia eritrocítica</strong>): múltiplas divisões nucleares sem citocinese imediata → esquizonte com múltiplos núcleos. Cada núcleo recebe citoplasma e organelas → <strong>merozoítos</strong> filhos. O número de merozoítos por eritrócito varia: P. falciparum: 16–32; P. vivax: 12–24; P. malariae: 6–12; P. ovale: 6–12.
+        </div>
+      </div>
+    </div>
+
+    <div class="timeline-item fade-in">
+      <div class="timeline-dot td-red">06</div>
+      <div class="timeline-content">
+        <div class="tl-label">HORAS 36–48 — RUPTURA</div>
+        <div class="tl-title">Libertação — O Acesso Febril</div>
+        <div class="tl-body">
+          O eritrócito repleto de merozoítos <strong>rompe</strong> — libertando 16–32 merozoítos + debris celulares + <strong>GPI (Glycosylphosphatidylinositol)</strong> parasitário + <strong>hemozoína</strong> + citocinas. Esta descarga maciça activa macrófagos → libertação explosiva de <strong>TNF-α, IL-1β, IL-6, IL-12</strong> → o hipotálamo responde com febre elevada, calafrios, sudorese. A febre é tão intensa e sincronizada porque <strong>milhões de eritrócitos rompem ao mesmo tempo</strong> — todos no mesmo estágio.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="card gold">
+    <div class="card-title"><span class="icon">🍽️</span> Metabolismo do Parasita — Como ele Se Alimenta</div>
+    <p><strong>Fonte energética principal:</strong> O Plasmodium é extremamente dependente de <strong>glicose</strong> — consome 70–100x mais glicose por volume que o eritrócito normal. Em infecções graves (P. falciparum), isso causa <strong>hipoglicemia profunda</strong> — especialmente em crianças e grávidas.</p>
+    <p><strong>Via glicolítica:</strong> O parasita usa principalmente <strong>glicólise anaeróbia</strong> (como o eritrócito maduro que não tem mitocôndrias activas). Mas ao contrário do eritrócito, o Plasmodium tem mitocôndrias funcionais usadas para <strong>síntese de pirimidinas</strong> (via DHODH — Dihydroorotate Dehydrogenase) — alvo da atovaquona.</p>
+    <p><strong>Síntese proteica:</strong> O parasita usa ribossomas próprios, diferentes dos humanos (diferença usada por antibióticos como doxiciclina na profilaxia).</p>
+    <p><strong>Digestão da hemoglobina:</strong> <em>Globina</em> → aminoácidos usados para síntese de proteínas parasitárias. <em>Heme</em> → polimerizado em hemozoína (não pode ser excretado). A <strong>cloroquina</strong> age aqui: inibe a polimerização do heme → acumulação de heme tóxico livre → morte do parasita.</p>
+  </div>
+</section>
+
+<!-- ===== SEÇÃO 5: PATOGÉNESE ===== -->
+<section class="section" id="patho">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 05</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-pink),var(--accent-red));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Patogénese Molecular</h2>
+    <p class="section-intro">Como o parasita transforma a nossa biologia num campo de batalha. Os mecanismos moleculares que explicam cada sinal e sintoma clínico — do simples calafrio à malária cerebral fatal.</p>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🩸 Anemia — Por Que os Glóbulos Vermelhos Desaparecem?</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p>A anemia na malária é <strong>multifactorial</strong> — resultado de 4 mecanismos simultâneos:</p>
+      <p><strong>1. Hemólise directa:</strong> A ruptura dos eritrócitos infectados é a causa mais óbvia. Mas apenas uma fracção dos eritrócitos está infectada (parasitemia de 1% = ~50.000 eritrócitos/µL destruídos de cada vez).</p>
+      <p><strong>2. Destruição de eritrócitos não infectados:</strong> Muito mais insidioso — por cada eritrócito infectado destruído, <em>8–10 eritrócitos sãos</em> são também removidos pelo baço (fenómeno chamado <em>bystander hemolysis</em>). Mecanismo: a activação do complemento e depósito de imunoglobulinas na superfície de eritrócitos não infectados marca-os para remoção esplénica.</p>
+      <p><strong>3. Disfunção medular:</strong> As citocinas inflamatórias (TNF-α, IL-10) inibem a eritropoiese na medula óssea — anemia aplástica relativa. O ferro fica sequestrado em macrófagos (hiperferritinemia).</p>
+      <p><strong>4. Hemólise intravascular maciça:</strong> Em infecções graves, massiva libertação de hemoglobina livre → <strong>hemoglobinúria</strong> (urina cor de Coca-Cola) → "blackwater fever" (febre da água negra) — histórico nome da malária grave com hemólise massiva.</p>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🧠 Malária Cerebral — O Mecanismo do Sequestro</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p>Exclusiva do <em>P. falciparum</em>. O parasita produz <strong>PfEMP1</strong> (Plasmodium falciparum Erythrocyte Membrane Protein 1) — uma proteína de adesão inserida em protrusões da membrana do eritrócito chamadas <em>knobs</em> (nódulos).</p>
+      <p>A PfEMP1 liga-se a receptores endoteliais: <strong>ICAM-1, CD36, PECAM-1, E-selectina, trombospondina</strong>. Isso faz os eritrócitos infectados aderirem ao endotélio dos capilares cerebrais → <strong>sequestro</strong>.</p>
+      <p>O sequestro cerebral causa: <strong>obstrução mecânica</strong> (estase do fluxo), <strong>inflamação local</strong> (TNF-α, NO-sintetase induzível), <strong>ruptura da barreira hemato-encefálica</strong> (BHE) por metaloproteinases. O resultado é edema cerebral, hipoxia neuronal, coma, convulsões, morte.</p>
+      <p><em>Por que só P. falciparum faz isso?</em> As outras espécies não têm o gene <em>var</em> que codifica a PfEMP1 — uma família de ~60 genes com variação antigénica que também permite ao parasita escapar à memória imunológica.</p>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🌡️ A Febre — Cronobiologia Molecular</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p>A febre malárica é um dos mais elegantes exemplos de <strong>cronobiologia molecular</strong> na medicina. Ocorre em paroxismos (do grego: <em>paroxysmos</em> = intensificação súbita) em 3 fases:</p>
+      <p><strong>Fase fria (calafrio):</strong> Vasoconstricção periférica → tremores violentos → temperatura central sobe. Dura 15–60 min. Patofisiologia: libertação de GPI e hemozoína activam receptores TLR-2 e TLR-4 nos macrófagos → IL-1β e TNF-α actuam no hipotálamo → aumento do ponto de termorregulação (set-point).</p>
+      <p><strong>Fase quente:</strong> Temperatura atinge 39–41°C (às vezes 42°C). Vasodilatação, taquicardia, pele quente e seca. Dura 2–6h. É a fase de maior comprometimento sistémico.</p>
+      <p><strong>Fase de suor:</strong> Sudorese profusa → queda brusca de temperatura → exaustão. O ciclo termina. O intervalo até ao próximo paroxismo depende da duração do ciclo eritrocítico: 48h (P. vivax/ovale/falciparum), 72h (P. malariae), 24h (P. knowlesi).</p>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>💛 Icterícia — A Bilirrubina e o Fígado</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p>A hemólise maciça liberta grandes quantidades de <strong>hemoglobina</strong>. A haptoglobina plasmática fica rapidamente saturada — a hemoglobina livre é captada pelo fígado. A globina é degradada, o heme é convertido em <strong>bilirrubina não conjugada (indirecta)</strong>.</p>
+      <p>O fígado normalmente conjuga a bilirrubina com ácido glucurónico (tornando-a hidrossolúvel para excreção biliar). Mas na malária, dois problemas ocorrem simultaneamente: <strong>sobrecarga de produção</strong> (hemólise maciça → bilirrubina indirecta ↑↑) e <strong>disfunção hepática</strong> (o Plasmodium pode infectar células de Kupffer, causar hepatomegália congestiva, inflamação).</p>
+      <p>Resultado: acumulação de bilirrubina → <strong>icterícia</strong> (do grego: <em>ikteros</em> = icterícia). A icterícia na malária é predominantemente <em>hemolítica</em> (bilirrubina indirecta alta) mas pode ter componente hepatocelular. Clinicamente: escleras amarelas, pele ictérica, urina escura (bilirubinúria).</p>
+    </div>
+  </div>
+
+  <div class="accordion-item">
+    <div class="accordion-header" onclick="toggleAccordion(this)">
+      <span>🩺 Esplenomegália — O Baço em Guerra</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p>O baço é o órgão imunológico mais activo na malária. As suas funções durante a infecção são extraordinárias:</p>
+      <p><strong>Filtração eritrocitária:</strong> Os sinusóides esplénicos têm fendas de 2–3 µm — menores que o eritrócito normal (7–8 µm). Os eritrócitos normais passam deformando-se. Os eritrócitos infectados (mais rígidos pela PfEMP1 e pelos knobs) ficam retidos → destruídos por macrófagos esplénicos.</p>
+      <p><strong>Pitting:</strong> O baço é capaz de remover o parasita do interior do eritrócito sem destruir o eritrócito — o merozoíto é "espremido para fora" (pitting). O eritrócito sobrevive mas fica alterado.</p>
+      <p><strong>Resposta imune:</strong> Apresentação de antígenos parasitários → activação de linfócitos T e B → produção de anticorpos. Em infecções repetidas, a resposta imune esplénica é crucial para a imunidade adquirida.</p>
+      <p>Com infecções crónicas ou repetidas → <strong>hiperplasia</strong> (do grego: <em>hyper</em> = além + <em>plasis</em> = formação) de todo o tecido esplénico → esplenomegália maciça. A "<strong>Síndrome da Esplenomegália Tropical Hiperreactiva</strong>" (SETH) é uma complicação crónica da malária repetida, com baços de >10cm.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== SEÇÃO 6: LÂMINAS ===== -->
+<section class="section" id="laminas">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 06</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-gold),var(--accent-lime));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Diagnóstico em Lâmina</h2>
+    <p class="section-intro">A microscopia de esfregaço de sangue periférico corado com Giemsa continua a ser o "padrão-ouro" do diagnóstico de malária. Mas reconhecer o parasita exige treino visual — e a lógica molecular por trás de cada achado.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔬</span> Por Que Usar Coloração de Giemsa?</div>
+    <p>O <strong>Giemsa</strong> (Gustav Giemsa, químico alemão, 1902) é uma mistura de <strong>azul de metileno</strong> e <strong>eosina</strong>. Funciona pela diferença de afinidade dos componentes celulares pelos corantes ácidos e básicos:</p>
+    <p><strong>Azul de metileno</strong> (básico) → cora estruturas <em>ácidas</em> = núcleos (DNA, RNA), citoplasma basófilo → cor <em>azul/violeta</em>.</p>
+    <p><strong>Eosina</strong> (ácido) → cora estruturas <em>básicas</em> = hemoglobina, grânulos eosinofílicos → cor <em>rosa/laranja</em>.</p>
+    <p>O parasita intracelular → seu citoplasma cora de <strong>azul</strong> (basofílico — rico em RNA ribossómico, síntese proteica activa) e o núcleo de <strong>vermelho/rosa</strong>. A hemoglobina do eritrócito → cor-de-rosa. A hemozoína → granulações <strong>negras/castanhas</strong>.</p>
+  </div>
+
+  <p style="color:var(--text-dim);margin-bottom:20px;font-size:0.95rem;">Clique em cada lâmina para ver descrição detalhada:</p>
+
+  <div class="lamina-grid">
+    <div class="lamina-card" onclick="openModal('anel','Forma em Anel (Ring Form) — P. falciparum','<h4>O Que Você Vê</h4><p>Eritrócito de tamanho normal. No interior, um <strong>anel azul fino e delicado</strong> com <strong>1 ou 2 pontos de cromatina vermelha</strong> (núcleo). O anel ocupa ~1/3 do eritrócito.</p><h4>Lógica Molecular</h4><p>Isto é o <strong>trofozoíto jovem</strong>. O anel azul = citoplasma do parasita jovem cheio de ribossomas (RNA → basofílico). O ponto vermelho = núcleo (DNA → cora com eosina/azur).</p><h4>Características Específicas de P. falciparum</h4><p><em>Dupla cromatina</em>: frequentemente 2 pontos de cromatina por anel — raro em outras espécies.<br><em>Formas marginais</em>: o anel fica na periferia do eritrócito (se agarrado à membrana pela PfEMP1).<br><em>Múltiplas infecções</em>: 2+ parasitas por eritrócito — P. falciparum é o único que frequentemente infecta múltiplos parasitas por célula.<br><em>Eritrócito não aumentado</em>: o eritrócito mantém tamanho normal — P. falciparum não causa aumento celular.</p><h4>Correlação Clínica</h4><p>Alta parasitemia com formas em anel = infecção activa grave. Mais de 5% parasitemia = malária severa segundo critérios da OMS.</p>')">
+      <canvas class="lamina-canvas" id="lam1"></canvas>
+      <div class="lamina-label">01 / FORMA EM ANEL · P. falciparum</div>
+    </div>
+    <div class="lamina-card" onclick="openModal('trof','Trofozoíto Maduro — P. vivax','<h4>O Que Você Vê</h4><p><strong>Eritrócito aumentado</strong> (P. vivax prefere eritrócitos jovens — reticulócitos — que são maiores). <strong>Granulações de Schüffner</strong> (pontos vermelhos/cor-de-rosa distribuídos pelo citoplasma do eritrócito). O parasita é <strong>ameboide</strong> — irregular, com pseudópodos, aspecto de "ameba".</p><h4>Lógica Molecular</h4><p>O aumento eritrocitário = alterações do citoesqueleto induzidas pelo parasita (proteínas RESA inseridas na espectrina). As <strong>Granulações de Schüffner</strong> são modificações da membrana eritrocitária — acumulações de proteínas parasitárias exportadas (PHIST proteins, STEVOR). A forma ameboide = trofozoíto activamente a digerir hemoglobina = alta actividade metabólica = muito RNA = muito azul.</p><h4>Correlação Clínica</h4><p>P. vivax só infecta reticulócitos (que têm receptor Duffy). Máx. parasitemia ~2–3% — menor que P. falciparum. Menos grave mas provoca anemia pela destruição de células jovens (precursoras).</p>')">
+      <canvas class="lamina-canvas" id="lam2"></canvas>
+      <div class="lamina-label">02 / TROFOZOÍTO · P. vivax</div>
+    </div>
+    <div class="lamina-card" onclick="openModal('schi','Esquizonte — P. malariae','<h4>O Que Você Vê</h4><p>Eritrócito de <strong>tamanho normal ou ligeiramente menor</strong> (P. malariae prefere eritrócitos velhos). Interior preenchido por <strong>6–12 merozoítos</strong> dispostos em torno de um aglomerado central de hemozoína — padrão em <strong>"rosácea" ou "margarida"</strong> (daisy-head appearance).</p><h4>Lógica Molecular</h4><p>Cada "pétala" = um merozoíto com núcleo (ponto rosa) + citoplasma (azul). O centro escuro = aglomerado de <strong>hemozoína</strong> = cristais de ferriprotoporfirina IX polimerizada — o pigmento malárico. Só visível em esquizontes maduros onde a hemozoína se acumulou.</p><h4>Padrão Rosácea</h4><p>O padrão em rosácea de P. malariae é o mais elegante e ordenado de todas as espécies — os merozoítos dispõem-se simetricamente ao redor do depósito central de hemozoína. Útil para identificação específica.</p><h4>Correlação Clínica</h4><p>P. malariae tem ciclo de 72h (quartana). Baixa parasitemia. Causa nefropatia quartã por depósito de imunocomplexos nos glomérulos (síndrome nefrótica crónica em crianças de áreas endémicas).</p>')">
+      <canvas class="lamina-canvas" id="lam3"></canvas>
+      <div class="lamina-label">03 / ESQUIZONTE ROSÁCEA · P. malariae</div>
+    </div>
+    <div class="lamina-card" onclick="openModal('gamet','Gametócito em Foice — P. falciparum','<h4>O Que Você Vê</h4><p>Forma <strong>crescente/falciforme</strong> (em foice) que deforma ou até extravasa o eritrócito. Cor azulada intensa (macrogametócito — fêmea) ou mais rosada/pálida (microgametócito — macho). Núcleo central compacto no macrogametócito, difuso no microgametócito.</p><h4>Lógica Molecular</h4><p>O gametócito falciforme de P. falciparum é <strong>único entre as espécies</strong> — as outras têm gametócitos ovoides. A forma de foice resulta de um citoesqueleto interno de <strong>microtúbulos</strong> que sustenta a deformação. O gametócito maturo tem hemozoína no interior e a membrana eritrocitária deformada mas intacta.</p><h4>Importância Epidemiológica</h4><p>Gametócitos são a única forma infecciosa para o mosquito. Aparecem 7–15 dias após o início da infecção sanguínea. Persistem mesmo após tratamento com esquizonticidas (cloroquina, artemisininas não os eliminam completamente) → transmissão contínua. Só a <strong>primaquina</strong> elimina gametócitos de P. falciparum.</p><h4>Correlação Clínica</h4><p>Presença de gametócitos = doente infeccioso para mosquitos. Relevante para controlo epidemiológico.</p>')">
+      <canvas class="lamina-canvas" id="lam4"></canvas>
+      <div class="lamina-label">04 / GAMETÓCITO FALCIFORME · P. falciparum</div>
+    </div>
+    <div class="lamina-card" onclick="openModal('ovale','P. ovale — Eritrócito Fimbriado','<h4>O Que Você Vê</h4><p>Eritrócito <strong>ligeiramente aumentado</strong>, com borda <strong>irregular, festonada ou laciniada</strong> (fimbriado — do latim: <em>fimbria</em> = franja). Granulações de Schüffner presentes (semelhante a P. vivax). O parasita tende a ter forma oval/ovóide.</p><h4>Lógica Molecular</h4><p>A borda fimbriada resulta de alterações no citoesqueleto eritrocitário induzidas pelo parasita — proteínas exportadas que rememoram a actina e espectrina. Esta é a característica morfológica mais específica do P. ovale — quando presente, praticamente confirma o diagnóstico.</p><h4>Comparação com P. vivax</h4><p>Ambos têm: granulações de Schüffner, eritrócito aumentado, hipnozoítos hepáticos. Diferença principal: P. ovale tem borda fimbriada, P. vivax não. P. ovale é mais raro (predomina na África Ocidental e Melanésia).</p><h4>Implicação Terapêutica</h4><p>Como P. vivax, necessita de primaquina para eliminar hipnozoítos. Testar G6PD antes.</p>')">
+      <canvas class="lamina-canvas" id="lam5"></canvas>
+      <div class="lamina-label">05 / ERITRÓCITO FIMBRIADO · P. ovale</div>
+    </div>
+    <div class="lamina-card" onclick="openModal('gota','Gota Espessa — Técnica de Concentração','<h4>O Que é a Gota Espessa?</h4><p>A gota espessa não é um esfregaço normal — é uma <strong>técnica de concentração</strong>. Uma grande quantidade de sangue é depositada, seca e depois corada SEM fixação prévia. A água da coloração <strong>lisa os eritrócitos</strong> — o que parece destruição é intencional!</p><h4>Por Que Usar?</h4><p>A gota espessa analisa ~20x mais sangue que o esfregaço fino, sendo <strong>muito mais sensível</strong> para detectar parasitas em baixas parasitemias (útil no início da infecção ou em imunes parciais).</p><h4>O Que Você Vê</h4><p>Sem eritrócitos intactos (lisados). Visíveis: leucócitos (morfologia preservada), plaquetas, e os <strong>parasitas</strong> — agora sem o fundo rosado do eritrócito, aparecem como formas azuis com pontos vermelhos "flutuando" no fundo.</p><h4>Limitação</h4><p>Difícil identificar espécie — os parasitas aparecem sem o contexto do eritrócito hospedeiro (tamanho, granulações). Para identificação de espécie, confirmar sempre com esfregaço fino.</p><h4>Correlação Laboratorial</h4><p>OMS recomenda: gota espessa para screening (alta sensibilidade) + esfregaço fino para identificação específica e quantificação de parasitemia.</p>')">
+      <canvas class="lamina-canvas" id="lam6"></canvas>
+      <div class="lamina-label">06 / GOTA ESPESSA · TÉCNICA</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ===== SEÇÃO 7: CLÍNICA ===== -->
+<section class="section" id="clinical">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 07</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-cyan),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Sintomas, Clínica & Emergências</h2>
+    <p class="section-intro">Da picada ao leito de UTI. Cada sinal clínico conectado ao mecanismo molecular que o gera — para nunca esquecer a lógica por trás do que se vê no doente.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> Apresentação Clínica Típica — A Tríade Malárica</div>
+    <p>O quadro clínico clássico da malária não complicada apresenta-se como a <strong>tríade malárica</strong>: <em>febre + calafrio + sudorese</em>. Mas o início raramente é tão textbook.</p>
+
+    <div class="stat-row">
+      <span class="stat-label">INCUBAÇÃO P. falciparum</span>
+      <div class="stat-bar"><div class="stat-fill" style="background:var(--accent-red);width:25%;" data-target="25"></div></div>
+      <span class="stat-val" style="color:var(--accent-red)">7–14 dias</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">INCUBAÇÃO P. vivax</span>
+      <div class="stat-bar"><div class="stat-fill" style="background:var(--accent-orange);width:40%;" data-target="40"></div></div>
+      <span class="stat-val" style="color:var(--accent-orange)">12–17 dias</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">INCUBAÇÃO P. malariae</span>
+      <div class="stat-bar"><div class="stat-fill" style="background:var(--accent-purple);width:65%;" data-target="65"></div></div>
+      <span class="stat-val" style="color:var(--accent-purple)">18–40 dias</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">PARASITEMIA GRAVE</span>
+      <div class="stat-bar"><div class="stat-fill" style="background:var(--accent-red);width:5%;" data-target="5"></div></div>
+      <span class="stat-val" style="color:var(--accent-red)">&gt;5%</span>
+    </div>
+    <div class="stat-row">
+      <span class="stat-label">MORTALIDADE GLOBAL MALÁRIA</span>
+      <div class="stat-bar"><div class="stat-fill" style="background:var(--accent-cyan);width:60%;" data-target="60"></div></div>
+      <span class="stat-val" style="color:var(--accent-cyan)">~600k/ano</span>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-title"><span class="icon">🚨</span> Malária Grave — Critérios OMS (P. falciparum)</div>
+    <p>Segundo a OMS, malária grave é definida pela presença de qualquer dos seguintes critérios:</p>
+    <table class="data-table">
+      <thead><tr><th>CRITÉRIO</th><th>MECANISMO</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Coma / Malária cerebral</strong></td><td>Sequestro cerebral por PfEMP1 → oclusão microvascular</td></tr>
+        <tr><td><strong>Anemia grave (Hb &lt;7g/dL)</strong></td><td>Hemólise + destruição bystander + eritropoiese suprimida</td></tr>
+        <tr><td><strong>Hipoglicemia (&lt;2.2 mmol/L)</strong></td><td>Consumo maciço de glicose pelo parasita</td></tr>
+        <tr><td><strong>Insuficiência respiratória</strong></td><td>Edema pulmonar por aumento de permeabilidade vascular</td></tr>
+        <tr><td><strong>Insuficiência renal aguda</strong></td><td>Hemoglobinúria + hipovolemia + depósito de imunocomplexos</td></tr>
+        <tr><td><strong>Coagulação intravascular disseminada</strong></td><td>Activação de trombina pelo GPI parasitário + trombocitopenia</td></tr>
+        <tr><td><strong>Hiperparasitemia (&gt;5%)</strong></td><td>Sequestro + hemólise maciça + consumo de O2</td></tr>
+        <tr><td><strong>Colapso circulatório (algid malaria)</strong></td><td>Sépsis parasitária + vasodilatação por NO excessivo</td></tr>
+      </tbody>
+    </table>
+    <div class="danger-box">
+      <strong>⚠️ Urgência Terapêutica:</strong> Malária cerebral tem mortalidade de <strong>15–20%</strong> mesmo com tratamento. Artesunato IV é o tratamento de eleição — superior à quinina. O tempo entre reconhecimento e início do tratamento é crítico.
+    </div>
+  </div>
+
+  <div class="card gold">
+    <div class="card-title"><span class="icon">💊</span> Lógica dos Antimaláricos — Onde Cada Droga Age</div>
+    <p><strong>Cloroquina:</strong> Acumula-se no vacúolo digestivo do parasita → inibe a heme polimerase → heme livre acumula → tóxico para o parasita. Resistência: mutação no gene <em>pfcrt</em> (P. falciparum chloroquine resistance transporter) → parasita expele a cloroquina do vacúolo.</p>
+    <p><strong>Artemisininas (artesunato, arteméter):</strong> O grupo endoperóxido reage com o ferro do heme → radicais livres → dano oxidativo ao parasita. Rápida e altamente eficaz. Sem resistência estabelecida ainda (Ásia Sudeste: resistência parcial).</p>
+    <p><strong>Primaquina:</strong> Age contra formas hepáticas (hipnozoítos) e gametócitos. Mecanismo: metabolismo hepático → metabolitos oxidantes → dano ao parasita. Perigo em deficiência de G6PD → hemólise do hospedeiro.</p>
+    <p><strong>Mefloquina:</strong> Inibe digestão de hemoglobina. Efeitos psiquiátricos como efeito adverso (pesadelos, psicose) — mediados por inibição de receptores adenosina cerebrais.</p>
+    <p><strong>Atovaquona-proguanil (Malarone):</strong> Atovaquona inibe a DHODH mitocondrial do parasita → colapso do potencial de membrana mitocondrial → morte. Proguanil inibe DHFR (síntese de folato). Usado na profilaxia e tratamento.</p>
+  </div>
+</section>
+
+<!-- ===== SEÇÃO 8: ESPÉCIES ===== -->
+<section class="section" id="species">
+  <div class="section-header">
+    <div class="section-tag">// CAPÍTULO 08</div>
+    <h2 class="section-title" style="background:linear-gradient(135deg,var(--accent-lime),var(--accent-cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Comparação de Espécies</h2>
+    <p class="section-intro">Uma análise lado a lado das 4 principais espécies humanas — do laboratório ao leito, da molécula ao mapa epidemiológico.</p>
+  </div>
+
+  <div class="species-tabs">
+    <button class="sp-tab active" data-sp="falciparum" onclick="showSpecies('falciparum',this)">P. falciparum</button>
+    <button class="sp-tab" data-sp="vivax" onclick="showSpecies('vivax',this)">P. vivax</button>
+    <button class="sp-tab" data-sp="malariae" onclick="showSpecies('malariae',this)">P. malariae</button>
+    <button class="sp-tab" data-sp="ovale" onclick="showSpecies('ovale',this)">P. ovale</button>
+  </div>
+
+  <div class="sp-panel active" id="sp-falciparum">
+    <div class="card red">
+      <div class="card-title" style="color:var(--accent-red)">⚡ P. falciparum — O Mais Perigoso</div>
+      <p><strong>Distribuição:</strong> África Subsaariana (90% dos casos mundiais), partes da Ásia e América do Sul.</p>
+      <p><strong>Eritrócito preferido:</strong> Qualquer eritrócito (todas as idades) → permite parasitemias muito altas.</p>
+      <p><strong>Ciclo eritrocítico:</strong> 36–48 horas → febre terciana.</p>
+      <p><strong>Hipnozoítos:</strong> NÃO — sem recidivas hepáticas.</p>
+      <p><strong>Lâmina — características únicas:</strong> Formas em anel com dupla cromatina; formas marginais (accolé); múltiplas infecções por eritrócito; eritrócito tamanho normal; gametócitos FALCIFORMES (em foice/crescente); hemozoína abundante.</p>
+      <p><strong>Complicações graves:</strong> Malária cerebral (sequestro por PfEMP1), blackwater fever, síndrome de dificuldade respiratória aguda, hipoglicemia, CID.</p>
+      <p><strong>Tratamento:</strong> Artesunato IV (grave) ou arteméter-lumefantrina oral. NÃO usar cloroquina (resistência universal).</p>
+    </div>
+  </div>
+
+  <div class="sp-panel" id="sp-vivax">
+    <div class="card orange">
+      <div class="card-title" style="color:var(--accent-orange)">🌀 P. vivax — O Recidivante</div>
+      <p><strong>Distribuição:</strong> Ásia, América Latina, Médio Oriente, África Oriental (menos comum na África Ocidental — populações Duffy-negativas).</p>
+      <p><strong>Eritrócito preferido:</strong> Reticulócitos (eritrócitos jovens, maiores, com receptor Duffy — DARC).</p>
+      <p><strong>Ciclo eritrocítico:</strong> 48 horas → febre terciana benigna.</p>
+      <p><strong>Hipnozoítos:</strong> SIM → recidivas meses-anos após. Requer primaquina.</p>
+      <p><strong>Lâmina — características únicas:</strong> Eritrócito aumentado; trofozoíto ameboide; granulações de Schüffner; esquizonte com 12–24 merozoítos; gametócitos ovoides.</p>
+      <p><strong>Complicações:</strong> Anemia moderada; esplenomegália; ruptura esplénica espontânea (rara mas grave); em grávidas, baixo peso ao nascer.</p>
+      <p><strong>Tratamento:</strong> Cloroquina (fase sanguínea) + primaquina 14 dias (hipnozoítos). Testar G6PD antes da primaquina.</p>
+    </div>
+  </div>
+
+  <div class="sp-panel" id="sp-malariae">
+    <div class="card purple">
+      <div class="card-title" style="color:var(--accent-purple)">🕰️ P. malariae — O Paciente Silencioso</div>
+      <p><strong>Distribuição:</strong> África, partes da Ásia e América do Sul. Distribuição mais limitada que P. vivax/falciparum.</p>
+      <p><strong>Eritrócito preferido:</strong> Eritrócitos velhos (senescentes, menores).</p>
+      <p><strong>Ciclo eritrocítico:</strong> 72 horas → febre quartana (recorre a cada 4o dia contando o dia da febre anterior).</p>
+      <p><strong>Hipnozoítos:</strong> NÃO — mas pode persistir décadas no sangue como parasitemia de baixíssimo grau ("recrudescência" — diferente de recidiva).</p>
+      <p><strong>Lâmina — características únicas:</strong> Eritrócito normal ou menor; trofozoíto em banda (band form — atravessa transversalmente o eritrócito); esquizonte em rosácea com 6–12 merozoítos + hemozoína central; gametócitos ovoides.</p>
+      <p><strong>Complicações específicas:</strong> <strong>Nefropatia Quartã</strong> — deposição de imunocomplexos (IgM, IgG, antígenos maláricos) no mesângio e membrana basal glomerular → síndrome nefrótica crónica (especialmente em crianças). Pode evoluir para insuficiência renal crónica.</p>
+      <p><strong>Tratamento:</strong> Cloroquina. SEM necessidade de primaquina (sem hipnozoítos).</p>
+    </div>
+  </div>
+
+  <div class="sp-panel" id="sp-ovale">
+    <div class="card lime">
+      <div class="card-title" style="color:var(--accent-lime)">🍃 P. ovale — O Raramente Visto</div>
+      <p><strong>Distribuição:</strong> África Ocidental principalmente; Melanésia; raro na Ásia.</p>
+      <p><strong>Eritrócito preferido:</strong> Reticulócitos (como P. vivax).</p>
+      <p><strong>Ciclo eritrocítico:</strong> 48–50 horas → febre terciana (ligeiramente mais longa que P. vivax).</p>
+      <p><strong>Hipnozoítos:</strong> SIM → recidivas possíveis. Requer primaquina.</p>
+      <p><strong>Lâmina — características únicas:</strong> Eritrócito aumentado + <strong>bordas fimbriadas/festonadas</strong> (diagnóstico quase definitivo!); granulações de Schüffner; parasita oval/redondo (menos ameboide que P. vivax); 6–12 merozoítos no esquizonte.</p>
+      <p><strong>Duas subespécies:</strong> P. ovale curtisi e P. ovale wallikeri — distinção só por PCR.</p>
+      <p><strong>Complicações:</strong> Raramente grave. Anemia moderada. Esplenomegália.</p>
+      <p><strong>Tratamento:</strong> Cloroquina + primaquina 14 dias. Testar G6PD.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- end content-wrap -->
+
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">UNIVERSIDADE LICUNGO · 2º ANO DE MEDICINA · ANO 2026</div>
+  <div class="footer-line"></div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--text-dim);letter-spacing:2px;">
+    PARASITOLOGIA MÉDICA · CICLO PLASMODIUM · PATOGÉNESE MALÁRIA
+  </div>
+  <div style="margin-top:12px;font-family:'Rajdhani',sans-serif;font-size:0.85rem;color:rgba(0,245,255,0.4);">
+    MolecularMentes | Demil — Transformando Ciência em Aprendizagem
+  </div>
+</footer>
+
+<script>
+// ===== PARTÍCULAS =====
+const pc = document.getElementById('particles-canvas');
+const ctx = pc.getContext('2d');
+let W, H, particles = [];
+
+function resizeCanvas() {
+  W = pc.width = window.innerWidth;
+  H = pc.height = window.innerHeight;
+}
+
+function createParticles() {
+  particles = [];
+  for (let i = 0; i < 60; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 2 + 0.5,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      hue: Math.random() > 0.5 ? '0,245,255' : '168,255,62',
+      a: Math.random() * 0.5 + 0.1
+    });
+  }
+}
+
+function animParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${p.hue},${p.a})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+
+window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+resizeCanvas(); createParticles(); animParticles();
+
+// ===== PROGRESS BAR =====
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+  document.getElementById('progressBar').style.width = (pct * 100) + '%';
+});
+
+// ===== SECTION NAVIGATION =====
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.chapter-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: document.getElementById(id).offsetTop - 20, behavior: 'smooth' });
+  initSectionAnimations(id);
+}
+
+function initSectionAnimations(id) {
+  if (id === 'mosquito') drawMosquitoAnim();
+  if (id === 'blood') drawBloodAnim();
+  if (id === 'laminas') {
+    setTimeout(() => {
+      drawLamina1(); drawLamina2(); drawLamina3();
+      drawLamina4(); drawLamina5(); drawLamina6();
+    }, 100);
+  }
+  animateStatBars();
+}
+
+// ===== QUIZ =====
+function checkQuiz(btn, type, qid) {
+  const box = btn.closest('.quiz-box');
+  box.querySelectorAll('.quiz-opt').forEach(b => b.style.pointerEvents = 'none');
+  btn.classList.add(type);
+  const fb = document.getElementById('fb-' + qid + '-' + (type === 'correct' ? 'correct' : 'wrong'));
+  if (fb) { fb.style.display = 'block'; fb.classList.add('show', type === 'correct' ? 'ok' : 'fail'); }
+}
+
+// ===== ACCORDION =====
+function toggleAccordion(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  header.closest('.section').querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+  header.closest('.section').querySelectorAll('.accordion-header').forEach(h => h.classList.remove('open'));
+  if (!isOpen) { body.classList.add('open'); header.classList.add('open'); }
+}
+
+// ===== MODAL =====
+function openModal(id, title, body) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = body;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+// ===== SPECIES TABS =====
+function showSpecies(sp, btn) {
+  document.querySelectorAll('.sp-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sp-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('sp-' + sp).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== STAT BARS ANIMATION =====
+function animateStatBars() {
+  document.querySelectorAll('.stat-fill').forEach(bar => {
+    const target = bar.dataset.target;
+    bar.style.width = '0%';
+    setTimeout(() => { bar.style.width = target + '%'; }, 200);
+  });
+}
+
+// ===== MOSQUITO ANIMATION =====
+function drawMosquitoAnim() {
+  const canvas = document.getElementById('mosquitoCanvas');
+  if (!canvas) return;
+  const c = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 200;
+  let t = 0;
+  let sporozoites = [];
+  for (let i = 0; i < 8; i++) {
+    sporozoites.push({
+      x: canvas.width * 0.2 + Math.random() * 40,
+      y: canvas.height * 0.5 + (Math.random()-0.5)*60,
+      angle: Math.random() * Math.PI * 2,
+      speed: 0.8 + Math.random() * 0.5,
+      len: 10 + Math.random() * 8,
+      hue: Math.random() > 0.5 ? '#00f5ff' : '#a8ff3e'
+    });
+  }
+
+  function frame() {
+    c.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Fundo gradiente
+    const grad = c.createLinearGradient(0,0,canvas.width,0);
+    grad.addColorStop(0,'rgba(10,30,10,0.8)');
+    grad.addColorStop(0.5,'rgba(5,10,20,0.9)');
+    grad.addColorStop(1,'rgba(20,5,5,0.8)');
+    c.fillStyle = grad; c.fillRect(0,0,canvas.width,canvas.height);
+
+    // Mosquito (simplificado)
+    const mx = canvas.width * 0.15, my = canvas.height * 0.5;
+    c.save();
+    c.strokeStyle = '#a8ff3e'; c.lineWidth = 1.5;
+    // Corpo
+    c.beginPath();
+    c.ellipse(mx, my, 25, 8, -0.2, 0, Math.PI*2);
+    c.fillStyle = 'rgba(168,255,62,0.15)'; c.fill(); c.stroke();
+    // Asas
+    c.save(); c.translate(mx-5, my);
+    const wingFlap = Math.sin(t * 0.3) * 0.3;
+    c.beginPath(); c.ellipse(0,-15+wingFlap*8,8,15,0.2,0,Math.PI*2);
+    c.fillStyle='rgba(168,255,62,0.1)'; c.fill(); c.stroke();
+    c.beginPath(); c.ellipse(0,15-wingFlap*8,8,15,-0.2,0,Math.PI*2);
+    c.fill(); c.stroke();
+    c.restore();
+    // Probóscide
+    c.beginPath(); c.moveTo(mx+25, my); c.lineTo(mx+55, my+10);
+    c.strokeStyle='rgba(168,255,62,0.6)'; c.stroke();
+    c.restore();
+
+    // Humano (braço simplificado)
+    const hx = canvas.width * 0.7;
+    c.fillStyle = 'rgba(255,160,100,0.15)';
+    c.strokeStyle = 'rgba(255,160,100,0.4)'; c.lineWidth = 1;
+    c.beginPath();
+    c.roundRect(hx - 20, canvas.height*0.2, 80, canvas.height*0.6, 20);
+    c.fill(); c.stroke();
+
+    // Corrente sanguínea
+    c.strokeStyle = 'rgba(255,50,50,0.3)'; c.lineWidth=2;
+    c.beginPath();
+    c.moveTo(hx, canvas.height*0.2+10);
+    c.lineTo(hx, canvas.height*0.8-10);
+    c.stroke();
+
+    // Esporozoítos
+    sporozoites.forEach(sp => {
+      sp.x += Math.cos(sp.angle) * sp.speed;
+      sp.y += Math.sin(sp.angle) * sp.speed * 0.3;
+      if (sp.x > canvas.width * 0.85) { sp.x = canvas.width*0.2+Math.random()*40; sp.y = canvas.height*0.5+(Math.random()-0.5)*60; }
+      sp.angle += (Math.random()-0.5)*0.1;
+
+      c.save();
+      c.translate(sp.x, sp.y);
+      c.rotate(sp.angle);
+      c.strokeStyle = sp.hue;
+      c.lineWidth = 2;
+      c.shadowColor = sp.hue; c.shadowBlur = 8;
+      c.beginPath();
+      c.moveTo(-sp.len/2, 0);
+      c.quadraticCurveTo(0, -4, sp.len/2, 0);
+      c.stroke();
+      c.beginPath();
+      c.arc(sp.len/2, 0, 2, 0, Math.PI*2);
+      c.fillStyle = sp.hue; c.fill();
+      c.restore();
+    });
+
+    // Labels
+    c.fillStyle='rgba(168,255,62,0.6)'; c.font='10px Share Tech Mono';
+    c.fillText('ANOPHELES ♀', mx-15, my+30);
+    c.fillStyle='rgba(255,160,100,0.6)';
+    c.fillText('HOSPEDEIRO', hx-5, canvas.height*0.85);
+    c.fillStyle='rgba(0,245,255,0.6)';
+    c.fillText('ESPOROZOÍTOS →', canvas.width*0.35, canvas.height*0.45);
+
+    t++;
+    if (document.getElementById('mosquito') && document.getElementById('mosquito').classList.contains('active')) {
+      requestAnimationFrame(frame);
+    }
+  }
+  frame();
+}
+
+// ===== BLOOD ANIMATION =====
+function drawBloodAnim() {
+  const canvas = document.getElementById('bloodCanvas');
+  if (!canvas) return;
+  const c = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 250;
+  let t = 0;
+
+  const rbc = Array.from({length:6}, (_, i) => ({
+    x: 80 + i * (canvas.width-120)/5,
+    y: canvas.height/2 + (i%2===0 ? -30 : 30),
+    phase: i * 0.8,
+    infected: i < 4,
+    rupturing: false,
+    rupTimer: 0,
+    particles: []
+  }));
+
+  let merozoites = [];
+
+  function frame() {
+    c.clearRect(0,0,canvas.width,canvas.height);
+    const bg = c.createRadialGradient(canvas.width/2,canvas.height/2,0,canvas.width/2,canvas.height/2,canvas.width);
+    bg.addColorStop(0,'#100005'); bg.addColorStop(1,'#050002');
+    c.fillStyle=bg; c.fillRect(0,0,canvas.width,canvas.height);
+
+    // Glóbulos
+    rbc.forEach((rb, ri) => {
+      if (rb.rupturing) {
+        rb.rupTimer++;
+        if (rb.rupTimer === 1) {
+          for (let m=0; m<8; m++) {
+            merozoites.push({
+              x: rb.x, y: rb.y,
+              vx: (Math.random()-0.5)*3,
+              vy: (Math.random()-0.5)*3,
+              life: 80
+            });
+          }
+        }
+        if (rb.rupTimer < 40) {
+          c.beginPath();
+          c.arc(rb.x, rb.y, 20 + rb.rupTimer*0.5, 0, Math.PI*2);
+          c.strokeStyle = `rgba(255,50,50,${1-rb.rupTimer/40})`;
+          c.lineWidth = 1;
+          c.stroke();
+        } else {
+          rb.infected = false; rb.rupturing = false; rb.rupTimer = 0;
+          rb.phase = Math.random() * Math.PI * 2;
+        }
+        return;
+      }
+
+      const px = Math.sin(t*0.01 + rb.phase) * 15;
+      const py = Math.cos(t*0.015 + rb.phase) * 8;
+      const cx = rb.x + px, cy = rb.y + py;
+
+      // Eritrócito
+      c.beginPath();
+      c.ellipse(cx, cy, 20, 13, 0.3, 0, Math.PI*2);
+      if (rb.infected) {
+        const progress = Math.min((t - ri*40) / 200, 1);
+        c.fillStyle = `rgba(${Math.floor(180+progress*75)},${Math.floor(80-progress*60)},${Math.floor(80-progress*60)},0.3)`;
+        c.strokeStyle = `rgba(255,${Math.floor(100-progress*80)},${Math.floor(100-progress*80)},0.7)`;
+      } else {
+        c.fillStyle = 'rgba(200,60,60,0.2)'; c.strokeStyle = 'rgba(200,80,80,0.5)';
+      }
+      c.lineWidth = 1.5; c.fill(); c.stroke();
+
+      // Núcleo do glóbulo (bicôncavo)
+      c.beginPath();
+      c.ellipse(cx, cy, 8, 5, 0.3, 0, Math.PI*2);
+      c.fillStyle = 'rgba(0,0,0,0.3)'; c.fill();
+
+      if (rb.infected) {
+        const phase = ((t*0.005 + rb.phase) % 1);
+        // Parasita interno
+        const psize = 3 + phase * 9;
+        c.beginPath();
+        c.arc(cx-2, cy-2, psize, 0, Math.PI*2);
+        c.fillStyle = `rgba(0,245,255,${0.15 + phase*0.2})`;
+        c.fill();
+        // Núcleo
+        c.beginPath();
+        c.arc(cx-2, cy-2, 3, 0, Math.PI*2);
+        c.fillStyle = 'rgba(255,100,100,0.8)'; c.fill();
+        // Hemozoína
+        if (phase > 0.4) {
+          c.beginPath();
+          c.arc(cx+5, cy+4, 2, 0, Math.PI*2);
+          c.fillStyle = 'rgba(80,40,0,0.9)'; c.fill();
+        }
+        // Ruptura ao atingir max
+        if (phase > 0.95 && !rb.rupturing) {
+          rb.rupturing = true;
+        }
+      }
+    });
+
+    // Merozoítos
+    merozoites = merozoites.filter(m => m.life > 0);
+    merozoites.forEach(m => {
+      m.x += m.vx; m.y += m.vy;
+      m.life--;
+      m.vx *= 0.98; m.vy *= 0.98;
+      c.beginPath();
+      c.arc(m.x, m.y, 2, 0, Math.PI*2);
+      c.fillStyle = `rgba(0,245,255,${m.life/80})`;
+      c.shadowColor='#00f5ff'; c.shadowBlur=6;
+      c.fill(); c.shadowBlur=0;
+    });
+
+    // Label febre
+    if (t % 200 === 0 || (t > 190 && t < 210)) {
+      c.fillStyle='rgba(255,100,50,0.8)';
+      c.font='bold 11px Orbitron, monospace';
+      c.fillText('⚡ RUPTURA SINCRONIZADA → FEBRE!', 20, 30);
+    }
+
+    t++;
+    if (document.getElementById('blood') && document.getElementById('blood').classList.contains('active')) {
+      requestAnimationFrame(frame);
+    }
+  }
+  frame();
+}
+
+// ===== LÂMINAS =====
+function drawLamina1() {
+  const c = document.getElementById('lam1').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#08001a'; c.fillRect(0,0,w,h);
+  const positions = [[w*0.25,h*0.4],[w*0.5,h*0.6],[w*0.75,h*0.35],[w*0.35,h*0.7]];
+  positions.forEach(([x,y],i) => {
+    c.beginPath(); c.ellipse(x,y,22,14,i*0.4,0,Math.PI*2);
+    c.fillStyle='rgba(220,160,160,0.25)'; c.fill();
+    c.strokeStyle='rgba(200,120,120,0.5)'; c.lineWidth=1; c.stroke();
+    c.beginPath(); c.ellipse(x,y,7,4,i*0.4,0,Math.PI*2);
+    c.fillStyle='rgba(0,0,0,0.3)'; c.fill();
+    c.beginPath();
+    const a = i*0.4;
+    c.arc(x+Math.cos(a)*6, y-Math.sin(a)*3, 7, 0, Math.PI*2);
+    c.strokeStyle='rgba(0,200,255,0.8)'; c.lineWidth=1.5; c.stroke();
+    c.beginPath();
+    c.arc(x+Math.cos(a)*6+4, y-Math.sin(a)*3-3, 2.5, 0, Math.PI*2);
+    c.fillStyle='rgba(255,80,80,0.9)'; c.fill();
+    if(i===0){
+      c.beginPath();
+      c.arc(x+Math.cos(a)*6-3, y-Math.sin(a)*3+2, 2, 0, Math.PI*2);
+      c.fillStyle='rgba(255,80,80,0.9)'; c.fill();
+    }
+  });
+  c.fillStyle='rgba(0,245,255,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('DUPLA CROMATINA', 5, h-8);
+}
+
+function drawLamina2() {
+  const c = document.getElementById('lam2').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#0a0a00'; c.fillRect(0,0,w,h);
+  [[w*0.3,h*0.5],[w*0.65,h*0.45]].forEach(([x,y], i) => {
+    c.beginPath(); c.ellipse(x,y,26,17,i*0.3,0,Math.PI*2);
+    c.fillStyle='rgba(220,170,130,0.2)'; c.fill();
+    c.strokeStyle='rgba(200,140,100,0.5)'; c.lineWidth=1; c.stroke();
+    // Schüffner dots
+    for(let d=0;d<12;d++) {
+      const dx = x+(Math.random()*40-20), dy = y+(Math.random()*24-12);
+      c.beginPath(); c.arc(dx,dy,1,0,Math.PI*2);
+      c.fillStyle='rgba(255,160,100,0.6)'; c.fill();
+    }
+    // Parasita ameboide
+    c.beginPath();
+    c.moveTo(x-10,y);
+    for(let a=0;a<Math.PI*2;a+=0.3){
+      const r=8+Math.random()*5;
+      c.lineTo(x+Math.cos(a)*r, y+Math.sin(a)*r);
+    }
+    c.closePath();
+    c.fillStyle='rgba(0,180,220,0.3)'; c.fill();
+    c.strokeStyle='rgba(0,220,255,0.6)'; c.lineWidth=1; c.stroke();
+  });
+  c.fillStyle='rgba(255,215,0,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('GRANULAÇÕES SCHÜFFNER', 5, h-8);
+}
+
+function drawLamina3() {
+  const c = document.getElementById('lam3').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#0a0005'; c.fillRect(0,0,w,h);
+  [[w*0.3,h*0.45],[w*0.68,h*0.55]].forEach(([x,y],i) => {
+    c.beginPath(); c.ellipse(x,y,20,13,i*0.2,0,Math.PI*2);
+    c.fillStyle='rgba(200,150,180,0.2)'; c.fill();
+    c.strokeStyle='rgba(180,120,160,0.5)'; c.lineWidth=1; c.stroke();
+    // Rosácea
+    const n = 8;
+    for(let m=0;m<n;m++){
+      const ang = (m/n)*Math.PI*2;
+      const mx2=x+Math.cos(ang)*9, my2=y+Math.sin(ang)*6;
+      c.beginPath(); c.arc(mx2,my2,3.5,0,Math.PI*2);
+      c.fillStyle='rgba(0,200,255,0.4)'; c.fill();
+      c.strokeStyle='rgba(0,220,255,0.7)'; c.lineWidth=1; c.stroke();
+      c.beginPath(); c.arc(mx2,my2,1.5,0,Math.PI*2);
+      c.fillStyle='rgba(255,80,80,0.8)'; c.fill();
+    }
+    c.beginPath(); c.arc(x,y,4,0,Math.PI*2);
+    c.fillStyle='rgba(60,30,0,0.9)'; c.fill();
+  });
+  c.fillStyle='rgba(191,0,255,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('PADRÃO ROSÁCEA + HEMOZOÍNA', 5, h-8);
+}
+
+function drawLamina4() {
+  const c = document.getElementById('lam4').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#0a0002'; c.fillRect(0,0,w,h);
+  [[w*0.3,h*0.5],[w*0.68,h*0.5]].forEach(([x,y],i) => {
+    c.beginPath();
+    c.save(); c.translate(x,y);
+    c.moveTo(-25,0);
+    c.quadraticCurveTo(0,-20+(i*5),25,8);
+    c.quadraticCurveTo(0,20-(i*5),-25,0);
+    c.fillStyle=i===0?'rgba(0,200,255,0.25)':'rgba(200,150,200,0.2)';
+    c.fill();
+    c.strokeStyle=i===0?'rgba(0,245,255,0.8)':'rgba(200,100,200,0.6)';
+    c.lineWidth=1.5; c.stroke();
+    c.beginPath(); c.arc(0,0,4,0,Math.PI*2);
+    c.fillStyle='rgba(255,80,80,0.8)'; c.fill();
+    c.restore();
+  });
+  c.fillStyle='rgba(255,23,68,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('FORMA FALCIFORME (CRESCENTE)', 5, h-8);
+}
+
+function drawLamina5() {
+  const c = document.getElementById('lam5').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#000a05'; c.fillRect(0,0,w,h);
+  [[w*0.3,h*0.5],[w*0.68,h*0.48]].forEach(([x,y],i) => {
+    // Eritrócito fimbriado
+    c.beginPath();
+    const spikes = 16;
+    for(let s=0;s<spikes;s++){
+      const a = (s/spikes)*Math.PI*2;
+      const r = s%2===0?24:19;
+      s===0?c.moveTo(x+Math.cos(a)*r, y+Math.sin(a)*r*0.7):c.lineTo(x+Math.cos(a)*r, y+Math.sin(a)*r*0.7);
+    }
+    c.closePath();
+    c.fillStyle='rgba(180,220,160,0.15)'; c.fill();
+    c.strokeStyle='rgba(168,255,62,0.5)'; c.lineWidth=1; c.stroke();
+    // Schüffner
+    for(let d=0;d<10;d++){
+      const dx=x+(Math.random()*30-15), dy=y+(Math.random()*20-10);
+      c.beginPath(); c.arc(dx,dy,1,0,Math.PI*2);
+      c.fillStyle='rgba(255,160,100,0.5)'; c.fill();
+    }
+    c.beginPath(); c.ellipse(x,y,7,5,0,0,Math.PI*2);
+    c.fillStyle='rgba(0,200,255,0.3)'; c.fill();
+    c.strokeStyle='rgba(0,220,255,0.6)'; c.lineWidth=1; c.stroke();
+  });
+  c.fillStyle='rgba(168,255,62,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('BORDA FIMBRIADA', 5, h-8);
+}
+
+function drawLamina6() {
+  const c = document.getElementById('lam6').getContext('2d');
+  const w = c.canvas.width = c.canvas.offsetWidth, h = c.canvas.height = 150;
+  c.fillStyle='#050505'; c.fillRect(0,0,w,h);
+  // Leucócito
+  c.beginPath(); c.arc(w*0.2, h*0.4, 15, 0, Math.PI*2);
+  c.fillStyle='rgba(200,200,255,0.2)'; c.fill();
+  c.strokeStyle='rgba(150,150,255,0.4)'; c.lineWidth=1; c.stroke();
+  c.beginPath(); c.arc(w*0.2-4,h*0.4-3,6,0,Math.PI*2);
+  c.fillStyle='rgba(100,100,220,0.4)'; c.fill();
+  // Parasitas flutuantes (sem eritrócito)
+  [[w*0.45,h*0.35],[w*0.6,h*0.55],[w*0.75,h*0.4],[w*0.5,h*0.65],[w*0.8,h*0.6]].forEach(([x,y])=>{
+    c.beginPath(); c.arc(x,y,5,0,Math.PI*2);
+    c.strokeStyle='rgba(0,245,255,0.5)'; c.lineWidth=1.5; c.stroke();
+    c.beginPath(); c.arc(x+2,y-2,2,0,Math.PI*2);
+    c.fillStyle='rgba(255,80,80,0.7)'; c.fill();
+  });
+  // Plaquetas
+  [[w*0.35,h*0.7],[w*0.65,h*0.75],[w*0.85,h*0.3]].forEach(([x,y])=>{
+    c.beginPath(); c.ellipse(x,y,5,3,0.5,0,Math.PI*2);
+    c.fillStyle='rgba(255,200,150,0.3)'; c.fill();
+    c.strokeStyle='rgba(255,180,100,0.4)'; c.lineWidth=1; c.stroke();
+  });
+  c.fillStyle='rgba(255,215,0,0.7)'; c.font='9px Share Tech Mono';
+  c.fillText('ERITRÓCITOS LISADOS · PARASITAS LIVRES', 5, h-8);
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  initSectionAnimations('intro');
+  drawLamina1(); drawLamina2(); drawLamina3();
+  drawLamina4(); drawLamina5(); drawLamina6();
+  animateStatBars();
+});
+
+// Init lâminas
+setTimeout(() => {
+  try { drawLamina1(); drawLamina2(); drawLamina3(); drawLamina4(); drawLamina5(); drawLamina6(); } catch(e) {}
+}, 500);
+</script>
+</body>
+</html>

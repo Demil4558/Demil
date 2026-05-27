@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MALÁRIA: O Inimigo Invisível | DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg:#04060e;--bg2:#080d1a;--bg3:#0d1526;
+--red:#ff2a4a;--red2:#ff6b7a;
+--cyan:#00f5d4;--cyan2:#7fffd4;
+--gold:#ffd700;--gold2:#ffec6e;
+--purple:#b44fff;--purple2:#d4a0ff;
+--green:#00ff88;--green2:#7fffa0;
+--orange:#ff8c00;--orange2:#ffb347;
+--blue:#00aaff;--blue2:#66ccff;
+--text:#e8eaf6;--text2:#b0bec5;
+--card:#0d1a2e;--card2:#111f35;
+--border:#1e3a5f;
+--glow-red:0 0 20px #ff2a4a88;
+--glow-cyan:0 0 20px #00f5d488;
+--glow-gold:0 0 20px #ffd70088;
+--glow-green:0 0 20px #00ff8888;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:17px;overflow-x:hidden;line-height:1.6}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:#0a0f1a}
+::-webkit-scrollbar-thumb{background:linear-gradient(var(--cyan),var(--purple));border-radius:3px}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,#0a1f3d 0%,var(--bg) 70%)}
+.hero-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.particle{position:absolute;border-radius:50%;animation:float-particle linear infinite}
+@keyframes float-particle{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100px) rotate(720deg);opacity:0}}
+.hero-title{text-align:center;z-index:2;padding:2rem}
+.hero-eyebrow{font-family:'Share Tech Mono',monospace;color:var(--cyan);font-size:0.85rem;letter-spacing:4px;text-transform:uppercase;margin-bottom:1rem;animation:fadeInDown 1s ease}
+.hero-main{font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,6vw,5rem);font-weight:900;line-height:1.1;margin-bottom:1.5rem;animation:fadeInUp 1s ease 0.3s both}
+.hero-main span.red{color:var(--red);text-shadow:var(--glow-red)}
+.hero-main span.cyan{color:var(--cyan);text-shadow:var(--glow-cyan)}
+.hero-sub{font-size:1.1rem;color:var(--text2);max-width:600px;margin:0 auto 2.5rem;animation:fadeInUp 1s ease 0.6s both}
+.hero-tags{display:flex;flex-wrap:wrap;gap:.6rem;justify-content:center;animation:fadeInUp 1s ease 0.9s both}
+.tag{padding:.35rem .9rem;border-radius:20px;font-family:'Share Tech Mono',monospace;font-size:.78rem;letter-spacing:1px;border:1px solid;cursor:default;transition:all .3s}
+.tag.t1{border-color:var(--cyan);color:var(--cyan);background:#00f5d410}
+.tag.t2{border-color:var(--red);color:var(--red);background:#ff2a4a10}
+.tag.t3{border-color:var(--gold);color:var(--gold);background:#ffd70010}
+.tag.t4{border-color:var(--green);color:var(--green);background:#00ff8810}
+.tag:hover{transform:scale(1.08);filter:brightness(1.3)}
+.scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);animation:bounce 2s infinite;color:var(--text2);font-size:.8rem;text-align:center;z-index:2}
+.scroll-arrow{display:block;width:24px;height:24px;border-right:2px solid var(--cyan);border-bottom:2px solid var(--cyan);transform:rotate(45deg);margin:0 auto .4rem}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#04060ecc;backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.nav-brand{font-family:'Orbitron',sans-serif;font-size:.9rem;font-weight:700;color:var(--cyan);text-shadow:var(--glow-cyan)}
+.nav-links{display:flex;flex-wrap:wrap;gap:.4rem}
+.nav-links a{color:var(--text2);text-decoration:none;font-size:.78rem;padding:.3rem .7rem;border-radius:4px;transition:all .2s;font-family:'Share Tech Mono',monospace;letter-spacing:.5px}
+.nav-links a:hover{color:var(--cyan);background:#00f5d415}
+
+/* SECTIONS */
+.section{padding:5rem 1.5rem;max-width:1100px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:3.5rem}
+.chapter-badge{display:inline-flex;align-items:center;gap:.5rem;background:linear-gradient(135deg,#0d2a4a,#1a3a5c);border:1px solid var(--border);border-radius:30px;padding:.4rem 1.2rem;margin-bottom:1.2rem;font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--cyan)}
+.chapter-badge .icon{font-size:1rem}
+.section-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.6rem,4vw,2.8rem);font-weight:700;margin-bottom:.8rem;line-height:1.2}
+.section-desc{color:var(--text2);font-size:1rem;max-width:700px;margin:0 auto}
+
+/* STORY PANELS */
+.story-panel{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.story-panel:hover{transform:translateY(-3px)}
+.story-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-color,var(--cyan))}
+.story-panel.red{--accent-color:var(--red)}
+.story-panel.gold{--accent-color:var(--gold)}
+.story-panel.green{--accent-color:var(--green)}
+.story-panel.purple{--accent-color:var(--purple)}
+.story-panel.blue{--accent-color:var(--blue)}
+.story-panel.orange{--accent-color:var(--orange)}
+.panel-speaker{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;border:2px solid;flex-shrink:0}
+.avatar.med{background:#ff2a4a20;border-color:var(--red)}
+.avatar.sci{background:#00f5d420;border-color:var(--cyan)}
+.avatar.lab{background:#ffd70020;border-color:var(--gold)}
+.avatar.bug{background:#00ff8820;border-color:var(--green)}
+.speaker-info{flex:1}
+.speaker-name{font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700}
+.speaker-role{font-size:.75rem;color:var(--text2);font-family:'Share Tech Mono',monospace}
+.panel-text{color:var(--text);line-height:1.75;font-size:1rem}
+.panel-text strong{color:var(--cyan)}
+.panel-text .highlight-red{color:var(--red);font-weight:700}
+.panel-text .highlight-gold{color:var(--gold);font-weight:700}
+.panel-text .highlight-green{color:var(--green);font-weight:700}
+.panel-text .highlight-purple{color:var(--purple);font-weight:700}
+
+/* MOLECULE CANVAS */
+.molecule-container{width:100%;height:300px;position:relative;background:radial-gradient(ellipse at center,#0a1f3d 0%,#04060e 80%);border-radius:16px;overflow:hidden;border:1px solid var(--border);margin:1.5rem 0}
+.mol-canvas{width:100%;height:100%;display:block}
+
+/* DIVIDER */
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:2rem 0}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.2rem;margin-top:2rem}
+
+/* INFO CARD */
+.info-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;transition:all .3s;position:relative;overflow:hidden}
+.info-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(255,255,255,.02));pointer-events:none}
+.info-card:hover{border-color:var(--accent,var(--cyan));transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,245,212,.12)}
+.info-card.red{--accent:var(--red)}
+.info-card.gold{--accent:var(--gold)}
+.info-card.green{--accent:var(--green)}
+.info-card.purple{--accent:var(--purple)}
+.info-card.blue{--accent:var(--blue)}
+.info-card.orange{--accent:var(--orange)}
+.card-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.card-title{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;margin-bottom:.6rem;color:var(--accent,var(--cyan))}
+.card-text{font-size:.92rem;color:var(--text2);line-height:1.65}
+
+/* ACCORDION */
+.accordion{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem}
+.accordion-header{padding:1.2rem 1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:1.05rem;transition:background .2s;user-select:none}
+.accordion-header:hover{background:var(--card2)}
+.accordion-header .acc-icon{transition:transform .3s;color:var(--cyan);font-size:1.2rem}
+.accordion-header.open .acc-icon{transform:rotate(180deg)}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(0.4,0,0.2,1)}
+.accordion-body.open{max-height:2000px}
+.accordion-content{padding:1.5rem;border-top:1px solid var(--border);color:var(--text2);line-height:1.75;font-size:.97rem}
+.accordion-content strong{color:var(--text)}
+.accordion-content .step{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start}
+.accordion-content .step-num{min-width:28px;height:28px;background:linear-gradient(135deg,var(--cyan),var(--blue));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#000;flex-shrink:0;margin-top:.1rem}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:2.5rem;margin-top:2rem}
+.timeline::before{content:'';position:absolute;left:.8rem;top:0;bottom:0;width:2px;background:linear-gradient(var(--cyan),var(--purple),var(--red))}
+.timeline-item{position:relative;margin-bottom:2rem}
+.timeline-item::before{content:'';position:absolute;left:-1.85rem;top:.35rem;width:14px;height:14px;border-radius:50%;border:2px solid var(--dot-color,var(--cyan));background:var(--bg);box-shadow:0 0 10px var(--dot-color,var(--cyan))}
+.timeline-item.red{--dot-color:var(--red)}
+.timeline-item.gold{--dot-color:var(--gold)}
+.timeline-item.green{--dot-color:var(--green)}
+.timeline-item.purple{--dot-color:var(--purple)}
+.timeline-time{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--dot-color,var(--cyan));margin-bottom:.3rem}
+.timeline-title{font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:.4rem}
+.timeline-text{color:var(--text2);font-size:.95rem;line-height:1.65}
+
+/* TABS */
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.tab-btn{padding:.55rem 1.2rem;border:1px solid var(--border);background:transparent;color:var(--text2);border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.95rem;font-weight:600;transition:all .2s;letter-spacing:.5px}
+.tab-btn.active{background:linear-gradient(135deg,#0d2a4a,#1a3a5c);border-color:var(--cyan);color:var(--cyan)}
+.tab-pane{display:none}
+.tab-pane.active{display:block;animation:fadeInUp .4s ease}
+
+/* QUIZ */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;margin-top:2rem}
+.quiz-q{font-size:1.1rem;font-weight:600;margin-bottom:1.5rem;line-height:1.5}
+.quiz-opts{display:flex;flex-direction:column;gap:.75rem}
+.quiz-opt{padding:1rem 1.4rem;border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .25s;font-size:.97rem;background:var(--card2);display:flex;align-items:center;gap:.8rem}
+.quiz-opt:hover{border-color:var(--cyan);color:var(--cyan)}
+.quiz-opt.correct{border-color:var(--green);background:#00ff8815;color:var(--green)}
+.quiz-opt.wrong{border-color:var(--red);background:#ff2a4a15;color:var(--red)}
+.quiz-opt.disabled{pointer-events:none;opacity:.6}
+.quiz-feedback{margin-top:1rem;padding:1rem 1.4rem;border-radius:10px;font-size:.97rem;display:none}
+.quiz-feedback.show{display:block;animation:fadeInUp .3s ease}
+.quiz-feedback.correct{background:#00ff8815;border:1px solid var(--green);color:var(--green)}
+.quiz-feedback.wrong{background:#ff2a4a15;border:1px solid var(--red);color:var(--red)}
+.quiz-next{margin-top:1.2rem;padding:.75rem 2rem;background:linear-gradient(135deg,var(--cyan),var(--blue));border:none;border-radius:8px;color:#000;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;display:none;transition:all .2s}
+.quiz-next.show{display:inline-block}
+.quiz-next:hover{transform:scale(1.04);filter:brightness(1.1)}
+.quiz-score{text-align:center;padding:2rem;display:none}
+.quiz-score.show{display:block;animation:fadeInUp .5s ease}
+.score-num{font-family:'Orbitron',sans-serif;font-size:3rem;font-weight:900}
+
+/* COMPARISON TABLE */
+.comp-table{width:100%;border-collapse:separate;border-spacing:0;margin-top:1.5rem;font-size:.92rem}
+.comp-table th{background:linear-gradient(135deg,#0d2a4a,#1a3a5c);padding:.9rem 1rem;text-align:left;font-family:'Orbitron',sans-serif;font-size:.78rem;letter-spacing:1px;color:var(--cyan)}
+.comp-table th:first-child{border-radius:10px 0 0 0}
+.comp-table th:last-child{border-radius:0 10px 0 0}
+.comp-table td{padding:.85rem 1rem;border-bottom:1px solid var(--border);color:var(--text2)}
+.comp-table tr:hover td{background:var(--card2)}
+.badge-green{background:#00ff8820;color:var(--green);border:1px solid var(--green);padding:.15rem .6rem;border-radius:20px;font-size:.78rem;white-space:nowrap}
+.badge-red{background:#ff2a4a20;color:var(--red);border:1px solid var(--red);padding:.15rem .6rem;border-radius:20px;font-size:.78rem;white-space:nowrap}
+.badge-gold{background:#ffd70020;color:var(--gold);border:1px solid var(--gold);padding:.15rem .6rem;border-radius:20px;font-size:.78rem;white-space:nowrap}
+.badge-cyan{background:#00f5d420;color:var(--cyan);border:1px solid var(--cyan);padding:.15rem .6rem;border-radius:20px;font-size:.78rem;white-space:nowrap}
+
+/* STAT CARDS */
+.stats-row{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin:2rem 0}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem 2rem;text-align:center;min-width:150px}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;display:block}
+.stat-label{color:var(--text2);font-size:.82rem;font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+
+/* CALLOUT */
+.callout{border-radius:12px;padding:1.2rem 1.5rem;margin:1.5rem 0;display:flex;gap:1rem;align-items:flex-start}
+.callout.info{background:#00f5d410;border:1px solid #00f5d440;border-left:4px solid var(--cyan)}
+.callout.warn{background:#ffd70010;border:1px solid #ffd70040;border-left:4px solid var(--gold)}
+.callout.danger{background:#ff2a4a10;border:1px solid #ff2a4a40;border-left:4px solid var(--red)}
+.callout.success{background:#00ff8810;border:1px solid #00ff8840;border-left:4px solid var(--green)}
+.callout-icon{font-size:1.4rem;flex-shrink:0}
+.callout-text{font-size:.97rem;line-height:1.65;color:var(--text2)}
+.callout-text strong{color:var(--text)}
+
+/* MOLECULAR DIAGRAM */
+.mol-diagram{background:radial-gradient(ellipse at 30% 50%,#0a1f3d 0%,#04060e 70%);border-radius:16px;border:1px solid var(--border);padding:2rem;margin:2rem 0;position:relative;overflow:hidden;min-height:200px}
+.mol-svg{display:block;width:100%;max-width:700px;margin:0 auto}
+
+/* PROGRESS BAR ANIM */
+.progress-wrap{margin:1rem 0}
+.progress-label{display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.88rem}
+.progress-label span:last-child{font-family:'Share Tech Mono',monospace;color:var(--cyan)}
+.progress-bar{height:8px;background:#1a2a3a;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;width:0;transition:width 1.5s cubic-bezier(.4,0,.2,1)}
+
+/* INTERACTIVE STEPS */
+.step-flow{display:flex;flex-direction:column;gap:1rem;margin:2rem 0}
+.step-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.4rem;cursor:pointer;transition:all .3s;position:relative;padding-left:4.5rem}
+.step-item::before{content:attr(data-step);position:absolute;left:1.2rem;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--step-color,var(--cyan)),var(--step-color2,var(--blue)));display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:900;color:#000;line-height:36px;text-align:center}
+.step-item:hover{border-color:var(--step-color,var(--cyan));transform:translateX(5px)}
+.step-item.active{border-color:var(--step-color,var(--cyan));background:linear-gradient(135deg,rgba(0,245,212,.05),var(--card))}
+.step-title{font-weight:700;font-size:1.05rem;margin-bottom:.3rem}
+.step-desc{color:var(--text2);font-size:.93rem;display:none}
+.step-item.active .step-desc{display:block;animation:fadeInUp .3s ease}
+
+/* BLOOD CELL ANIMATION */
+.blood-scene{width:100%;height:250px;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,#1a0a0a 0%,#04060e 80%);border-radius:16px;border:1px solid var(--border);margin:1.5rem 0}
+
+/* FOOTER */
+footer{background:linear-gradient(180deg,var(--bg2),#020408);border-top:1px solid var(--border);padding:4rem 2rem 2rem;text-align:center}
+.footer-logo{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:900;color:var(--cyan);text-shadow:var(--glow-cyan);margin-bottom:.5rem}
+.footer-sub{color:var(--text2);font-size:.9rem;margin-bottom:.3rem}
+.footer-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem auto;max-width:400px}
+.footer-copy{color:#4a6080;font-size:.82rem;font-family:'Share Tech Mono',monospace}
+
+/* GLOW LINES SECTION BG */
+.section-alt{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%)}
+.full-section{padding:5rem 1.5rem}
+.full-section .section{padding:0;margin:0 auto}
+
+/* MICRO BADGE */
+.micro-label{font-family:'Share Tech Mono',monospace;font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--text2);margin-bottom:.5rem;display:block}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+.hero-main{font-size:2rem}
+.section{padding:3rem 1rem}
+.grid2,.grid3{grid-template-columns:1fr}
+.nav-links a{font-size:.7rem;padding:.25rem .5rem}
+.stat-card{min-width:120px;padding:1rem}
+.stat-num{font-size:1.5rem}
+.comp-table{font-size:.78rem}
+.comp-table th,.comp-table td{padding:.6rem .7rem}
+}
+
+/* ANIMATION CLASSES */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+.slide-left{opacity:0;transform:translateX(-30px);transition:all .7s ease}
+.slide-left.visible{opacity:1;transform:translateX(0)}
+.slide-right{opacity:0;transform:translateX(30px);transition:all .7s ease}
+.slide-right.visible{opacity:1;transform:translateX(0)}
+.scale-in{opacity:0;transform:scale(.9);transition:all .6s ease}
+.scale-in.visible{opacity:1;transform:scale(1)}
+
+/* SPECIAL ELEMENTS */
+.formula-box{background:#0a1a2e;border:1px solid var(--blue);border-radius:10px;padding:1rem 1.5rem;font-family:'Share Tech Mono',monospace;font-size:.95rem;color:var(--cyan);text-align:center;margin:1rem 0;overflow-x:auto}
+.formula-box .arrow{color:var(--gold);margin:0 .5rem}
+.lifecycle-wrap{overflow-x:auto;padding-bottom:1rem}
+
+/* PULSING DOT */
+.pulse-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:.5rem;animation:pulse-anim 1.5s infinite}
+.pulse-dot.green{background:var(--green);box-shadow:0 0 0 0 rgba(0,255,136,.7)}
+.pulse-dot.red{background:var(--red);box-shadow:0 0 0 0 rgba(255,42,74,.7)}
+@keyframes pulse-anim{0%{box-shadow:0 0 0 0 rgba(0,245,212,.7)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.show{display:flex;animation:fadeIn .3s ease}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-close{position:absolute;top:1rem;right:1rem;background:transparent;border:none;color:var(--text2);font-size:1.4rem;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--red)}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">🔬 DemilMed-UL</div>
+  <div class="nav-links">
+    <a href="#intro">Intro</a>
+    <a href="#plasmodium">Parasita</a>
+    <a href="#ciclo">Ciclo</a>
+    <a href="#microscopia">Microscopia</a>
+    <a href="#tdr">TDR</a>
+    <a href="#molecular">Molecular</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-title">
+    <div class="hero-eyebrow">DemilMed-UL · 2º Ano de Medicina · 2026</div>
+    <h1 class="hero-main">
+      <span class="red">MALÁRIA</span><br>
+      <span class="cyan">O Inimigo Invisível</span>
+    </h1>
+    <p class="hero-sub">Microscopia · TDR · Mecanismos Moleculares<br>Uma jornada épica ao coração da célula</p>
+    <div class="hero-tags">
+      <span class="tag t1">Microscopia</span>
+      <span class="tag t2">Plasmodium</span>
+      <span class="tag t3">TDR/RDT</span>
+      <span class="tag t4">Biologia Molecular</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span class="scroll-arrow"></span>
+    COMEÇAR JORNADA
+  </div>
+</section>
+
+<!-- SECTION 1 - INTRO -->
+<div class="full-section" id="intro">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">⚔️</span> CAPÍTULO 1</div>
+    <h2 class="section-title">O <span style="color:var(--red)">Inimigo</span> que Ninguém Vê</h2>
+    <p class="section-desc">A malária mata mais de 600.000 pessoas por ano. Para combater um inimigo, precisas primeiro de o conhecer.</p>
+  </div>
+
+  <div class="stats-row fade-in">
+    <div class="stat-card">
+      <span class="stat-num" style="color:var(--red)">600K+</span>
+      <span class="stat-label">Mortes/Ano</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:var(--gold)">249M</span>
+      <span class="stat-label">Casos Globais</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:var(--cyan)">5</span>
+      <span class="stat-label">Espécies</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num" style="color:var(--green)">95%</span>
+      <span class="stat-label">Casos em África</span>
+    </div>
+  </div>
+
+  <div class="story-panel red fade-in">
+    <div class="panel-speaker">
+      <div class="avatar med">👩‍⚕️</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--red)">Dra. Amina</div>
+        <div class="speaker-role">Médica do Internato · Universidade Licungo</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "Imagina um inimigo tão pequeno que cabes 1.000 deles numa só célula do teu sangue. Não consegues vê-lo sem ajuda. Não consegues sentí-lo chegar. Mas ele já está a trabalhar — a reprogramar os teus glóbulos vermelhos, a esconder-se do teu sistema imunitário, a preparar o colapso do teu corpo. <strong>Esse inimigo chama-se Plasmodium.</strong> E hoje, vais aprender a apanhá-lo em flagrante."
+    </div>
+  </div>
+
+  <div class="grid2 fade-in">
+    <div class="info-card red">
+      <span class="card-icon">🦟</span>
+      <div class="card-title">O Vector</div>
+      <div class="card-text">A fêmea do mosquito <em>Anopheles</em> é o veículo. Durante uma picada de sangue, injeta esporozoítos — a forma infecciosa do parasita — directamente na tua corrente sanguínea. Tudo começa aqui.</div>
+    </div>
+    <div class="info-card gold">
+      <span class="card-icon">🔬</span>
+      <div class="card-title">O Diagnóstico</div>
+      <div class="card-text">Dois métodos principais dominam o campo de batalha clínico: a <strong>Microscopia</strong> (exame de esfregaço/gota espessa) — o padrão ouro — e o <strong>TDR/RDT</strong> (Teste de Diagnóstico Rápido), mais rápido mas com limitações moleculares.</div>
+    </div>
+  </div>
+
+  <div class="callout warn fade-in">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-text"><strong>Porquê diagnosticar correctamente?</strong> Tratamento sem diagnóstico adequado causa resistência aos fármacos, toxicidade desnecessária e falha terapêutica. Em Moçambique, P. falciparum é responsável por &gt;95% dos casos — e é o mais mortífero.</div>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 2 - O PARASITA -->
+<div class="full-section section-alt" id="plasmodium">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">🧬</span> CAPÍTULO 2</div>
+    <h2 class="section-title">Conhece o <span style="color:var(--purple)">Plasmodium</span></h2>
+    <p class="section-desc">5 espécies, 1 missão: sobreviver dentro de ti.</p>
+  </div>
+
+  <div class="story-panel purple fade-in">
+    <div class="panel-speaker">
+      <div class="avatar sci">🧬</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--purple)">Prof. Kazuki</div>
+        <div class="speaker-role">Parasitologista · Especialista em Protozoários</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "O Plasmodium é um <span class="highlight-purple">protozoário apicomplexa</span>. Não é vírus, não é bactéria — é muito mais sofisticado. Tem um genoma de 23 Mb codificando ~5.500 genes. Tem duas fases de reprodução: <strong>assexuada</strong> (em ti) e <strong>sexuada</strong> (no mosquito). E tem mecanismos de evasão imunitária que levaram 100 milhões de anos a evoluir."
+    </div>
+  </div>
+
+  <!-- TABS DAS ESPÉCIES -->
+  <div class="fade-in">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="openTab(event,'sp1')">P. falciparum</button>
+      <button class="tab-btn" onclick="openTab(event,'sp2')">P. vivax</button>
+      <button class="tab-btn" onclick="openTab(event,'sp3')">P. malariae</button>
+      <button class="tab-btn" onclick="openTab(event,'sp4')">P. ovale</button>
+      <button class="tab-btn" onclick="openTab(event,'sp5')">P. knowlesi</button>
+    </div>
+    <div id="sp1" class="tab-pane active">
+      <div class="story-panel red">
+        <div class="panel-text">
+          <strong style="color:var(--red);font-family:'Orbitron',sans-serif;font-size:1.1rem">⚡ Plasmodium falciparum</strong><br><br>
+          O mais perigoso. O mais mortífero. O mais prevalente em África Subsariana.<br><br>
+          <strong>Características microscópicas únicas:</strong><br>
+          • Anel fino e delicado — forma de "signet ring" com cromatina puntiforme<br>
+          • <span class="highlight-red">Dupla infecção</span> dentro do mesmo eritrócito (raro nas outras espécies)<br>
+          • Trofozoítos maduros raramente circulam — <strong>sequestram-se</strong> em capilares<br>
+          • <span class="highlight-gold">Gametócitos em forma de banana/crescente</span> — PATOGNOMÓNICO<br>
+          • Eritrócito infectado <strong>não aumenta de tamanho</strong><br>
+          • Pontuações de <span class="highlight-red">Maurer's clefts</span> (não grânulos de Schüffner)<br><br>
+          <strong>Perigo:</strong> Provoca malária cerebral, anemia grave, ARDS, insuficiência renal. Taxa de mortalidade sem tratamento: até 25% em crianças.
+        </div>
+      </div>
+    </div>
+    <div id="sp2" class="tab-pane">
+      <div class="story-panel" style="--accent-color:var(--orange)">
+        <div class="panel-text">
+          <strong style="color:var(--orange);font-family:'Orbitron',sans-serif;font-size:1.1rem">🔶 Plasmodium vivax</strong><br><br>
+          O mais distribuído globalmente. Causa recidivas por hipnozoítos hepáticos.<br><br>
+          <strong>Características microscópicas:</strong><br>
+          • Eritrócito infectado <span class="highlight-gold">aumentado de tamanho</span><br>
+          • Grânulos de <span class="highlight-red">Schüffner</span> característicos no citoplasma do eritrócito<br>
+          • Trofozoíto ameboide — forma irregular "fantasma"<br>
+          • Esquizonte com múltiplos merozoítos (roseta de 12–24)<br>
+          • Gametócito oval/redondo, grande<br><br>
+          <strong>Recidiva:</strong> Hipnozoítos dormentes no fígado reactivam meses/anos depois. Precisam de primaquina para erradicar (verificar G6PD!).
+        </div>
+      </div>
+    </div>
+    <div id="sp3" class="tab-pane">
+      <div class="story-panel" style="--accent-color:var(--blue)">
+        <div class="panel-text">
+          <strong style="color:var(--blue);font-family:'Orbitron',sans-serif;font-size:1.1rem">🔵 Plasmodium malariae</strong><br><br>
+          A "malária quarta" — ciclo de 72h (febre terceiros em terceiros dias).<br><br>
+          <strong>Características microscópicas:</strong><br>
+          • Eritrócito <strong>não aumentado</strong>, pode até estar menor<br>
+          • Trofozoíto em "banda" — barra atravessando o eritrócito<br>
+          • Esquizonte em "flor de margarida" com 6–12 merozoítos<br>
+          • Sem grânulos de Schüffner<br><br>
+          <strong>Peculiaridade:</strong> Pode persistir décadas no hospedeiro. Pode causar síndrome nefrótica (deposição de complexos imunes).
+        </div>
+      </div>
+    </div>
+    <div id="sp4" class="tab-pane">
+      <div class="story-panel" style="--accent-color:var(--green)">
+        <div class="panel-text">
+          <strong style="color:var(--green);font-family:'Orbitron',sans-serif;font-size:1.1rem">🟢 Plasmodium ovale</strong><br><br>
+          Dois subtipos: P. ovale curtisi e P. ovale wallikeri.<br><br>
+          <strong>Características microscópicas:</strong><br>
+          • Eritrócito levemente aumentado, com forma <span class="highlight-green">oval/fimbriated</span> (borda irregular)<br>
+          • Grânulos de <strong>Schüffner</strong> presentes (como P. vivax)<br>
+          • Menos merozoítos que vivax (8–12)<br>
+          • Gametócito redondo, compacto<br><br>
+          <strong>Causa recidiva</strong> por hipnozoítos. Raro em África, mais comum em África Ocidental.
+        </div>
+      </div>
+    </div>
+    <div id="sp5" class="tab-pane">
+      <div class="story-panel" style="--accent-color:var(--cyan)">
+        <div class="panel-text">
+          <strong style="color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:1.1rem">🩵 Plasmodium knowlesi</strong><br><br>
+          Zoonose de primatas. Emergente no Sudeste Asiático.<br><br>
+          <strong>Características microscópicas:</strong><br>
+          • Morfologicamente <strong>semelhante a P. malariae</strong> — difícil distinguir<br>
+          • Ciclo eritrocítico de 24h — pode levar a parasitemia elevada rapidamente<br>
+          • Eritrócito não aumentado<br>
+          • Pode ser grave e fatal<br><br>
+          <strong>Diagnóstico definitivo:</strong> PCR molecular — microscopia sozinha não é suficiente para distinguir de P. malariae.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARAÇÃO -->
+  <div class="fade-in" style="overflow-x:auto">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1rem;margin-bottom:1rem;color:var(--cyan)">📊 TABELA COMPARATIVA — MICROSCOPIA</h3>
+    <table class="comp-table">
+      <tr>
+        <th>Espécie</th><th>Eritrócito</th><th>Grânulos</th><th>Forma típica</th><th>Perigo</th>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--red)">P. falciparum</strong></td>
+        <td>Normal/menor</td>
+        <td>Maurer's clefts</td>
+        <td>Anel fino, duplo; gametócito banana</td>
+        <td><span class="badge-red">ALTO</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--orange)">P. vivax</strong></td>
+        <td><span class="badge-gold">Aumentado</span></td>
+        <td>Schüffner ✓</td>
+        <td>Ameboide, irregular</td>
+        <td><span class="badge-gold">MÉDIO</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--blue)">P. malariae</strong></td>
+        <td>Normal/menor</td>
+        <td>Ausentes</td>
+        <td>Banda, flor de margarida</td>
+        <td><span class="badge-cyan">BAIXO</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--green)">P. ovale</strong></td>
+        <td>Aumentado, oval</td>
+        <td>Schüffner ✓</td>
+        <td>Oval, fimbriated</td>
+        <td><span class="badge-cyan">BAIXO</span></td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--cyan)">P. knowlesi</strong></td>
+        <td>Normal</td>
+        <td>Ausentes</td>
+        <td>Como malariae</td>
+        <td><span class="badge-red">ALTO</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- SECTION 3 - CICLO DE VIDA -->
+<div class="full-section" id="ciclo">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">🔄</span> CAPÍTULO 3</div>
+    <h2 class="section-title">O <span style="color:var(--gold)">Ciclo de Vida</span> do Parasita</h2>
+    <p class="section-desc">Uma jornada de dois mundos — do mosquito ao humano e de volta.</p>
+  </div>
+
+  <div class="story-panel gold fade-in">
+    <div class="panel-speaker">
+      <div class="avatar lab">🔭</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--gold)">Lab. Fernanda</div>
+        <div class="speaker-role">Técnica de Laboratório · Mestre em Diagnóstico</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "Para diagnosticar, precisas de saber <em>onde</em> o parasita está em cada momento. O ciclo de vida do Plasmodium é uma obra-prima de complexidade. Divide-se em duas grandes fases: <strong>fase hepática</strong> (exo-eritrocítica) e <strong>fase eritrocítica</strong> (dentro dos glóbulos vermelhos). É durante a fase eritrocítica que consegues detectar o parasita no sangue — e é aí que a microscopia e o TDR actuam."
+    </div>
+  </div>
+
+  <!-- TIMELINE DO CICLO -->
+  <div class="timeline fade-in">
+    <div class="timeline-item">
+      <div class="timeline-time">FASE 1 · PICADA</div>
+      <div class="timeline-title">🦟 Inoculação de Esporozoítos</div>
+      <div class="timeline-text">A fêmea do <em>Anopheles</em> pica → injeta <strong>esporozoítos</strong> na pele → entram na corrente sanguínea em minutos → viajam até ao fígado. Os esporozoítos têm proteínas de superfície (CSP — Circumsporozoite Protein) que reconhecem hepatócitos via ligação a heparano-sulfato.</div>
+    </div>
+    <div class="timeline-item gold">
+      <div class="timeline-time">FASE 2 · FÍGADO (7–30 dias)</div>
+      <div class="timeline-title">🏥 Esquizogonia Hepática (Exo-Eritrocítica)</div>
+      <div class="timeline-text">Esporozoíto invade hepatócito → desenvolve-se em <strong>esquizonte hepático</strong> → produz 10.000–30.000 <strong>merozoítos</strong> por célula hepática → hepatócito rebenta → merozoítos libertados em <strong>merossomas</strong> (bolhas que protegem da imunidade). <em>P. vivax e P. ovale</em> formam <strong>hipnozoítos</strong> dormentes — causa de recidiva.</div>
+    </div>
+    <div class="timeline-item red">
+      <div class="timeline-time">FASE 3 · SANGUE (48–72h ciclo)</div>
+      <div class="timeline-title">🩸 Esquizogonia Eritrocítica — O Estágio do Diagnóstico!</div>
+      <div class="timeline-text">Merozoíto invade eritrócito → <strong>Anel (trofozoíto jovem)</strong> → <strong>Trofozoíto maduro</strong> → <strong>Esquizonte</strong> → Eritrócito rebenta → libertação de novos merozoítos + <span class="highlight-red">picos de febre</span>. É nesta fase que o parasita é visível na microscopia e detectável pelo TDR (antígenos HRP2, pLDH circulam no sangue).</div>
+    </div>
+    <div class="timeline-item purple">
+      <div class="timeline-time">FASE 4 · DIFERENCIAÇÃO SEXUAL</div>
+      <div class="timeline-title">💜 Formação de Gametócitos</div>
+      <div class="timeline-text">Alguns merozoítos diferenciam-se em <strong>gametócitos</strong> (masculinos e femininos) em vez de continuarem ciclo assexuado. Circulam no sangue — não causam sintomas mas são infecciosos para o mosquito. Em P. falciparum, os gametócitos têm forma de <span class="highlight-red">crescente/banana</span> — forma diagnóstica única.</div>
+    </div>
+    <div class="timeline-item green">
+      <div class="timeline-time">FASE 5 · DE VOLTA AO MOSQUITO</div>
+      <div class="timeline-title">🦟 Reprodução Sexuada (Esporogonia)</div>
+      <div class="timeline-text">Mosquito pica → ingere gametócitos → no estômago do mosquito: gametócitos maduram em <strong>gametas</strong> → fertilização → <strong>oocisto</strong> na parede estomacal → produz <strong>esporozoítos</strong> → migram para glândulas salivares → pronto para nova infecção. Ciclo completo: 10–21 dias no mosquito.</div>
+    </div>
+  </div>
+
+  <div class="callout info fade-in">
+    <span class="callout-icon">💡</span>
+    <div class="callout-text"><strong>Pérola clínica:</strong> A febre da malária é <em>periódica</em> porque ocorre quando os eritrócitos rebentam em sincronismo. P. vivax e P. ovale: febre de 48h (terçã benigna). P. malariae: 72h (quartã). P. falciparum: pode ser contínua/irregular pois nem sempre sincroniza.</div>
+  </div>
+
+  <!-- CANVAS ANIMAÇÃO -->
+  <div class="molecule-container fade-in" id="cycleContainer">
+    <canvas class="mol-canvas" id="cycleCanvas"></canvas>
+  </div>
+  <p style="text-align:center;color:var(--text2);font-size:.85rem;font-family:'Share Tech Mono',monospace;margin-top:.5rem">▲ SIMULAÇÃO: Ciclo Eritrocítico do Plasmodium</p>
+</div>
+</div>
+
+<!-- SECTION 4 - MICROSCOPIA -->
+<div class="full-section section-alt" id="microscopia">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">🔬</span> CAPÍTULO 4</div>
+    <h2 class="section-title"><span style="color:var(--cyan)">Microscopia</span> — O Padrão Ouro</h2>
+    <p class="section-desc">Ver o invisível com os teus próprios olhos. A arte e ciência do esfregaço de sangue.</p>
+  </div>
+
+  <div class="story-panel fade-in">
+    <div class="panel-speaker">
+      <div class="avatar lab">🔭</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--cyan)">Lab. Fernanda</div>
+        <div class="speaker-role">Padrão Ouro · Diagnóstico Definitivo</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "A microscopia é como tirar uma fotografia da batalha que acontece dentro do teu sangue. Com o corante certo e uma lâmina bem feita, consegues ver os parasitas, contar quantos são, e saber exactamente com que espécie estás a lidar. <strong>É o único método que dá simultaneamente diagnóstico E densidade parasitária.</strong>"
+    </div>
+  </div>
+
+  <div class="tabs fade-in">
+    <button class="tab-btn active" onclick="openTab(event,'mic1')">Esfregaço Fino</button>
+    <button class="tab-btn" onclick="openTab(event,'mic2')">Gota Espessa</button>
+    <button class="tab-btn" onclick="openTab(event,'mic3')">Coloração Giemsa</button>
+    <button class="tab-btn" onclick="openTab(event,'mic4')">Como Ler</button>
+  </div>
+
+  <div id="mic1" class="tab-pane active fade-in">
+    <div class="story-panel">
+      <div class="panel-text">
+        <strong style="color:var(--cyan);font-family:'Orbitron',sans-serif">ESFREGAÇO DE SANGUE FINO (Thin Blood Film)</strong><br><br>
+        <strong>O que é:</strong> Uma camada monocelular de sangue espalhada numa lâmina de vidro, fixada com metanol antes de corar.<br><br>
+        <strong>Como fazer:</strong>
+        <div class="step-flow" id="thin-steps">
+          <div class="step-item" data-step="1" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+            <div class="step-title">Colheita da Gota</div>
+            <div class="step-desc">Pica o dedo (polegar ou anelar) com lanceta. Usa a segunda gota de sangue — descarta a primeira (contém linfa e detritos celulares). Coloca gota de 2–3µL no terço proximal da lâmina limpa e desengordurада.</div>
+          </div>
+          <div class="step-item" data-step="2" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+            <div class="step-title">Espalhamento</div>
+            <div class="step-desc">Usa uma segunda lâmina espalhadora a 30–45°. Encosta ao sangue, espera difundir (1–2 seg), depois empurra suavemente em movimento recto. A cauda deve terminar antes do fim da lâmina. Espessura: <strong>monocamada perfeita</strong> — os eritrócitos não se devem sobrepor.</div>
+          </div>
+          <div class="step-item" data-step="3" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+            <div class="step-title">Secagem e Fixação</div>
+            <div class="step-desc">Deixa secar ao ar (5–10 min). NUNCA soprar nem aquecer. <strong>Fixa com metanol absoluto</strong> por 30–60 segundos — os eritrócitos são preservados, o que permite identificar a morfologia do eritrócito infectado (crucial para diagnóstico de espécie).</div>
+          </div>
+          <div class="step-item" data-step="4" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+            <div class="step-title">Coloração Giemsa</div>
+            <div class="step-desc">Aplica solução Giemsa diluída (1:10 a 1:20 em tampão fosfato pH 7.0–7.2). Tempo: 20–30 minutos. Lava suavemente com água tamponada. Deixa secar verticalmente. NUNCA esfrega.</div>
+          </div>
+          <div class="step-item" data-step="5" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+            <div class="step-title">Exame Microscópico</div>
+            <div class="step-desc">Examina com objectiva de <strong>100× (imersão em óleo)</strong>. Verifica pelo menos 200 campos antes de declarar negativo. A cauda da lâmina concentra plaquetas e células maiores — começa pelo corpo.</div>
+          </div>
+        </div>
+        <br>
+        <strong>Vantagem principal:</strong> Preserva morfologia dos eritrócitos → permite diagnóstico de espécie com precisão.<br>
+        <strong>Sensibilidade:</strong> Deteta ≥50–100 parasitas/µL de sangue.
+      </div>
+    </div>
+  </div>
+
+  <div id="mic2" class="tab-pane fade-in">
+    <div class="story-panel gold">
+      <div class="panel-text">
+        <strong style="color:var(--gold);font-family:'Orbitron',sans-serif">GOTA ESPESSA (Thick Blood Film)</strong><br><br>
+        <strong>O que é:</strong> Uma camada concentrada de sangue (20–30× mais concentrada que esfregaço fino). <strong>NÃO é fixada</strong> — os eritrócitos lisam durante a coloração, libertando os parasitas no campo visual.<br><br>
+        <strong>Processo:</strong>
+        <div class="step-flow">
+          <div class="step-item" data-step="1" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+            <div class="step-title">Preparação da Gota</div>
+            <div class="step-desc">Coloca 5–10µL de sangue (2–3 gotas) no centro da lâmina. Com a ponta da lanceta ou da agulha, espalha em círculo de 1,5cm de diâmetro. Deve ser opaca mas não muito espessa (podes ler um jornal através dela quando seca).</div>
+          </div>
+          <div class="step-item" data-step="2" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+            <div class="step-title">Secagem (CRUCIAL)</div>
+            <div class="step-desc"><strong>NÃO fixar com metanol!</strong> Deixa secar completamente ao ar (30–60 min à temperatura ambiente). Se fixar, os eritrócitos não lisam e a gota espessa perde a sua vantagem. A hemoglobina deve desfixar durante coloração.</div>
+          </div>
+          <div class="step-item" data-step="3" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+            <div class="step-title">Coloração Giemsa</div>
+            <div class="step-desc">Aplica Giemsa 3% (mais concentrado que no esfregaço fino) por 30–45 min. A água da solução lisa os eritrócitos. Os parasitas ficam expostos no campo, corados azul-roxo (citoplasma) e vermelho (cromatina — "ponto vermelho").</div>
+          </div>
+          <div class="step-item" data-step="4" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+            <div class="step-title">Leitura e Contagem</div>
+            <div class="step-desc">Lê com objectiva 100×. Para quantificação, conta parasitas vs. leucócitos:<br><strong>Parasitas/µL = (Nº parasitas / Nº leucócitos contados) × 8000</strong> (assumindo 8000 leucócitos/µL). Ou conta por 1000 eritrócitos no esfregaço fino.</div>
+          </div>
+        </div>
+        <br>
+        <div class="callout warn">
+          <span class="callout-icon">⭐</span>
+          <div class="callout-text"><strong>Gota Espessa = Triagem, Esfregaço Fino = Confirmação de espécie.</strong> A gota espessa concentra parasitas e tem maior sensibilidade (detecta ≥5–10 parasitas/µL). O esfregaço fino identifica a espécie mas tem menor sensibilidade. O ideal é fazer AMBOS na mesma lâmina.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mic3" class="tab-pane fade-in">
+    <div class="story-panel" style="--accent-color:var(--purple)">
+      <div class="panel-text">
+        <strong style="color:var(--purple);font-family:'Orbitron',sans-serif">COLORAÇÃO DE GIEMSA — A MAGIA MOLECULAR</strong><br><br>
+        <strong>O que é Giemsa?</strong> Um corante policromático complexo composto por:<br>
+        • <span class="highlight-purple">Azul de metileno</span> (corante básico/catiónico) — cora ácidos nucleicos e citoplasma<br>
+        • <span class="highlight-red">Eosina</span> (corante ácido/aniónico) — cora componentes básicos (hemoglobina, grânulos)<br>
+        • Azur B e outros componentes<br><br>
+        <strong>Como o Giemsa funciona molecularmente:</strong><br>
+        O azul de metileno e o azur B são corantes <strong>catiónicos</strong> que se ligam às cargas negativas do DNA/RNA e dos fosfolípidos da membrana. A eosina é <strong>aniónica</strong> e liga-se a proteínas carregadas positivamente.<br><br>
+        <strong>Resultado da coloração:</strong><br>
+        • <span class="highlight-purple">Núcleo/cromatina do parasita → VERMELHO/ROXO</span> (Azur-eosina) — O famoso "ponto vermelho"<br>
+        • <span class="highlight-red">Citoplasma do parasita → AZUL</span> (azul de metileno)<br>
+        • Citoplasma eritrócito → Rosa pálido (eosina suave)<br>
+        • Grânulos de Schüffner → Rosa-vermelho pontilhado<br>
+        • Leucócitos: núcleo roxo, grânulos característicos<br><br>
+        <strong>pH crítico:</strong> Tampão fosfato a pH 7.0–7.2. Se pH incorreto:<br>
+        • pH muito ácido (&lt;6.8): tudo cora rosa, grânulos de Schüffner desaparecem<br>
+        • pH muito alcalino (&gt;7.4): tudo cora azul-escuro, difícil de interpretar<br><br>
+        <div class="formula-box">
+          Azul de Metileno (catiónico) + DNA (aniónico) → <span class="arrow">→</span> Ligação electrostática → Cor Azul/Roxo<br>
+          Eosina (aniónica) + Hemoglobina (básica) → <span class="arrow">→</span> Ligação iónica → Cor Rosa/Vermelho
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mic4" class="tab-pane fade-in">
+    <div class="story-panel" style="--accent-color:var(--green)">
+      <div class="panel-text">
+        <strong style="color:var(--green);font-family:'Orbitron',sans-serif">COMO LER A LÂMINA — GUIA PRÁTICO</strong><br><br>
+        <strong>Setup do microscópio:</strong><br>
+        1. Objectiva 10× para orientação → 40× para triagem → <strong>100× (óleo) para diagnóstico definitivo</strong><br>
+        2. Ajusta condensador e diafragma para máximo contraste<br>
+        3. Iluminação Köhler se disponível<br><br>
+        <strong>O que procurar:</strong><br>
+        • <span class="highlight-green">Anel azul com ponto vermelho</span> = trofozoíto jovem (DIAGNÓSTICO)<br>
+        • Anel duplo no mesmo eritrócito = suspeita de P. falciparum<br>
+        • Eritrócito aumentado com grânulos rosa = P. vivax ou P. ovale<br>
+        • Crescente/banana = gametócito de P. falciparum (DIAGNÓSTICO DEFINITIVO)<br>
+        • Banda atravessando eritrócito = P. malariae<br><br>
+        <strong>Onde está a cauda da lâmina:</strong> Concentra células maiores e plaquetas. Examina o CORPO da lâmina para parasitas.<br><br>
+        <strong>Erros comuns e como evitá-los:</strong><br>
+        • ❌ Confundir plaquetas sobrepostas em eritrócitos com parasitas — plaquetas não têm cromatina (ponto vermelho)<br>
+        • ❌ Artefactos de coloração — compare com controlo positivo<br>
+        • ❌ Declarar negativo antes de 200 campos (baixa parasitemia)<br>
+        • ❌ Fixar gota espessa com metanol — destrói a preparação<br><br>
+        <strong>Quantificação — Densidade Parasitária:</strong><br>
+        <div class="formula-box">
+          Esfregaço fino: Parasitas/µL = (parasitas / 1000 eritrócitos) × 5×10⁶<br><br>
+          Gota espessa: Parasitas/µL = (parasitas / leucócitos contados) × 8000
+        </div>
+        <strong>Interpretação da densidade:</strong><br>
+        • &lt;1% = ligeira; 1–5% = moderada; &gt;5% = hiperparasitemia (ALTO RISCO em P. falciparum)
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS MICROSCOPIA -->
+  <div class="molecule-container fade-in" id="microscopeContainer">
+    <canvas class="mol-canvas" id="microscopeCanvas"></canvas>
+  </div>
+  <p style="text-align:center;color:var(--text2);font-size:.85rem;font-family:'Share Tech Mono',monospace;margin-top:.5rem">▲ SIMULAÇÃO: Visualização de Eritrócitos Infectados na Microscopia</p>
+</div>
+</div>
+
+<!-- SECTION 5 - TDR -->
+<div class="full-section" id="tdr">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">⚡</span> CAPÍTULO 5</div>
+    <h2 class="section-title">TDR/RDT — O <span style="color:var(--gold)">Diagnóstico Rápido</span></h2>
+    <p class="section-desc">15 minutos. Sem microscópio. Uma linha ou duas. Mas como funciona molecularmente?</p>
+  </div>
+
+  <div class="story-panel gold fade-in">
+    <div class="panel-speaker">
+      <div class="avatar sci">🧬</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--gold)">Prof. Kazuki</div>
+        <div class="speaker-role">Imunologia de Diagnóstico · Biologia Molecular</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "O TDR parece simples mas esconde uma engenharia molecular extraordinária. É um imunoensaio de fluxo lateral — detecta proteínas específicas do parasita usando anticorpos monoclonais conjugados a partículas de ouro coloidal. <strong>Quando vês aquela linha vermelha, é ouro real que estás a ver.</strong> Ouro nanométrico colorido por reacção antígeno-anticorpo."
+    </div>
+  </div>
+
+  <!-- TDR ANATOMY INTERACTIVE -->
+  <div class="fade-in">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--gold);margin-bottom:1.5rem">⚡ ANATOMIA MOLECULAR DO TDR</h3>
+    
+    <div class="step-flow">
+      <div class="step-item" data-step="①" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+        <div class="step-title">Zona de Amostra (Sample Pad)</div>
+        <div class="step-desc">Membrana de fibra de vidro ou celulose onde aplicas 5–10µL de sangue + tampão de lise. O tampão contém detergentes que lisam os eritrócitos, libertando os antígenos intracelulares (HRP2 e pLDH). Também normaliza o pH e reduz viscosidade.</div>
+      </div>
+      <div class="step-item" data-step="②" style="--step-color:var(--gold);--step-color2:var(--orange)" onclick="toggleStep(this)">
+        <div class="step-title">Conjugado (Conjugate Pad)</div>
+        <div class="step-desc">Contém <strong>anticorpos monoclonais anti-HRP2/anti-pLDH conjugados a nanopartículas de ouro coloidal</strong> (20–40nm de diâmetro). Estão secos e livres. Quando a amostra passa, os anticorpos-ouro hidratam-se e ligam-se aos antígenos do parasita — formando complexos antígeno-anticorpo-ouro que migram pela fita.</div>
+      </div>
+      <div class="step-item" data-step="③" style="--step-color:var(--red);--step-color2:var(--orange)" onclick="toggleStep(this)">
+        <div class="step-title">LINHA DE TESTE (T) — A Linha de Diagnóstico</div>
+        <div class="step-desc">Contém <strong>anticorpos anti-HRP2 ou anti-pLDH fixos</strong> na membrana de nitrocelulose. Se antígenos do parasita estão presentes: complexo antígeno-anticorpo-ouro CAPTURADO aqui → acumulação de ouro → <span style="color:var(--red);font-weight:700">LINHA VERMELHA VISÍVEL</span>. Se sem parasita: nada se acumula → linha ausente → NEGATIVO.</div>
+      </div>
+      <div class="step-item" data-step="④" style="--step-color:var(--green);--step-color2:var(--cyan)" onclick="toggleStep(this)">
+        <div class="step-title">LINHA DE CONTROLO (C) — Validação Interna</div>
+        <div class="step-desc">Contém anticorpos anti-IgG que capturam os anticorpos-ouro que NÃO foram capturados na linha T (excesso). <strong>SEMPRE deve aparecer</strong> — confirma que o fluxo ocorreu correctamente. Se a linha C não aparecer = teste INVÁLIDO (não há resultado, repetir).</div>
+      </div>
+      <div class="step-item" data-step="⑤" style="--step-color:var(--cyan);--step-color2:var(--blue)" onclick="toggleStep(this)">
+        <div class="step-title">Absorbent Pad (Almofada Absorvente)</div>
+        <div class="step-desc">No final da fita, absorve o excesso de líquido e mantém o fluxo capilar constante ao longo de toda a fita. Sem este componente, o fluxo pararia antes de atingir a linha de controlo.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANTÍGENOS -->
+  <div class="fade-in" style="margin-top:2.5rem">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--cyan);margin-bottom:1.5rem">🧬 ANTÍGENOS ALVO DO TDR — DETALHE MOLECULAR</h3>
+    
+    <div class="grid2">
+      <div class="info-card red">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">HRP2 — Histidine-Rich Protein 2</div>
+        <div class="card-text">
+          <strong>Específico de P. falciparum</strong><br>
+          Proteína de ~30kDa rica em repetições de histidina-alanina-histidina (HAH). Produzida nos trofozoítos e exportada para a membrana do eritrócito e circulação.<br><br>
+          <strong>Gene:</strong> <em>hrp2</em>, no cromossoma 8 de P. falciparum<br>
+          <strong>Função biológica:</strong> Biomineralização do heme → formação do hemozoíno (β-hematina) — detoxifica o heme livre tóxico<br><br>
+          <strong>PROBLEMA CRÍTICO — Deleção do Gene hrp2/hrp3:</strong><br>
+          Populações de P. falciparum na América do Sul, África Oriental e Eritreia apresentam <span style="color:var(--red);font-weight:700">deleção dos genes hrp2 e hrp3</span> → TDR <strong>FALSO-NEGATIVO</strong> mesmo com infecção real. Crise de saúde pública global!<br><br>
+          <strong>Persistência pós-tratamento:</strong> HRP2 permanece detectável 4–6 semanas após cura → falsos positivos em zonas de alta endemicidade.
+        </div>
+      </div>
+      <div class="info-card gold">
+        <span class="card-icon">⚗️</span>
+        <div class="card-title">pLDH — Lactato Desidrogenase Parasitária</div>
+        <div class="card-text">
+          <strong>Detecta todas as espécies de Plasmodium</strong><br>
+          Enzima metabólica da glicólise do parasita. Quatro isoformas:<br>
+          • <em>pfLDH</em> → específica de P. falciparum<br>
+          • <em>pvLDH</em> → específica de P. vivax<br>
+          • <em>pLDH pan</em> → detecta todas as espécies<br><br>
+          <strong>Estrutura:</strong> Homotetrâmero de ~35kDa por subunidade. Catalisa: piruvato + NADH → lactato + NAD⁺<br><br>
+          <strong>Vantagem:</strong> Indicador de parasitas VIÁVEIS (desaparece 1–3 dias após cura). Não detecta HRP2-negativas se for pan-LDH.<br><br>
+          <strong>Desvantagem:</strong> Menor sensibilidade que HRP2 em baixas parasitemias (&lt;200 parasitas/µL).
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card blue fade-in" style="margin-top:1.2rem">
+      <span class="card-icon">🔵</span>
+      <div class="card-title">Aldolase Pan-Plasmodium</div>
+      <div class="card-text">
+        Enzima glicolítica presente em todas as espécies. Menos usada nos TDRs modernos mas presente em alguns formatos combinados. Sensibilidade inferior às anteriores. Estrutura: homotetrâmero que catalisa frutose-1,6-bifosfato → gliceraldeído-3-fosfato + dihidroxiacetona fosfato.
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERPRETAÇÃO TDR -->
+  <div class="fade-in" style="margin-top:2.5rem">
+    <h3 style="font-family:'Orbitron',sans-serif;font-size:1.1rem;color:var(--cyan);margin-bottom:1.5rem">📊 INTERPRETAÇÃO DO RESULTADO TDR</h3>
+    <div class="grid3">
+      <div class="info-card green">
+        <span class="card-icon">✅</span>
+        <div class="card-title">POSITIVO</div>
+        <div class="card-text">Linhas T + C presentes. Uma ou duas linhas T (depende do formato multi-espécie). Qualquer intensidade de linha T = POSITIVO (mesmo se fraca).</div>
+      </div>
+      <div class="info-card blue">
+        <span class="card-icon">➖</span>
+        <div class="card-title">NEGATIVO</div>
+        <div class="card-text">Apenas linha C visível. Linha T ausente. Não exclui malária em 100% — baixas parasitemias podem dar falso negativo. Confirmar com microscopia se suspeita clínica alta.</div>
+      </div>
+      <div class="info-card red">
+        <span class="card-icon">❌</span>
+        <div class="card-title">INVÁLIDO</div>
+        <div class="card-text">Linha C AUSENTE. Independentemente de linha T. O teste falhou — problema técnico, amostra insuficiente, ou tira danificada. REPETIR obrigatoriamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TDR CANVAS -->
+  <div class="molecule-container fade-in" id="tdrContainer">
+    <canvas class="mol-canvas" id="tdrCanvas"></canvas>
+  </div>
+  <p style="text-align:center;color:var(--text2);font-size:.85rem;font-family:'Share Tech Mono',monospace;margin-top:.5rem">▲ ANIMAÇÃO: Fluxo de Anticorpos no TDR — Clica para alternar Positivo/Negativo</p>
+</div>
+</div>
+
+<!-- SECTION 6 - MOLECULAR -->
+<div class="full-section section-alt" id="molecular">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">⚗️</span> CAPÍTULO 6</div>
+    <h2 class="section-title">Mecanismos <span style="color:var(--purple)">Moleculares</span> em Detalhe</h2>
+    <p class="section-desc">O nível mais profundo — onde a bioquímica encontra o diagnóstico.</p>
+  </div>
+
+  <div class="story-panel purple fade-in">
+    <div class="panel-speaker">
+      <div class="avatar sci">🧬</div>
+      <div class="speaker-info">
+        <div class="speaker-name" style="color:var(--purple)">Prof. Kazuki</div>
+        <div class="speaker-role">Biologia Molecular Avançada · Patogénese Molecular</div>
+      </div>
+    </div>
+    <div class="panel-text">
+      "Chegamos ao coração da matéria. O que acontece a nível molecular quando o Plasmodium invade um eritrócito? Quais as cascatas de sinalização? Como o parasita sequestra o eritrócito, evade o sistema imunitário, e porque é que o TDR pode falhar? Tudo começa com uma dança molecular fascinante."
+    </div>
+  </div>
+
+  <!-- ACCORDIONS MOLECULARES -->
+  <div class="fade-in">
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🔴 Invasão do Eritrócito — Cascata Molecular Completa</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="step"><div class="step-num">1</div><div>
+            <strong>Reconhecimento Inicial (EBA-175 / MSP1):</strong><br>
+            O merozoíto livre circula no sangue. A proteína de superfície <strong>MSP1 (Merozoite Surface Protein 1)</strong> faz reconhecimento inespecífico. Em seguida, <strong>EBA-175 (Erythrocyte-Binding Antigen 175)</strong> liga-se especificamente à <strong>Glicoforina A</strong> do eritrócito — interacção de alta afinidade que inicia a invasão. P. vivax usa proteínas DBP (Duffy Binding Protein) que se ligam ao <strong>antigénio Duffy (DARC/ACKR1)</strong>.
+          </div></div>
+          <div class="step"><div class="step-num">2</div><div>
+            <strong>Reorientação Apical (segundos):</strong><br>
+            O merozoíto roda para alinhar o seu <strong>complexo apical</strong> (ápex) com a membrana do eritrócito. Envolvem-se AMA1 (Apical Membrane Antigen 1) e o complexo RON — RON2/3/4/5 — que formam uma junção de passagem tight (<strong>Moving Junction</strong>).
+          </div></div>
+          <div class="step"><div class="step-num">3</div><div>
+            <strong>Formação da Junção de Passagem:</strong><br>
+            AMA1 no merozoíto + RON2 inserido na membrana do eritrócito → formam anel de oclusão que o merozoíto usa como âncora. O merozoíto "empurra-se" através deste anel enquanto a actina-miosina interna gera força motriz. É um <strong>motor molecular acto-miosina</strong> que propulsiona a invasão.
+          </div></div>
+          <div class="step"><div class="step-num">4</div><div>
+            <strong>Descarga dos Roptrias (rhoptries):</strong><br>
+            Organelos apicais especializados descarregam proteínas RHOP (RhopH1/2/3) na membrana em formação. Estas proteínas <strong>remoldam os canais de permeabilidade do eritrócito</strong> (New Permeability Pathways, NPP) — fundamentais para importação de nutrientes pelo parasita.
+          </div></div>
+          <div class="step"><div class="step-num">5</div><div>
+            <strong>Formação do Vacúolo Parasitóforo (PV):</strong><br>
+            O parasita é encerrado num vacúolo membranoso (<strong>Parasitophorous Vacuole Membrane, PVM</strong>) derivado da membrana do eritrócito + proteínas das roptrias. O PV é o "apartamento" do parasita — isolado do citoplasma do eritrócito. Proteínas PEXEL/HT exportam moléculas para fora do PV → remodelação do eritrócito.
+          </div></div>
+          <div class="step"><div class="step-num">6</div><div>
+            <strong>Remodelação do Eritrócito (KAHRP, PfEMP3, RESA):</strong><br>
+            O parasita exporta +400 proteínas para o eritrócito via sistema PEXEL (Plasmodium Export ELement). <strong>KAHRP</strong> ancora o citoesqueleto do eritrócito. <strong>PfEMP1</strong> é inserida em "knobs" (protuberâncias) na superfície → permite <strong>citoaderência ao endotélio</strong> (mecanismo do sequestro e malária cerebral).
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🟡 Metabolismo do Heme — Do Veneno ao Cristal</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          O Plasmodium sobrevive dentro do eritrócito digerindo hemoglobina (fonte de aminoácidos). O processo:<br><br>
+          <div class="step"><div class="step-num">1</div><div>
+            <strong>Digestão da Hemoglobina no Vacúolo Digestivo:</strong><br>
+            A hemoglobina é endocitada para a vesícula digestiva do parasita — um compartimento ácido (pH 5.0–5.5) rico em proteases: <strong>plasmepsina I/II</strong> (aspartil-proteases), <strong>falcipain 2/3</strong> (cisteíno-proteases), <strong>falcilesina</strong>. Globina → aminoácidos livres (nutrição). Heme (Fe-protoporfirina IX) libertado.
+          </div></div>
+          <div class="step"><div class="step-num">2</div><div>
+            <strong>Toxicidade do Heme Livre:</strong><br>
+            O heme livre (Fe²⁺-protoporfirinaIX) é extremamente tóxico — gera radicais superóxido (O₂⁻), peroxidação lipídica e lise membranar. Em μM concentrações, mata o parasita. O parasita acumula enormes quantidades (1 eritrócito = 280 milhões de moléculas de hemoglobina = ~10⁸ moléculas de heme).
+          </div></div>
+          <div class="step"><div class="step-num">3</div><div>
+            <strong>Detoxificação — Formação do Hemozoíno (β-hematina):</strong><br>
+            O parasita polimeriza o heme em <strong>hemozoíno</strong> (também chamado "pigmento malárico") — cristais insolúveis de β-hematina. A HRP2 (o antígeno do TDR!) atua como proteína chaperona neste processo, nucleando a polimerização. O hemozoíno é visível como grânulo castanho escuro na microscopia — sinal auxiliar de diagnóstico.
+          </div></div>
+          <div class="step"><div class="step-num">4</div><div>
+            <strong>Relevância Farmacológica:</strong><br>
+            <strong>Cloroquina, quinina e artemisinina</strong> interferem com este processo. A cloroquina acumula-se na vesícula digestiva (base fraca, protonada em pH baixo) → inibe a polimerização do heme → heme tóxico acumula → morte do parasita. Resistência à cloroquina: mutações na <strong>PfCRT (P. falciparum Chloroquine Resistance Transporter)</strong> bombeiam a cloroquina para fora da vesícula.
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🔵 PfEMP1 e Citoaderência — O Segredo da Malária Cerebral</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="step"><div class="step-num">1</div><div>
+            <strong>O gene var e variação antigénica:</strong><br>
+            P. falciparum tem ~60 genes var que codificam variantes de <strong>PfEMP1 (P. falciparum Erythrocyte Membrane Protein 1)</strong>. Apenas 1 gene var é expresso por vez (exclusão mutuamente exclusiva). Switching periódico de variante → o sistema imunitário nunca consegue eliminar totalmente o parasita — explica a necessidade de múltiplas infecções para imunidade parcial.
+          </div></div>
+          <div class="step"><div class="step-num">2</div><div>
+            <strong>Knob-forming e KAHRP:</strong><br>
+            <strong>KAHRP (Knob-Associated Histidine-Rich Protein)</strong> é exportado via PEXEL e forma um suporte proteico abaixo da membrana do eritrócito, criando protuberâncias ("knobs") de 50–100nm. O PfEMP1 é ancorado nestes knobs, exposto à superfície.
+          </div></div>
+          <div class="step"><div class="step-num">3</div><div>
+            <strong>Ligandos e receptores de citoaderência:</strong><br>
+            PfEMP1 liga-se a múltiplos receptores endoteliais:<br>
+            • <strong>ICAM-1</strong> (cérebro) → malária cerebral<br>
+            • <strong>CD36</strong> (tecidos periféricos) → sequestro sistémico<br>
+            • <strong>EPCR</strong> (Endothelial Protein C Receptor) → formas graves (PfEMP1 do grupo A)<br>
+            • <strong>CSA (Condroitin Sulfate A)</strong> → placenta → malária gestacional
+          </div></div>
+          <div class="step"><div class="step-num">4</div><div>
+            <strong>Patogénese da Malária Cerebral:</strong><br>
+            Sequestro de eritrócitos infectados nos microvasos cerebrais → obstrução mecânica + disfunção endotelial → inflamação (TNF-α, IL-1β, IL-6) → ruptura da barreira hematoencefálica → edema cerebral → <strong>coma e morte</strong>. PfEMP1-EPCR interfere com a via da proteína C → pró-coagulação adicional.
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>⚡ Mecanismo Molecular do TDR — Imunocromatografia em Detalhe</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="step"><div class="step-num">1</div><div>
+            <strong>Ouro Coloidal Nanoparticulado:</strong><br>
+            As partículas de ouro coloidal (20–40nm) têm cor vermelha-vinho por <strong>ressonância de plasmão de superfície</strong> — quando excitadas por luz visível, os electrões de condução oscilam na superfície. O tamanho das partículas determina a cor: 20nm=vermelho, 100nm=azul-violeta. São funcionalizadas com anticorpos via ligações Au-S (tiol-ouro) ou adsorção proteica.
+          </div></div>
+          <div class="step"><div class="step-num">2</div><div>
+            <strong>Anticorpos Monoclonais — Especificidade:</strong><br>
+            São anticorpos IgG produzidos por hibridomas (fusão de linfócito B + mieloma). Cada anticorpo reconhece um único epítopo na HRP2 ou pLDH. O sistema "sandwich" usa DOIS anticorpos diferentes: conjugado-ouro captura um epítopo → anticorpo da linha T captura outro epítopo → formação de sandwich antígeno-2 anticorpos → sinal amplificado.
+          </div></div>
+          <div class="step"><div class="step-num">3</div><div>
+            <strong>Fluxo Capilar em Nitrocelulose:</strong><br>
+            A membrana de nitrocelulose tem poros de 5–15μm. A amostra migra por <strong>capilaridade</strong> a velocidade controlada. A velocidade afecta a sensibilidade: fluxo muito rápido → menos tempo de ligação → menor sensibilidade. O fabricante optimiza a porosidade para balancear velocidade e sensibilidade.
+          </div></div>
+          <div class="step"><div class="step-num">4</div><div>
+            <strong>Limite de Detecção e Sensibilidade:</strong><br>
+            TDRs baseados em HRP2: detectam ≥100–200 parasitas/µL (algumas marcas até 50/µL). pLDH: ≥200–500 parasitas/µL. <strong>Zona prozona (Hook Effect):</strong> em parasitemias extremamente elevadas (&gt;200.000/µL), excesso de antígeno satura ambos os anticorpos → linha T fraca ou ausente → FALSO NEGATIVO. Dilua a amostra se suspeitar.
+          </div></div>
+          <div class="step"><div class="step-num">5</div><div>
+            <strong>Causas de Falsos Positivos HRP2:</strong><br>
+            • Reacção cruzada com anticorpos reumatóides (FR +)<br>
+            • HRP2 circulante após cura (persistência 4–6 semanas)<br>
+            • Infecção mista — linha HRP2 positiva mesmo sem P. falciparum activo<br>
+            • Contaminação cruzada entre amostras (ambiente laboratorial)
+          </div></div>
+          <div class="step"><div class="step-num">6</div><div>
+            <strong>Causas de Falsos Negativos:</strong><br>
+            • Baixa parasitemia (&lt;100/µL) — abaixo do limite de detecção<br>
+            • Deleção hrp2/hrp3 em P. falciparum<br>
+            • Degradação do kit (temperatura, humidade, prazo de validade)<br>
+            • Zona prozona (alta parasitemia)<br>
+            • Técnica incorreta (volume errado, leitura fora do tempo)
+          </div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🟢 Microscopia vs TDR — Análise Molecular Comparativa</span>
+        <span class="acc-icon">▼</span>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <table class="comp-table" style="margin:0">
+            <tr>
+              <th>Parâmetro</th><th>Microscopia</th><th>TDR/RDT</th>
+            </tr>
+            <tr><td><strong>Princípio</strong></td><td>Visualização directa do parasita</td><td>Detecção de antígenos por imunocromatografia</td></tr>
+            <tr><td><strong>Sensibilidade</strong></td><td><span class="badge-green">≥50 parasitas/µL</span> (gota espessa)</td><td><span class="badge-gold">100–200 parasitas/µL</span></td></tr>
+            <tr><td><strong>Especificidade</strong></td><td><span class="badge-green">99%+</span> (perito)</td><td><span class="badge-gold">95–99%</span></td></tr>
+            <tr><td><strong>Diagnóstico espécie</strong></td><td><span class="badge-green">SIM (morfologia)</span></td><td><span class="badge-gold">Parcial (depende kit)</span></td></tr>
+            <tr><td><strong>Densidade parasitária</strong></td><td><span class="badge-green">SIM (quantitativo)</span></td><td><span class="badge-red">NÃO</span></td></tr>
+            <tr><td><strong>Tempo</strong></td><td><span class="badge-gold">45–60 min</span></td><td><span class="badge-green">15–20 min</span></td></tr>
+            <tr><td><strong>Equipamento</strong></td><td><span class="badge-red">Microscópio, perito</span></td><td><span class="badge-green">Apenas tira + sangue</span></td></tr>
+            <tr><td><strong>Falso negativo</strong></td><td>Baixa parasitemia, inexperiência</td><td>Deleção hrp2, baixa parasitemia, zona prozona</td></tr>
+            <tr><td><strong>Falso positivo</strong></td><td>Plaquetas sobrepostas, artefactos</td><td>HRP2 pós-cura, reacção cruzada FR</td></tr>
+            <tr><td><strong>Custo</strong></td><td><span class="badge-gold">Médio</span> (infra-estrutura)</td><td><span class="badge-green">Baixo por teste</span></td></tr>
+            <tr><td><strong>Campo periférico</strong></td><td><span class="badge-red">Difícil (perito)</span></td><td><span class="badge-green">EXCELENTE</span></td></tr>
+          </table>
+          <br>
+          <div class="callout success">
+            <span class="callout-icon">🏆</span>
+            <div class="callout-text"><strong>Algoritmo OMS:</strong> TDR como triagem inicial (especialmente no campo) → confirmar positivo com microscopia quando possível → negativo com alta suspeita clínica: repetir TDR 24h depois + microscopia. PCR reservada para investigação e casos difíceis.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS MOLECULAR -->
+  <div class="molecule-container fade-in" id="molContainer">
+    <canvas class="mol-canvas" id="molCanvas"></canvas>
+  </div>
+  <p style="text-align:center;color:var(--text2);font-size:.85rem;font-family:'Share Tech Mono',monospace;margin-top:.5rem">▲ SIMULAÇÃO: Antígenos e Anticorpos em Acção</p>
+</div>
+</div>
+
+<!-- SECTION 7 - QUIZ -->
+<div class="full-section" id="quiz">
+<div class="section">
+  <div class="section-header fade-in">
+    <div class="chapter-badge"><span class="icon">🎯</span> DESAFIO FINAL</div>
+    <h2 class="section-title">Testa o teu <span style="color:var(--green)">Conhecimento</span></h2>
+    <p class="section-desc">Consegues passar no teste do Dra. Amina?</p>
+  </div>
+
+  <div class="quiz-card fade-in" id="quizContainer">
+    <div id="quizContent">
+      <div class="micro-label">PERGUNTA <span id="qNum">1</span> DE 8</div>
+      <div class="quiz-q" id="quizQ"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-feedback" id="quizFb"></div>
+      <button class="quiz-next" id="quizNext" onclick="nextQuestion()">PRÓXIMA →</button>
+    </div>
+    <div class="quiz-score" id="quizScore">
+      <div class="score-num" id="scoreNum"></div>
+      <div style="color:var(--text2);margin:.5rem 0">de 8 perguntas correctas</div>
+      <div id="scoreMsg" style="font-size:1.1rem;margin:1rem 0"></div>
+      <button onclick="restartQuiz()" style="padding:.75rem 2rem;background:linear-gradient(135deg,var(--cyan),var(--blue));border:none;border-radius:8px;color:#000;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:1rem">RECOMEÇAR</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">Departamento de Medicina Laboratorial</div>
+  <div class="footer-sub" style="color:var(--cyan)">Universidade Licungo (UL) · Quelimane, Moçambique</div>
+  <div class="footer-divider"></div>
+  <div style="color:var(--text2);font-size:.88rem;margin-bottom:.3rem">2º Ano de Medicina · Módulo de Parasitologia e Diagnóstico</div>
+  <div class="footer-copy">© 2026 DemilMed-UL · Universidade Licungo · Todos os direitos reservados<br>
+  Microscopia & Diagnóstico por TDR para Malária · Material Educativo</div>
+</footer>
+
+<script>
+// ============ PARTICLES HERO ============
+(function(){
+  const container=document.getElementById('particles');
+  const colors=['#00f5d4','#ff2a4a','#ffd700','#b44fff','#00ff88','#ff8c00'];
+  for(let i=0;i<40;i++){
+    const p=document.createElement('div');
+    p.className='particle';
+    const size=Math.random()*4+2;
+    p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*15+8}s;animation-delay:${Math.random()*10}s`;
+    container.appendChild(p);
+  }
+})();
+
+// ============ SCROLL ANIMATIONS ============
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      // progress bars
+      e.target.querySelectorAll&&e.target.querySelectorAll('.progress-fill').forEach(b=>{
+        b.style.width=b.dataset.w||'0%';
+      });
+    }
+  });
+},{threshold:.1});
+document.querySelectorAll('.fade-in,.slide-left,.slide-right,.scale-in').forEach(el=>observer.observe(el));
+
+// ============ TABS ============
+function openTab(e,id){
+  const parent=e.target.closest('.fade-in')||e.target.parentElement.parentElement;
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    if(b.closest('.fade-in')===parent||b.parentElement===e.target.parentElement) b.classList.remove('active');
+  });
+  e.target.classList.add('active');
+  document.querySelectorAll('.tab-pane').forEach(p=>{if(p.id===id)p.classList.add('active');else p.classList.remove('active');});
+}
+
+// ============ ACCORDION ============
+function toggleAccordion(header){
+  const body=header.nextElementSibling;
+  const isOpen=header.classList.contains('open');
+  document.querySelectorAll('.accordion-header.open').forEach(h=>{
+    h.classList.remove('open');
+    h.nextElementSibling.classList.remove('open');
+  });
+  if(!isOpen){header.classList.add('open');body.classList.add('open');}
+}
+
+// ============ STEP ITEMS ============
+function toggleStep(el){
+  const wasActive=el.classList.contains('active');
+  el.closest('.step-flow').querySelectorAll('.step-item').forEach(s=>s.classList.remove('active'));
+  if(!wasActive) el.classList.add('active');
+}
+
+// ============ CANVAS: CICLO ERITROCÍTICO ============
+(function(){
+  const canvas=document.getElementById('cycleCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+
+  const cells=[];
+  const stages=['Anel','Trofozoíto','Esquizonte','Lise!'];
+  const stageColors=['#00f5d4','#ffd700','#ff8c00','#ff2a4a'];
+
+  for(let i=0;i<6;i++){
+    cells.push({
+      x:Math.random()*.7*350+50,y:Math.random()*.6*200+50,
+      phase:Math.random()*4,speed:.002+Math.random()*.003,
+      r:18+Math.random()*8
+    });
+  }
+
+  function drawCell(x,y,r,phase,t2){
+    const stageI=Math.floor((phase+t2)%4);
+    const progress=(phase+t2)%1;
+    const col=stageColors[stageI];
+    ctx.save();
+    ctx.translate(x,y);
+
+    // eritrócito base
+    ctx.beginPath();
+    ctx.ellipse(0,0,r,r*.75,0,0,Math.PI*2);
+    ctx.fillStyle='#3a0a0a';
+    ctx.fill();
+    ctx.strokeStyle='#7a1a1a';
+    ctx.lineWidth=1;
+    ctx.stroke();
+
+    if(stageI===0){
+      // anel
+      ctx.beginPath();
+      ctx.arc(0,0,r*.45,0,Math.PI*2);
+      ctx.strokeStyle=col;ctx.lineWidth=2;ctx.stroke();
+      ctx.beginPath();ctx.arc(r*.2,-r*.1,2.5,0,Math.PI*2);
+      ctx.fillStyle='#ff2a4a';ctx.fill();
+    } else if(stageI===1){
+      // trofozoíto ameboide
+      ctx.beginPath();
+      for(let a=0;a<Math.PI*2;a+=.3){
+        const rr=r*.5+Math.sin(a*3+t*2)*r*.15;
+        a===0?ctx.moveTo(Math.cos(a)*rr,Math.sin(a)*rr):ctx.lineTo(Math.cos(a)*rr,Math.sin(a)*rr);
+      }
+      ctx.closePath();ctx.fillStyle=col+'44';ctx.fill();
+      ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+    } else if(stageI===2){
+      // esquizonte - merozoítos
+      const n=8;
+      for(let j=0;j<n;j++){
+        const a=(j/n)*Math.PI*2;
+        const mx=Math.cos(a)*r*.45,my=Math.sin(a)*r*.45;
+        ctx.beginPath();ctx.arc(mx,my,3.5,0,Math.PI*2);
+        ctx.fillStyle=col;ctx.fill();
+      }
+    } else {
+      // lise - partículas saindo
+      const num=8;
+      for(let j=0;j<num;j++){
+        const a=(j/num)*Math.PI*2;
+        const dist=r*(1+progress*.8);
+        ctx.beginPath();ctx.arc(Math.cos(a)*dist,Math.sin(a)*dist,2.5,0,Math.PI*2);
+        ctx.fillStyle=col;ctx.globalAlpha=1-progress*.7;ctx.fill();ctx.globalAlpha=1;
+      }
+    }
+
+    ctx.restore();
+  }
+
+  function loop(){
+    if(!canvas.offsetParent&&canvas.offsetWidth===0){requestAnimationFrame(loop);return;}
+    resize();
+    ctx.clearRect(0,0,W,H);
+    // stars bg
+    ctx.fillStyle='rgba(4,6,14,.4)';ctx.fillRect(0,0,W,H);
+
+    t+=.008;
+
+    // draw cells scaled to canvas
+    const scaleX=W/400,scaleY=H/280;
+    cells.forEach(c=>{
+      drawCell(c.x*scaleX,c.y*scaleY,c.r*Math.min(scaleX,scaleY)*1.2,c.phase,t*c.speed*50);
+    });
+
+    // legend
+    ctx.font='11px Share Tech Mono,monospace';
+    stages.forEach((s,i)=>{
+      ctx.fillStyle=stageColors[i];
+      ctx.fillRect(10+i*90,H-28,10,10);
+      ctx.fillText(s,24+i*90,H-20);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ CANVAS: MICROSCOPIA ============
+(function(){
+  const canvas=document.getElementById('microscopeCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const rbc=[];
+  for(let i=0;i<20;i++){
+    rbc.push({
+      x:Math.random()*380+10,y:Math.random()*220+20,
+      r:14+Math.random()*6,
+      infected:Math.random()<.25,
+      type:Math.floor(Math.random()*3),
+      rot:Math.random()*Math.PI*2,
+      vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3
+    });
+  }
+
+  function drawRBC(c){
+    ctx.save();
+    ctx.translate(c.x*(W/400),c.y*(H/260));
+    ctx.rotate(c.rot);
+    const r=c.r*Math.min(W/400,H/260);
+
+    ctx.beginPath();
+    ctx.ellipse(0,0,r,r*.65,0,0,Math.PI*2);
+    ctx.fillStyle=c.infected?'#4a0a0a':'#2a0808';
+    ctx.fill();
+    ctx.strokeStyle=c.infected?'#ff4a4a':'#8b2020';
+    ctx.lineWidth=1;ctx.stroke();
+
+    // biconcave indent
+    ctx.beginPath();ctx.ellipse(0,0,r*.4,r*.25,0,0,Math.PI*2);
+    ctx.fillStyle=c.infected?'#3a0808':'#1a0404';ctx.fill();
+
+    if(c.infected){
+      if(c.type===0){
+        // anel
+        ctx.beginPath();ctx.arc(r*.2,-r*.1,r*.35,0,Math.PI*2);
+        ctx.strokeStyle='#00f5d4';ctx.lineWidth=1.8;ctx.stroke();
+        ctx.beginPath();ctx.arc(r*.35,-r*.15,1.8,0,Math.PI*2);
+        ctx.fillStyle='#ff2a4a';ctx.fill();
+      } else if(c.type===1){
+        // trofozoíto
+        ctx.beginPath();ctx.arc(0,0,r*.45,0,Math.PI*2);
+        ctx.fillStyle='#00f5d422';ctx.fill();
+        ctx.strokeStyle='#00f5d4';ctx.lineWidth=1.5;ctx.stroke();
+        // schuffner dots
+        for(let j=0;j<6;j++){
+          const a=j/6*Math.PI*2;
+          ctx.beginPath();ctx.arc(Math.cos(a)*r*.5,Math.sin(a)*r*.3,1.2,0,Math.PI*2);
+          ctx.fillStyle='#ff8c0088';ctx.fill();
+        }
+      } else {
+        // gametócito banana
+        ctx.beginPath();
+        ctx.moveTo(-r*.7,0);
+        ctx.bezierCurveTo(-r*.7,-r*.8,r*.7,-r*.8,r*.7,0);
+        ctx.bezierCurveTo(r*.5,r*.2,-r*.5,r*.2,-r*.7,0);
+        ctx.fillStyle='#b44fff44';ctx.fill();
+        ctx.strokeStyle='#b44fff';ctx.lineWidth=1.5;ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  function loop(){
+    resize();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(10,5,5,.4)';ctx.fillRect(0,0,W,H);
+    t+=.01;
+
+    rbc.forEach(c=>{
+      c.x+=c.vx;c.y+=c.vy;
+      c.rot+=.003;
+      if(c.x<0||c.x>400)c.vx*=-1;
+      if(c.y<0||c.y>260)c.vy*=-1;
+      drawRBC(c);
+    });
+
+    // legend
+    ctx.font='10px Share Tech Mono,monospace';
+    const lg=[['#ff4a4a','Infectado'],['#8b2020','Saudável'],['#00f5d4','Anel/Trof'],['#b44fff','Gametócito']];
+    lg.forEach((l,i)=>{
+      ctx.fillStyle=l[0];ctx.fillRect(10+i*105,H-22,8,8);
+      ctx.fillStyle='#b0bec5';ctx.fillText(l[1],22+i*105,H-15);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ CANVAS: TDR ANIMATION ============
+(function(){
+  const canvas=document.getElementById('tdrCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0,isPositive=true;
+  canvas.addEventListener('click',()=>{isPositive=!isPositive;t=0;});
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  function loop(){
+    resize();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#04060e';ctx.fillRect(0,0,W,H);
+    t+=.012;
+
+    const cx=W/2,cy=H/2;
+    const stripW=Math.min(W*.7,400),stripH=60;
+    const sx=cx-stripW/2,sy=cy-stripH/2;
+
+    // tira fundo
+    ctx.fillStyle='#f5f0e8';
+    ctx.beginPath();
+    ctx.roundRect(sx,sy,stripW,stripH,8);
+    ctx.fill();
+    ctx.strokeStyle='#ccc';ctx.lineWidth=1;ctx.stroke();
+
+    // zona sample
+    ctx.fillStyle='#e8d4b8';
+    ctx.fillRect(sx,sy,stripW*.15,stripH);
+    ctx.fillStyle='#666';ctx.font='9px monospace';
+    ctx.fillText('S',sx+stripW*.06,sy+stripH*.6);
+
+    // particulas de ouro fluindo
+    const flowProgress=((t%3)/3);
+    const numP=12;
+    for(let i=0;i<numP;i++){
+      const delay=i/numP;
+      const pos=(flowProgress-delay+1)%1;
+      if(pos<.7){
+        const px=sx+stripW*.15+pos*stripW*.7;
+        const py=sy+stripH*.5+(Math.sin(t*3+i)*stripH*.15);
+        const alpha=isPositive?1:0.4;
+        ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,165,0,${alpha})`;ctx.fill();
+        // glow
+        ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,140,0,${alpha*.15})`;ctx.fill();
+      }
+    }
+
+    // linha T
+    const tLineX=sx+stripW*.55;
+    const tAlpha=isPositive?Math.min(1,(t-1)*0.5):0.05;
+    ctx.strokeStyle=`rgba(180,0,0,${tAlpha})`;
+    ctx.lineWidth=8;
+    ctx.beginPath();ctx.moveTo(tLineX,sy+8);ctx.lineTo(tLineX,sy+stripH-8);ctx.stroke();
+    ctx.fillStyle='#333';ctx.font='bold 10px monospace';
+    ctx.fillText('T',tLineX-4,sy-4);
+
+    // linha C (sempre aparece)
+    const cLineX=sx+stripW*.75;
+    const cAlpha=Math.min(1,(t-1.5)*.4);
+    ctx.strokeStyle=`rgba(0,0,180,${Math.max(.05,cAlpha)})`;
+    ctx.lineWidth=8;
+    ctx.beginPath();ctx.moveTo(cLineX,sy+8);ctx.lineTo(cLineX,sy+stripH-8);ctx.stroke();
+    ctx.fillStyle='#333';ctx.font='bold 10px monospace';
+    ctx.fillText('C',cLineX-4,sy-4);
+
+    // resultado
+    ctx.font='bold 16px Orbitron,monospace';
+    if(isPositive){
+      ctx.fillStyle='#00ff88';
+      ctx.fillText('✓ POSITIVO — P. falciparum detectado',cx-(ctx.measureText('✓ POSITIVO — P. falciparum detectado').width/2),cy+stripH*.5+30);
+    } else {
+      ctx.fillStyle='#4488ff';
+      ctx.fillText('– NEGATIVO — Sem antígenos detectados',cx-(ctx.measureText('– NEGATIVO — Sem antígenos detectados').width/2),cy+stripH*.5+30);
+    }
+
+    ctx.fillStyle='#b0bec5';ctx.font='11px Share Tech Mono,monospace';
+    ctx.fillText('[ CLICA para alternar Positivo / Negativo ]',cx-(ctx.measureText('[ CLICA para alternar Positivo / Negativo ]').width/2),H-12);
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ CANVAS: MOLECULAR ============
+(function(){
+  const canvas=document.getElementById('molCanvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,t=0;
+  function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
+  resize();window.addEventListener('resize',resize);
+
+  const particles=[];
+  for(let i=0;i<30;i++){
+    particles.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-.5)*1.2,vy:(Math.random()-.5)*1.2,
+      r:3+Math.random()*4,
+      color:['#00f5d4','#ff2a4a','#ffd700','#b44fff','#00ff88'][Math.floor(Math.random()*5)],
+      label:['HRP2','pLDH','Ab','Ag','Au'][Math.floor(Math.random()*5)],
+      bound:false,boundTo:-1,bindT:0
+    });
+  }
+
+  function loop(){
+    resize();
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(4,6,14,.35)';ctx.fillRect(0,0,W,H);
+    t+=.01;
+
+    // check bindings
+    particles.forEach((p,i)=>{
+      if(p.bound) return;
+      particles.forEach((q,j)=>{
+        if(i>=j||q.bound) return;
+        if(p.label==='Ab'&&(q.label==='HRP2'||q.label==='Ag')||
+           (p.label==='HRP2'||p.label==='Ag')&&q.label==='Ab'){
+          const dx=p.x-q.x,dy=p.y-q.y;
+          if(Math.sqrt(dx*dx+dy*dy)<30&&Math.random()<.01){
+            p.bound=true;q.bound=true;p.boundTo=j;q.boundTo=i;
+            p.bindT=t;q.bindT=t;
+          }
+        }
+      });
+    });
+
+    particles.forEach((p,i)=>{
+      if(p.bound&&p.boundTo>=0){
+        const q=particles[p.boundTo];
+        p.x+=(q.x-p.x)*.05;p.y+=(q.y-p.y)*.05;
+        // occasionally unbind
+        if(t-p.bindT>5){p.bound=false;p.boundTo=-1;}
+      } else {
+        p.x+=p.vx;p.y+=p.vy;
+        if(p.x<0||p.x>W)p.vx*=-1;
+        if(p.y<0||p.y>H)p.vy*=-1;
+      }
+
+      // draw connections
+      if(p.bound&&p.boundTo>i){
+        const q=particles[p.boundTo];
+        ctx.strokeStyle=p.color+'66';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.stroke();
+      }
+
+      // glow
+      const grad=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*3);
+      grad.addColorStop(0,p.color+'44');grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,Math.PI*2);ctx.fill();
+
+      // particle
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.fill();
+
+      // label
+      ctx.font='8px Share Tech Mono,monospace';ctx.fillStyle='#ffffff88';
+      ctx.fillText(p.label,p.x+p.r+2,p.y+3);
+    });
+
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============ QUIZ ============
+const questions=[
+  {q:"Qual a característica microscópica PATOGNOMÓNICA (exclusiva) de P. falciparum?",opts:["Grânulos de Schüffner","Gametócito em forma de crescente/banana","Eritrócito aumentado de tamanho","Trofozoíto em banda"],correct:1,exp:"Os gametócitos em crescente/banana são EXCLUSIVOS de P. falciparum. Nenhuma outra espécie apresenta esta morfologia."},
+  {q:"Qual antígeno é detectado pelos TDRs como ESPECÍFICO de P. falciparum?",opts:["pLDH pan","Aldolase","HRP2 (Histidine-Rich Protein 2)","KAHRP"],correct:2,exp:"HRP2 é codificada apenas pelo gene hrp2 de P. falciparum. É o marcador mais sensível para esta espécie nos TDRs actuais."},
+  {q:"Na gota espessa, por que NÃO se deve fixar com metanol?",opts:["O metanol destrói os parasitas","O metanol impede a lise dos eritrócitos, reduzindo a concentração de parasitas por campo","O metanol altera o pH da coloração","O metanol é tóxico para o técnico"],correct:1,exp:"A gota espessa é NÃO fixada para que os eritrócitos lisem durante a coloração de Giemsa, concentrando os parasitas e aumentando a sensibilidade 20-30x."},
+  {q:"O que significa uma linha C ausente no TDR, independentemente da linha T?",opts:["Resultado negativo","Resultado positivo fraco","Resultado INVÁLIDO — repetir o teste","Infecção por P. vivax"],correct:2,exp:"A linha C (controlo) deve SEMPRE aparecer — confirma que o fluxo ocorreu correctamente. Se ausente, o teste é inválido por razões técnicas."},
+  {q:"Qual mecanismo molecular explica a malária cerebral?",opts:["Destruição de neurónios pelo parasita directamente","Citoaderência de eritrócitos infectados via PfEMP1 nos microvasos cerebrais","Libertação de toxinas pelos gametócitos","Febre alta danificando o cérebro"],correct:1,exp:"PfEMP1, inserida em 'knobs' na superfície do eritrócito infectado, liga-se ao ICAM-1 e EPCR nos microvasos cerebrais → sequestro → obstrução e inflamação → malária cerebral."},
+  {q:"Qual espécie de Plasmodium forma hipnozoítos hepáticos, causando recidivas?",opts:["P. falciparum e P. malariae","P. vivax e P. ovale","Apenas P. vivax","Todas as espécies"],correct:1,exp:"P. vivax e P. ovale formam hipnozoítos dormentes no fígado que reactivam semanas a anos depois (recidiva). P. falciparum NÃO forma hipnozoítos."},
+  {q:"O pH correcto do tampão para coloração de Giemsa é:",opts:["pH 5.5 (ácido)","pH 6.5","pH 7.0–7.2 (levemente neutro)","pH 8.5 (alcalino)"],correct:2,exp:"pH 7.0–7.2 é crítico. pH mais ácido faz os grânulos de Schüffner desaparecerem (falso negativo de espécie). pH muito alcalino torna tudo azul escuro e difícil de interpretar."},
+  {q:"A 'zona prozona' (hook effect) no TDR causa:",opts:["Falso positivo por excesso de anticorpos","Falso negativo por excesso de ANTÍGENO saturando ambos os anticorpos","Linha C ausente","Coloração da membrana da tira"],correct:1,exp:"Em parasitemias muito elevadas (>200.000/µL), excesso de HRP2/pLDH satura tanto os anticorpos-ouro do conjugado como os da linha T → nenhum sandwich se forma → linha T fraca ou ausente = FALSO NEGATIVO."}
+];
+
+let currentQ=0,score=0,answered=false;
+
+function loadQuestion(){
+  const q=questions[currentQ];
+  document.getElementById('qNum').textContent=currentQ+1;
+  document.getElementById('quizQ').textContent=q.q;
+  const opts=document.getElementById('quizOpts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('div');
+    btn.className='quiz-opt';
+    btn.innerHTML=`<span style="font-family:'Share Tech Mono',monospace;color:var(--cyan);min-width:20px">${['A','B','C','D'][i]}</span>${o}`;
+    btn.onclick=()=>answer(i);
+    opts.appendChild(btn);
+  });
+  document.getElementById('quizFb').className='quiz-feedback';
+  document.getElementById('quizFb').textContent='';
+  document.getElementById('quizNext').className='quiz-next';
+  answered=false;
+}
+
+function answer(idx){
+  if(answered)return;
+  answered=true;
+  const q=questions[currentQ];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('disabled'));
+  const fb=document.getElementById('quizFb');
+  if(idx===q.correct){
+    opts[idx].classList.add('correct');
+    score++;
+    fb.className='quiz-feedback correct show';
+    fb.textContent='✓ CORRECTO! '+q.exp;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.correct].classList.add('correct');
+    fb.className='quiz-feedback wrong show';
+    fb.textContent='✗ Incorrecto. '+q.exp;
+  }
+  document.getElementById('quizNext').className='quiz-next show';
+}
+
+function nextQuestion(){
+  currentQ++;
+  if(currentQ>=questions.length){
+    document.getElementById('quizContent').style.display='none';
+    const sc=document.getElementById('quizScore');
+    sc.className='quiz-score show';
+    const sn=document.getElementById('scoreNum');
+    sn.textContent=`${score}/8`;
+    const pct=score/8;
+    sn.style.color=pct>=.75?'var(--green)':pct>=.5?'var(--gold)':'var(--red)';
+    const msgs=['Não desistas! Relê o material com atenção.','A melhorar! Revê os capítulos sobre TDR e espécies.','Bom trabalho! Alguns detalhes a rever.','Muito bom! Quase lá!','EXCELENTE! Diagnóstico perfeito! 🎉'];
+    document.getElementById('scoreMsg').textContent=msgs[Math.floor(pct*4.99)];
+  } else {
+    loadQuestion();
+  }
+}
+
+function restartQuiz(){
+  currentQ=0;score=0;answered=false;
+  document.getElementById('quizContent').style.display='block';
+  document.getElementById('quizScore').className='quiz-score';
+  loadQuestion();
+}
+
+loadQuestion();
+
+// ============ PROGRESS BARS AUTO ============
+document.querySelectorAll('.progress-fill').forEach(b=>{
+  if(!b.dataset.w) b.dataset.w=b.style.width;
+  b.style.width='0%';
+});
+</script>
+</body>
+</html>

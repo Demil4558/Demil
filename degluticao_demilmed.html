@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A JORNADA DO BOLO — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&display=swap');
+
+  :root {
+    --gold: #FFD700;
+    --neon-cyan: #00FFFF;
+    --neon-pink: #FF006E;
+    --neon-green: #39FF14;
+    --neon-orange: #FF6600;
+    --neon-purple: #BF00FF;
+    --blood-red: #CC0000;
+    --deep-blue: #001133;
+    --panel-dark: #0A0A0F;
+    --panel-mid: #111122;
+    --panel-light: #1A1A2E;
+    --text-main: #E8E8F0;
+    --text-dim: #8888AA;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #050508;
+    color: var(--text-main);
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 20px; height: 20px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #050508; }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+  /* ========================
+     INTRO COVER
+  ======================== */
+  #cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #0a0a1f 0%, #050508 70%);
+  }
+
+  .cover-bg-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,215,0,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,215,0,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridPulse 4s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+  }
+
+  .cover-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: orbFloat 8s ease-in-out infinite;
+  }
+  .orb1 { width:400px;height:400px; background:rgba(0,255,255,0.08); top:-100px;left:-100px; }
+  .orb2 { width:300px;height:300px; background:rgba(255,0,110,0.08); bottom:-50px;right:-50px; animation-delay:-3s; }
+  .orb3 { width:200px;height:200px; background:rgba(255,215,0,0.06); top:50%;left:50%; animation-delay:-6s; }
+
+  @keyframes orbFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(30px,-30px) scale(1.1); }
+    66% { transform: translate(-20px,20px) scale(0.9); }
+  }
+
+  .manga-title-wrapper {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .manga-vol {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 8px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    animation: fadeSlideDown 1s ease both;
+  }
+
+  .manga-main-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: 0.9;
+    color: #fff;
+    text-shadow:
+      0 0 30px rgba(255,215,0,0.5),
+      0 0 60px rgba(255,215,0,0.3),
+      6px 6px 0 var(--blood-red),
+      10px 10px 0 rgba(0,0,0,0.5);
+    animation: fadeSlideDown 1s 0.2s ease both;
+    letter-spacing: 4px;
+  }
+
+  .manga-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    color: var(--neon-cyan);
+    margin-top: 20px;
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px var(--neon-cyan);
+    animation: fadeSlideDown 1s 0.4s ease both;
+  }
+
+  .manga-author {
+    margin-top: 40px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    animation: fadeSlideDown 1s 0.6s ease both;
+  }
+  .manga-author span { color: var(--gold); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: bounceDown 2s ease-in-out infinite;
+    color: var(--gold);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    z-index: 10;
+  }
+  .scroll-arrow { font-size: 1.5rem; }
+
+  @keyframes bounceDown {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ========================
+     CHAPTER DIVIDERS
+  ======================== */
+  .chapter-divider {
+    position: relative;
+    padding: 60px 20px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .chapter-divider::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 20%, rgba(255,215,0,0.03) 50%, transparent 80%);
+  }
+
+  .chapter-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 6px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+
+  .chapter-line {
+    width: 200px;
+    height: 2px;
+    margin: 20px auto;
+    position: relative;
+  }
+  .chapter-line::before, .chapter-line::after {
+    content: '';
+    position: absolute;
+    height: 2px;
+    transition: width 0.5s ease;
+  }
+  .chapter-line::before { left: 0; width: 80px; background: var(--gold); }
+  .chapter-line::after { right: 0; width: 80px; background: var(--neon-cyan); }
+
+  /* ========================
+     MANGA PANELS
+  ======================== */
+  .manga-page {
+    padding: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* PANEL TYPES */
+  .panel {
+    background: var(--panel-dark);
+    border: 2px solid transparent;
+    border-radius: 4px;
+    padding: 30px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+  }
+
+  .panel.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .panel-gold {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(255,215,0,0.15), inset 0 0 40px rgba(255,215,0,0.03);
+  }
+  .panel-cyan {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 20px rgba(0,255,255,0.15), inset 0 0 40px rgba(0,255,255,0.03);
+  }
+  .panel-pink {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 20px rgba(255,0,110,0.15), inset 0 0 40px rgba(255,0,110,0.03);
+  }
+  .panel-green {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 20px rgba(57,255,20,0.15), inset 0 0 40px rgba(57,255,20,0.03);
+  }
+  .panel-orange {
+    border-color: var(--neon-orange);
+    box-shadow: 0 0 20px rgba(255,102,0,0.15), inset 0 0 40px rgba(255,102,0,0.03);
+  }
+  .panel-purple {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 20px rgba(191,0,255,0.15), inset 0 0 40px rgba(191,0,255,0.03);
+  }
+
+  /* CORNER DECORATION */
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 40px; height: 40px;
+    border-top: 3px solid var(--gold);
+    border-left: 3px solid var(--gold);
+  }
+  .panel::after {
+    content: '';
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 40px; height: 40px;
+    border-bottom: 3px solid var(--gold);
+    border-right: 3px solid var(--gold);
+  }
+  .panel-cyan::before, .panel-cyan::after { border-color: var(--neon-cyan); }
+  .panel-pink::before, .panel-pink::after { border-color: var(--neon-pink); }
+  .panel-green::before, .panel-green::after { border-color: var(--neon-green); }
+  .panel-orange::before, .panel-orange::after { border-color: var(--neon-orange); }
+  .panel-purple::before, .panel-purple::after { border-color: var(--neon-purple); }
+
+  /* SPEECH BUBBLE */
+  .speech-bubble {
+    background: #fff;
+    color: #111;
+    border-radius: 20px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    position: relative;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: 3px solid #111;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: 30px;
+    border: 10px solid transparent;
+    border-top-color: #111;
+  }
+  .speech-bubble.right::after { left: auto; right: 30px; }
+
+  .speech-bubble.neon {
+    background: var(--panel-dark);
+    color: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+  }
+  .speech-bubble.neon::after { border-top-color: var(--neon-cyan); }
+
+  .speech-bubble.gold {
+    background: var(--panel-dark);
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+  .speech-bubble.gold::after { border-top-color: var(--gold); }
+
+  /* CHARACTER */
+  .character-block {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin: 20px 0;
+  }
+  .character-block.right { flex-direction: row-reverse; }
+
+  .char-avatar {
+    width: 80px; height: 80px;
+    min-width: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem;
+    border: 3px solid var(--gold);
+    background: var(--panel-mid);
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+    animation: avatarPulse 3s ease-in-out infinite;
+  }
+  @keyframes avatarPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(255,215,0,0.3); }
+    50% { box-shadow: 0 0 40px rgba(255,215,0,0.6); }
+  }
+
+  /* PANEL TITLES */
+  .panel-tag {
+    display: inline-block;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    padding: 4px 12px;
+    border: 1px solid currentColor;
+    border-radius: 2px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+  }
+  .tag-gold { color: var(--gold); }
+  .tag-cyan { color: var(--neon-cyan); }
+  .tag-pink { color: var(--neon-pink); }
+  .tag-green { color: var(--neon-green); }
+  .tag-orange { color: var(--neon-orange); }
+  .tag-purple { color: var(--neon-purple); }
+
+  .panel-heading {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    line-height: 1.1;
+  }
+
+  /* BODY TEXT */
+  .panel p {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    color: var(--text-main);
+    margin-bottom: 15px;
+    font-weight: 400;
+  }
+
+  .highlight {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .highlight-cyan { color: var(--neon-cyan); font-weight: 700; }
+  .highlight-pink { color: var(--neon-pink); font-weight: 700; }
+  .highlight-green { color: var(--neon-green); font-weight: 700; }
+  .highlight-orange { color: var(--neon-orange); font-weight: 700; }
+  .highlight-purple { color: var(--neon-purple); font-weight: 700; }
+
+  .etym {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    border-left: 3px solid var(--gold);
+    padding-left: 12px;
+    margin: 10px 0;
+    font-style: italic;
+  }
+
+  /* DEFINITION BOX */
+  .def-box {
+    background: linear-gradient(135deg, rgba(255,215,0,0.05), rgba(0,255,255,0.05));
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .def-box::before {
+    content: '◆ DEFINIÇÃO';
+    position: absolute;
+    top: -10px; left: 20px;
+    background: #050508;
+    padding: 0 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--gold);
+  }
+
+  .concept-box {
+    background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(191,0,255,0.05));
+    border: 1px solid rgba(0,255,255,0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .concept-box::before {
+    content: '◆ CONCEITO-CHAVE';
+    position: absolute;
+    top: -10px; left: 20px;
+    background: #050508;
+    padding: 0 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--neon-cyan);
+  }
+
+  .clinical-box {
+    background: linear-gradient(135deg, rgba(255,0,110,0.05), rgba(255,102,0,0.05));
+    border: 1px solid rgba(255,0,110,0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    position: relative;
+  }
+  .clinical-box::before {
+    content: '◆ CLÍNICA';
+    position: absolute;
+    top: -10px; left: 20px;
+    background: #050508;
+    padding: 0 10px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--neon-pink);
+  }
+
+  /* ANATOMY DIAGRAM ASCII */
+  .diagram-box {
+    background: var(--panel-mid);
+    border: 1px solid rgba(57,255,20,0.3);
+    border-radius: 8px;
+    padding: 25px;
+    margin: 20px 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--neon-green);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+
+  /* STEPS */
+  .steps-list { list-style: none; padding: 0; }
+  .steps-list li {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+  .step-num {
+    min-width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: 2px solid currentColor;
+    flex-shrink: 0;
+  }
+
+  /* PRESSURE TABLE */
+  .pressure-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1rem;
+  }
+  .pressure-table th {
+    background: rgba(255,215,0,0.1);
+    color: var(--gold);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid var(--gold);
+  }
+  .pressure-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-main);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .pressure-table tr:hover td { background: rgba(255,215,0,0.05); }
+
+  /* PHASE CARDS */
+  .phase-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+
+  .phase-card {
+    background: var(--panel-mid);
+    border-radius: 8px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    cursor: default;
+  }
+  .phase-card:hover { transform: translateY(-5px); }
+
+  .phase-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .phase-card.gold::before { background: var(--gold); }
+  .phase-card.cyan::before { background: var(--neon-cyan); }
+  .phase-card.pink::before { background: var(--neon-pink); }
+  .phase-card.green::before { background: var(--neon-green); }
+
+  .phase-card-icon { font-size: 2.5rem; margin-bottom: 15px; }
+  .phase-card-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .phase-card p { font-size: 0.95rem; color: #ccc; line-height: 1.7; }
+
+  /* ACCORDION */
+  .accordion { margin: 10px 0; }
+
+  .accordion-header {
+    background: var(--panel-mid);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 6px;
+    padding: 15px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  .accordion-header:hover {
+    background: rgba(255,215,0,0.1);
+    border-color: var(--gold);
+  }
+  .accordion-header.active {
+    background: rgba(255,215,0,0.1);
+    border-color: var(--gold);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .accordion-arrow {
+    transition: transform 0.3s ease;
+    font-size: 1rem;
+  }
+  .accordion-header.active .accordion-arrow { transform: rotate(180deg); }
+
+  .accordion-body {
+    display: none;
+    background: rgba(255,215,0,0.03);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-top: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    padding: 20px;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text-main);
+  }
+  .accordion-body.open { display: block; }
+
+  /* QUIZ */
+  .quiz-section {
+    background: var(--panel-mid);
+    border: 2px solid var(--neon-purple);
+    border-radius: 12px;
+    padding: 30px;
+    margin: 30px 0;
+    position: relative;
+  }
+  .quiz-section::before {
+    content: '⚡ QUIZ DE BATALHA';
+    position: absolute;
+    top: -14px; left: 30px;
+    background: #050508;
+    padding: 0 15px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    color: var(--neon-purple);
+  }
+
+  .quiz-question {
+    font-family: 'Bangers', cursive;
+    font-size: 1.6rem;
+    letter-spacing: 2px;
+    color: #fff;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+
+  .quiz-options {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-option {
+    background: var(--panel-dark);
+    border: 1px solid rgba(191,0,255,0.3);
+    border-radius: 6px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+    text-align: left;
+    color: var(--text-main);
+  }
+  .quiz-option:hover {
+    border-color: var(--neon-purple);
+    background: rgba(191,0,255,0.1);
+    transform: translateX(5px);
+  }
+  .quiz-option.correct {
+    border-color: var(--neon-green);
+    background: rgba(57,255,20,0.1);
+    color: var(--neon-green);
+  }
+  .quiz-option.wrong {
+    border-color: var(--neon-pink);
+    background: rgba(255,0,110,0.1);
+    color: var(--neon-pink);
+  }
+
+  .quiz-feedback {
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 1rem;
+    line-height: 1.7;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct-fb {
+    background: rgba(57,255,20,0.1);
+    border: 1px solid var(--neon-green);
+    color: var(--neon-green);
+  }
+  .quiz-feedback.wrong-fb {
+    background: rgba(255,0,110,0.1);
+    border: 1px solid var(--neon-pink);
+    color: var(--neon-pink);
+  }
+
+  .quiz-next-btn {
+    background: var(--neon-purple);
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+    display: none;
+  }
+  .quiz-next-btn:hover {
+    background: var(--neon-pink);
+    transform: scale(1.05);
+  }
+  .quiz-next-btn.show { display: block; }
+
+  .quiz-score {
+    font-family: 'Orbitron', monospace;
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    margin-bottom: 15px;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 40px;
+    margin: 20px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), var(--neon-cyan), var(--neon-pink));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 25px;
+    padding: 15px 20px;
+    background: var(--panel-mid);
+    border-radius: 8px;
+    border-left: 3px solid var(--gold);
+    font-size: 1rem;
+    line-height: 1.8;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -29px; top: 20px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid #050508;
+    box-shadow: 0 0 10px var(--gold);
+  }
+
+  .timeline-item:nth-child(2) { border-color: var(--neon-cyan); }
+  .timeline-item:nth-child(2)::before { background: var(--neon-cyan); box-shadow: 0 0 10px var(--neon-cyan); }
+  .timeline-item:nth-child(3) { border-color: var(--neon-pink); }
+  .timeline-item:nth-child(3)::before { background: var(--neon-pink); box-shadow: 0 0 10px var(--neon-pink); }
+  .timeline-item:nth-child(4) { border-color: var(--neon-green); }
+  .timeline-item:nth-child(4)::before { background: var(--neon-green); box-shadow: 0 0 10px var(--neon-green); }
+  .timeline-item:nth-child(5) { border-color: var(--neon-orange); }
+  .timeline-item:nth-child(5)::before { background: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+  .timeline-item:nth-child(6) { border-color: var(--neon-purple); }
+  .timeline-item:nth-child(6)::before { background: var(--neon-purple); box-shadow: 0 0 10px var(--neon-purple); }
+
+  .timeline-time {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .timeline-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+
+  /* MUSCLE TABLE */
+  .muscle-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+  }
+
+  .muscle-card {
+    background: var(--panel-mid);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid rgba(0,255,255,0.2);
+    transition: all 0.3s ease;
+  }
+  .muscle-card:hover {
+    border-color: var(--neon-cyan);
+    background: rgba(0,255,255,0.05);
+    transform: translateY(-3px);
+  }
+
+  .muscle-card-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--neon-cyan);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+  .muscle-card-function {
+    font-size: 0.95rem;
+    color: #ccc;
+    line-height: 1.7;
+  }
+
+  /* NERVE BOX */
+  .nerve-box {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .nerve-item {
+    background: var(--panel-mid);
+    border-radius: 6px;
+    padding: 15px;
+    border-left: 4px solid var(--neon-pink);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .nerve-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--neon-pink);
+    margin-bottom: 5px;
+    letter-spacing: 2px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+    z-index: 1000;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--neon-cyan));
+    width: 0%;
+    transition: width 0.1s ease;
+    box-shadow: 0 0 10px var(--gold);
+  }
+
+  /* NAV DOTS */
+  .nav-dots {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .nav-dot:hover, .nav-dot.active {
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+    transform: scale(1.5);
+  }
+
+  /* FULL SCENE DIVIDERS */
+  .scene-break {
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), var(--neon-cyan), transparent);
+    margin: 50px 0;
+    opacity: 0.5;
+  }
+
+  /* SPEED LINES BG */
+  .speed-section {
+    position: relative;
+    padding: 40px 20px;
+    overflow: hidden;
+  }
+  .speed-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 5px,
+      rgba(255,215,0,0.02) 5px,
+      rgba(255,215,0,0.02) 6px
+    );
+    pointer-events: none;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--panel-dark);
+    border-top: 2px solid var(--gold);
+    padding: 50px 20px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  footer::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center top, rgba(255,215,0,0.05), transparent 70%);
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+    margin-bottom: 10px;
+  }
+  .footer-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    margin-bottom: 5px;
+  }
+  .footer-line {
+    width: 100px;
+    height: 1px;
+    background: var(--gold);
+    margin: 20px auto;
+    opacity: 0.4;
+  }
+  .footer-copy {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* SPARKLE */
+  @keyframes sparkle {
+    0%,100% { opacity: 0; transform: scale(0) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1) rotate(180deg); }
+  }
+  .sparkle {
+    display: inline-block;
+    color: var(--gold);
+    animation: sparkle 2s ease-in-out infinite;
+  }
+  .sparkle:nth-child(2) { animation-delay: 0.5s; }
+  .sparkle:nth-child(3) { animation-delay: 1s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .manga-main-title { font-size: 3.5rem; }
+    .character-block { flex-direction: column !important; }
+    .phase-cards { grid-template-columns: 1fr; }
+    .diagram-box { font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ============================
+     CAPA
+============================ -->
+<section id="cover">
+  <div class="cover-bg-grid"></div>
+  <div class="cover-orb orb1"></div>
+  <div class="cover-orb orb2"></div>
+  <div class="cover-orb orb3"></div>
+
+  <div class="manga-title-wrapper">
+    <div class="manga-vol">DemilMed-UL · Vol.01 · Fisiologia Gastrointestinal</div>
+    <div class="manga-main-title">A JORNADA<br>DO BOLO</div>
+    <div class="manga-subtitle">Cavidade Oral & Deglutição</div>
+
+    <div style="margin-top:30px; display:flex; gap:30px; justify-content:center; flex-wrap:wrap;">
+      <span class="sparkle">✦</span>
+      <span style="font-family:'Share Tech Mono',monospace; font-size:0.85rem; color:var(--text-dim); letter-spacing:2px;">Pressões · Fases · Regulação · Anatomia</span>
+      <span class="sparkle">✦</span>
+    </div>
+
+    <div class="manga-author">Por: <span>DemilMed-UL</span> · Universidade Licungo · 2026 · 2º Ano de Medicina</div>
+  </div>
+
+  <div class="scroll-hint">
+    <span style="font-size:0.7rem;letter-spacing:3px;">COMEÇAR A JORNADA</span>
+    <span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ============================
+     CAPÍTULO 0 — PRÓLOGO
+============================ -->
+<div data-section="0">
+<div class="chapter-divider">
+  <div class="chapter-number">Prólogo</div>
+  <div class="chapter-title" style="color:var(--gold)">O QUE É PRESSÃO?</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    Antes de entrar no mundo da deglutição, precisamos dominar o conceito mais importante — a pressão. Sem ela, nada faz sentido.
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-gold">
+    <div class="panel-tag tag-gold">Prólogo · Conceito Base</div>
+    <div class="panel-heading" style="color:var(--gold)">🤔 O que raios é pressão?</div>
+
+    <div class="character-block">
+      <div class="char-avatar">🧑‍🎓</div>
+      <div style="flex:1">
+        <div class="speech-bubble">
+          Professor, antes de começar quero entender: quando falam em "pressão" no corpo humano… o que isso significa exactamente?
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; margin-bottom:20px"></div>
+
+    <div class="character-block right">
+      <div class="char-avatar" style="border-color:var(--neon-cyan); box-shadow: 0 0 20px rgba(0,255,255,0.3);">🧬</div>
+      <div style="flex:1">
+        <div class="speech-bubble neon right">
+          Excelente pergunta! Vamos do zero absoluto. Pressão é uma força a agir sobre uma área.
+        </div>
+      </div>
+    </div>
+
+    <div class="def-box" style="margin-top:25px;">
+      <p><strong style="color:var(--gold)">Pressão</strong> — do latim <em>"pressura"</em> (acto de pressionar, de comprimir) — é a <span class="highlight">força aplicada perpendicularmente sobre uma superfície, por unidade de área</span>.</p>
+
+      <p style="margin-top:10px; font-family:'Share Tech Mono',monospace; color:var(--neon-cyan); font-size:1.1rem; text-align:center;">
+        P = F ÷ A
+        <span style="display:block; font-size:0.8rem; color:var(--text-dim); margin-top:5px;">(Pressão = Força ÷ Área)</span>
+      </p>
+    </div>
+
+    <p>Imagina que tens um balão cheio de ar. O ar dentro do balão está a <span class="highlight">empurrar as paredes do balão para fora</span>. Essa força de empurrar por cada centímetro quadrado da parede é a pressão.</p>
+
+    <p>Agora imagina o teu estômago. Tem paredes musculares. Quando os músculos se contraem, espremem o interior — criam pressão. Essa pressão move o alimento.</p>
+
+    <div class="concept-box">
+      <p><span class="highlight-cyan">No corpo humano,</span> a pressão é o motor que move tudo: sangue pelas artérias, ar pelos pulmões, alimento pelo tubo digestivo. Onde existe diferença de pressão entre dois pontos, <span class="highlight">o conteúdo flui sempre do ponto de maior pressão para o de menor pressão</span> — lei fundamental da física.</p>
+    </div>
+
+    <div class="etym">📚 Etimologia: "Pressão" → latim <em>pressio</em> (acto de apertar). "Pressão arterial": a força com que o coração aperta o sangue contra as paredes das artérias.</div>
+  </div>
+
+  <div class="panel panel-cyan">
+    <div class="panel-tag tag-cyan">Pressão no TGI</div>
+    <div class="panel-heading" style="color:var(--neon-cyan)">⚡ Pressão no Tubo Digestivo</div>
+
+    <p>O <span class="highlight">TGI — Tubo Gastrointestinal</span> (Gastrointestinal Tract — em inglês) é um tubo muscular que vai da boca ao ânus. É um tubo oco. Tem paredes musculares que se contraem.</p>
+
+    <p>Quando os músculos da parede do TGI se contraem, <span class="highlight-cyan">comprimem o interior do tubo</span> e aumentam a pressão lá dentro. O conteúdo então é empurrado para frente, para uma zona de menor pressão.</p>
+
+    <div class="diagram-box">
+╔═══════════════════════════════════════════════════════╗
+║            PRINCÍPIO DO FLUXO NO TGI                  ║
+╠═══════════════════════════════════════════════════════╣
+║                                                       ║
+║  [ZONA A - Alta Pressão]  →→→→  [ZONA B - Baixa P]   ║
+║      Músculo contraído              Relaxado          ║
+║      P = 40 mmHg                    P = 10 mmHg       ║
+║                                                       ║
+║  ▶ O alimento SEMPRE flui de A → B                    ║
+║  ▶ Nunca ao contrário (excepto no vómito!)            ║
+╚═══════════════════════════════════════════════════════╝
+    </div>
+
+    <div class="clinical-box">
+      <p><strong style="color:var(--neon-pink)">Relevância clínica:</strong> A acalasia é uma doença onde o esfíncter esofágico inferior (uma válvula muscular) não relaxa. Isso cria uma zona de <span class="highlight-pink">alta pressão permanente</span> que o alimento não consegue atravessar. O doente não consegue engolir — disfagia. Compreende agora porque? O alimento não consegue fluir do esófago (maior P) para o estômago (deveria ter menor P mas a válvula não abre).</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     CAPÍTULO 1 — CAVIDADE ORAL
+============================ -->
+<div class="scene-break"></div>
+<div data-section="1">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo I</div>
+  <div class="chapter-title" style="color:var(--neon-cyan)">A CAVIDADE ORAL</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    A arena onde tudo começa — anatomia, estruturas, saliva e a preparação do alimento para a grande jornada.
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-cyan">
+    <div class="panel-tag tag-cyan">Cap.I · Anatomia</div>
+    <div class="panel-heading" style="color:var(--neon-cyan)">🦷 O Palco: A Boca</div>
+
+    <p>A <span class="highlight">cavidade oral</span> — do latim <em>cavitas</em> (espaço oco) + <em>oralis</em> (relativo à boca, do latim <em>os/oris</em>, boca) — é o espaço dentro da boca. É a primeira estação do TGI e onde começa a digestão.</p>
+
+    <div class="diagram-box">
+╔══════════════════════════════════════════════════════════════╗
+║               VISTA LATERAL — CAVIDADE ORAL                 ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║         [Palato duro]──[Palato mole]──[Úvula]               ║
+║               ↑                           ↓                  ║
+║         ┌─────────────────────────────────────┐              ║
+║         │   VESTÍBULO    │    CAVIDADE ORAL    │             ║
+║   Lábios│    (entre       │    PROPRIAMENTE    │ Istmo        ║
+║    ↔    │    dentes e     │      DITA          │ das fauces  ║
+║         │    bochechas)   │  (dentes→istmo)    │ →Faringe    ║
+║         └─────────────────────────────────────┘              ║
+║                         │                                    ║
+║               [LÍNGUA — assoalho da boca]                    ║
+║                         │                                    ║
+║          [Glândulas salivares: parótida, submandibular,      ║
+║           sublingual — despejam saliva aqui dentro]          ║
+╚══════════════════════════════════════════════════════════════╝
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🏛️ LIMITES DA CAVIDADE ORAL — DETALHES</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <ul class="steps-list">
+          <li>
+            <span class="step-num" style="color:var(--gold)">🔼</span>
+            <div><strong style="color:var(--gold)">TECTO (parede superior):</strong> palato duro (parte anterior, formado pelos ossos palatinos e apófise palatina da maxila — duro porque tem osso) + palato mole (parte posterior, sem osso — apenas músculo e mucosa, móvel). O palato separa a boca do nariz.</div>
+          </li>
+          <li>
+            <span class="step-num" style="color:var(--neon-cyan)">🔽</span>
+            <div><strong style="color:var(--neon-cyan)">ASSOALHO (parede inferior):</strong> formado pelo músculo milo-hióideo, sustentado pelo osso hióide. É onde "assenta" a língua.</div>
+          </li>
+          <li>
+            <span class="step-num" style="color:var(--neon-pink)">◀▶</span>
+            <div><strong style="color:var(--neon-pink)">PAREDES LATERAIS:</strong> bochechas (músculos bucinadores revestidos por mucosa). O bucinador é o músculo que usas quando assobias ou sopras.</div>
+          </li>
+          <li>
+            <span class="step-num" style="color:var(--neon-green)">◀</span>
+            <div><strong style="color:var(--neon-green)">PAREDE ANTERIOR:</strong> lábios (músculo orbicular da boca).</div>
+          </li>
+          <li>
+            <span class="step-num" style="color:var(--neon-orange)">▶</span>
+            <div><strong style="color:var(--neon-orange)">PAREDE POSTERIOR:</strong> istmo das fauces — a "porta" que comunica com a faringe. É aqui que a úvula e os arcos palatinos (amígdalas) estão visíveis.</div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-gold">
+    <div class="panel-tag tag-gold">Estruturas Nobres</div>
+    <div class="panel-heading" style="color:var(--gold)">👅 A Língua — O Músculo Mais Versátil</div>
+
+    <p>A <span class="highlight">língua</span> — do latim <em>lingua</em> (língua, linguagem) — é um <span class="highlight">músculo esquelético</span> maciço, altamente móvel, que ocupa quase todo o assoalho da boca. É composta por músculos intrínsecos (que mudam a forma) e extrínsecos (que movem a língua no espaço).</p>
+
+    <div class="muscle-grid">
+      <div class="muscle-card">
+        <div class="muscle-card-name">GENIOGLOSSO</div>
+        <div class="muscle-card-function">Protrai (empurra para fora) e deprime a língua. É o maior músculo da língua — forma a maior parte do corpo. "Genio" = queixo.</div>
+      </div>
+      <div class="muscle-card">
+        <div class="muscle-card-name">HIOGLOSSO</div>
+        <div class="muscle-card-function">Deprime e retrai a língua. Origina no osso hióide. "Hio" = hióide.</div>
+      </div>
+      <div class="muscle-card">
+        <div class="muscle-card-name">ESTILGLOSSO</div>
+        <div class="muscle-card-function">Retrai e eleva os lados da língua — crucial na deglutição. Origina no processo estilóide.</div>
+      </div>
+      <div class="muscle-card">
+        <div class="muscle-card-name">PALATOGLOSSO</div>
+        <div class="muscle-card-function">Eleva a parte posterior da língua E abaixa o palato mole — fecha o istmo. Forma o arco palatoglosso.</div>
+      </div>
+    </div>
+
+    <div class="concept-box">
+      <p><span class="highlight-cyan">Inervação motora da língua:</span> TODOS os músculos da língua são inervados pelo <span class="highlight">nervo hipoglosso (XII par craniano)</span> — excepto o palatoglosso, que é inervado pelo nervo vago (X par). "Hipo" = abaixo + "glosso" = língua (o nervo que passa por baixo da língua).</p>
+    </div>
+
+    <div class="clinical-box">
+      <p><strong style="color:var(--neon-pink)">Sinal clínico importante:</strong> Numa lesão do nervo hipoglosso (XII), ao pedir ao doente que mostre a língua, ela <span class="highlight-pink">desvia para o lado da lesão</span>. Porquê? O genioglosso do lado saudável "empurra" sem oposição do lado lesado.</p>
+    </div>
+  </div>
+
+  <div class="panel panel-green">
+    <div class="panel-tag tag-green">Bioquímica</div>
+    <div class="panel-heading" style="color:var(--neon-green)">💧 A Saliva — O Fluido Mágico</div>
+
+    <div class="character-block">
+      <div class="char-avatar" style="border-color:var(--neon-green); box-shadow:0 0 20px rgba(57,255,20,0.3);">🧪</div>
+      <div style="flex:1">
+        <div class="speech-bubble" style="background:var(--panel-mid); color:var(--neon-green); border-color:var(--neon-green);">
+          A saliva não é apenas "água da boca". É um fluido biológico extraordinariamente complexo com funções que vão muito além da digestão!
+        </div>
+      </div>
+    </div>
+
+    <p>A <span class="highlight-green">saliva</span> — do latim <em>saliva</em> (fluido oral) — é produzida pelas <span class="highlight">glândulas salivares major</span>:</p>
+
+    <ul class="steps-list">
+      <li>
+        <span class="step-num" style="color:var(--gold)">1</span>
+        <div><strong style="color:var(--gold)">Parótida</strong> ("para" + "otos" = ao lado da orelha): as maiores glândulas, produzem saliva principalmente serosa (rica em enzimas). O seu ducto (ducto de Stensen) abre na mucosa da bochecha ao nível do 2º molar superior. Inervadas pelo nervo glossofaríngeo (IX par) via gânglio ótico.</div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-cyan)">2</span>
+        <div><strong style="color:var(--neon-cyan)">Submandibular</strong> (abaixo da mandíbula): mistas (serosas + mucosas). O ducto de Wharton abre no soalho da boca, perto do freio lingual. Inervadas pelo nervo facial (VII par) via gânglio submandibular.</div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-pink)">3</span>
+        <div><strong style="color:var(--neon-pink)">Sublingual</strong> (abaixo da língua): as menores, mucosas. Vários pequenos ductos (ductos de Rivinus). Inervadas pelo nervo facial (VII par) também.</div>
+      </li>
+    </ul>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🔬 COMPOSIÇÃO E FUNÇÕES DA SALIVA — DETALHES</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p style="margin-bottom:15px;">A saliva é composta por <strong style="color:var(--neon-green)">99.5% de água</strong> e 0.5% de solutos orgânicos e inorgânicos. Produzimos entre <strong style="color:var(--gold)">0.5 a 1.5 litros de saliva por dia</strong>.</p>
+
+        <table class="pressure-table">
+          <tr>
+            <th>COMPONENTE</th>
+            <th>FUNÇÃO</th>
+          </tr>
+          <tr>
+            <td><span style="color:var(--gold)">α-amilase salivar (Ptialina)</span></td>
+            <td>Inicia a digestão de amido (polissacáridos) → maltose. Funciona em pH 6.7–7. É inactivada pelo ácido gástrico.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-cyan)">Mucinas (glicoproteínas)</span></td>
+            <td>Lubrificam o alimento, formam o bolo alimentar coeso, protegem a mucosa oral.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-pink)">Lisozima</span></td>
+            <td>Enzima antimicrobiana — destrói a parede celular de bactérias Gram-positivas.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-green)">Imunoglobulina A secretora (IgA-s)</span></td>
+            <td>Defesa imunológica — neutraliza bactérias e vírus antes que penetrem a mucosa.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-orange)">Bicarbonato (HCO₃⁻)</span></td>
+            <td>Tampão pH — neutraliza ácidos produzidos por bactérias, protege os dentes.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-purple)">Hipostatina / Cistatinas</span></td>
+            <td>Inibem crescimento de fungos (Candida) e precipitação de cálcio nos ductos.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--gold)">Lipase lingual</span></td>
+            <td>Inicia digestão de triglicéridos — acção menor na boca, mais activa no estômago.</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-cyan)">EGF (Epidermal Growth Factor)</span></td>
+            <td>Factor de crescimento — promove cicatrização da mucosa oral e gastrointestinal.</td>
+          </tr>
+        </table>
+
+        <div class="clinical-box" style="margin-top:15px;">
+          <p><strong style="color:var(--neon-pink)">Síndrome de Sjögren:</strong> Doença autoimune que destrói as glândulas salivares e lacrimais. O doente tem xerostomia (boca seca) grave, disfagia (dificuldade para engolir), cáries múltiplas (sem a protecção tampão da saliva) e candidíase oral recorrente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-orange">
+    <div class="panel-tag tag-orange">Mastigação</div>
+    <div class="panel-heading" style="color:var(--neon-orange)">💥 A Mastigação — Preparando para Engolir</div>
+
+    <p>A <span class="highlight-orange">mastigação</span> — do latim <em>masticatio</em> (acto de mascar) — é o processo de <span class="highlight">triturar e misturar o alimento com saliva</span>, transformando-o em bolo alimentar (do grego <em>bolos</em> = torrão de terra — uma massa coesa).</p>
+
+    <p>É um acto <span class="highlight-orange">voluntário e reflexo</span>. Voluntário porque podes parar quando quiseres. Reflexo porque, uma vez iniciado, os músculos mastigatórios funcionam de forma semi-automática via arcos reflexos no tronco cerebral.</p>
+
+    <div class="muscle-grid">
+      <div class="muscle-card" style="border-color:rgba(255,102,0,0.3);">
+        <div class="muscle-card-name" style="color:var(--neon-orange)">MASSÉTER</div>
+        <div class="muscle-card-function">Eleva a mandíbula (fecha a boca). O músculo de maior força mastigatória. Podes sentir ao apertar os dentes — é o que salienta na mandíbula lateral.</div>
+      </div>
+      <div class="muscle-card" style="border-color:rgba(255,102,0,0.3);">
+        <div class="muscle-card-name" style="color:var(--neon-orange)">TEMPORAL</div>
+        <div class="muscle-card-function">Eleva E retrai a mandíbula. Em forma de leque na têmpora. Facilmente palpável ao mastigar.</div>
+      </div>
+      <div class="muscle-card" style="border-color:rgba(255,102,0,0.3);">
+        <div class="muscle-card-name" style="color:var(--neon-orange)">PTERIGÓIDEOS</div>
+        <div class="muscle-card-function">Medial: eleva e protrai. Lateral: abre a boca, movimentos laterais (trituração). São os que permitem o movimento de moagem lateral.</div>
+      </div>
+      <div class="muscle-card" style="border-color:rgba(255,102,0,0.3);">
+        <div class="muscle-card-name" style="color:var(--neon-orange)">MILO-HIÓIDEO / DIGÁSTRICO</div>
+        <div class="muscle-card-function">Abaixam a mandíbula (abrem a boca), elevam o osso hióide — papel crucial na deglutição.</div>
+      </div>
+    </div>
+
+    <div class="concept-box">
+      <p>Todos os músculos mastigatórios são inervados pelo <span class="highlight">nervo trigémio (V par craniano)</span> — especificamente o ramo mandibular (V3). "Trigémio" = três gémeos, referindo os três ramos: oftálmico (V1), maxilar (V2) e mandibular (V3).</p>
+    </div>
+
+    <p>A força da mandíbula pode chegar a <span class="highlight-orange">80–150 kg de força</span> nos molares — suficiente para triturar a maioria dos alimentos. O resultado final da mastigação é o <span class="highlight">bolo alimentar</span>: uma massa húmida, amolecida, moldada pela língua, pronta para ser engolida.</p>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     CAPÍTULO 2 — DEGLUTIÇÃO
+============================ -->
+<div class="scene-break"></div>
+<div data-section="2">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo II</div>
+  <div class="chapter-title" style="color:var(--neon-pink)">A DEGLUTIÇÃO</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    O acto mais complexo e perigoso do TGI — porque respiração e digestão partilham o mesmo corredor.
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-pink">
+    <div class="panel-tag tag-pink">Cap.II · Conceito</div>
+    <div class="panel-heading" style="color:var(--neon-pink)">⚡ O que é Deglutição?</div>
+
+    <div class="character-block">
+      <div class="char-avatar" style="border-color:var(--neon-pink); box-shadow:0 0 20px rgba(255,0,110,0.3);">😮</div>
+      <div style="flex:1">
+        <div class="speech-bubble" style="background:var(--panel-mid); color:#fff; border-color:var(--neon-pink);">
+          Espera — a traqueia e o esófago estão lado a lado na garganta? Então como é que o alimento não vai parar nos pulmões toda a vez que engolimos?!
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px;">Exactamente a pergunta certa! A <span class="highlight-pink">deglutição</span> — do latim <em>deglutire</em> (engolir, do prefixo <em>de-</em> + <em>glutire</em> = engolir) — é o processo pelo qual o <span class="highlight">bolo alimentar é transportado da boca para o estômago</span>, passando pela faringe e pelo esófago.</p>
+
+    <p>E sim — a traqueia (via aérea) e o esófago (via digestiva) partilham a mesma entrada: a faringe. A deglutição é uma <span class="highlight-pink">coreografia muscular altamente coordenada</span> que garante que o alimento vai pelo sítio certo — e não para os pulmões.</p>
+
+    <div class="concept-box">
+      <p><span class="highlight-cyan">A deglutição é o único processo fisiológico normal onde a respiração é VOLUNTARIAMENTE interrompida.</span> Durante o acto de engolir, a respiração para por aproximadamente <strong>0.5–1 segundo</strong>. Engolimos cerca de <strong>600 vezes por dia</strong> — maioritariamente em vigília e durante as refeições.</p>
+    </div>
+
+    <p>A deglutição envolve a coordenação de <span class="highlight">mais de 30 músculos</span> e 5 pares cranianos, tudo em menos de 10 segundos. É uma das sequências motoras mais complexas do corpo humano.</p>
+  </div>
+
+  <div class="panel panel-gold">
+    <div class="panel-tag tag-gold">Neurologia</div>
+    <div class="panel-heading" style="color:var(--gold)">🧠 O Centro de Controlo — O CDD</div>
+
+    <p>A deglutição é orquestrada pelo <span class="highlight">CDD — Centro de Deglutição do Tronco Cerebral</span> (Swallowing Center / Deglutition Center — em inglês), localizado no <span class="highlight">bulbo raquidiano</span> (medula oblongada).</p>
+
+    <p>Quando o bolo alimentar toca os receptores sensoriais da faringe → sinal sobe ao bulbo via nervo glossofaríngeo (IX) e vago (X) → bulbo activa o programa motor da deglutição → sinais motores descem de volta aos músculos faringo-esofágicos.</p>
+
+    <div class="def-box">
+      <p><strong style="color:var(--gold)">O CDD é como o director de orquestra:</strong> recebe informação sensorial ("o bolo chegou à faringe"), processa tudo em milissegundos, e lança a sequência motora precisa — <span class="highlight">musculo por musculo, em timing perfeito</span>. Nem precisas pensar nisto. É automático.</p>
+    </div>
+
+    <div class="nerve-box">
+      <div class="nerve-item">
+        <div class="nerve-name">V — TRIGÉMIO</div>
+        Sensibilidade da língua, mucosa oral, dentes. Inervação motora dos músculos mastigatórios e milo-hióideo.
+      </div>
+      <div class="nerve-item">
+        <div class="nerve-name">VII — FACIAL</div>
+        Motor dos músculos faciais (lábios). Sensorial: paladar nos 2/3 anteriores da língua. Secretomotor: glândulas submandibular e sublingual.
+      </div>
+      <div class="nerve-item">
+        <div class="nerve-name">IX — GLOSSOFARÍNGEO</div>
+        Sensorial da faringe posterior (dispara o reflexo de deglutição!), paladar no 1/3 posterior da língua. Motor do músculo estilofaríngeo.
+      </div>
+      <div class="nerve-item">
+        <div class="nerve-name">X — VAGO</div>
+        Motor de TODOS os músculos da faringe (excepto estilofaríngeo) e do esófago. Sensorial da laringe, epiglote. O nervo mais importante na deglutição.
+      </div>
+      <div class="nerve-item">
+        <div class="nerve-name">XII — HIPOGLOSSO</div>
+        Motor de todos os músculos da língua (excepto palatoglosso). Essencial para a fase oral.
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     CAPÍTULO 3 — AS FASES
+============================ -->
+<div class="scene-break"></div>
+<div data-section="3">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo III</div>
+  <div class="chapter-title" style="color:var(--neon-green)">AS 3 FASES</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    A deglutição divide-se em 3 fases distintas. Cada uma tem o seu tempo, os seus músculos, as suas pressões.
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-green">
+    <div class="panel-tag tag-green">Visão Geral</div>
+    <div class="panel-heading" style="color:var(--neon-green)">🗺️ O Mapa da Jornada</div>
+
+    <div class="phase-cards">
+      <div class="phase-card gold">
+        <div class="phase-card-icon">🦷</div>
+        <div class="phase-card-title" style="color:var(--gold)">FASE ORAL</div>
+        <p>Voluntária. A língua molda o bolo e lança-o para a faringe. Dura ~1 segundo.</p>
+      </div>
+      <div class="phase-card cyan">
+        <div class="phase-card-icon">⚡</div>
+        <div class="phase-card-title" style="color:var(--neon-cyan)">FASE FARÍNGEA</div>
+        <p>Involuntária. A mais crítica e rápida — protege a via aérea. Dura ~1 segundo.</p>
+      </div>
+      <div class="phase-card pink">
+        <div class="phase-card-icon">🌊</div>
+        <div class="phase-card-title" style="color:var(--neon-pink)">FASE ESOFÁGICA</div>
+        <p>Involuntária. Peristalse leva o bolo ao estômago. Dura 6–10 segundos.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="panel panel-gold">
+    <div class="panel-tag tag-gold">Fase 1</div>
+    <div class="panel-heading" style="color:var(--gold)">🦷 FASE ORAL — A Grande Preparação</div>
+
+    <p>A fase oral é a única fase <span class="highlight">voluntária</span> da deglutição. Podes escolher quando engoles. Subdivide-se em duas sub-fases:</p>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>📋 SUBFASE PREPARATÓRIA ORAL</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>Esta fase ocorre durante a mastigação. O alimento é triturado, misturado com saliva, e a língua trabalha activamente para <strong style="color:var(--gold)">moldar o bolo alimentar</strong> — uma massa coesa, com forma adequada para ser engolida.</p>
+        <p style="margin-top:10px;">A língua usa os músculos intrínsecos para moldar e os extrínsecos para posicionar o bolo no dorso (parte de cima) da língua, mantendo-o ali enquanto a mastigação continua.</p>
+        <p style="margin-top:10px;"><strong style="color:var(--neon-cyan)">O palatoglosso</strong> fecha o istmo das fauces (a porta para a faringe) — impede que fragmentos de alimento caiam prematuramente para a faringe antes de o bolo estar pronto.</p>
+      </div>
+    </div>
+
+    <div class="accordion" style="margin-top:10px;">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>🚀 SUBFASE DE PROPULSÃO ORAL</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>Quando o bolo está pronto, a língua inicia um movimento ondulante de <strong style="color:var(--gold)">frente para trás</strong>:</p>
+        <ol style="padding-left:20px; line-height:2; margin-top:10px;">
+          <li><strong style="color:#fff;">1.</strong> A <strong>ponta da língua</strong> pressiona contra o palato duro (logo atrás dos dentes incisivos superiores) — âncora anterior.</li>
+          <li><strong style="color:#fff;">2.</strong> Uma <strong>onda de pressão</strong> propaga-se da ponta para a raiz da língua — como espremer um tubo de pasta desde a frente.</li>
+          <li><strong style="color:#fff;">3.</strong> A língua empurra o bolo progressivamente para trás.</li>
+          <li><strong style="color:#fff;">4.</strong> Quando o bolo atinge o <strong>arco palatoglosso</strong> (anterior) da faringe → dispara o reflexo de deglutição → início da fase faríngea.</li>
+        </ol>
+        <div class="clinical-box" style="margin-top:15px;">
+          <p><strong style="color:var(--neon-pink)">Pressão nesta fase:</strong> A língua gera pressões de <strong>~40–60 mmHg</strong> contra o palato para propulsionar o bolo. Em idosos ou com AVC, a força da língua diminui e a propulsão falha — causa de disfagia orofaríngea.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="panel panel-cyan">
+    <div class="panel-tag tag-cyan">Fase 2 · CRÍTICA</div>
+    <div class="panel-heading" style="color:var(--neon-cyan)">⚡ FASE FARÍNGEA — O Momento do Perigo</div>
+
+    <div class="character-block">
+      <div class="char-avatar" style="border-color:var(--blood-red); box-shadow:0 0 20px rgba(204,0,0,0.5);">⚠️</div>
+      <div style="flex:1">
+        <div class="speech-bubble neon right">
+          Esta é a fase mais perigosa! O bolo tem que atravessar a faringe — onde a via aérea e digestiva se cruzam — SEM entrar nos pulmões. Tudo acontece em menos de 1 segundo!
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px;">A fase faríngea é <span class="highlight-cyan">completamente reflexa e involuntária</span> — uma vez disparada, não podes pará-la. É o <span class="highlight">programa motor automático</span> do bulbo em plena acção.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">T = 0 ms — DISPARO DO REFLEXO</div>
+        <div class="timeline-title">Gatilho Sensorial</div>
+        O bolo alimentar toca os receptores da mucosa da faringe posterior e dos pilares palatinos. Sinal sobe via nervo IX (glossofaríngeo) e X (vago) até ao CDD no bulbo. O reflexo dispara.
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">T = 0–100 ms — VEDAÇÃO NASOFARÍNGEA</div>
+        <div class="timeline-title">Fechar a Porta do Nariz</div>
+        O <strong>palato mole eleva-se</strong> e encosta à parede posterior da faringe → fecha a comunicação com a nasofaringe (cavidade nasal). Se isto falhar → alimento sai pelo nariz (regurgitação nasal). O músculo que faz isto: tensor do véu palatino (V par) e elevador do véu palatino (X par).
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">T = 100–300 ms — PROTECÇÃO DA VIA AÉREA</div>
+        <div class="timeline-title">O Momento Crítico — Fechar a Laringe</div>
+        <strong>Três mecanismos simultâneos</strong> protegem a via aérea:<br><br>
+        1. <strong style="color:var(--neon-green)">Dobramento da epiglote</strong> — a epiglote (cartilagem em forma de folha) dobra-se para baixo sobre a abertura da laringe (glote), como uma tampa. É empurrada pela raiz da língua.<br><br>
+        2. <strong style="color:var(--gold)">Adução das cordas vocais</strong> — as cordas vocais fecham-se (aduzem) → fecha a glote. O músculo cricotiróideo e os aritenóideos fazem isto.<br><br>
+        3. <strong style="color:var(--neon-pink)">Elevação laringo-hióidea</strong> — toda a laringe e o hióide sobem (~2 cm) e avançam, afastando-se da trajectória do bolo. Podes sentir isto ao colocar o dedo na maçã de Adão enquanto engoles — ela sobe.
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">T = 200–400 ms — ABERTURA DO EES</div>
+        <div class="timeline-title">A Válvula Abre!</div>
+        O <strong style="color:var(--neon-green)">EES — Esfíncter Esofágico Superior</strong> (Upper Esophageal Sphincter — UES em inglês) <strong>relaxa e abre</strong>. O EES é formado principalmente pelo músculo cricofaríngeo. Em repouso, está SEMPRE contraído (pressão ~60–100 mmHg) para impedir a entrada de ar no esófago e o refluxo. Durante a deglutição, relaxa → pressão cai → abre a passagem.
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">T = 300–700 ms — PERISTALSE FARÍNGEA</div>
+        <div class="timeline-title">O Bolo Atravessa</div>
+        Os músculos constrictores da faringe (superior, médio e inferior) contraem-se sequencialmente de <strong>cima para baixo</strong>, como espremer um tubo. Esta onda peristáltica empurra o bolo através da faringe. Pressões geradas: <strong style="color:var(--gold)">~50–100 mmHg</strong>. Com o EES aberto, o bolo flui facilmente para o esófago.
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-time">T = 700–1000 ms — REABERTURA</div>
+        <div class="timeline-title">Tudo Volta ao Normal</div>
+        O EES fecha-se novamente (cricofaríngeo contrai). A laringe e o hióide descem. A epiglote levanta. As cordas vocais abrem. O palato mole desce. A respiração recomeça. O bolo já está no esófago.
+      </div>
+    </div>
+
+    <div class="clinical-box">
+      <p><strong style="color:var(--neon-pink)">Aspiração:</strong> Se qualquer um destes mecanismos de protecção falhar → <span class="highlight-pink">aspiração</span> — o bolo (ou líquido) entra na laringe e vai para os pulmões. Causa pneumonia aspirativa, potencialmente fatal. Especialmente risco em idosos, doentes com AVC, Parkinson, ou sedados.</p>
+
+      <p style="margin-top:10px;"><strong style="color:var(--neon-pink)">Globo faríngeo:</strong> Sensação de "nó na garganta" sem disfagia real — frequentemente de causa funcional (ansiedade, refluxo). O EES em hipertonia pode contribuir.</p>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="panel panel-purple">
+    <div class="panel-tag tag-purple">Fase 3</div>
+    <div class="panel-heading" style="color:var(--neon-purple)">🌊 FASE ESOFÁGICA — A Longa Viagem</div>
+
+    <p>Uma vez no esófago, o bolo alimentar é conduzido ao estômago por <span class="highlight-purple">peristalse esofágica</span>. O esófago é um tubo muscular de aproximadamente <span class="highlight">25 cm</span> de comprimento que atravessa o tórax e termina no estômago através do diafragma.</p>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)" style="border-color:rgba(191,0,255,0.3); color:var(--neon-purple);">
+        <span>🔬 ESTRUTURA DO ESÓFAGO</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>O esófago tem três camadas musculares distintas por região:</p>
+        <ul style="padding-left:20px; line-height:2; margin-top:10px;">
+          <li><strong style="color:var(--gold)">1/3 superior:</strong> músculo esquelético (voluntário) — pelo nervo vago via neurónios motores do núcleo ambíguo.</li>
+          <li><strong style="color:var(--neon-cyan)">1/3 médio:</strong> músculo misto (esquelético + liso) — transição.</li>
+          <li><strong style="color:var(--neon-pink)">1/3 inferior:</strong> músculo liso (involuntário) — controlado pelo sistema nervoso entérico (SNE) e vago via núcleo motor dorsal.</li>
+        </ul>
+        <p style="margin-top:10px;">O esófago <strong>não tem serosa</strong> (camada externa que outros órgãos têm) — por isso tumores esofágicos estendem-se localmente com mais facilidade.</p>
+      </div>
+    </div>
+
+    <div class="concept-box" style="margin-top:20px;">
+      <p><strong style="color:var(--neon-cyan)">Peristalse Primária:</strong> é a onda de contracção disparada directamente pela deglutição. Começa logo após o EES se fechar e propaga-se ao longo do esófago numa velocidade de <span class="highlight">2–4 cm/segundo</span>. Leva o bolo do esófago ao estômago em 6–10 segundos (sólidos). Líquidos caem por gravidade quase instantaneamente.</p>
+    </div>
+
+    <div class="def-box" style="margin-top:15px;">
+      <p><strong style="color:var(--gold)">Peristalse Secundária:</strong> se o bolo não for completamente limpo pela peristalse primária (fragmentos residuais), receptores de distensão no esófago detectam isso e disparam uma <span class="highlight">nova onda peristáltica local</span>, sem necessidade de nova deglutição. É um mecanismo de limpeza automático.</p>
+    </div>
+
+    <p style="margin-top:20px;">No final do esófago existe o <span class="highlight-purple">EEI — Esfíncter Esofágico Inferior</span> (Lower Esophageal Sphincter — LES em inglês), também chamado cárdia. É uma zona de <span class="highlight">musculatura circular aumentada</span> que, em repouso, mantém uma pressão de <strong>15–35 mmHg</strong> — acima da pressão gástrica — impedindo o refluxo do ácido gástrico para o esófago.</p>
+
+    <div class="clinical-box">
+      <p><strong style="color:var(--neon-pink)">DRGE — Doença do Refluxo Gastroesofágico</strong> (Gastroesophageal Reflux Disease — GERD em inglês): incompetência do EEI → o ácido gástrico reflui para o esófago → azia (pirose), regurgitação ácida. Tratamento: IBPs (Inibidores da Bomba de Protões), ex.: omeprazol. Cronicamente → esófago de Barrett (metaplasia intestinal → risco de adenocarcinoma).</p>
+
+      <p style="margin-top:10px;"><strong style="color:var(--neon-pink)">Acalasia:</strong> falha do relaxamento do EEI durante a deglutição (destruição dos neurónios inibitórios do plexo mientérico). Pressão no EEI mantém-se alta → disfagia grave para sólidos e líquidos. Tratamento: dilatação pneumática ou miotomia de Heller.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     CAPÍTULO 4 — PRESSÕES
+============================ -->
+<div class="scene-break"></div>
+<div data-section="4">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo IV</div>
+  <div class="chapter-title" style="color:var(--gold)">ATLAS DAS PRESSÕES</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    Um mapa completo de todas as pressões do processo de deglutição — da boca ao estômago.
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-gold">
+    <div class="panel-tag tag-gold">Cap.IV · Manometria</div>
+    <div class="panel-heading" style="color:var(--gold)">📊 Manometria — Medir as Pressões</div>
+
+    <p>A <span class="highlight">manometria esofágica</span> — do grego <em>manon</em> (raro, diluído, relacionado a fluidos) + <em>metron</em> (medida) — é o exame que mede as pressões ao longo do esófago durante a deglutição. É o "padrão ouro" para diagnóstico de distúrbios motores esofágicos.</p>
+
+    <p>Um cateter com múltiplos sensores de pressão é introduzido pelo nariz até ao estômago. Pedimos ao doente que engula → registamos as pressões em cada ponto em tempo real.</p>
+
+    <table class="pressure-table">
+      <tr>
+        <th>LOCAL</th>
+        <th>PRESSÃO EM REPOUSO</th>
+        <th>PRESSÃO DURANTE DEGLUTIÇÃO</th>
+        <th>SIGNIFICADO</th>
+      </tr>
+      <tr>
+        <td><span style="color:var(--gold)">Boca/Língua (propulsão)</span></td>
+        <td>~0 mmHg (pressão atmosférica)</td>
+        <td><strong style="color:var(--gold)">40–60 mmHg</strong></td>
+        <td>Força da língua contra palato para propulsionar o bolo</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-cyan)">Nasofaringe (após palato mole subir)</span></td>
+        <td>0 mmHg (comunicação nasal)</td>
+        <td><strong style="color:var(--neon-cyan)">Vedada (~30 mmHg)</strong></td>
+        <td>Palato mole fecha: impede regurgitação nasal</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-pink)">Faringe (onda peristáltica)</span></td>
+        <td>~0 mmHg</td>
+        <td><strong style="color:var(--neon-pink)">50–100 mmHg</strong></td>
+        <td>Constrictores faríngeos empurrando o bolo</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-green)">EES (esfíncter cricofaríngeo)</span></td>
+        <td><strong style="color:var(--blood-red)">60–100 mmHg (contraído)</strong></td>
+        <td><strong style="color:var(--neon-green)">~0–10 mmHg (relaxado)</strong></td>
+        <td>Válvula que em repouso fecha; abre para deixar o bolo passar</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--gold)">Corpo do esófago (peristalse primária)</span></td>
+        <td>~0–5 mmHg (intraesofágica)</td>
+        <td><strong style="color:var(--gold)">30–90 mmHg</strong> (onda propulsiva)</td>
+        <td>Onda peristáltica progressiva levando o bolo</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-purple)">EEI (cárdia)</span></td>
+        <td><strong style="color:var(--blood-red)">15–35 mmHg (contraído)</strong></td>
+        <td><strong style="color:var(--neon-purple)">~0–5 mmHg (relaxa)</strong></td>
+        <td>Válvula anti-refluxo; abre antes da onda peristáltica chegar</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-cyan)">Estômago</span></td>
+        <td>5–10 mmHg (pressão intragástrica)</td>
+        <td>Acomoda o bolo (relaxamento receptivo)</td>
+        <td>Recebe o bolo; fundus relaxa para acomodar</td>
+      </tr>
+    </table>
+
+    <div class="concept-box">
+      <p><strong style="color:var(--neon-cyan)">Lógica das pressões:</strong> nota como os esfíncteres (EES e EEI) têm <span class="highlight">pressão alta em repouso</span> — são "válvulas fechadas" por padrão. Durante a deglutição, <span class="highlight">relaxam activamente</span> (pressão cai para quase zero) para deixar o bolo passar, e logo fecham novamente. Este relaxamento é mediado por neurónios inibitórios (liberando NO — Óxido Nítrico — e VIP — Peptídeo Vasoactivo Intestinal).</p>
+    </div>
+  </div>
+
+  <div class="panel panel-cyan">
+    <div class="panel-tag tag-cyan">Física aplicada</div>
+    <div class="panel-heading" style="color:var(--neon-cyan)">⚖️ O Gradiente de Pressão — A Lei que Governa Tudo</div>
+
+    <p>Voltamos ao princípio fundamental: <span class="highlight">o bolo flui da zona de maior pressão para a zona de menor pressão</span>. Vamos ver como isto se aplica exactamente:</p>
+
+    <div class="diagram-box">
+╔═══════════════════════════════════════════════════════════════════╗
+║           GRADIENTE DE PRESSÃO NA DEGLUTIÇÃO                     ║
+╠═══════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  BOCA           FARINGE      EES          ESÓFAGO    EEI   ESTÔMAGO
+║  60 mmHg  →   70 mmHg   →  0 mmHg  →   30 mmHg  → 0 mmHg → 5 mmHg
+║                                                                   ║
+║  [Língua]    [Constrictores] [ABERTO]  [Peristalse] [ABERTO] [Acomoda]
+║                                                                   ║
+║  ▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶ FLUXO DO BOLO ▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶▶
+║                                                                   ║
+║  NOTA: Os esfíncteres (EES e EEI) relaxam NO MOMENTO CERTO       ║
+║  para criar o gradiente favorável ao fluxo do bolo.              ║
+╚═══════════════════════════════════════════════════════════════════╝
+    </div>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)" style="border-color:rgba(0,255,255,0.3); color:var(--neon-cyan);">
+        <span>🔭 PRESSÃO INTRAESOFÁGICA BASAL — CONCEITO IMPORTANTE</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>O interior do esófago torácico tem pressão ligeiramente <strong style="color:var(--neon-cyan)">negativa</strong> em relação à atmosfera — aproximadamente <strong>-5 mmHg</strong>. Porquê?</p>
+        <p style="margin-top:10px;">Porque o esófago fica no <strong>mediastino torácico</strong> — a cavidade torácica tem pressão negativa durante a inspiração (que "expande" o tórax e "puxa" os pulmões). Isso reflecte-se no esófago.</p>
+        <p style="margin-top:10px;">Esta pressão negativa ajuda de certa forma na <strong>progressão do bolo para baixo</strong>, mas também é o motivo pelo qual o refluxo gastroesofágico pode ser aspirado facilmente se a via aérea não estiver protegida.</p>
+        <div class="def-box" style="margin-top:10px;">
+          <p><strong style="color:var(--gold)">Manometria de Alta Resolução (MAR):</strong> técnica moderna com &gt;36 sensores ao longo do esófago. Gera mapas coloridos de pressão em tempo real (topografia de pressão esofágica — TPE), permitindo classificar distúrbios motores com a Classificação de Chicago (v4.0, 2021) — o standard actual.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     CAPÍTULO 5 — REGULAÇÃO
+============================ -->
+<div class="scene-break"></div>
+<div data-section="5">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo V</div>
+  <div class="chapter-title" style="color:var(--neon-orange)">A REGULAÇÃO</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    Quem controla tudo? Como o sistema nervoso coordena este espectáculo em milissegundos?
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="panel panel-orange">
+    <div class="panel-tag tag-orange">Regulação Neural</div>
+    <div class="panel-heading" style="color:var(--neon-orange)">🧠 O Sistema de Controlo Multinível</div>
+
+    <p>A deglutição é regulada em <span class="highlight-orange">três níveis hierárquicos</span> do sistema nervoso:</p>
+
+    <ul class="steps-list">
+      <li>
+        <span class="step-num" style="color:var(--gold)">1</span>
+        <div>
+          <strong style="color:var(--gold)">CÓRTEX CEREBRAL (Voluntário):</strong> O córtex motor (área 4 de Brodmann) e o córtex pré-motor inicia a deglutição voluntariamente. As regiões são bilaterais, mas com dominância (geralmente esquerda). Lesões corticais → disfagia cortical (frequente no AVC).
+        </div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-cyan)">2</span>
+        <div>
+          <strong style="color:var(--neon-cyan)">TRONCO CEREBRAL — BULBO (Centro de Deglutição):</strong> O CDD (Centro de Deglutição) no bulbo é o verdadeiro "computador" da deglutição. Recebe inputs sensoriais e emite a sequência motora precisa. Tem dois grupos de neurónios: <em>Grupo Dorsal</em> (sensorial, núcleo do trato solitário — NTS) e <em>Grupo Ventral</em> (motor, núcleo ambíguo — para músculos faríngeos/esofágicos). O NTS "recebe o sinal", o núcleo ambíguo "dá as ordens".
+        </div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-pink)">3</span>
+        <div>
+          <strong style="color:var(--neon-pink)">SISTEMA NERVOSO ENTÉRICO (SNE):</strong> o esófago inferior e o EEI são controlados pelo plexo mientérico de Auerbach (entre as camadas musculares) — o "segundo cérebro" do intestino. Funciona de forma semi-autónoma, coordenando a peristalse mesmo sem input do SNC. Usa acetilcolina (excitatório) e NO/VIP (inibitório para relaxar os esfíncteres).
+        </div>
+      </li>
+    </ul>
+
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAccordion(this)" style="border-color:rgba(255,102,0,0.3); color:var(--neon-orange);">
+        <span>🔬 NEUROTRANSMISSORES DA DEGLUTIÇÃO</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <table class="pressure-table">
+          <tr>
+            <th>NEUROTRANSMISSOR</th>
+            <th>LOCAL DE ACÇÃO</th>
+            <th>EFEITO</th>
+          </tr>
+          <tr>
+            <td><span style="color:var(--gold)">Acetilcolina (ACh)</span></td>
+            <td>Plexo mientérico → músculos lisos</td>
+            <td>Excitação — contracção muscular → peristalse</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-cyan)">NO (Óxido Nítrico)</span></td>
+            <td>EES, EEI, músculo liso esofágico</td>
+            <td>Inibição — relaxamento dos esfíncteres</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-pink)">VIP (Peptídeo Vasoactivo Intestinal)</span></td>
+            <td>EEI principalmente</td>
+            <td>Inibição — relaxamento do EEI durante deglutição</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-green)">Substância P</span></td>
+            <td>Neurónios sensoriais da faringe</td>
+            <td>Mediador do reflexo de deglutição</td>
+          </tr>
+          <tr>
+            <td><span style="color:var(--neon-orange)">Serotonina (5-HT)</span></td>
+            <td>Células enterocromafins do esófago</td>
+            <td>Modulação da motilidade e sensibilidade</td>
+          </tr>
+        </table>
+        <div class="clinical-box" style="margin-top:15px;">
+          <p><strong style="color:var(--neon-pink)">Acalasia revisitada:</strong> Na acalasia, há destruição selectiva dos neurónios inibitórios (que liberam NO e VIP) do plexo mientérico esofágico → o EEI não relaxa → obstrução funcional. O agente etiológico mais estudado é o <em>Trypanosoma cruzi</em> (Doença de Chagas) em países endémicos como o Brasil e Moçambique.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-purple">
+    <div class="panel-tag tag-purple">Regulação Hormonal</div>
+    <div class="panel-heading" style="color:var(--neon-purple)">💊 Factores Hormonais e Farmacológicos</div>
+
+    <p>Além do controlo neural, vários <span class="highlight-purple">hormonas e fármacos</span> modulam a pressão do EEI e a motilidade esofágica:</p>
+
+    <table class="pressure-table">
+      <tr>
+        <th>FACTOR</th>
+        <th>EFEITO NO EEI</th>
+        <th>RELEVÂNCIA CLÍNICA</th>
+      </tr>
+      <tr>
+        <td><span style="color:var(--gold)">Gastrina</span></td>
+        <td>↑ Pressão (aumenta)</td>
+        <td>Produzida pelo estômago; protege contra refluxo pós-prandial</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-cyan)">Motilina</span></td>
+        <td>↑ Pressão</td>
+        <td>Regulação do jejum; eritromicina age como agonista da motilina → procinético</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-pink)">Secretina, CCK</span></td>
+        <td>↓ Pressão (diminui)</td>
+        <td>Libertadas na digestão intestinal; reductores fisiológicos da pressão do EEI</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-green)">Progesterona</span></td>
+        <td>↓ Pressão</td>
+        <td>Explica a azia intensa na gravidez (progesterona elevada → EEI hipotónico)</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-orange)">Tabaco / Álcool</span></td>
+        <td>↓ Pressão</td>
+        <td>Factores de risco para DRGE — diminuem a competência do EEI</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--neon-purple)">BZD / Opiáceos</span></td>
+        <td>↓ Pressão + ↓ peristalse</td>
+        <td>Sedação farmacológica predispõe à aspiração e à disfagia</td>
+      </tr>
+      <tr>
+        <td><span style="color:var(--gold)">Metoclopramida / Domperidona</span></td>
+        <td>↑ Pressão</td>
+        <td>Procinéticos antagonistas da dopamina — usados no tratamento de DRGE e gastroparesia</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="panel panel-pink">
+    <div class="panel-tag tag-pink">Reflexos</div>
+    <div class="panel-heading" style="color:var(--neon-pink)">⚡ Os Reflexos Protetores da Via Aérea</div>
+
+    <p>Além do reflexo de deglutição, existem outros reflexos que protegem a via aérea durante e após a deglutição:</p>
+
+    <ul class="steps-list">
+      <li>
+        <span class="step-num" style="color:var(--neon-pink)">1</span>
+        <div>
+          <strong style="color:var(--neon-pink)">REFLEXO DE TOSSE:</strong> Se algum material atinge a laringe ou a traqueia, o reflexo de tosse expele-o com forças de até 160 km/h. Mediado pelo nervo vago (X). Suprimido por anestesia geral → risco de aspiração silenciosa.
+        </div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-orange)">2</span>
+        <div>
+          <strong style="color:var(--neon-orange)">REFLEXO DE GAG (náusea/ânsia):</strong> estímulo da faringe posterior → contracção faríngea protectora. Útil na avaliação neurológica (testa integridade do IX e X pares). Em doentes com AVC sem reflexo de gag → alto risco de aspiração.
+        </div>
+      </li>
+      <li>
+        <span class="step-num" style="color:var(--neon-green)">3</span>
+        <div>
+          <strong style="color:var(--neon-green)">APNEIA DE DEGLUTIÇÃO:</strong> inibição activa do centro respiratório durante a fase faríngea. O bulbo activamente para a respiração ~0.5–1 segundo. Se a respiração estiver comprometida (DPOC, insuficiência respiratória) → coordenação deglutição-respiração perturbada → maior risco de aspiração.
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     QUIZ SECTION
+============================ -->
+<div class="scene-break"></div>
+<div data-section="6">
+<div class="chapter-divider">
+  <div class="chapter-number">Capítulo Final</div>
+  <div class="chapter-title" style="color:var(--neon-purple)">QUIZ DE BATALHA</div>
+  <div class="chapter-line"></div>
+  <p style="color:var(--text-dim); font-size:1.05rem; max-width:600px; margin:0 auto;">
+    Tens o conhecimento? Prova!
+  </p>
+</div>
+
+<div class="manga-page">
+  <div class="quiz-section" id="quizSection">
+    <div class="quiz-score" id="quizScore">PONTUAÇÃO: 0 / 0</div>
+    <div class="quiz-question" id="quizQuestion"></div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuestion()">PRÓXIMA QUESTÃO ▶</button>
+    <div id="quizComplete" style="display:none; text-align:center;">
+      <div style="font-family:'Bangers',cursive; font-size:3rem; color:var(--gold); margin:20px 0;">JORNADA CONCLUÍDA!</div>
+      <div id="finalScore" style="font-family:'Orbitron',monospace; font-size:1.2rem; color:var(--neon-cyan); margin-bottom:20px;"></div>
+      <button onclick="restartQuiz()" style="background:var(--gold); color:#000; border:none; padding:15px 40px; border-radius:6px; font-family:'Orbitron',monospace; font-size:0.9rem; letter-spacing:3px; cursor:pointer; font-weight:700;">JOGAR NOVAMENTE</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================
+     RODAPÉ
+============================ -->
+<div class="scene-break"></div>
+<footer>
+  <div style="position:relative; z-index:1;">
+    <div class="footer-logo">DemilMed-UL</div>
+    <div class="footer-sub">UNIVERSIDADE LICUNGO · UL</div>
+    <div class="footer-sub">2º ANO DE MEDICINA · 2026</div>
+    <div class="footer-line"></div>
+    <div class="footer-sub" style="color:var(--gold); margin-bottom:5px;">A Jornada do Bolo — Cavidade Oral & Deglutição</div>
+    <div class="footer-sub">Fisiologia Gastrointestinal · Vol. I</div>
+    <div class="footer-line"></div>
+    <div class="footer-copy">© 2026 DemilMed-UL · Todos os direitos reservados · Frederico Emílio | Demil</div>
+    <div class="footer-copy" style="margin-top:5px; color:rgba(255,215,0,0.3);">
+      Conteúdo baseado em: Guyton & Hall (Tratado de Fisiologia Médica, 14ª ed.) · Robbins & Cotran (Patologia, 10ª ed.) · Gray's Anatomy · Harrison's Principles of Internal Medicine
+    </div>
+  </div>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const cursorDot = document.getElementById('cursorDot');
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    cursorDot.style.left = e.clientX + 'px';
+    cursorDot.style.top = e.clientY + 'px';
+  });
+
+  // PROGRESS BAR
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrolled / total) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  // NAV DOTS
+  const sections = document.querySelectorAll('[data-section]');
+  const navDots = document.getElementById('navDots');
+  const sectionNames = ['Prólogo','Cap.I','Cap.II','Cap.III','Cap.IV','Cap.V','Quiz'];
+
+  sections.forEach((section, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.title = sectionNames[i];
+    dot.addEventListener('click', () => {
+      section.scrollIntoView({ behavior: 'smooth' });
+    });
+    navDots.appendChild(dot);
+  });
+
+  const updateNavDots = () => {
+    const dots = navDots.querySelectorAll('.nav-dot');
+    sections.forEach((section, i) => {
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[i]) dots[i].classList.add('active');
+      }
+    });
+  };
+  window.addEventListener('scroll', updateNavDots);
+
+  // SCROLL REVEAL
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.panel, .timeline-item').forEach(el => {
+    observer.observe(el);
+  });
+
+  // ACCORDION
+  function toggleAccordion(header) {
+    const body = header.nextElementSibling;
+    const isOpen = body.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('open'));
+    document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+    // Open this one if it was closed
+    if (!isOpen) {
+      body.classList.add('open');
+      header.classList.add('active');
+    }
+  }
+
+  // QUIZ
+  const quizData = [
+    {
+      q: "Qual é a definição correcta de PRESSÃO em contexto fisiológico?",
+      opts: [
+        "A quantidade de fluido que passa por um tubo por unidade de tempo",
+        "A força aplicada perpendicularmente sobre uma superfície por unidade de área",
+        "A velocidade com que os músculos se contraem",
+        "A diferença de temperatura entre dois compartimentos"
+      ],
+      correct: 1,
+      fb: "✅ Correcto! Pressão = Força ÷ Área. No TGI, os músculos ao se contraírem criam força sobre a superfície interna do tubo, gerando pressão que empurra o conteúdo para frente."
+    },
+    {
+      q: "A língua é inervada principalmente por qual nervo craniano?",
+      opts: [
+        "Nervo Trigémio (V par)",
+        "Nervo Facial (VII par)",
+        "Nervo Hipoglosso (XII par)",
+        "Nervo Glossofaríngeo (IX par)"
+      ],
+      correct: 2,
+      fb: "✅ Excelente! O XII par (hipoglosso) inerva TODOS os músculos da língua, excepto o palatoglosso (inervado pelo X par — vago). Lesão do XII → língua desvia para o lado da lesão."
+    },
+    {
+      q: "Durante a fase FARÍNGEA da deglutição, qual é a ORDEM CORRECTA dos eventos de protecção da via aérea?",
+      opts: [
+        "EES abre → palato mole sobe → epiglote fecha → cordas vocais aduzem",
+        "Palato mole sobe → epiglote fecha + cordas aduzem + laringe sobe → EES abre",
+        "Cordas vocais aduzem → EES abre → palato mole sobe → epiglote fecha",
+        "Laringe sobe → EES fecha → palato mole desce → epiglote abre"
+      ],
+      correct: 1,
+      fb: "✅ Perfeito! A sequência correcta: 1º o palato mole fecha a nasofaringe, 2º a laringe sobe + epiglote dobra + cordas aduzem (simultâneos, protegem a via aérea), 3º o EES relaxa e abre. Só então o bolo pode passar com segurança."
+    },
+    {
+      q: "O EEI (Esfíncter Esofágico Inferior) em repouso tem qual pressão aproximada?",
+      opts: [
+        "0–5 mmHg (quase sem pressão — está relaxado)",
+        "15–35 mmHg (pressão acima da gástrica — está contraído)",
+        "60–100 mmHg (muito contraído como o EES)",
+        "-5 mmHg (pressão negativa como o esófago torácico)"
+      ],
+      correct: 1,
+      fb: "✅ Correcto! O EEI mantém 15–35 mmHg em repouso — acima da pressão intragástrica (5–10 mmHg) — criando uma barreira anti-refluxo. Na DRGE, o EEI está hipotónico (<10 mmHg) → ácido gástrico reflui."
+    },
+    {
+      q: "Na Doença de Chagas, qual é o mecanismo da disfagia esofágica?",
+      opts: [
+        "Destruição dos neurónios excitatórios → EEI hipotenso → refluxo",
+        "Destruição dos neurónios inibitórios (NO/VIP) do plexo mientérico → EEI não relaxa → acalasia",
+        "Inflamação da mucosa esofágica → estenose mecânica",
+        "Comprometimento do nervo hipoglosso → fraqueza da língua"
+      ],
+      correct: 1,
+      fb: "✅ Magistral! O T. cruzi destrói selectivamente os neurónios inibitórios (que libertam NO e VIP) do plexo mientérico. Sem inibição → o EEI permanece contraído → não relaxa na deglutição → acalasia chagásica. Muito relevante em Moçambique e no Brasil."
+    },
+    {
+      q: "A azia (pirrose) que muitas grávidas sentem está relacionada principalmente com:",
+      opts: [
+        "O feto comprimindo mecanicamente o esófago de baixo para cima",
+        "A progesterona elevada na gravidez que diminui a pressão do EEI",
+        "A HCG aumentando a produção de ácido gástrico",
+        "O aumento do volume sanguíneo que dilata as veias esofágicas"
+      ],
+      correct: 1,
+      fb: "✅ Excelente raciocínio! A progesterona (hormona dominante na gravidez) relaxa o músculo liso, incluindo o EEI → pressão cai → refluxo ácido → azia. A compressão mecânica pelo feto no 3º trimestre agrava ainda mais o problema."
+    },
+    {
+      q: "Qual é a duração aproximada da fase FARÍNGEA da deglutição?",
+      opts: [
+        "5–10 minutos",
+        "10–30 segundos",
+        "Menos de 1 segundo (~0.5–1s)",
+        "2–3 segundos"
+      ],
+      correct: 2,
+      fb: "✅ Correcto! A fase faríngea dura menos de 1 segundo — é a mais rápida e a mais crítica. Nesse tempo, o bulbo coordena a contracção de mais de 30 músculos para proteger a via aérea e propulsionar o bolo. A fase esofágica dura 6–10 segundos."
+    },
+    {
+      q: "O 'sinal do desvio da língua' em neurologia indica lesão de qual nervo?",
+      opts: [
+        "Nervo Facial (VII par) — que inerva os músculos mímicos",
+        "Nervo Hipoglosso (XII par) — a língua desvia para o lado da lesão",
+        "Nervo Vago (X par) — causando também rouquidão",
+        "Nervo Trigémio (V par) — com perda de sensibilidade facial"
+      ],
+      correct: 1,
+      fb: "✅ Perfeito! Lesão do XII par (hipoglosso) → o genioglosso do lado saudável empurra a língua sem oposição do lado afectado → língua desvia PARA o lado da lesão. Sinal importante no exame neurológico, especialmente em AVCs do tronco cerebral."
+    }
+  ];
+
+  let currentQ = 0, score = 0, answered = false;
+
+  function loadQuestion() {
+    const q = quizData[currentQ];
+    document.getElementById('quizQuestion').textContent = q.q;
+    document.getElementById('quizScore').textContent = `QUESTÃO ${currentQ+1}/${quizData.length} · PONTUAÇÃO: ${score}`;
+
+    const optsEl = document.getElementById('quizOptions');
+    optsEl.innerHTML = '';
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-option';
+      btn.innerHTML = `<strong style="color:var(--neon-purple)">${String.fromCharCode(65+i)})</strong> ${opt}`;
+      btn.onclick = () => selectAnswer(i);
+      optsEl.appendChild(btn);
+    });
+
+    document.getElementById('quizFeedback').className = 'quiz-feedback';
+    document.getElementById('quizFeedback').textContent = '';
+    document.getElementById('quizNextBtn').className = 'quiz-next-btn';
+    answered = false;
+  }
+
+  function selectAnswer(selected) {
+    if (answered) return;
+    answered = true;
+
+    const q = quizData[currentQ];
+    const opts = document.querySelectorAll('.quiz-option');
+    opts[q.correct].classList.add('correct');
+
+    const fb = document.getElementById('quizFeedback');
+    if (selected === q.correct) {
+      score++;
+      opts[selected].classList.add('correct');
+      fb.textContent = q.fb;
+      fb.className = 'quiz-feedback correct-fb show';
+    } else {
+      opts[selected].classList.add('wrong');
+      fb.textContent = '❌ Não exactamente. ' + q.fb;
+      fb.className = 'quiz-feedback wrong-fb show';
+    }
+
+    document.getElementById('quizScore').textContent = `QUESTÃO ${currentQ+1}/${quizData.length} · PONTUAÇÃO: ${score}`;
+    document.getElementById('quizNextBtn').className = 'quiz-next-btn show';
+  }
+
+  function nextQuestion() {
+    currentQ++;
+    if (currentQ < quizData.length) {
+      loadQuestion();
+    } else {
+      document.getElementById('quizSection').querySelector('.quiz-question').style.display = 'none';
+      document.getElementById('quizOptions').style.display = 'none';
+      document.getElementById('quizFeedback').style.display = 'none';
+      document.getElementById('quizNextBtn').style.display = 'none';
+      document.getElementById('quizComplete').style.display = 'block';
+      const pct = Math.round((score/quizData.length)*100);
+      let msg = pct >= 80 ? '🏆 MESTRE DA DEGLUTIÇÃO!' : pct >= 60 ? '⚡ BOM RESULTADO — CONTINUA!' : '📚 RELÊ O MATERIAL E TENTA NOVAMENTE!';
+      document.getElementById('finalScore').textContent = `${score}/${quizData.length} (${pct}%) — ${msg}`;
+    }
+  }
+
+  function restartQuiz() {
+    currentQ = 0; score = 0;
+    document.getElementById('quizSection').querySelector('.quiz-question').style.display = '';
+    document.getElementById('quizOptions').style.display = '';
+    document.getElementById('quizFeedback').style.display = '';
+    document.getElementById('quizComplete').style.display = 'none';
+    loadQuestion();
+  }
+
+  loadQuestion();
+
+  // STAGGERED TIMELINE REVEAL
+  const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 150);
+        timelineObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.timeline-item').forEach(el => {
+    timelineObserver.observe(el);
+  });
+</script>
+</body>
+</html>

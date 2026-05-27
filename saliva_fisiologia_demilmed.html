@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Saga da Saliva — DemilMed-UL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --bg: #050810;
+    --bg2: #0a0f1e;
+    --bg3: #0d1428;
+    --panel: #0e1530;
+    --cyan: #00e5ff;
+    --pink: #ff2d78;
+    --yellow: #ffe600;
+    --green: #00ff9d;
+    --purple: #b44dff;
+    --orange: #ff7c00;
+    --white: #f0f4ff;
+    --dim: #7b8ab8;
+    --border: rgba(0,229,255,0.18);
+    --glow-cyan: 0 0 20px #00e5ff88, 0 0 60px #00e5ff33;
+    --glow-pink: 0 0 20px #ff2d7888, 0 0 60px #ff2d7833;
+    --glow-yellow: 0 0 20px #ffe60088, 0 0 60px #ffe60033;
+    --glow-green: 0 0 20px #00ff9d88;
+    --glow-purple: 0 0 20px #b44dff88;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 14px; height: 14px;
+    background: var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    top:0; left:0;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.1s, background 0.2s;
+    box-shadow: var(--glow-cyan);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 2px solid var(--cyan);
+    border-radius: 50%;
+    position: fixed;
+    top:0; left:0;
+    pointer-events: none;
+    z-index: 99998;
+    opacity: 0.5;
+    transition: transform 0.25s ease, border-color 0.2s;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+  /* ===== COVER ===== */
+  #cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 40%, #0a1a3a 0%, #050810 70%);
+  }
+
+  .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 15%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 40%, #00e5ff 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 20%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 75% 60%, #ff2d78 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 10%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 20% 70%, #ffe600 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 85%, #fff 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 45%, #00ff9d 0%, transparent 100%),
+      radial-gradient(1px 1px at 85% 80%, #fff 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 15% 55%, #b44dff 0%, transparent 100%);
+    animation: twinkle 4s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; }
+  }
+
+  .cover-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--cyan);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .cover-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.6s forwards;
+  }
+
+  .cover-title span.t1 { color: var(--white); }
+  .cover-title span.t2 {
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    display: block;
+  }
+  .cover-title span.t3 {
+    color: var(--pink);
+    text-shadow: var(--glow-pink);
+    font-size: 0.6em;
+    display: block;
+  }
+
+  .cover-sub {
+    font-size: 1.15rem;
+    color: var(--dim);
+    text-align: center;
+    max-width: 600px;
+    margin-bottom: 50px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.9s forwards;
+  }
+
+  .cover-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: 2px solid var(--cyan);
+    color: var(--cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 3px;
+    padding: 16px 40px;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    opacity: 0;
+    animation: fadeUp 0.9s 1.2s forwards;
+    cursor: none;
+  }
+  .cover-btn::before {
+    content: '';
+    position: absolute;
+    left: -100%; top: 0;
+    width: 100%; height: 100%;
+    background: var(--cyan);
+    opacity: 0.15;
+    transition: left 0.3s;
+  }
+  .cover-btn:hover::before { left: 0; }
+  .cover-btn:hover {
+    box-shadow: var(--glow-cyan);
+    color: #fff;
+  }
+
+  .cover-deco {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .deco1 { width: 400px; height: 400px; background: rgba(0,229,255,0.06); top: -100px; left: -100px; }
+  .deco2 { width: 300px; height: 300px; background: rgba(255,45,120,0.07); bottom: 0; right: -80px; }
+  .deco3 { width: 200px; height: 200px; background: rgba(180,77,255,0.08); top: 50%; left: 60%; }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 2s forwards;
+  }
+  .scroll-hint span {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--dim);
+  }
+  .scroll-arrow {
+    width: 24px; height: 24px;
+    border-right: 2px solid var(--cyan);
+    border-bottom: 2px solid var(--cyan);
+    transform: rotate(45deg);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%,100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(6px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
+  }
+
+  /* ===== NAV ===== */
+  #nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    transform: translateY(-100%);
+    transition: transform 0.4s;
+  }
+  #nav.visible { transform: translateY(0); }
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+  }
+  .nav-chapters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .nav-ch {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--dim);
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: none;
+  }
+  .nav-ch:hover {
+    color: var(--cyan);
+    border-color: var(--cyan);
+  }
+  .nav-ch.active {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: rgba(0,229,255,0.08);
+  }
+
+  /* ===== PROGRESS BAR ===== */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink), var(--yellow));
+    width: 0%;
+    z-index: 1001;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--cyan);
+  }
+
+  /* ===== CHAPTER SECTIONS ===== */
+  .chapter {
+    min-height: 100vh;
+    padding: 100px 0 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chapter-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* Chapter number badge */
+  .ch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .ch-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--dim);
+  }
+  .ch-line { width: 60px; height: 1px; background: var(--border); }
+
+  .ch-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.6rem);
+    font-weight: 900;
+    margin-bottom: 12px;
+    line-height: 1.15;
+  }
+
+  .ch-subtitle {
+    font-size: 1rem;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    font-family: 'Orbitron', monospace;
+  }
+
+  /* ===== MANGA PANEL LAYOUTS ===== */
+  .manga-grid {
+    display: grid;
+    gap: 2px;
+    margin: 40px 0;
+  }
+  .manga-2col { grid-template-columns: 1fr 1fr; }
+  .manga-3col { grid-template-columns: 2fr 1fr; }
+  .manga-rev { grid-template-columns: 1fr 2fr; }
+  .manga-full { grid-template-columns: 1fr; }
+
+  .manga-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 28px 26px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .manga-panel:hover {
+    border-color: rgba(0,229,255,0.4);
+    transform: translateY(-2px);
+  }
+  .manga-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+  .panel-cyan::before { background: var(--cyan); box-shadow: var(--glow-cyan); }
+  .panel-pink::before { background: var(--pink); box-shadow: var(--glow-pink); }
+  .panel-yellow::before { background: var(--yellow); box-shadow: var(--glow-yellow); }
+  .panel-green::before { background: var(--green); box-shadow: var(--glow-green); }
+  .panel-purple::before { background: var(--purple); box-shadow: var(--glow-purple); }
+  .panel-orange::before { background: var(--orange); }
+
+  .panel-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .tag-cyan { color: var(--cyan); }
+  .tag-pink { color: var(--pink); }
+  .tag-yellow { color: var(--yellow); }
+  .tag-green { color: var(--green); }
+  .tag-purple { color: var(--purple); }
+  .tag-orange { color: var(--orange); }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.3;
+  }
+
+  .panel-text {
+    color: #c5cfe8;
+    font-size: 0.97rem;
+    line-height: 1.9;
+  }
+
+  /* ===== SPEECH BUBBLES ===== */
+  .speech-section {
+    display: flex;
+    gap: 24px;
+    margin: 40px 0;
+    align-items: flex-start;
+  }
+  .speech-section.right { flex-direction: row-reverse; }
+
+  .char-avatar {
+    width: 80px;
+    min-width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    flex-shrink: 0;
+    border: 2px solid;
+    position: relative;
+  }
+  .avatar-cyan { background: rgba(0,229,255,0.1); border-color: var(--cyan); color: var(--cyan); box-shadow: var(--glow-cyan); }
+  .avatar-pink { background: rgba(255,45,120,0.1); border-color: var(--pink); color: var(--pink); box-shadow: var(--glow-pink); }
+  .avatar-yellow { background: rgba(255,230,0,0.1); border-color: var(--yellow); color: var(--yellow); box-shadow: var(--glow-yellow); }
+  .avatar-green { background: rgba(0,255,157,0.1); border-color: var(--green); color: var(--green); box-shadow: var(--glow-green); }
+
+  .speech-bubble {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 24px;
+    position: relative;
+    flex: 1;
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    width: 0; height: 0;
+  }
+  .speech-section:not(.right) .speech-bubble::before {
+    left: -12px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 12px solid var(--border);
+  }
+  .speech-section.right .speech-bubble::before {
+    right: -12px;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 12px solid var(--border);
+  }
+  .char-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .speech-bubble p {
+    color: #d0d9f0;
+    font-size: 0.95rem;
+    line-height: 1.85;
+  }
+
+  /* ===== HIGHLIGHT BOXES ===== */
+  .highlight-box {
+    border: 1px solid;
+    padding: 24px 28px;
+    margin: 30px 0;
+    position: relative;
+    border-radius: 2px;
+  }
+  .hb-cyan { border-color: var(--cyan); background: rgba(0,229,255,0.04); }
+  .hb-pink { border-color: var(--pink); background: rgba(255,45,120,0.04); }
+  .hb-yellow { border-color: var(--yellow); background: rgba(255,230,0,0.04); }
+  .hb-green { border-color: var(--green); background: rgba(0,255,157,0.04); }
+  .hb-purple { border-color: var(--purple); background: rgba(180,77,255,0.04); }
+
+  .hb-label {
+    position: absolute;
+    top: -11px;
+    left: 20px;
+    background: var(--bg);
+    padding: 0 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .hb-cyan .hb-label { color: var(--cyan); }
+  .hb-pink .hb-label { color: var(--pink); }
+  .hb-yellow .hb-label { color: var(--yellow); }
+  .hb-green .hb-label { color: var(--green); }
+  .hb-purple .hb-label { color: var(--purple); }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    padding-left: 32px;
+    margin: 30px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(180deg, var(--cyan), var(--pink), var(--yellow), var(--green));
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s;
+  }
+  .tl-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .tl-dot {
+    position: absolute;
+    left: -28px;
+    top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--cyan);
+  }
+  .tl-step {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--cyan);
+    margin-bottom: 8px;
+  }
+  .tl-content {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    border-radius: 2px;
+  }
+  .tl-content strong {
+    display: block;
+    color: var(--white);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+  .tl-content p {
+    color: #b8c4de;
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+
+  /* ===== ANATOMY DIAGRAM (SVG-based) ===== */
+  .diagram-container {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    margin: 30px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== MOLECULE CARD ===== */
+  .mol-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 30px 0;
+  }
+  .mol-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 2px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mol-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan), var(--pink));
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  .mol-card:hover::after { transform: scaleX(1); }
+  .mol-card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.4); }
+  .mol-icon {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .mol-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--cyan);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .mol-desc {
+    color: #9aabcf;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+
+  /* ===== STAT BARS ===== */
+  .stat-bar-container {
+    margin: 10px 0;
+  }
+  .stat-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--dim);
+    margin-bottom: 6px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .stat-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .stat-fill {
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 1.2s ease;
+  }
+
+  /* ===== SECTION DIVIDER ===== */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 60px 0;
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .divider-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* ===== PROSE ===== */
+  .prose {
+    color: #c5cfe8;
+    font-size: 1rem;
+    line-height: 2;
+    margin-bottom: 24px;
+  }
+  .prose strong { color: var(--white); }
+  .prose .hl-cyan { color: var(--cyan); font-weight: 600; }
+  .prose .hl-pink { color: var(--pink); font-weight: 600; }
+  .prose .hl-yellow { color: var(--yellow); font-weight: 600; }
+  .prose .hl-green { color: var(--green); font-weight: 600; }
+  .prose .hl-purple { color: var(--purple); font-weight: 600; }
+  .prose .hl-orange { color: var(--orange); font-weight: 600; }
+
+  .etym {
+    display: inline;
+    color: var(--yellow);
+    font-style: italic;
+    font-size: 0.9em;
+  }
+
+  /* ===== CHAPTER BACKGROUNDS ===== */
+  #ch1 { background: radial-gradient(ellipse at 20% 50%, rgba(0,229,255,0.04) 0%, transparent 60%), var(--bg); }
+  #ch2 { background: radial-gradient(ellipse at 80% 30%, rgba(255,45,120,0.04) 0%, transparent 60%), var(--bg2); }
+  #ch3 { background: radial-gradient(ellipse at 30% 70%, rgba(180,77,255,0.04) 0%, transparent 60%), var(--bg); }
+  #ch4 { background: radial-gradient(ellipse at 70% 50%, rgba(0,255,157,0.04) 0%, transparent 60%), var(--bg2); }
+  #ch5 { background: radial-gradient(ellipse at 40% 30%, rgba(255,124,0,0.04) 0%, transparent 60%), var(--bg); }
+  #ch6 { background: radial-gradient(ellipse at 60% 70%, rgba(255,230,0,0.04) 0%, transparent 60%), var(--bg2); }
+  #ch7 { background: radial-gradient(ellipse at 50% 50%, rgba(0,229,255,0.05) 0%, transparent 60%), var(--bg); }
+  #ch8 { background: radial-gradient(ellipse at 30% 40%, rgba(255,45,120,0.05) 0%, transparent 60%), var(--bg2); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #020408;
+    border-top: 1px solid var(--border);
+    padding: 60px 40px 40px;
+    text-align: center;
+  }
+  .footer-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+    margin-bottom: 16px;
+    letter-spacing: 4px;
+  }
+  .footer-info {
+    color: var(--dim);
+    font-size: 0.9rem;
+    line-height: 2;
+    letter-spacing: 1px;
+  }
+  .footer-line {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    margin: 24px auto;
+  }
+  .footer-copy {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #3a4060;
+    margin-top: 30px;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* pulsing dot */
+  @keyframes pulse {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.6; }
+  }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+
+  /* floating animation */
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .float { animation: float 3s ease-in-out infinite; }
+
+  /* glitch effect */
+  @keyframes glitch {
+    0%,100% { text-shadow: 2px 0 var(--pink), -2px 0 var(--cyan); }
+    25% { text-shadow: -2px 0 var(--pink), 2px 0 var(--cyan); }
+    50% { text-shadow: 2px 2px var(--pink), -2px -2px var(--cyan); }
+    75% { text-shadow: -2px 2px var(--pink), 2px -2px var(--cyan); }
+  }
+  .glitch { animation: glitch 3s ease-in-out infinite; }
+
+  /* scan line */
+  .scanline {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,255,0.01) 2px,
+      rgba(0,229,255,0.01) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 700px) {
+    .manga-2col, .manga-3col, .manga-rev { grid-template-columns: 1fr; }
+    .speech-section { flex-direction: column; }
+    .speech-section.right { flex-direction: column; }
+    #nav { padding: 12px 20px; }
+    .nav-chapters { display: none; }
+    .chapter-inner { padding: 0 18px; }
+    .cover-title { font-size: 1.8rem; }
+  }
+
+  /* interactive accordion */
+  .accordion-item {
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    overflow: hidden;
+    border-radius: 2px;
+  }
+  .accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: none;
+    background: var(--panel);
+    transition: background 0.2s;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--white);
+  }
+  .accordion-header:hover { background: rgba(0,229,255,0.07); }
+  .accordion-arrow {
+    color: var(--cyan);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+  }
+  .accordion-item.open .accordion-arrow { transform: rotate(180deg); }
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    padding: 0 20px;
+    color: #b8c4de;
+    font-size: 0.93rem;
+    line-height: 1.85;
+  }
+  .accordion-item.open .accordion-body {
+    max-height: 600px;
+    padding: 20px;
+  }
+
+  /* quiz */
+  .quiz-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 30px;
+    border-radius: 4px;
+    margin: 30px 0;
+  }
+  .quiz-q {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .quiz-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quiz-opt {
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    color: #c5cfe8;
+    font-size: 0.9rem;
+    cursor: none;
+    transition: all 0.2s;
+    border-radius: 2px;
+    text-align: left;
+  }
+  .quiz-opt:hover { border-color: var(--cyan); background: rgba(0,229,255,0.05); color: var(--white); }
+  .quiz-opt.correct { border-color: var(--green); background: rgba(0,255,157,0.1); color: var(--green); }
+  .quiz-opt.wrong { border-color: var(--pink); background: rgba(255,45,120,0.1); color: var(--pink); }
+  .quiz-feedback {
+    margin-top: 16px;
+    font-size: 0.92rem;
+    line-height: 1.8;
+    display: none;
+    padding: 14px;
+    border-radius: 2px;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(0,255,157,0.07); color: var(--green); border: 1px solid var(--green); }
+  .quiz-feedback.err { background: rgba(255,45,120,0.07); color: var(--pink); border: 1px solid var(--pink); }
+
+  /* number highlight */
+  .num-big {
+    font-family: 'Orbitron', monospace;
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    display: block;
+    margin-bottom: 6px;
+  }
+  .num-label {
+    font-size: 0.8rem;
+    color: var(--dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* grid of numbers */
+  .num-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin: 30px 0;
+  }
+  .num-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 2px;
+    text-align: center;
+  }
+
+  /* drop cap */
+  .dropcap::first-letter {
+    font-family: 'Orbitron', monospace;
+    font-size: 4.5em;
+    font-weight: 900;
+    float: left;
+    line-height: 0.75;
+    margin-right: 12px;
+    color: var(--cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  /* ===== SCROLLSPY DOTS ===== */
+  #spy {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 900;
+  }
+  .spy-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--dim);
+    border: 1px solid transparent;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .spy-dot.active {
+    background: var(--cyan);
+    box-shadow: var(--glow-cyan);
+    transform: scale(1.4);
+  }
+
+  /* grid horizontal scroll for tables */
+  .htable {
+    overflow-x: auto;
+    margin: 20px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+  }
+  th {
+    background: rgba(0,229,255,0.08);
+    color: var(--cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--cyan);
+  }
+  td {
+    padding: 12px 18px;
+    color: #bbc9e8;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:hover td { background: rgba(0,229,255,0.03); }
+
+</style>
+</head>
+<body>
+
+<!-- cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- progress bar -->
+<div id="progress"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">DEMILMED·UL</div>
+  <div class="nav-chapters">
+    <a href="#ch1" class="nav-ch">I · O QUE É SALIVA</a>
+    <a href="#ch2" class="nav-ch">II · AS GLÂNDULAS</a>
+    <a href="#ch3" class="nav-ch">III · COMO É PRODUZIDA</a>
+    <a href="#ch4" class="nav-ch">IV · O QUE CONTÉM</a>
+    <a href="#ch5" class="nav-ch">V · COMO É CONTROLADA</a>
+    <a href="#ch6" class="nav-ch">VI · FUNÇÕES</a>
+    <a href="#ch7" class="nav-ch">VII · CLÍNICA</a>
+    <a href="#ch8" class="nav-ch">VIII · QUIZ</a>
+  </div>
+</nav>
+
+<!-- SCROLLSPY -->
+<div id="spy">
+  <div class="spy-dot active" data-target="cover"></div>
+  <div class="spy-dot" data-target="ch1"></div>
+  <div class="spy-dot" data-target="ch2"></div>
+  <div class="spy-dot" data-target="ch3"></div>
+  <div class="spy-dot" data-target="ch4"></div>
+  <div class="spy-dot" data-target="ch5"></div>
+  <div class="spy-dot" data-target="ch6"></div>
+  <div class="spy-dot" data-target="ch7"></div>
+  <div class="spy-dot" data-target="ch8"></div>
+</div>
+
+<!-- ============================================================ COVER -->
+<section id="cover">
+  <div class="stars"></div>
+  <div class="cover-deco deco1"></div>
+  <div class="cover-deco deco2"></div>
+  <div class="cover-deco deco3"></div>
+  <div class="scanline"></div>
+
+  <p class="cover-label">DemilMed-UL · 2026 · Fisiologia</p>
+
+  <h1 class="cover-title">
+    <span class="t1">A SAGA DE</span>
+    <span class="t2 glitch">SALIVA PRIME</span>
+    <span class="t3">Fisiologia da Saliva · Do Átomo ao Leito Clínico</span>
+  </h1>
+
+  <p class="cover-sub">
+    Uma viagem épica pelo universo microscópico da boca humana — onde moléculas batalham, células secretam e a vida começa a digerir.
+  </p>
+
+  <a href="#ch1" class="cover-btn">
+    ▶ Iniciar Jornada
+  </a>
+
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ============================================================ CH1: O QUE É SALIVA -->
+<section class="chapter" id="ch1">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO I</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--cyan)">O que é a Saliva?</h2>
+    <p class="ch-subtitle reveal">Origens · Definição · Visão Geral</p>
+
+    <div class="speech-section reveal">
+      <div class="char-avatar avatar-cyan float">💧</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-cyan">NARRATOR · SALIVA PRIME</span>
+        <p>Eu sou a <strong>Saliva</strong> — um fluido misterioso que habita a sua boca há toda a vida, mas que quase ninguém realmente conhece. Sou mais do que simples "cuspe". Sou um coquetel molecular de precisão cirúrgica, produzido por fábricas biológicas chamadas <strong>glândulas salivares</strong>, e libertado na cavidade oral com uma missão clara: preparar o alimento para ser digerido, proteger a mucosa, combater bactérias e muito mais.</p>
+      </div>
+    </div>
+
+    <div class="prose reveal dropcap">
+      Antes de mergulharmos no detalhe, vamos começar pelo básico. <span class="hl-cyan">O que é um fluido?</span> Um fluido é qualquer substância que não tem forma fixa — que flui, que se adapta ao recipiente que o contém. A água é um fluido. O sangue é um fluido. E a saliva também é um fluido — um fluido aquoso, ligeiramente viscoso, que preenche os espaços da boca.
+    </div>
+
+    <div class="prose reveal">
+      Agora: <span class="hl-yellow">onde é produzida?</span> A saliva não aparece do nada. Ela é fabricada em estruturas especializadas chamadas <span class="etym">"glândulas"</span> — do latim <em>glans, glandis</em> (bolota, nódulo). As glândulas são órgãos ou grupos de células que têm como função principal <strong>produzir e secretar substâncias</strong> — podem ser hormonas, enzimas, muco ou outros fluidos.
+    </div>
+
+    <div class="manga-grid manga-2col reveal">
+      <div class="manga-panel panel-cyan">
+        <span class="panel-tag tag-cyan">Etimologia</span>
+        <div class="panel-title">De onde vem a palavra "Saliva"?</div>
+        <p class="panel-text">Do latim <em>salīva</em>, cujo significado original era exatamente isso: saliva, cuspe. Já os gregos chamavam de <em>ptýalon</em> (πτύαλον) — que ainda hoje aparece no nome da enzima <strong>ptialina</strong>, um tipo de amílase salivar. Quando vires a palavra "ptial-", pensa sempre em saliva.</p>
+      </div>
+      <div class="manga-panel panel-pink">
+        <span class="panel-tag tag-pink">Dado Rápido</span>
+        <div class="panel-title">Quanto produzimos por dia?</div>
+        <p class="panel-text">Um ser humano adulto saudável produz entre <strong>0,5 e 1,5 litros de saliva por dia</strong>. Isso equivale a encher entre 2 a 6 garrafas de água de 250 ml. Durante toda a vida, produzimos dezenas de milhares de litros — o suficiente para encher uma piscina pequena!</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-cyan reveal">
+      <span class="hb-label">Definição Formal</span>
+      <p class="panel-text">A <strong>saliva</strong> é uma secreção exócrina aquosa, produzida pelas glândulas salivares maiores e menores, composta por água (aproximadamente 99%), eletrólitos, mucinas, enzimas, proteínas antibacterianas, imunoglobulinas e outros componentes orgânicos e inorgânicos. Tem pH entre 6,2 e 7,4, e fluxo médio em repouso de 0,3–0,4 mL/min, podendo atingir 4–5 mL/min durante estimulação máxima.</p>
+    </div>
+
+    <div class="num-grid reveal">
+      <div class="num-card">
+        <span class="num-big" style="color:var(--cyan)">99%</span>
+        <span class="num-label">água</span>
+      </div>
+      <div class="num-card">
+        <span class="num-big" style="color:var(--pink)">1L</span>
+        <span class="num-label">volume médio/dia</span>
+      </div>
+      <div class="num-card">
+        <span class="num-big" style="color:var(--yellow)">6,8</span>
+        <span class="num-label">pH médio</span>
+      </div>
+      <div class="num-card">
+        <span class="num-big" style="color:var(--green)">3</span>
+        <span class="num-label">pares glândulas maiores</span>
+      </div>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================ CH2: AS GLÂNDULAS -->
+<section class="chapter" id="ch2">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO II</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--pink)">Os Três Guerreiros<br>e os Seus Exércitos</h2>
+    <p class="ch-subtitle reveal">Anatomia das Glândulas Salivares</p>
+
+    <div class="speech-section right reveal">
+      <div class="char-avatar avatar-pink float">⚔️</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-pink">GENERAL PARÓTIDA</span>
+        <p>Somos três generais — <strong>Parótida</strong>, <strong>Submandibular</strong> e <strong>Sublingual</strong> — e cada um comanda um exército de células secretoras. Mas não trabalhamos sozinhos: há centenas de pequenas glândulas menores espalhadas por toda a mucosa oral que também contribuem para a batalha.</p>
+      </div>
+    </div>
+
+    <div class="prose reveal">
+      As glândulas salivares dividem-se em dois grupos: as <span class="hl-cyan">glândulas maiores</span> — pares simétricas, grandes o suficiente para serem visíveis em exame — e as <span class="hl-pink">glândulas menores</span> — pequeninas, numerosas (700 a 1000), distribuídas pela mucosa dos lábios, bochechas, palato, língua e orofaringe.
+    </div>
+
+    <div class="manga-grid manga-3col reveal">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div class="manga-panel panel-cyan" style="flex:1">
+          <span class="panel-tag tag-cyan">Glândula Maior #1</span>
+          <div class="panel-title">Glândula Parótida</div>
+          <p class="panel-text"><span class="etym">Para-</span> (junto a) + <span class="etym">-otis</span> (ouvido, grego). "A que fica junto ao ouvido." É a <strong>maior</strong> das três glândulas salivares. Localiza-se na face lateral da face, à frente e abaixo do pavilhão auricular, entre o músculo masseter e o ramo da mandíbula. O seu ducto — <strong>ducto de Stensen</strong> (ou ducto parotídeo) — atravessa o músculo bucinador e abre na mucosa da bochecha, ao nível do 2º molar superior.</p>
+        </div>
+        <div class="manga-panel panel-pink" style="flex:1">
+          <span class="panel-tag tag-pink">Glândula Maior #2</span>
+          <div class="panel-title">Glândula Submandibular</div>
+          <p class="panel-text"><span class="etym">Sub-</span> (abaixo) + <span class="etym">mandibula</span> (mandíbula). Localizada no assoalho da boca, no triângulo submandibular. É a <strong>segunda maior</strong>. O seu ducto — <strong>ducto de Wharton</strong> — passa medialmente e abre na carúncula sublingual (pequena saliência rosada na base da língua). Responsável por ~70% da saliva em repouso.</p>
+        </div>
+      </div>
+      <div class="manga-panel panel-purple">
+        <span class="panel-tag tag-purple">Glândula Maior #3</span>
+        <div class="panel-title">Glândula Sublingual</div>
+        <p class="panel-text"><span class="etym">Sub-</span> (abaixo) + <span class="etym">lingua</span> (língua). É a <strong>menor</strong> das três maiores. Localiza-se no assoalho anterior da boca, abaixo da língua. Não tem um único ducto principal — drena por múltiplos ductos (ductos de Rivinus), que podem fundir-se no <strong>ducto de Bartholin</strong>. Produz principalmente muco espesso e saliva altamente viscosa.</p>
+      </div>
+    </div>
+
+    <!-- SVG DIAGRAM -->
+    <div class="diagram-container reveal">
+      <p class="panel-tag tag-cyan">DIAGRAMA ANATÓMICO · Vista Lateral Esquemática</p>
+      <svg viewBox="0 0 600 380" style="width:100%;max-width:600px;display:block;margin:0 auto">
+        <defs>
+          <filter id="glow-c">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <!-- Head silhouette -->
+        <ellipse cx="300" cy="180" rx="160" ry="170" fill="none" stroke="#1a2540" stroke-width="2"/>
+        <!-- Ear -->
+        <ellipse cx="460" cy="190" rx="18" ry="30" fill="none" stroke="#2a3560" stroke-width="1.5"/>
+        <!-- Jaw -->
+        <path d="M180 280 Q300 360 420 280" fill="none" stroke="#2a3560" stroke-width="1.5"/>
+        <!-- Eye -->
+        <ellipse cx="340" cy="130" rx="18" ry="10" fill="#0a1020" stroke="#2a3560" stroke-width="1"/>
+        <!-- Nose -->
+        <path d="M300 150 Q295 175 285 180 Q300 185 315 180 Q305 175 300 150" fill="#0a1020" stroke="#2a3560" stroke-width="1"/>
+        <!-- Mouth -->
+        <path d="M270 230 Q300 250 330 230" fill="none" stroke="#2a3560" stroke-width="1.5"/>
+
+        <!-- PAROTID -->
+        <ellipse cx="430" cy="210" rx="45" ry="35" fill="rgba(0,229,255,0.12)" stroke="#00e5ff" stroke-width="2" filter="url(#glow-c)"/>
+        <text x="430" y="205" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="9">PARÓTIDA</text>
+        <text x="430" y="218" text-anchor="middle" fill="#00e5ff" font-family="Orbitron" font-size="7">~25% saliva</text>
+        <!-- Stensen's duct -->
+        <line x1="390" y1="210" x2="310" y2="228" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="310" cy="228" r="4" fill="#00e5ff" class="pulse"/>
+        <text x="350" y="215" fill="#00e5ff" font-family="Orbitron" font-size="7">Ducto de Stensen</text>
+
+        <!-- SUBMANDIBULAR -->
+        <ellipse cx="280" cy="310" rx="40" ry="28" fill="rgba(255,45,120,0.12)" stroke="#ff2d78" stroke-width="2" filter="url(#glow-c)"/>
+        <text x="280" y="306" text-anchor="middle" fill="#ff2d78" font-family="Orbitron" font-size="8">SUBMANDIBULAR</text>
+        <text x="280" y="318" text-anchor="middle" fill="#ff2d78" font-family="Orbitron" font-size="7">~70% saliva</text>
+        <!-- Wharton's duct -->
+        <line x1="280" y1="283" x2="285" y2="248" stroke="#ff2d78" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <circle cx="285" cy="248" r="4" fill="#ff2d78" class="pulse"/>
+        <text x="248" y="265" fill="#ff2d78" font-family="Orbitron" font-size="7">Ducto de Wharton</text>
+
+        <!-- SUBLINGUAL -->
+        <ellipse cx="300" cy="258" rx="22" ry="14" fill="rgba(180,77,255,0.15)" stroke="#b44dff" stroke-width="2" filter="url(#glow-c)"/>
+        <text x="300" y="254" text-anchor="middle" fill="#b44dff" font-family="Orbitron" font-size="7">SUBLINGUAL</text>
+        <text x="300" y="265" text-anchor="middle" fill="#b44dff" font-family="Orbitron" font-size="6">~5% saliva</text>
+
+        <!-- Labels -->
+        <text x="30" y="30" fill="#3a4060" font-family="Orbitron" font-size="8">Vista Lateral Esquemática — Sem escala</text>
+      </svg>
+      <p style="color:var(--dim);font-size:0.82rem;margin-top:12px;text-align:center">Representação esquemática. Os círculos a pulsar (●) indicam os orifícios de abertura dos ductos.</p>
+    </div>
+
+    <div class="prose reveal">
+      Cada glândula é composta por dois tipos de células secretoras chamadas <span class="hl-cyan">ácinos</span> — do latim <em>acinus</em> (baga de uva). Os ácinos são os "laboratórios" onde a saliva é produzida. Existem dois tipos:
+    </div>
+
+    <div class="manga-grid manga-2col reveal">
+      <div class="manga-panel panel-cyan">
+        <span class="panel-tag tag-cyan">Tipo 1 de Ácino</span>
+        <div class="panel-title">Ácino Seroso</div>
+        <p class="panel-text"><em>Sero-</em> (do latim serum, soro). Células piramidais com núcleo basal redondo, repletas de grânulos de zimogénio (precursores de enzimas). Produzem uma secreção <strong>fluida, aquosa, rica em enzimas</strong> — especialmente a <strong>amilase salivar (ptialina)</strong>. A parótida é quase exclusivamente serosa. Aspeto histológico: células com citoplasma basofílico basal (ribossomas) e eosinofílico apical (grânulos de zimogénio).</p>
+      </div>
+      <div class="manga-panel panel-purple">
+        <span class="panel-tag tag-purple">Tipo 2 de Ácino</span>
+        <div class="panel-title">Ácino Mucoso</div>
+        <p class="panel-text"><em>Muco-</em> (do latim mucus, muco). Células com núcleo achatado e basal, citoplasma claro com vacúolos de mucina. Produzem uma secreção <strong>viscosa, espessa, rica em mucinas</strong> (glicoproteínas). A sublingual é predominantemente mucosa. Histologicamente: núcleos comprimidos na periferia, citoplasma pálido "fantasma" com mucigénio.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-yellow reveal">
+      <span class="hb-label">Conceito-Chave · Células Mioepiteliais</span>
+      <p class="panel-text">Envolvendo os ácinos existe um tipo especial de célula: a <strong>célula mioepitelial</strong> (<em>myo-</em> = músculo, grego). Estas células têm características tanto de músculo liso quanto de epitélio — têm filamentos de actina e miosina e conseguem <strong>contrair-se</strong>, espremendo o ácino como quem aperta um tubo de pasta de dentes, e assim impulsionando a saliva para os ductos. São activadas principalmente pelo sistema nervoso autónomo.</p>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH3: COMO É PRODUZIDA -->
+<section class="chapter" id="ch3">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO III</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--purple)">A Fábrica Molecular</h2>
+    <p class="ch-subtitle reveal">Mecanismos de Secreção · Dois Estágios · Transporte Iónico</p>
+
+    <div class="speech-section reveal">
+      <div class="char-avatar avatar-yellow float">⚗️</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-yellow">CIENTISTA ÁCINO</span>
+        <p>A produção de saliva não é magia — é <strong>físico-química pura</strong>. Tudo começa com iões (partículas com carga elétrica) que se movem de um lado para outro das membranas celulares. Para entender isso, precisas primeiro de saber o que é <strong>pressão osmótica</strong> e o que é um <strong>gradiente</strong>.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-purple reveal">
+      <span class="hb-label">Base · O que é Pressão Osmótica?</span>
+      <p class="panel-text">Imagina dois compartimentos separados por uma membrana com furos pequenos (permeável à água, mas não a sais). Se num lado tens mais sal do que no outro, a água move-se automaticamente do lado com menos sal para o lado com mais sal — tentando equilibrar as concentrações. Esta força que "puxa" a água chama-se <strong>pressão osmótica</strong> (<em>osmos</em>, grego = impulso). Quanto mais solutos num compartimento, maior a sua pressão osmótica e mais água é atraída para lá.</p>
+    </div>
+
+    <div class="highlight-box hb-cyan reveal">
+      <span class="hb-label">Base · O que é um Gradiente?</span>
+      <p class="panel-text">Um <strong>gradiente</strong> (do latim <em>gradiens</em> = que caminha) é simplesmente uma diferença de concentração, pressão ou voltagem entre dois pontos. Como uma bola no topo de uma colina que rola para baixo — os iões e moléculas movem-se "morro abaixo", ou seja, de onde estão em maior concentração para onde estão em menor concentração. Esse movimento espontâneo (sem gastar energia) chama-se <strong>difusão passiva</strong>. Quando é preciso energia (ATP) para mover algo "morro acima", chama-se <strong>transporte ativo</strong>.</p>
+    </div>
+
+    <div class="prose reveal">
+      A secreção salivar ocorre em <span class="hl-cyan">dois estágios sequenciais</span>: primeiro nos ácinos, depois nos ductos. O modelo clássico é o chamado <strong>Modelo de Dois Estágios de Thaysen et al.</strong> (1954, refinado posteriormente).
+    </div>
+
+    <div class="timeline reveal">
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--cyan)"></div>
+        <div class="tl-step">ESTÁGIO 1 — NOS ÁCINOS</div>
+        <div class="tl-content">
+          <strong>Produção do Fluido Primário (saliva primária)</strong>
+          <p>Os ácinos produzem um fluido com composição muito semelhante ao <strong>plasma sanguíneo</strong> (o líquido do sangue sem células). Isso significa que é <strong>isotónico</strong> — tem a mesma concentração de solutos que o sangue (~300 mOsm/L). Os principais iões presentes são: Na⁺ (sódio), Cl⁻ (cloreto), K⁺ (potássio) e HCO₃⁻ (bicarbonato). Como isso acontece? As células acinares captam ativamente Cl⁻ do sangue, acumulam-no no interior celular, depois libertam-no para o lúmen (interior do ácino). O Na⁺ segue passivamente através de junções intercelulares. A água segue osmoticamente — é "puxada" pelos solutos para dentro do lúmen. Resultado: fluido aquoso e isotónico entra no ácino.</p>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--pink)"></div>
+        <div class="tl-step">ESTÁGIO 2 — NOS DUCTOS</div>
+        <div class="tl-content">
+          <strong>Modificação do Fluido (saliva definitiva)</strong>
+          <p>Enquanto o fluido percorre os ductos estriados e excretores, as <strong>células ductais</strong> modificam ativamente a sua composição. Dois eventos fundamentais: (1) As células ductais <strong>reabsorvem Na⁺ e Cl⁻</strong> do lúmen de volta para o sangue — usando bombas Na⁺/K⁺-ATPase e canais de Cl⁻. (2) As células ductais <strong>secretam K⁺ e HCO₃⁻</strong> para o lúmen. A membrana ductal é <strong>impermeável à água</strong> — a água NÃO consegue seguir os iões. Resultado: a saliva final torna-se <strong>hipotónica</strong> (muito mais diluída que o plasma) — com baixo Na⁺ e Cl⁻, mas com K⁺ e HCO₃⁻ elevados comparados ao plasma. Esta é a saliva que chega à boca.</p>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--yellow)"></div>
+        <div class="tl-step">DETALHE CRÍTICO</div>
+        <div class="tl-content">
+          <strong>Por que a saliva é hipotónica?</strong>
+          <p>Porque os ductos reabsorvem mais iões do que secretam, e a água não acompanha. Esta hipotonicidade é fundamental: garante que a saliva não "roube" água da mucosa oral, e que as suas enzimas funcionem em condições óptimas de concentração iónica. Além disso, o HCO₃⁻ secretado pelos ductos é o responsável pelo pH ligeiramente básico da saliva — essencial para neutralizar ácidos produzidos por bactérias na placa dentária e proteger o esmalte.</p>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--green)"></div>
+        <div class="tl-step">DETALHE MOLECULAR · A BOMBA</div>
+        <div class="tl-content">
+          <strong>Na⁺/K⁺-ATPase: O Motor da Saliva</strong>
+          <p>Toda esta maravilha depende de uma proteína transmembranar chamada <strong>Na⁺/K⁺-ATPase</strong> (Adenosine Triphosphatase — Adenosinatrifosfatase). Esta bomba consome <strong>ATP</strong> (Adenosine Triphosphate — Trifosfato de Adenosina) — a moeda energética da célula — para bombear 3 iões Na⁺ para fora da célula e 2 iões K⁺ para dentro, a cada ciclo. Isso cria gradientes que permitem todo o transporte iónico secundário. Sem ATP, sem saliva. Sem saliva... a boca morre.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- IONIC TABLE -->
+    <div class="htable reveal">
+      <p class="panel-tag tag-cyan" style="margin-bottom:14px">Composição Iónica Comparada</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Ião</th>
+            <th>Plasma (mEq/L)</th>
+            <th>Saliva Primária</th>
+            <th>Saliva Final (repouso)</th>
+            <th>Significado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Na⁺ (Sódio)</td><td>140</td><td>~140</td><td>15–50</td><td>Reabsorvido nos ductos</td></tr>
+          <tr><td>Cl⁻ (Cloreto)</td><td>105</td><td>~105</td><td>15–40</td><td>Reabsorvido nos ductos</td></tr>
+          <tr><td>K⁺ (Potássio)</td><td>4–5</td><td>~4–5</td><td>20–40</td><td>Secretado nos ductos</td></tr>
+          <tr><td>HCO₃⁻ (Bicarbonato)</td><td>24</td><td>~24</td><td>15–80</td><td>Secretado; ↑ com estimulação</td></tr>
+          <tr><td>Ca²⁺ (Cálcio)</td><td>2,5</td><td>~2</td><td>1,2–2</td><td>Importante para mucinas e esmalte</td></tr>
+          <tr><td>PO₄³⁻ (Fosfato)</td><td>1</td><td>~1</td><td>2–10</td><td>Protege esmalte dentário</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="highlight-box hb-green reveal">
+      <span class="hb-label">Lei de Fick — O Princípio da Difusão</span>
+      <p class="panel-text">A velocidade com que um ião ou molécula atravessa uma membrana por difusão depende de: (1) a diferença de concentração entre os dois lados (gradiente), (2) a área da membrana disponível, e (3) a espessura da membrana. Quanto maior o gradiente e a área, e menor a espessura, mais rápida a difusão. Este é o princípio de Fick — a base física de todo o transporte passivo no organismo, incluindo na secreção salivar.</p>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH4: COMPOSIÇÃO -->
+<section class="chapter" id="ch4">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO IV</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--yellow)">O Arsenal Molecular</h2>
+    <p class="ch-subtitle reveal">Composição da Saliva · Proteínas · Enzimas · Iões · pH</p>
+
+    <div class="speech-section right reveal">
+      <div class="char-avatar avatar-yellow float">🧬</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-yellow">BIOQUÍMICA SALIVAR</span>
+        <p>A saliva é como uma <strong>sopa molecular altamente especializada</strong>. Dos seus 99% de água, o 1% restante contém um arsenal surpreendente: enzimas digestivas, proteínas de defesa, mucinas lubrificantes, fatores de crescimento e muito mais. Cada componente tem uma missão precisa.</p>
+      </div>
+    </div>
+
+    <div class="mol-grid reveal">
+      <div class="mol-card">
+        <span class="mol-icon">🔬</span>
+        <div class="mol-name">Amilase Salivar (Ptialina)</div>
+        <p class="mol-desc">A principal enzima digestiva da saliva. Cliva as ligações α-1,4-glicosídicas do amido, gerando maltose e dextrinas. Actua no pH 6,7–7,0, é inactivada pelo pH ácido gástrico. Representa 40–50% das proteínas solúveis salivares. Produzida principalmente pela parótida.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🛡️</span>
+        <div class="mol-name">IgA Secretora (sIgA)</div>
+        <p class="mol-desc">A principal imunoglobulina (anticorpo) das mucosas. Liga-se a bactérias e vírus, impedindo-os de aderir à mucosa oral — o chamado "exclusão imunológica". Resistente a proteases por ter uma cadeia J e um componente secretor. É a primeira linha de defesa imunológica na boca.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🌀</span>
+        <div class="mol-name">Mucinas (MUC5B, MUC7)</div>
+        <p class="mol-desc">Glicoproteínas enormes (do latim <em>mucus</em>). As MUC5B formam géis viscoelásticos que lubrificam a mucosa e envolvem o bolo alimentar. As MUC7 são menores, solúveis, e têm propriedades antimicrobianas. São o que dá à saliva a sua textura viscosa e escorregadia.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">⚡</span>
+        <div class="mol-name">Lisozima</div>
+        <p class="mol-desc">Enzima antibacteriana clássica. Cliva as ligações β-1,4 do peptidoglicano — o "esqueleto" da parede celular bacteriana — especialmente de bactérias Gram-positivas. Provoca lise osmótica da bactéria. Presente também nas lágrimas, leite materno e muco nasal.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🔴</span>
+        <div class="mol-name">Lactoferrina</div>
+        <p class="mol-desc">Glicoproteína que <strong>quelata ferro</strong> (do grego <em>chele</em>, garra) — prende o ferro livre, privando as bactérias deste nutriente essencial ao seu crescimento. Também tem efeitos bactericidas diretos e ação antifúngica. Parte do sistema de imunidade inata da saliva.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🧊</span>
+        <div class="mol-name">Histatinas</div>
+        <p class="mol-desc">Peptídeos ricos em histidina, únicos dos primatas. Potentemente antifúngicas — especialmente contra <em>Candida albicans</em>. Também inibem a enzima glucosiltransferase de <em>Streptococcus mutans</em> (o principal agente da cárie dentária), impedindo a formação de biofilme.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🌊</span>
+        <div class="mol-name">Sistema Peroxidase Salivar</div>
+        <p class="mol-desc">Complexo enzimático (peroxidase salivar + SCN⁻ + H₂O₂) que produz <strong>OSCN⁻</strong> (hipotiocianato). Este composto inibe enzimas glicolíticas bacterianas, reduzindo a produção de ácido pelas bactérias da placa. Um sistema antimicrobiano sofisticado e contínuo.</p>
+      </div>
+      <div class="mol-card">
+        <span class="mol-icon">🌱</span>
+        <div class="mol-name">EGF (Epidermal Growth Factor)</div>
+        <p class="mol-desc">Fator de Crescimento Epidérmico. Estimula a proliferação e migração de células epiteliais — esencial para a <strong>cicatrização de feridas</strong> na mucosa oral e gastrointestinal. Por isso feridas na boca cicatrizam tão rapidamente. Descoberto por Stanley Cohen (Nobel 1986).</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-cyan reveal">
+      <span class="hb-label">pH e Tampão Bicarbonato — Como a Saliva Protege os Dentes</span>
+      <p class="panel-text">O pH da saliva em repouso é 6,2–7,4. Quando estimulada, sobe até 8,0 devido ao aumento de HCO₃⁻ secretado pelos ductos. O HCO₃⁻ funciona como <strong>tampão</strong> (buffer) — ou seja, resiste a mudanças de pH. O sistema tampão bicarbonato funciona assim: quando um ácido entra na boca (ex. produzido por bactérias ou vindo dos refrigerantes), o HCO₃⁻ reage com o H⁺ (protão ácido), formando H₂CO₃ (ácido carbónico), que se decompõe em H₂O + CO₂, neutralizando o ácido. Sem saliva, o pH oral cairia rapidamente, dissolvendo o esmalte dentário — processo chamado <strong>desmineralização</strong>.</p>
+    </div>
+
+    <div class="prose reveal">
+      Outro componente inorgânico importante: o <span class="hl-cyan">flúor</span> — presente em pequenas quantidades mas crucial para a <strong>remineralização</strong> do esmalte. O flúor (F⁻) entra na estrutura cristalina da hidroxiapatita do esmalte, formando <strong>fluorapatita</strong> — um cristal mais resistente ao ácido. Este é o princípio por trás das pastas dentífricas fluoretadas.
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH5: CONTROLO NERVOSO -->
+<section class="chapter" id="ch5">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO V</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--green)">O Centro de Comando</h2>
+    <p class="ch-subtitle reveal">Controlo Nervoso da Secreção · SNA · Neurotransmissores</p>
+
+    <div class="speech-section reveal">
+      <div class="char-avatar avatar-green float">🧠</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-green">CÓRTEX CEREBRAL</span>
+        <p>Eu controlo tudo. Ao contrário do coração ou dos pulmões — que têm alguma autonomia — as glândulas salivares são <strong>completamente dependentes do sistema nervoso</strong> para secretar. Sem nervo, sem saliva. É por isso que tens a boca seca quando estás com medo ou ansiedade, e corres a salivar quando cheiras um prato favorito.</p>
+      </div>
+    </div>
+
+    <div class="prose reveal">
+      A secreção salivar é controlada exclusivamente pelo <span class="hl-green">Sistema Nervoso Autónomo (SNA)</span> — a parte do sistema nervoso que controla funções viscerais automáticas (sem esforço consciente). O SNA divide-se em dois braços com efeitos opostos: o <span class="hl-cyan">parassimpático</span> e o <span class="hl-pink">simpático</span>.
+    </div>
+
+    <div class="manga-grid manga-2col reveal">
+      <div class="manga-panel panel-cyan">
+        <span class="panel-tag tag-cyan">Braço #1</span>
+        <div class="panel-title">Sistema Parassimpático<br><small style="font-weight:400;font-size:0.8rem">"Repouso e digestão"</small></div>
+        <p class="panel-text"><strong>Nervo facial (VII)</strong> → glândulas submandibular e sublingual (via nervo corda do tímpano → gânglio submandibular → fibras pós-ganglionares). <strong>Nervo glossofaríngeo (IX)</strong> → glândula parótida (via nervo petroso menor → gânglio ótico → fibras pós-ganglionares). Neurotransmissor: <strong>Acetilcolina (ACh)</strong>, ligando-se a receptores <strong>muscarínicos M3</strong> nas células acinares. Resultado: <strong>saliva abundante, fluida e rica em proteínas</strong>. Mecanismo: ACh → receptor M3 → Gq → fosfolipase C → IP3 → ↑Ca²⁺ intracelular → exocitose de grânulos e abertura de canais de Cl⁻ → secreção</p>
+      </div>
+      <div class="manga-panel panel-pink">
+        <span class="panel-tag tag-pink">Braço #2</span>
+        <div class="panel-title">Sistema Simpático<br><small style="font-weight:400;font-size:0.8rem">"Luta ou fuga"</small></div>
+        <p class="panel-text">Fibras pós-ganglionares do gânglio cervical superior → glândulas salivares. Neurotransmissor: <strong>Noradrenalina (NA)</strong>, ligando-se a receptores <strong>β-adrenérgicos</strong> (principalmente β1) e <strong>α-adrenérgicos</strong>. Resultado: saliva escassa, viscosa, rica em mucinas e enzimas (estimulação β) e também vasoconstricção dos vasos glandulares (estimulação α) — reduzindo o fluxo sanguíneo e portanto reduzindo a secreção. Mecanismo β: NA → β1 → Gs → adenilil-ciclase → ↑AMPc → PKA → fosforilação de proteínas → exocitose enzimática</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-green reveal">
+      <span class="hb-label">Núcleos Salivares do Tronco Cerebral</span>
+      <p class="panel-text">Os neurónios parassimpáticos pré-ganglionares que controlam as glândulas salivares têm os seus corpos celulares em dois núcleos do tronco cerebral: (1) <strong>Núcleo salivatório superior</strong> — para as glândulas submandibular e sublingual, via nervo VII. (2) <strong>Núcleo salivatório inferior</strong> — para a parótida, via nervo IX. Estes núcleos recebem inputs de: córtex gustativo (sabor), hipotálamo (estado geral), córtex olfativo (cheiro), e córtex pré-frontal (pensamentos e emoções — daí que pensar em comida já basta para salivar!).</p>
+    </div>
+
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--cyan)"></div>
+        <div class="tl-step">PASSO 1 — ESTÍMULO</div>
+        <div class="tl-content">
+          <strong>Activação dos Receptores Sensoriais</strong>
+          <p>Estímulos mecânicos (mastigação), químicos (sabor, pH), olfativos (cheiro de comida) ou psíquicos (ver/pensar em comida) activam fibras aferentes que chegam ao núcleo do trato solitário no tronco cerebral → integração nos núcleos salivares.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--pink)"></div>
+        <div class="tl-step">PASSO 2 — SINAL NERVOSO</div>
+        <div class="tl-content">
+          <strong>Potencial de Acção nas Fibras Autónomas</strong>
+          <p>Fibras pré-ganglionares colinérgicas conduzem potenciais de acção até gânglios periféricos → sinapses → fibras pós-ganglionares chegam às células acinares e ductais e células mioepiteliais.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--green)"></div>
+        <div class="tl-step">PASSO 3 — SINALIZAÇÃO CELULAR</div>
+        <div class="tl-content">
+          <strong>Cascata de Segundo Mensageiro</strong>
+          <p>Parassimpático: ACh → M3 → ↑IP3 → ↑Ca²⁺ → exocitose + activação de canais iónicos. Simpático (β): NA → β1 → ↑AMPc → PKA → exocitose enzimática. Células mioepiteliais contraem (α1-adrenérgico e muscarínico) → expulsão mecânica da saliva.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--yellow)"></div>
+        <div class="tl-step">PASSO 4 — SECREÇÃO</div>
+        <div class="tl-content">
+          <strong>Saída da Saliva pelos Ductos</strong>
+          <p>O fluido primário é modificado nos ductos (reabsorção de Na⁺/Cl⁻, secreção de K⁺/HCO₃⁻) e a saliva hipotónica final flui pelos ductos excretores até à cavidade oral.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose reveal">
+      Um detalhe fascinante: ao contrário das glândulas exócrinas do pâncreas ou estômago, as glândulas salivares <span class="hl-yellow">não são controladas por hormonas gastrointestinais</span> de forma directa. O controlo é quase exclusivamente neural, o que permite respostas muito rápidas (segundos) ao estímulo — essencial para preparar a boca antes mesmo de engolirmos a primeira peça de comida.
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH6: FUNÇÕES -->
+<section class="chapter" id="ch6">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO VI</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--orange)">As Missões da Saliva</h2>
+    <p class="ch-subtitle reveal">Funções Digestiva · Protetora · Imunológica · Solvente · Cicatrizante</p>
+
+    <div class="speech-section right reveal">
+      <div class="char-avatar avatar-pink float">🎯</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-pink">SALIVA PRIME · MODO MISSÃO</span>
+        <p>Sou multifuncional. Não faço apenas uma coisa — tenho pelo menos <strong>seis missões simultâneas</strong> a decorrer sempre que estou na boca. Cada componente tem o seu papel. Nenhum detalhe é acidental.</p>
+      </div>
+    </div>
+
+    <!-- ACCORDION -->
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🍚 1 · Digestão de Amido — A Amilase em Ação</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>A <strong>amilase salivar (α-amilase, EC 3.2.1.1)</strong> inicia a digestão dos hidratos de carbono complexos (amido e glicogénio) logo na boca. O amido é um polissacarídeo — uma cadeia longa de unidades de glicose ligadas por ligações α-1,4 (cadeia linear, amilose) e α-1,6 (ramificações, amilopectina). A amilase cliva as ligações α-1,4, gerando maltose (dissacarídeo) e dextrinas (oligossacarídeos). Embora a exposição ao alimento na boca seja breve (20–30 segundos de mastigação), a amilase continua activa no estômago por algum tempo, até o pH ácido gástrico (pH 2–3) a inactivar. Após a refeição, cerca de 30% do amido pode já ter sido parcialmente digerido pela amilase salivar antes de chegar ao intestino.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🌊 2 · Lubrificação — O Papel das Mucinas</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>As <strong>mucinas</strong> (MUC5B e MUC7) são glicoproteínas de elevado peso molecular (>1000 kDa). As MUC5B formam redes poliméricas viscoelásticas — como uma rede molecular — que revestem e lubrificam toda a mucosa oral, esofágica e gástrica. Esta lubrificação serve para: (1) facilitar a deglutição do bolo alimentar; (2) proteger a mucosa de abrasão mecânica durante a mastigação; (3) facilitar a fala — a fala requer deslizamento suave entre os tecidos orais. Pessoas com xerostomia (boca seca) têm dificuldade em falar, deglutir e mastigar — demonstrando o quão vital é esta função.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🦷 3 · Proteção do Esmalte Dentário</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>O esmalte dentário é composto por <strong>hidroxiapatita</strong> [Ca₁₀(PO₄)₆(OH)₂] — o mineral mais duro do corpo humano. As bactérias da placa dentária (sobretudo <em>Streptococcus mutans</em>) fermentam açúcares produzindo ácido láctico, que desce o pH abaixo do <strong>pH crítico do esmalte (pH 5,5)</strong>. Abaixo deste valor, a hidroxiapatita começa a dissolver-se (desmineralização). A saliva actua de três formas: (1) <strong>tampão bicarbonato</strong>: neutraliza o ácido; (2) <strong>Ca²⁺ e PO₄³⁻</strong> salivares: facilitam a remineralização (redeposição de mineral no esmalte); (3) <strong>película adquirida</strong> (proteínas salivares que aderem ao esmalte, formando uma camada protetora). A saliva é, literalmente, a primeira barreira de defesa dos dentes.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🛡️ 4 · Defesa Antimicrobiana (Imunidade Inata)</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>A saliva é um fluido imunológico activo. Os seus componentes antimicrobianos incluem: <strong>sIgA</strong> (anticorpo secretor — "cola" em bactérias e vírus, impede adesão à mucosa); <strong>lisozima</strong> (destrói parede bacteriana); <strong>lactoferrina</strong> (priva bactérias de ferro); <strong>histatinas</strong> (antifúngicas); <strong>sistema peroxidase</strong> (gera OSCN⁻ bacteriostático); <strong>defensinas</strong> (peptídeos que perfuram membranas bacterianas); <strong>cistatinas</strong> (inibem proteases bacterianas e virais); e <strong>mucinas</strong> (armadilha viscosa que captura patogénicos e os encaminha para deglutição e destruição gástrica). Juntos, formam um sistema de vigilância imunológica contínua e sofisticada.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>👅 5 · Solvente para o Paladar</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>Sem saliva, não há paladar. As moléculas que compõem o sabor dos alimentos (aminoácidos, açúcares, ácidos, etc.) precisam estar em <strong>solução aquosa</strong> para activar os <strong>receptores gustativos</strong> das células ciliadas dos botões gustativos — localizados nas papilas gustativas da língua. A saliva dissolve essas moléculas e as transporta até aos botões. Pessoas com xerostomia grave relatam não conseguir sentir o sabor dos alimentos — o que confirma que a saliva é literalmente o "solvente do paladar".</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🌱 6 · Cicatrização e Reparação da Mucosa</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>A saliva contém <strong>EGF (Epidermal Growth Factor — Fator de Crescimento Epidérmico)</strong>, <strong>NGF (Nerve Growth Factor)</strong>, <strong>IGF-1</strong>, e <strong>TGF-β</strong>. Estes factores estimulam proliferação e migração celular, acelerando a cicatrização de feridas na mucosa oral e mesmo no tracto gastrointestinal superior. Por isso feridas na boca cicatrizam em 3–5 dias, enquanto a pele pode levar semanas. A saliva também contém <strong>trombospondina</strong> e factores pro-coagulantes que ajudam na hemostase local após extracção dentária ou trauma oral. O instinto de "lamber feridas" existe em praticamente todos os mamíferos — e tem base biológica real.</p>
+      </div>
+    </div>
+
+    <div class="accordion-item reveal">
+      <div class="accordion-header" onclick="toggleAcc(this)">
+        <span>🗣️ 7 · Facilitação da Fala</span>
+        <span class="accordion-arrow">▼</span>
+      </div>
+      <div class="accordion-body">
+        <p>A produção de sons articulados da fala requer movimentos rápidos e precisos da língua, lábios e palato. A saliva lubrifica estes tecidos, permitindo deslizamentos rápidos e sem fricção. A xerostomia causa disartria (dificuldade na articulação das palavras) — os tecidos "colam" uns aos outros, perturbando a fonação. Pessoas que falam muito (professores, cantores, actores) têm maior estimulação salivar reflexa — o sistema adapta-se à demanda.</p>
+      </div>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">próxima batalha</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH7: CLÍNICA -->
+<section class="chapter" id="ch7">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO VII</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--pink)">Quando o Sistema Falha</h2>
+    <p class="ch-subtitle reveal">Patologia Salivar · Diagnóstico · Relevância em Moçambique</p>
+
+    <div class="speech-section reveal">
+      <div class="char-avatar avatar-cyan float">🏥</div>
+      <div class="speech-bubble">
+        <span class="char-name tag-cyan">MÉDICO CLÍNICO</span>
+        <p>Toda a fisiologia que estudaste tem um espelho na patologia. Cada função da saliva que falha gera uma síndrome clínica específica. O médico experiente lê os sinais da boca como um texto diagnóstico.</p>
+      </div>
+    </div>
+
+    <div class="manga-grid manga-2col reveal">
+      <div class="manga-panel panel-pink">
+        <span class="panel-tag tag-pink">Patologia #1</span>
+        <div class="panel-title">Xerostomia<br><small style="font-weight:400">Boca Seca</small></div>
+        <p class="panel-text"><em>Xero-</em> (grego: seco) + <em>stoma</em> (boca). Redução ou ausência de saliva (hipossalivação: &lt;0,1 mL/min em repouso). Causas: síndrome de Sjögren (doença autoimune que destrói glândulas salivares e lacrimais), radioterapia cervical/cabeça e pescoço, medicamentos (anticolinérgicos, antidepressivos tricíclicos, anti-hipertensivos, anti-histamínicos, diuréticos), desidratação, ansiedade, diabetes mellitus descontrolada. Consequências: cárie dentária acelerada, candidíase oral, disfagia, disgeusia (alteração do paladar), disartria, mucosa oral eritematosa. <strong>Relevância em Moçambique:</strong> alta prevalência de HIV (que causa xerostomia por infiltração linfocítica das glândulas) e de uso de ARVs com efeito xerostómico.</p>
+      </div>
+      <div class="manga-panel panel-yellow">
+        <span class="panel-tag tag-yellow">Patologia #2</span>
+        <div class="panel-title">Sialolitíase<br><small style="font-weight:400">Cálculos Salivares</small></div>
+        <p class="panel-text"><em>Sialo-</em> (saliva) + <em>lithos</em> (pedra) + <em>-iasis</em> (condição). Formação de cálculos (concreções calcificadas) nos ductos salivares — 80% na glândula submandibular (ducto de Wharton longo, fluxo lento, saliva mais alcalina e rica em Ca²⁺ e PO₄³⁻). Apresentação clínica: dor e edema da glândula durante as refeições (quando o fluxo salivar aumenta e o cálculo obstrui o ducto), desaparecendo depois. Diagnóstico: palpação do ducto, radiografia (80% dos cálculos são radiopacos), ecografia. Complicação: sialoadenite (infecção da glândula obstruída). Tratamento: hidratação, massagem, sialendoscopia, litotrícia, cirurgia.</p>
+      </div>
+    </div>
+
+    <div class="manga-grid manga-2col reveal">
+      <div class="manga-panel panel-purple">
+        <span class="panel-tag tag-purple">Patologia #3</span>
+        <div class="panel-title">Parotidite<br><small style="font-weight:400">Inflamação da Parótida</small></div>
+        <p class="panel-text"><em>Parótida</em> + <em>-ite</em> (inflamação). A <strong>parotidite epidémica (papeira/caxumba)</strong> é causada pelo vírus Paramyxovirus parotiditis. Apresentação: edema inflamatório bilateral doloroso da parótida, febre, mal-estar. Altamente prevalente em Moçambique entre crianças não vacinadas (vacina MMR ainda com cobertura irregular). Complicações: orquite (inflamação testicular, podendo causar infertilidade masculina em adultos), meningite asséptica, pancreatite, surdez neurossensorial. Diagnóstico: clínico + serologia (IgM anti-paramyxovirus). Prevenção: vacinação MMR.</p>
+      </div>
+      <div class="manga-panel panel-orange">
+        <span class="panel-tag tag-orange">Patologia #4</span>
+        <div class="panel-title">Sialorreia / Ptialismo<br><small style="font-weight:400">Excesso de Saliva</small></div>
+        <p class="panel-text"><em>Sialo-</em> (saliva) + <em>-rreia</em> (fluxo excessivo). Hipersecreção salivar ou incapacidade de engolir a saliva produzida. Causas: gravidez (hipersecreção hormonal), intoxicação por organofosforados (inibidores da acetilcolinesterase → excesso de ACh → hipersecreção), raiva (o vírus rábico destrói centros de deglutição), parkinsonismo (disfunção motora orofaríngea), lesões do tronco cerebral. <strong>Relevância em Moçambique:</strong> intoxicações por pesticidas agrícolas (organofosforados) são emergências relativamente frequentes — sialorreia + miose + bradicárdia + broncoespasmo = tríade colinérgica clássica. Antídoto: atropina (anticolinérgico).</p>
+      </div>
+    </div>
+
+    <div class="highlight-box hb-pink reveal">
+      <span class="hb-label">Síndrome de Sjögren — A Saliva como Alvo Autoimune</span>
+      <p class="panel-text">A <strong>síndrome de Sjögren</strong> é uma doença autoimune sistémica em que linfócitos T e B infiltram e destroem progressivamente as glândulas exócrinas — salivares e lacrimais principalmente. Os autoanticorpos anti-Ro/SS-A e anti-La/SS-B são os marcadores serológicos. Apresenta-se com a tríade: xerostomia, xeroftalmia (olhos secos) e artralgia. Pode ser primária (isolada) ou secundária (associada a LES, AR, esclerodermia). A biópsia de glândula salivar minor do lábio (focos de ≥50 linfócitos por 4 mm²) é o gold standard diagnóstico. Tratamento: pilocarpina (agonista muscarínico M3 → estimula secreção residual), substitutos salivares artificiais, higiene oral rigorosa.</p>
+    </div>
+
+    <div class="highlight-box hb-cyan reveal">
+      <span class="hb-label">Saliva como Ferramenta Diagnóstica — Sialómica</span>
+      <p class="panel-text">A saliva contém DNA, RNA, proteínas e metabolitos que reflectem o estado de saúde sistémica. A <strong>sialómica</strong> (análise omics da saliva) permite detectar: marcadores de cancro oral e sistémico (proteínas p53, IL-8, MMP-9), infecções virais (HIV, HPV, SARS-CoV-2 — os testes de antigénio COVID em saliva!), hormonas (cortisol, testosterona, estrogénio), drogas e álcool. Em Moçambique, os testes rápidos de HIV em saliva (OraQuick®) têm sido utilizados em contextos de rastreio comunitário — demonstrando o potencial da saliva como biofluido diagnóstico de fácil acesso e colheita não-invasiva.</p>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">batalha final · quiz</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CH8: QUIZ -->
+<section class="chapter" id="ch8">
+  <div class="scanline"></div>
+  <div class="chapter-inner">
+
+    <div class="ch-badge reveal">
+      <span class="ch-num">CAPÍTULO VIII</span>
+      <div class="ch-line"></div>
+    </div>
+    <h2 class="ch-title reveal" style="color:var(--cyan)">Arena de Combate</h2>
+    <p class="ch-subtitle reveal">Quiz Interativo · Testa os Teus Conhecimentos</p>
+
+    <!-- Q1 -->
+    <div class="quiz-box reveal" id="q1">
+      <p class="quiz-q">❓ 1. A glândula salivar responsável por aproximadamente 70% da saliva produzida em repouso é:</p>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">A) Parótida</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',true)">B) Submandibular</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">C) Sublingual</button>
+        <button class="quiz-opt" onclick="answer(this,'q1',false)">D) Glândulas menores</button>
+      </div>
+      <div class="quiz-feedback ok" id="q1-ok">✅ Correto! A glândula submandibular produz ~70% da saliva em repouso. É a que tem ducto de Wharton e secreção mista (serosa e mucosa). Em estimulação máxima, a parótida toma a liderança com secreção serosa abundante.</div>
+      <div class="quiz-feedback err" id="q1-err">❌ Não desta vez. A resposta correta é B) Submandibular. A parótida produz ~25% em repouso mas lidera durante estimulação. A sublingual produz apenas ~5%.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-box reveal" id="q2">
+      <p class="quiz-q">❓ 2. Qual é o mecanismo pelo qual a acetilcolina estimula a secreção nos ácinos salivares parassimpaticamente?</p>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">A) ACh → receptor β1 → AMPc → PKA → exocitose</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',true)">B) ACh → receptor M3 → Gq → IP3 → ↑Ca²⁺ → exocitose</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">C) ACh → receptor nicotínico → influxo de Na⁺ → despolarização → exocitose</button>
+        <button class="quiz-opt" onclick="answer(this,'q2',false)">D) ACh → receptor M2 → Gi → ↓AMPc → inibição da exocitose</button>
+      </div>
+      <div class="quiz-feedback ok" id="q2-ok">✅ Perfeito! A via parassimpática usa ACh → receptor muscarínico M3 → proteína Gq → fosfolipase C → IP3 → libertação de Ca²⁺ do RE → exocitose de grânulos secretores e abertura de canais iónicos.</div>
+      <div class="quiz-feedback err" id="q2-err">❌ Incorreto. A via parassimpática usa o receptor M3 (muscarínico), acoplado a Gq → IP3 → Ca²⁺. Os receptores β1 são do simpático. Os nicotínicos são receptores ionotrópicos do SNS somático. M2 acopla a Gi (inibitório).</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-box reveal" id="q3">
+      <p class="quiz-q">❓ 3. A saliva é hipotónica em relação ao plasma porque:</p>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">A) Os ácinos produzem fluido com baixa concentração de iões desde o início</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">B) A saliva absorve água em excesso da mucosa oral</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',true)">C) Os ductos reabsorvem Na⁺ e Cl⁻ sem permitir que a água os acompanhe</button>
+        <button class="quiz-opt" onclick="answer(this,'q3',false)">D) A parótida secreta um fluido com muito menos sódio que o plasma desde o início</button>
+      </div>
+      <div class="quiz-feedback ok" id="q3-ok">✅ Excelente! Os ductos são impermeáveis à água mas reabsorvem activamente Na⁺ e Cl⁻. A saliva primária era isotónica; no ducto, iões saem mas a água não pode segui-los → saliva final hipotónica. Este princípio é análogo ao que acontece no néfron renal!</div>
+      <div class="quiz-feedback err" id="q3-err">❌ Errado. O fluido acinoso é isotónico (igual ao plasma). A hipotonicidade é criada nos ductos, onde iões (Na⁺, Cl⁻) são reabsorvidos mas a água não consegue acompanhar — pois a membrana ductal é impermeável à água.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-box reveal" id="q4">
+      <p class="quiz-q">❓ 4. Em Moçambique, um doente apresenta sialorreia, miose, bradicárdia e broncoespasmo após trabalhar num campo agrícola. Qual o mecanismo mais provável e o tratamento?</p>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">A) Intoxicação por carbamates; tratamento com pilocarpina</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',true)">B) Intoxicação por organofosforados (inibição da AChE); tratamento com atropina</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">C) Síndrome de Sjögren; tratamento com corticosteróides</button>
+        <button class="quiz-opt" onclick="answer(this,'q4',false)">D) Parotidite viral; tratamento sintomático e analgesia</button>
+      </div>
+      <div class="quiz-feedback ok" id="q4-ok">✅ Correto! Os organofosforados inibem a acetilcolinesterase (AChE) → ACh acumula nas sinapses → hiperstimulação colinérgica → SLUDGE (Salivação, Lacrimejamento, Urinação, Defecação, distress Gastrointestinal, Emese) + broncospasmo + miose + bradicárdia. Antídoto: ATROPINA (antagonista muscarínico) + pralidoxima (reativador da AChE se dado precocemente).</div>
+      <div class="quiz-feedback err" id="q4-err">❌ A síndrome descrita (SLUDGE + miose + bradicárdia + broncoespasmo) é a crise colinérgica clássica — causada por inibição da acetilcolinesterase, tipicamente por organofosforados (pesticidas). O antídoto é a ATROPINA (bloqueador muscarínico), não pilocarpina (que seria agonista e pioraria).</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-box reveal" id="q5">
+      <p class="quiz-q">❓ 5. Qual enzima salivar actua sobre o amido e qual é o seu produto final direto antes da chegada ao intestino?</p>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">A) Lipase lingual; produz ácidos gordos e glicerol</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">C) Lisozima; produz fragmentos do peptidoglicano</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',true)">B) Amilase salivar (ptialina); produz maltose e dextrinas</button>
+        <button class="quiz-opt" onclick="answer(this,'q5',false)">D) Protease salivar; produz aminoácidos e peptídeos</button>
+      </div>
+      <div class="quiz-feedback ok" id="q5-ok">✅ Muito bem! A amilase salivar (α-amilase, ptialina) cliva ligações α-1,4-glicosídicas do amido, produzindo maltose (dissacarídeo) e dextrinas (oligossacarídeos com ramificações α-1,6 intactas). Continua activa até ser inactivada pelo pH ácido gástrico (pH &lt; 4).</div>
+      <div class="quiz-feedback err" id="q5-err">❌ A lipase lingual existe mas actua sobre triglicerídeos. A lisozima destrói bactérias. A resposta correcta é a amilase salivar (ptialina), que digere o amido em maltose e dextrinas. A saliva não contém proteases significativas.</div>
+    </div>
+
+    <div style="text-align:center;margin-top:40px" class="reveal">
+      <div style="font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;color:var(--dim);margin-bottom:16px">PONTUAÇÃO</div>
+      <div id="score-display" style="font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:var(--cyan);text-shadow:var(--glow-cyan)">0 / 5</div>
+      <p style="color:var(--dim);font-size:0.9rem;margin-top:10px">Responde a todas as perguntas para completar o quiz.</p>
+    </div>
+
+    <div class="divider reveal">
+      <div class="divider-line"></div>
+      <span class="divider-text">fim da saga</span>
+      <div class="divider-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FOOTER -->
+<footer>
+  <div class="footer-logo">DEMILMED·UL</div>
+  <div class="footer-line"></div>
+  <div class="footer-info">
+    DemilMed-UL<br>
+    Universidade Licungo · Faculdade de Medicina<br>
+    2º Ano de Medicina · 2026<br><br>
+    Fisiologia da Saliva — Guia Interativo
+  </div>
+  <div class="footer-line"></div>
+  <p class="footer-copy">© DEMILMED-UL 2026 · UNIVERSIDADE LICUNGO · TODOS OS DIREITOS RESERVADOS</p>
+</footer>
+
+<script>
+  // ===== CURSOR =====
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function animCursor() {
+    rx += (mx - rx) * 0.18;
+    ry += (my - ry) * 0.18;
+    cursor.style.transform = `translate(${mx-7}px,${my-7}px)`;
+    ring.style.transform = `translate(${rx-18}px,${ry-18}px)`;
+    requestAnimationFrame(animCursor);
+  })();
+
+  // ===== PROGRESS =====
+  const prog = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+    prog.style.width = pct + '%';
+  });
+
+  // ===== NAV SHOW =====
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) nav.classList.add('visible');
+    else nav.classList.remove('visible');
+  });
+
+  // ===== REVEAL ON SCROLL =====
+  const reveals = document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.tl-item');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // stat bars
+        e.target.querySelectorAll && e.target.querySelectorAll('.stat-fill').forEach(bar => {
+          bar.style.width = bar.dataset.val || '80%';
+        });
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // ===== SCROLLSPY =====
+  const spyDots = document.querySelectorAll('.spy-dot');
+  const sections = ['cover','ch1','ch2','ch3','ch4','ch5','ch6','ch7','ch8'];
+  const navLinks = document.querySelectorAll('.nav-ch');
+
+  window.addEventListener('scroll', () => {
+    let current = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 200) current = i;
+    });
+    spyDots.forEach((d, i) => d.classList.toggle('active', i === current));
+    navLinks.forEach((l, i) => l.classList.toggle('active', i === current - 1));
+  });
+
+  // Spy dot click
+  spyDots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      document.getElementById(sections[i]).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  // ===== ACCORDION =====
+  function toggleAcc(header) {
+    const item = header.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }
+
+  // ===== QUIZ =====
+  let scores = {};
+
+  function answer(btn, qid, correct) {
+    const box = document.getElementById(qid);
+    if (box.dataset.answered) return;
+    box.dataset.answered = '1';
+
+    box.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+    btn.classList.add(correct ? 'correct' : 'wrong');
+
+    const okEl = document.getElementById(qid + '-ok');
+    const errEl = document.getElementById(qid + '-err');
+
+    if (correct) {
+      okEl.classList.add('show');
+      scores[qid] = 1;
+    } else {
+      errEl.classList.add('show');
+      // highlight correct
+      box.querySelectorAll('.quiz-opt').forEach(b => {
+        if (b.onclick.toString().includes('true')) b.classList.add('correct');
+      });
+      scores[qid] = 0;
+    }
+
+    updateScore();
+  }
+
+  function updateScore() {
+    const total = Object.values(scores).reduce((a, b) => a + b, 0);
+    const answered = Object.keys(scores).length;
+    const display = document.getElementById('score-display');
+    if (display) {
+      display.textContent = total + ' / ' + answered;
+      if (answered === 5) {
+        display.textContent = total + ' / 5';
+        if (total === 5) display.style.color = 'var(--green)';
+        else if (total >= 3) display.style.color = 'var(--yellow)';
+        else display.style.color = 'var(--pink)';
+      }
+    }
+  }
+
+  // ===== INITIAL TIMELINE ITEMS =====
+  document.querySelectorAll('.tl-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.12) + 's';
+    observer.observe(item);
+  });
+</script>
+</body>
+</html>

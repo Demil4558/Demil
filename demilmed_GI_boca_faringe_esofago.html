@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DemilMed-UL | A Jornada do Bolo Alimentar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800;900&family=Press+Start+2P&family=Orbitron:wght@700;900&display=swap');
+
+  :root {
+    --bg: #0a0a12;
+    --bg2: #10101e;
+    --bg3: #15152a;
+    --panel: #1a1a2e;
+    --panel2: #16213e;
+    --accent1: #ff6b35;
+    --accent2: #00d4ff;
+    --accent3: #ffbe0b;
+    --accent4: #06ffa5;
+    --accent5: #ff006e;
+    --accent6: #8338ec;
+    --text: #e8e8ff;
+    --text2: #a0a0c0;
+    --glow1: rgba(255,107,53,0.4);
+    --glow2: rgba(0,212,255,0.4);
+    --glow3: rgba(255,190,11,0.4);
+    --glow4: rgba(6,255,165,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* === HERO === */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 50%, #1a0a2e 0%, #0a0a12 70%);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .hero::before {
+    content:'';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234400ff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    animation: bgmove 20s linear infinite;
+  }
+
+  @keyframes bgmove { from{background-position:0 0} to{background-position:60px 60px} }
+
+  .hero-badge {
+    background: linear-gradient(135deg, var(--accent6), var(--accent5));
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0.4rem 1.2rem;
+    border-radius: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 0 20px var(--accent6);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 20px var(--accent6); }
+    50% { box-shadow: 0 0 40px var(--accent6), 0 0 80px rgba(131,56,236,0.3); }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    line-height: 1;
+    color: #fff;
+    text-shadow: 4px 4px 0 var(--accent5), 8px 8px 0 var(--accent6);
+    margin-bottom: 0.5rem;
+    animation: titleFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes titleFloat {
+    0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+  }
+
+  .hero-subtitle {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.2rem, 4vw, 2.5rem);
+    color: var(--accent2);
+    text-shadow: 2px 2px 0 rgba(0,212,255,0.3);
+    margin-bottom: 2rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero-desc {
+    max-width: 600px;
+    font-size: 1rem;
+    color: var(--text2);
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .hero-chars {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .char-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .char-bubble:hover { transform: scale(1.1) rotate(-3deg); }
+
+  .char-emoji {
+    font-size: 3rem;
+    background: var(--panel);
+    border-radius: 50%;
+    width: 80px; height: 80px;
+    display: flex; align-items:center; justify-content:center;
+    border: 3px solid var(--accent2);
+    box-shadow: 0 0 20px var(--glow2);
+    animation: charBob 2s ease-in-out infinite;
+  }
+  .char-bubble:nth-child(2) .char-emoji { border-color: var(--accent3); box-shadow: 0 0 20px var(--glow3); animation-delay: 0.3s; }
+  .char-bubble:nth-child(3) .char-emoji { border-color: var(--accent4); box-shadow: 0 0 20px var(--glow4); animation-delay: 0.6s; }
+  .char-bubble:nth-child(4) .char-emoji { border-color: var(--accent5); box-shadow: 0 0 20px rgba(255,0,110,0.4); animation-delay: 0.9s; }
+
+  @keyframes charBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+  .char-name {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text2);
+    font-size: 0.8rem;
+    animation: scrollBounce 2s ease-in-out infinite;
+  }
+  @keyframes scrollBounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+
+  /* === NAV === */
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,18,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-btn {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.4rem 0.9rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--accent1);
+    color: #fff;
+    border-color: var(--accent1);
+    box-shadow: 0 0 12px var(--glow1);
+  }
+
+  /* === MAIN CONTENT === */
+  main { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* === CHAPTER HEADER === */
+  .chapter {
+    margin: 4rem 0 2rem;
+    position: relative;
+  }
+
+  .chapter-number {
+    font-family: 'Bangers', cursive;
+    font-size: 5rem;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    top: -2rem;
+    left: -1rem;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .chapter-tag {
+    display: inline-block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    padding: 0.3rem 1rem;
+    border-radius: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .tag-orange { background: rgba(255,107,53,0.15); color: var(--accent1); border: 1px solid var(--accent1); }
+  .tag-blue { background: rgba(0,212,255,0.15); color: var(--accent2); border: 1px solid var(--accent2); }
+  .tag-yellow { background: rgba(255,190,11,0.15); color: var(--accent3); border: 1px solid var(--accent3); }
+  .tag-green { background: rgba(6,255,165,0.15); color: var(--accent4); border: 1px solid var(--accent4); }
+  .tag-pink { background: rgba(255,0,110,0.15); color: var(--accent5); border: 1px solid var(--accent5); }
+  .tag-purple { background: rgba(131,56,236,0.15); color: var(--accent6); border: 1px solid var(--accent6); }
+
+  .chapter-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+
+  /* === MANGA PANEL === */
+  .manga-panel {
+    background: var(--panel);
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .manga-panel::before {
+    content:'';
+    position: absolute;
+    top:0; left:0; right:0;
+    height: 3px;
+    border-radius: 1rem 1rem 0 0;
+  }
+  .panel-orange::before { background: linear-gradient(90deg, var(--accent1), var(--accent6)); }
+  .panel-blue::before { background: linear-gradient(90deg, var(--accent2), var(--accent6)); }
+  .panel-yellow::before { background: linear-gradient(90deg, var(--accent3), var(--accent1)); }
+  .panel-green::before { background: linear-gradient(90deg, var(--accent4), var(--accent2)); }
+  .panel-pink::before { background: linear-gradient(90deg, var(--accent5), var(--accent6)); }
+
+  /* === SPEECH BUBBLE === */
+  .speech {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin: 1.5rem 0;
+  }
+  .speech.right { flex-direction: row-reverse; }
+
+  .speech-avatar {
+    font-size: 2rem;
+    flex-shrink: 0;
+    background: var(--panel2);
+    border-radius: 50%;
+    width: 55px; height: 55px;
+    display: flex; align-items:center; justify-content:center;
+    border: 2px solid var(--accent2);
+    box-shadow: 0 0 12px var(--glow2);
+    position: relative;
+  }
+  .speech.orange .speech-avatar { border-color: var(--accent1); box-shadow: 0 0 12px var(--glow1); }
+  .speech.yellow .speech-avatar { border-color: var(--accent3); box-shadow: 0 0 12px var(--glow3); }
+  .speech.green .speech-avatar { border-color: var(--accent4); box-shadow: 0 0 12px var(--glow4); }
+  .speech.pink .speech-avatar { border-color: var(--accent5); box-shadow: 0 0 12px rgba(255,0,110,0.4); }
+
+  .speech-bubble {
+    background: var(--bg3);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 1rem;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.92rem;
+    color: var(--text);
+    max-width: 85%;
+    position: relative;
+    line-height: 1.7;
+  }
+  .speech-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.4rem;
+  }
+
+  /* === MOLECULE ANIMATION === */
+  .molecule-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    min-height: 160px;
+  }
+
+  .molecule {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .atom {
+    background: var(--panel);
+    border: 2px solid var(--accent2);
+    border-radius: 50%;
+    width: 52px; height: 52px;
+    display: flex; align-items:center; justify-content:center;
+    color: var(--accent2);
+    font-size: 0.75rem;
+    box-shadow: 0 0 15px var(--glow2);
+    animation: atomPulse 2s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.2s;
+    position: relative;
+  }
+  .atom:hover { transform: scale(1.2); }
+  .atom.red { border-color: var(--accent5); color: var(--accent5); box-shadow: 0 0 15px rgba(255,0,110,0.4); }
+  .atom.yellow { border-color: var(--accent3); color: var(--accent3); box-shadow: 0 0 15px var(--glow3); }
+  .atom.green { border-color: var(--accent4); color: var(--accent4); box-shadow: 0 0 15px var(--glow4); }
+  .atom.orange { border-color: var(--accent1); color: var(--accent1); box-shadow: 0 0 15px var(--glow1); }
+
+  @keyframes atomPulse {
+    0%,100%{ box-shadow: 0 0 15px var(--glow2); }
+    50%{ box-shadow: 0 0 30px var(--glow2), 0 0 60px rgba(0,212,255,0.1); }
+  }
+
+  .bond {
+    width: 30px; height: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent6));
+    animation: bondFlow 1s linear infinite;
+  }
+  @keyframes bondFlow {
+    0%{ background-position:0 0 } 100%{background-position:30px 0}
+  }
+
+  /* === INFO CARDS === */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .info-card {
+    background: var(--panel2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .info-card::after {
+    content:'';
+    position: absolute;
+    bottom:0; left:0; right:0;
+    height: 2px;
+  }
+  .card-orange::after { background: var(--accent1); }
+  .card-blue::after { background: var(--accent2); }
+  .card-yellow::after { background: var(--accent3); }
+  .card-green::after { background: var(--accent4); }
+  .card-pink::after { background: var(--accent5); }
+  .card-purple::after { background: var(--accent6); }
+
+  .card-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+  .card-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--accent2);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+  }
+  .card-orange .card-title { color: var(--accent1); }
+  .card-yellow .card-title { color: var(--accent3); }
+  .card-green .card-title { color: var(--accent4); }
+  .card-pink .card-title { color: var(--accent5); }
+  .card-purple .card-title { color: var(--accent6); }
+
+  .card-text { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+  /* === TIMELINE === */
+  .timeline { position: relative; padding: 0 0 0 2.5rem; margin: 2rem 0; }
+  .timeline::before {
+    content:'';
+    position: absolute;
+    left: 0.6rem; top:0; bottom:0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent1), var(--accent2), var(--accent4), var(--accent5));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+  .timeline-item.visible { opacity:1; transform:translateX(0); }
+
+  .timeline-dot {
+    position: absolute;
+    left: -2.1rem;
+    top: 0.3rem;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--accent1);
+    background: var(--bg);
+    box-shadow: 0 0 10px var(--glow1);
+  }
+
+  .timeline-time {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--accent3);
+    letter-spacing: 0.15em;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-content {
+    background: var(--panel);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.8rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .timeline-title {
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-text { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+  /* === HIGHLIGHT BOXES === */
+  .highlight {
+    border-radius: 0.8rem;
+    padding: 1.2rem 1.5rem;
+    margin: 1.2rem 0;
+    font-size: 0.88rem;
+    line-height: 1.7;
+  }
+  .highlight-clinical {
+    background: rgba(6,255,165,0.06);
+    border-left: 4px solid var(--accent4);
+    border-top: 1px solid rgba(6,255,165,0.2);
+    border-right: 1px solid rgba(6,255,165,0.1);
+    border-bottom: 1px solid rgba(6,255,165,0.1);
+  }
+  .highlight-molecule {
+    background: rgba(0,212,255,0.06);
+    border-left: 4px solid var(--accent2);
+  }
+  .highlight-warning {
+    background: rgba(255,107,53,0.06);
+    border-left: 4px solid var(--accent1);
+  }
+  .highlight-memory {
+    background: rgba(255,190,11,0.06);
+    border-left: 4px solid var(--accent3);
+  }
+  .highlight-physics {
+    background: rgba(131,56,236,0.06);
+    border-left: 4px solid var(--accent6);
+  }
+
+  .highlight-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* === PROCESS FLOW === */
+  .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: var(--bg2);
+    border-radius: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .flow-step {
+    background: var(--panel);
+    border: 1.5px solid var(--accent2);
+    border-radius: 0.6rem;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent2);
+    text-align: center;
+    min-width: 80px;
+    box-shadow: 0 0 10px var(--glow2);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .flow-step:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--glow2); }
+  .flow-step.orange { border-color: var(--accent1); color: var(--accent1); box-shadow: 0 0 10px var(--glow1); }
+  .flow-step.yellow { border-color: var(--accent3); color: var(--accent3); box-shadow: 0 0 10px var(--glow3); }
+  .flow-step.green { border-color: var(--accent4); color: var(--accent4); box-shadow: 0 0 10px var(--glow4); }
+  .flow-step.pink { border-color: var(--accent5); color: var(--accent5); box-shadow: 0 0 10px rgba(255,0,110,0.4); }
+
+  .flow-arrow {
+    font-size: 1.2rem;
+    color: var(--accent6);
+    animation: arrowPulse 1s ease-in-out infinite;
+  }
+  @keyframes arrowPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+  /* === MUSCLE ANIMATION === */
+  .muscle-viz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: var(--bg2);
+    border-radius: 1rem;
+    margin: 1.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .esoph-tube {
+    width: 80px;
+    background: linear-gradient(180deg, #2a1a3e, #3d1a2e);
+    border: 2px solid var(--accent5);
+    border-radius: 2rem;
+    height: 200px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(255,0,110,0.2);
+    overflow: hidden;
+  }
+
+  .bolus-ball {
+    width: 30px; height: 30px;
+    background: radial-gradient(circle at 40% 40%, #ffbe0b, #ff6b35);
+    border-radius: 50%;
+    position: absolute;
+    left: 50%; transform: translateX(-50%);
+    top: 10px;
+    box-shadow: 0 0 15px rgba(255,190,11,0.6);
+    animation: bolusDrop 3s ease-in-out infinite;
+  }
+  @keyframes bolusDrop {
+    0%{top:10px} 80%{top:155px} 100%{top:155px; opacity:0}
+  }
+
+  .peristalsis-wave {
+    position: absolute;
+    left:0; right:0;
+    height: 20px;
+    background: rgba(255,0,110,0.3);
+    animation: waveDown 3s ease-in-out infinite;
+  }
+  @keyframes waveDown { 0%{top:-20px} 100%{top:220px} }
+
+  /* === ACCORDIONS === */
+  .accordion {
+    margin: 0.8rem 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 0.8rem;
+    overflow: hidden;
+  }
+
+  .accordion-header {
+    padding: 1rem 1.2rem;
+    background: var(--panel);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    user-select: none;
+  }
+  .accordion-header:hover { background: var(--panel2); }
+
+  .accordion-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s;
+    color: var(--accent2);
+  }
+  .accordion.open .accordion-arrow { transform: rotate(180deg); }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    background: var(--bg2);
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.7;
+  }
+  .accordion.open .accordion-body {
+    max-height: 2000px;
+    padding: 1.2rem;
+  }
+
+  /* === QUIZ === */
+  .quiz-box {
+    background: var(--panel);
+    border: 2px solid var(--accent6);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: 0 0 20px rgba(131,56,236,0.2);
+  }
+
+  .quiz-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.5rem;
+    color: var(--accent6);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .quiz-question {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .quiz-option {
+    background: var(--bg2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.6rem;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .quiz-option:hover { border-color: var(--accent6); background: rgba(131,56,236,0.1); }
+  .quiz-option.correct { border-color: var(--accent4); background: rgba(6,255,165,0.1); color: var(--accent4); }
+  .quiz-option.wrong { border-color: var(--accent5); background: rgba(255,0,110,0.1); color: var(--accent5); }
+
+  .quiz-feedback {
+    display: none;
+    padding: 0.8rem 1rem;
+    border-radius: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(6,255,165,0.1); color: var(--accent4); border: 1px solid var(--accent4); }
+  .quiz-feedback.wrong { background: rgba(255,0,110,0.1); color: var(--accent5); border: 1px solid var(--accent5); }
+
+  /* === TABLE === */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 1.5rem 0;
+    border-radius: 0.8rem;
+    overflow: hidden;
+  }
+
+  .data-table th {
+    background: var(--panel2);
+    color: var(--accent2);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 0.8rem 1rem;
+    text-align: left;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--accent2);
+  }
+
+  .data-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text2);
+    vertical-align: top;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.03); }
+
+  /* === ANATOMY SVG === */
+  .anatomy-container {
+    background: var(--bg2);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .anatomy-svg-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .anat-label {
+    position: absolute;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .anat-label:hover { opacity: 0.7; }
+  .anat-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    background: var(--bg3);
+    border-radius: 2rem;
+    height: 6px;
+    margin: 0.5rem 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 2rem;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    box-shadow: 0 0 8px var(--glow1);
+    animation: progressGrow 2s ease-out forwards;
+  }
+  @keyframes progressGrow { from{width:0} }
+
+  /* === EQUATION === */
+  .equation-box {
+    background: var(--panel2);
+    border: 1px solid rgba(131,56,236,0.3);
+    border-radius: 0.8rem;
+    padding: 1.2rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--accent6);
+    box-shadow: 0 0 20px rgba(131,56,236,0.1);
+  }
+  .equation-label {
+    font-size: 0.6rem;
+    color: var(--text2);
+    margin-top: 0.4rem;
+    font-family: 'Nunito', sans-serif;
+    letter-spacing: 0.05em;
+  }
+
+  /* === TABS === */
+  .tab-group { margin: 1.5rem 0; }
+  .tab-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text2);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn.active { color: var(--accent2); border-bottom-color: var(--accent2); }
+  .tab-panel { display: none; padding: 1.2rem 0.5rem; font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
+  .tab-panel.active { display: block; }
+
+  /* === DIVIDER === */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 3rem 0;
+  }
+
+  /* === FOOTER === */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 3rem 1rem 2rem;
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2.5rem;
+    color: var(--accent1);
+    text-shadow: 3px 3px 0 var(--accent6);
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+
+  .footer-text { color: var(--text2); font-size: 0.8rem; line-height: 2; }
+
+  /* === UTILITY === */
+  strong { color: #fff; }
+  em { color: var(--accent3); font-style: normal; font-weight: 700; }
+  .text-orange { color: var(--accent1); }
+  .text-blue { color: var(--accent2); }
+  .text-yellow { color: var(--accent3); }
+  .text-green { color: var(--accent4); }
+  .text-pink { color: var(--accent5); }
+  .text-purple { color: var(--accent6); }
+
+  p { margin: 0.7rem 0; font-size: 0.92rem; color: var(--text2); line-height: 1.8; }
+
+  /* === ANIMATION KEYFRAMES === */
+  @keyframes fadeUp {
+    from{opacity:0; transform:translateY(30px)}
+    to{opacity:1; transform:translateY(0)}
+  }
+  .fade-up { animation: fadeUp 0.6s ease forwards; }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 600px) {
+    .hero-title { font-size: 2.2rem; }
+    .hero-subtitle { font-size: 1rem; }
+    .chapter-title { font-size: 1.6rem; }
+    .card-grid { grid-template-columns: 1fr; }
+    .data-table { font-size: 0.75rem; }
+    .data-table th, .data-table td { padding: 0.5rem 0.7rem; }
+    .flow { flex-direction: column; }
+    .speech { flex-direction: column; }
+    .speech.right { flex-direction: column; }
+  }
+
+  /* Glow pulse for atoms */
+  .atom-large {
+    width: 70px; height: 70px;
+    font-size: 0.8rem;
+  }
+
+  /* Neuron animation */
+  .neuron-pulse {
+    display: inline-block;
+    width: 12px; height: 12px;
+    background: var(--accent3);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--glow3);
+    animation: neuronFire 0.8s ease-in-out infinite;
+    vertical-align: middle;
+    margin: 0 2px;
+  }
+  @keyframes neuronFire {
+    0%,100%{transform:scale(1); opacity:0.4}
+    50%{transform:scale(1.5); opacity:1}
+  }
+
+  /* Saliva drops */
+  .drop {
+    display: inline-block;
+    animation: dropFall 1.5s ease-in infinite;
+    font-size: 1.2rem;
+  }
+  .drop:nth-child(2){animation-delay:0.3s}
+  .drop:nth-child(3){animation-delay:0.6s}
+  @keyframes dropFall {
+    0%{transform:translateY(-5px); opacity:0}
+    50%{opacity:1}
+    100%{transform:translateY(5px); opacity:0}
+  }
+
+  /* Glottis */
+  .glottis-anim {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 1rem 0;
+  }
+  .glottis-left, .glottis-right {
+    width: 40px; height: 12px;
+    background: var(--accent5);
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(255,0,110,0.5);
+    animation: glottisClose 2s ease-in-out infinite;
+  }
+  .glottis-right { animation-direction: alternate-reverse; }
+  @keyframes glottisClose {
+    0%,100%{transform:scaleX(1)} 50%{transform:scaleX(0.1)}
+  }
+
+  /* Scroll progress */
+  #scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2), var(--accent4));
+    width: 0%;
+    z-index: 9999;
+    transition: width 0.1s;
+  }
+</style>
+</head>
+<body>
+
+<div id="scroll-progress"></div>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-badge">🏥 DEMILMED-UL · FISIOLOGIA · 2026</div>
+  <h1 class="hero-title">🍎 A JORNADA DO<br>BOLO ALIMENTAR</h1>
+  <p class="hero-subtitle">Boca · Faringe · Esôfago · Motilidade</p>
+  <p class="hero-desc">Embarque nesta missão épica pelo trato digestivo superior. Moléculas dançam, músculose contraem, neurónios disparam — tudo para levar a comida do prato até ao estômago. Uma aventura de fisiologia de nível Boron! 🚀</p>
+
+  <div class="hero-chars">
+    <div class="char-bubble">
+      <div class="char-emoji">👅</div>
+      <div class="char-name">MIKA<br><span style="color:var(--text2);font-size:0.6rem">A Boca</span></div>
+    </div>
+    <div class="char-bubble">
+      <div class="char-emoji">🦷</div>
+      <div class="char-name">DENTE<br><span style="color:var(--text2);font-size:0.6rem">Mastigação</span></div>
+    </div>
+    <div class="char-bubble">
+      <div class="char-emoji">💧</div>
+      <div class="char-name">SALIVA<br><span style="color:var(--text2);font-size:0.6rem">A Enzimática</span></div>
+    </div>
+    <div class="char-bubble">
+      <div class="char-emoji">🌊</div>
+      <div class="char-name">PERIS<br><span style="color:var(--text2);font-size:0.6rem">A Onda</span></div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Explorar</span>
+    <span>▼</span>
+  </div>
+</section>
+
+<!-- ===== NAV ===== -->
+<nav class="nav-bar">
+  <button class="nav-btn" onclick="scrollTo('#cap1')">🗺️ Anatomia</button>
+  <button class="nav-btn" onclick="scrollTo('#cap2')">🦷 Mastigação</button>
+  <button class="nav-btn" onclick="scrollTo('#cap3')">💧 Saliva</button>
+  <button class="nav-btn" onclick="scrollTo('#cap4')">🌀 Deglutição</button>
+  <button class="nav-btn" onclick="scrollTo('#cap5')">🌊 Esôfago</button>
+  <button class="nav-btn" onclick="scrollTo('#cap6')">🧠 Neuro</button>
+  <button class="nav-btn" onclick="scrollTo('#cap7')">🏥 Clínica</button>
+  <button class="nav-btn" onclick="scrollTo('#cap8')">🧪 Quiz</button>
+</nav>
+
+<main>
+
+<!-- ===========================
+     CAPÍTULO 1 — ANATOMIA
+     =========================== -->
+<section id="cap1" class="chapter">
+  <div class="chapter-number">01</div>
+  <div class="chapter-tag tag-orange">CAPÍTULO 1</div>
+  <h2 class="chapter-title">🗺️ O Mapa do Reino<br><small style="font-size:0.5em;color:var(--text2)">Anatomia Funcional da Boca, Faringe e Esôfago</small></h2>
+</section>
+
+<div class="speech orange">
+  <div class="speech-avatar">🗺️</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-orange">MESTRE ANATÔMICO</div>
+    Antes de partir em aventura, precisas conhecer o território, jovem! O trato digestivo superior é um reino de 3 regiões — Boca, Faringe e Esôfago. Cada uma tem a sua missão específica na epopeia da digestão!
+  </div>
+</div>
+
+<div class="manga-panel panel-orange">
+  <div class="chapter-tag tag-orange" style="margin-bottom:1rem">VISÃO GERAL — MAPA FUNCIONAL</div>
+  
+  <div class="flow">
+    <div class="flow-step orange">👅 BOCA<br><small>Mastigação<br>+ Saliva</small></div>
+    <div class="flow-arrow">▶</div>
+    <div class="flow-step yellow">🌀 FARINGE<br><small>Deglutição<br>+ Proteção VA</small></div>
+    <div class="flow-arrow">▶</div>
+    <div class="flow-step green">📏 ESÔFAGO<br><small>Transporte<br>25cm</small></div>
+    <div class="flow-arrow">▶</div>
+    <div class="flow-step pink">🫙 ESTÔMAGO<br><small>Digestão<br>Química</small></div>
+  </div>
+
+  <p style="text-align:center;font-size:0.8rem;color:var(--text2);margin-top:0.5rem">Tempo total desta jornada: <em>8 a 20 segundos</em> desde a boca até ao estômago</p>
+</div>
+
+<div class="chapter-tag tag-blue" style="margin: 1.5rem 0 0.5rem">ANATOMIA DA BOCA — CAVIDADE ORAL</div>
+
+<div class="card-grid">
+  <div class="info-card card-orange">
+    <div class="card-icon">🦷</div>
+    <div class="card-title">Vestíbulo Oral</div>
+    <div class="card-text">Espaço entre os dentes/gengivas e os lábios/bochechas. Porta de entrada do alimento. Etimologia: <em>vestibulum</em> (lat.) = antecâmara, hall de entrada.</div>
+  </div>
+  <div class="info-card card-blue">
+    <div class="card-icon">👅</div>
+    <div class="card-title">Cavidade Oral Própria</div>
+    <div class="card-text">Espaço interno delimitado pelos dentes, palato duro/mole, assoalho e língua. Onde acontece a mastigação real e a formação do bolo alimentar.</div>
+  </div>
+  <div class="info-card card-yellow">
+    <div class="card-icon">🫁</div>
+    <div class="card-title">Palato Duro vs Mole</div>
+    <div class="card-text"><strong>Duro</strong> (osso palatino + processo palatino da maxila): separa boca do nariz. <strong>Mole</strong> (músculo): move-se durante a deglutição para fechar a nasofaringe. CRUCIAL!</div>
+  </div>
+  <div class="info-card card-green">
+    <div class="card-icon">💪</div>
+    <div class="card-title">A Língua (Glossa/Lingua)</div>
+    <div class="card-text">Músculo esquelético voluntário mas com reflexos automáticos. Empurra o alimento durante mastigação e deglutição. Inervação motora: <em>Nervo Hipoglosso (XII)</em>.</div>
+  </div>
+</div>
+
+<div class="chapter-tag tag-yellow" style="margin: 1.5rem 0 0.5rem">ANATOMIA DA FARINGE</div>
+
+<div class="manga-panel panel-yellow">
+  <p>A faringe (do grego <em>pharynx</em> = garganta) é um tubo muscular compartilhado entre os sistemas <strong>digestivo e respiratório</strong>. Tem ~12-14 cm de comprimento e divide-se em 3 andares:</p>
+  
+  <div class="card-grid" style="margin-top:1rem">
+    <div class="info-card card-blue">
+      <div class="card-icon">👃</div>
+      <div class="card-title">Nasofaringe</div>
+      <div class="card-text">Atrás das fossas nasais. Contém as <em>Trompas de Eustáquio</em> (ligação ao ouvido médio) e as amígdalas faríngeas (adenoides). <strong>Nunca passa alimento aqui</strong> em condições normais.</div>
+    </div>
+    <div class="info-card card-orange">
+      <div class="card-icon">👅</div>
+      <div class="card-title">Orofaringe</div>
+      <div class="card-text">Atrás da cavidade oral. Aqui o ar E o alimento cruzam-se! É a zona perigosa. Amígdalas palatinas estão aqui. Comunicação com boca pelo <em>istmo das fauces</em>.</div>
+    </div>
+    <div class="info-card card-pink">
+      <div class="card-icon">🌬️</div>
+      <div class="card-title">Laringofaringe (Hipofaringe)</div>
+      <div class="card-text">Atrás da laringe. Onde se separa definitivamente: <strong>via aérea</strong> (laringe → traqueia) vs <strong>via digestiva</strong> (esôfago). A epiglote fecha a laringe durante a deglutição.</div>
+    </div>
+  </div>
+</div>
+
+<div class="highlight highlight-molecule">
+  <div class="highlight-label text-blue">🔬 DETALHE HISTOLÓGICO — PAREDES DA FARINGE</div>
+  A parede da faringe é composta por <strong>4 camadas</strong> (de fora para dentro):
+  <br><br>
+  <strong>1. Adventícia:</strong> tecido conjuntivo frouxo — ancora a faringe ao redor.<br>
+  <strong>2. Muscular:</strong> músculo estriado esquelético em 2 camadas — <em>constritores</em> (circular externa) e <em>elevadores</em> (longitudinal interna). São eles que fazem a faringe se contrair na deglutição.<br>
+  <strong>3. Submucosa:</strong> tecido conjuntivo com glândulas mucosas — lubrificação.<br>
+  <strong>4. Mucosa:</strong> epitélio pavimentoso estratificado não queratinizado — resistente ao atrito do alimento.
+</div>
+
+<div class="chapter-tag tag-green" style="margin: 1.5rem 0 0.5rem">ANATOMIA DO ESÔFAGO</div>
+
+<div class="manga-panel panel-green">
+  <div class="speech">
+    <div class="speech-avatar">🌊</div>
+    <div class="speech-bubble">
+      <div class="speech-name text-green">PERIS — A ONDA PERISTÁLTICA</div>
+      Olá! Sou o Esôfago — um tubo muscular de <strong>~25 centímetros</strong>! Do grego <em>oisophagos</em> = aquele que carrega alimento. A minha única missão é transportar o bolo alimentar com elegância da faringe até o estômago. Simples, mas vital!
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Segmento</th>
+        <th>Localização</th>
+        <th>Tipo de Músculo</th>
+        <th>Função</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--accent3)">Superior (1/3)</strong></td>
+        <td>Pescoço / torácico superior</td>
+        <td>Estriado esquelético</td>
+        <td>Início deglutição voluntária→reflexo</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent2)">Médio (1/3)</strong></td>
+        <td>Mediastino médio</td>
+        <td>Misto (esq. + liso)</td>
+        <td>Transição, peristálise</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent4)">Inferior (1/3)</strong></td>
+        <td>Mediastino posterior → diafragma</td>
+        <td>Músculo liso</td>
+        <td>Peristálise + EEI</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight highlight-warning" style="margin-top:1rem">
+    <div class="highlight-label text-orange">⚡ FACTO IMPORTANTE — OS DOIS ESFÍNCTERES</div>
+    O esôfago tem 2 guardiões:<br>
+    • <strong>EES — Esfíncter Esofágico Superior</strong> (= Upper Esophageal Sphincter): feito pelo músculo cricofaríngeo (estriado esquelético). Pressão em repouso: ~60-100 mmHg. Evita entrada de ar no esôfago.<br>
+    • <strong>EEI — Esfíncter Esofágico Inferior</strong> (= Lower Esophageal Sphincter): músculo liso, NÃO é um esfíncter anatômico real, mas sim uma <em>zona de alta pressão funcional</em> de ~2-4 cm. Pressão em repouso: ~15-35 mmHg. Evita o refluxo gastroesofágico!
+  </div>
+</div>
+
+<div class="highlight highlight-memory">
+  <div class="highlight-label text-yellow">🧠 MNEMÓNICA — HISTOLOGIA DO ESÔFAGO</div>
+  <strong>MASSA</strong> = <strong>M</strong>ucosa (epitélio pavimentoso estratificado NÃO queratinizado) → <strong>A</strong>dventícia (NÃO tem serosa, exceto abdominal) → <strong>S</strong>ubmucosa → <strong>S</strong>ubmucosa tem as <em>glândulas esofágicas próprias</em> (mucosas, lubrificação) → <strong>A</strong>s camadas musculares (circular interna + longitudinal externa — INVERSO do intestino!).
+  <br><br>
+  ⚠️ <strong>Atenção:</strong> O epitélio da mucosa esofágica é o mesmo da boca — pavimentoso estratificado. Se mudar para colunar → <em>Esôfago de Barrett</em> (pré-canceroso)!
+</div>
+
+<!-- ===========================
+     CAPÍTULO 2 — MASTIGAÇÃO
+     =========================== -->
+<div class="divider"></div>
+<section id="cap2" class="chapter">
+  <div class="chapter-number">02</div>
+  <div class="chapter-tag tag-yellow">CAPÍTULO 2</div>
+  <h2 class="chapter-title">🦷 A Batalha da Mastigação<br><small style="font-size:0.5em;color:var(--text2)">Mecânica, Músculos e Controlo Neural</small></h2>
+</section>
+
+<div class="speech yellow">
+  <div class="speech-avatar">🦷</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-yellow">DENTE — O GUERREIRO</div>
+    A mastigação (do latim <em>masticare</em>) não é só partir o alimento! É um processo neuromuscular sofisticado que prepara o bolo para ser digerido. Quanto melhor eu fizer o meu trabalho, mais fácil é para as enzimas depois!
+  </div>
+</div>
+
+<div class="manga-panel panel-yellow">
+  <div class="chapter-tag tag-yellow" style="margin-bottom:1rem">FÍSICA DA MASTIGAÇÃO</div>
+  
+  <div class="highlight highlight-physics">
+    <div class="highlight-label text-purple">🔭 PRINCÍPIOS FÍSICOS</div>
+    A mastigação aplica <strong>força mecânica</strong> para reduzir o tamanho das partículas alimentares. A lógica é simples:<br><br>
+    <strong>Área de superfície ∝ 1 / tamanho da partícula</strong><br><br>
+    Ao diminuir o tamanho das partículas, <em>aumentamos exponencialmente</em> a área de superfície de contacto com as enzimas digestivas. Uma partícula de 1cm³ tem muito menos superfície do que 1000 partículas de 1mm³ com o mesmo volume total!<br><br>
+    <strong>Força de mordida humana:</strong><br>
+    • Incisivos: ~150-200 N<br>
+    • Molares: ~500-700 N (suficiente para mastigar nozes!)
+  </div>
+
+  <div class="chapter-tag tag-orange" style="margin: 1.5rem 0 0.5rem">OS 4 MÚSCULOS MASTIGADORES</div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Músculo</th>
+        <th>Origem → Inserção</th>
+        <th>Ação</th>
+        <th>Nervo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--accent1)">Masseter</strong></td>
+        <td>Arco zigomático → ângulo mandíbula</td>
+        <td>Elevação da mandíbula (fechar)</td>
+        <td>V3 (trigémino)</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent2)">Temporal</strong></td>
+        <td>Fossa temporal → processo coronoide</td>
+        <td>Elevação + retração</td>
+        <td>V3 (trigémino)</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent4)">Pterigoide Medial</strong></td>
+        <td>Fossa pterigoideia → ângulo mandíbula</td>
+        <td>Elevação + movimentos laterais</td>
+        <td>V3 (trigémino)</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent5)">Pterigoide Lateral</strong></td>
+        <td>Asa maior esfenóide → côndilo mandíbula</td>
+        <td>Protrusão + abertura mandíbula</td>
+        <td>V3 (trigémino)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight highlight-memory" style="margin-top:1rem">
+    <div class="highlight-label text-yellow">🧠 MNEMÓNICA</div>
+    Todos os músculos mastigadores são inervados pelo <strong>Nervo Trigémino (V) — ramo mandibular (V3)</strong>.<br>
+    "MMPP Mastigam Com Trigémino" = <strong>M</strong>asseter, <strong>M</strong>ilo-hioide, <strong>P</strong>terigoide (med. e lat.), <strong>P</strong>eriglottal → todos V3!
+  </div>
+</div>
+
+<div class="chapter-tag tag-purple" style="margin: 1.5rem 0 0.5rem">CONTROLO NEURAL DA MASTIGAÇÃO</div>
+
+<div class="manga-panel panel-orange">
+  <div class="speech">
+    <div class="speech-avatar">🧠</div>
+    <div class="speech-bubble">
+      <div class="speech-name text-orange">NEURAL — O MAESTRO</div>
+      A mastigação parece voluntária, mas existe um <strong>CPG — Central Pattern Generator</strong> (Gerador de Padrão Central) no tronco cerebral que a torna automática! É por isso que consegues mastigar enquanto pensas noutras coisas!
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">⏱️ PASSO 1 — VOLUNTÁRIO</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Córtex Motor → Início da Mastigação</div>
+        <div class="timeline-text">O córtex motor primário (giro pré-central) envia sinal voluntário para abrir a boca. O <em>Nervo V3 (trigémino motor)</em> contrai os pterigoides laterais → protrusão + abertura da mandíbula.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent3)"></div>
+      <div class="timeline-time">⏱️ PASSO 2 — REFLEXO</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Mecanorreceptores → Reflexo Mastigatório</div>
+        <div class="timeline-text">Os <em>mecanorreceptores periodontais</em> (no ligamento periodontal dos dentes) detetam a presença de alimento. Sinal via V3 sensitivo → <strong>Núcleo Sensitivo do V</strong> no tronco cerebral → ativa CPG mastigatório.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent4)"></div>
+      <div class="timeline-time">⏱️ PASSO 3 — CPG</div>
+      <div class="timeline-content">
+        <div class="timeline-title">CPG → Ritmo Inibitório-Excitatório</div>
+        <div class="timeline-text">O CPG (localizado na Formação Reticular Pontina) cria um padrão rítmico: <strong>excita elevadores</strong> (masseter, temporal) para fechar mandíbula → <strong>inibe elevadores</strong> → relaxamento → ciclo repete. Frequência: ~1 ciclo/segundo.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent5)"></div>
+      <div class="timeline-time">⏱️ PASSO 4 — COORDENAÇÃO</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Língua + Bochechas → Posicionamento do Alimento</div>
+        <div class="timeline-text">A língua (N. hipoglosso XII) e o bucinador (N. facial VII) trabalham em conjunto para recolocar o alimento entre os dentes a cada ciclo mastigatório. É uma coreografia automática perfeita!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="highlight highlight-clinical">
+  <div class="highlight-label text-green">🏥 CLÍNICA — BRUXISMO E DISFUNÇÃO MASTIGATÓRIA</div>
+  <strong>Bruxismo</strong> = ranger/apertar os dentes inconscientemente (sono ou vigília). Causa: hiperatividade do CPG mastigatório por stress, ansiedade, apneia do sono. Tratamento: goteiras dentárias, toxina botulínica no masseter.<br><br>
+  <strong>Disfunção da ATM</strong> (Articulação Têmporo-Mandibular): dor, clicks, limitação de abertura. Pode simular dor de ouvido (nervo auriculotemporal = ramo do V3).<br><br>
+  <strong>Avaliar em paciente</strong>: força de mordida reduzida = pensar em lesão do V3 (ex: tumor), miopatia ou AVC (lesão corticobulbar bilateral).
+</div>
+
+<!-- ===========================
+     CAPÍTULO 3 — SALIVA
+     =========================== -->
+<div class="divider"></div>
+<section id="cap3" class="chapter">
+  <div class="chapter-number">03</div>
+  <div class="chapter-tag tag-blue">CAPÍTULO 3</div>
+  <h2 class="chapter-title">💧 Saliva — O Elixir Mágico<br><small style="font-size:0.5em;color:var(--text2)">Composição, Glândulas e Regulação</small></h2>
+</section>
+
+<div class="speech">
+  <div class="speech-avatar">💧</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-blue">SALIVA — A ENZIMÁTICA</div>
+    Não subestime o meu poder! Produzo <strong>1-1,5 litros por dia</strong>! Sou um fluido complexo com funções de lubrificação, proteção, digestão e comunicação imune. E funciono 24h! (mesmo quando dormem... em menor quantidade)
+  </div>
+</div>
+
+<div class="manga-panel panel-blue">
+  <div class="chapter-tag tag-blue" style="margin-bottom:1rem">AS 3 GRANDES GLÂNDULAS SALIVARES</div>
+  
+  <div class="card-grid">
+    <div class="info-card card-orange">
+      <div class="card-icon">🔶</div>
+      <div class="card-title">Parótida (70ml/h estimulada)</div>
+      <div class="card-text">
+        Maior glândula. Localização: frente à orelha (região parotídea). Ducto de Stensen → abre na mucosa bucal, nível do 2º molar superior.<br><br>
+        <strong>Secreção:</strong> serosa pura (rica em proteínas + <em>α-amilase</em>). Inervação parassimpática: N. Glossofaríngeo (IX) → gânglio ótico → N. Auriculotemporal.
+      </div>
+    </div>
+    <div class="info-card card-blue">
+      <div class="card-icon">🔷</div>
+      <div class="card-title">Submandibular (65-70% do total)</div>
+      <div class="card-text">
+        Abaixo da mandíbula, no triângulo submandibular. Ducto de Wharton → abre no assoalho da boca (carúncula sublingual).<br><br>
+        <strong>Secreção:</strong> seromucosa (mista). Inervação parassimpática: N. Facial (VII) → Corda do Tímpano → N. Lingual → gânglio submandibular.
+      </div>
+    </div>
+    <div class="info-card card-green">
+      <div class="card-icon">🟢</div>
+      <div class="card-title">Sublingual (5% do total)</div>
+      <div class="card-text">
+        Sob a língua, no assoalho oral. Múltiplos ductos de Rivinus. Sem ducto principal único (ou ducto de Bartholin acessório).<br><br>
+        <strong>Secreção:</strong> predominantemente mucosa (rica em mucinas). Inervação: igual à submandibular (VII → Corda do Tímpano).
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight highlight-molecule" style="margin-top:1.5rem">
+    <div class="highlight-label text-blue">🔬 HISTOLOGIA — DOIS TIPOS DE CÉLULAS ACINARES</div>
+    Os ácinos são as unidades secretoras das glândulas. Existem 2 tipos:<br><br>
+    <strong>• Células Serosas:</strong> pirâmide, citoplasma basófilo (muito RER — retículo endoplasmático rugoso), grânulos de zimogênio (armazenam enzimas inativas). Produzem <em>enzimas + água + eletrólitos</em>.<br><br>
+    <strong>• Células Mucosas:</strong> cuboide-cilíndrica, citoplasma claro (cheio de vacúolos de mucina). Produzem <em>mucinas</em> (glicoproteínas de alto peso molecular que formam o muco).<br><br>
+    Nas glândulas mistas, os ácinos mucosos têm frequentemente uma <strong>"meia-lua serosa"</strong> (células serosas em crescente ao redor do ácino mucoso) — artefato histológico, na realidade são ácinos separados.
+  </div>
+</div>
+
+<div class="chapter-tag tag-yellow" style="margin: 1.5rem 0 0.5rem">COMPOSIÇÃO MOLECULAR DA SALIVA</div>
+
+<div class="manga-panel panel-yellow">
+
+  <div class="tab-group">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab(this,'t1','tab-saliva')">💧 Água & Iões</button>
+      <button class="tab-btn" onclick="switchTab(this,'t2','tab-saliva')">🧪 Enzimas</button>
+      <button class="tab-btn" onclick="switchTab(this,'t3','tab-saliva')">🛡️ Proteínas Imunes</button>
+      <button class="tab-btn" onclick="switchTab(this,'t4','tab-saliva')">🧫 pH & Tampões</button>
+    </div>
+    <div id="t1" class="tab-panel active tab-saliva">
+      <p>A saliva é <strong>99,5% água</strong>. O 0,5% restante é o que faz toda a diferença!</p>
+      <p><strong>Iões em repouso vs estimulada:</strong></p>
+      <table class="data-table">
+        <thead><tr><th>Ião</th><th>Em Repouso</th><th>Estimulada</th><th>Comparação com Plasma</th></tr></thead>
+        <tbody>
+          <tr><td>Na⁺</td><td>~15 mEq/L</td><td>~70 mEq/L</td><td>↓ que plasma (140 mEq/L)</td></tr>
+          <tr><td>K⁺</td><td>~20 mEq/L</td><td>~15 mEq/L</td><td>↑ que plasma (4 mEq/L)</td></tr>
+          <tr><td>Cl⁻</td><td>~15 mEq/L</td><td>~40 mEq/L</td><td>↓ que plasma (103 mEq/L)</td></tr>
+          <tr><td>HCO₃⁻</td><td>~15 mEq/L</td><td>~60 mEq/L</td><td>↑ que plasma (24 mEq/L)</td></tr>
+          <tr><td>Ca²⁺</td><td>~2 mEq/L</td><td>~2 mEq/L</td><td>Igual</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:0.8rem">A saliva é <em>hipotônica</em> em relação ao plasma! O epitélio do ducto reabsorve Na⁺ e Cl⁻ (sem água → impermeável à água) e secreta K⁺ e HCO₃⁻.</p>
+    </div>
+    <div id="t2" class="tab-panel tab-saliva">
+      <p><strong>α-Amilase Salivar</strong> (= Ptialina, do grego <em>ptyalon</em> = saliva):</p>
+      <p>• Enzima principal. Hidrolisa ligações α-1,4-glicosídicas do amido (polissacarídeo) → maltose + maltotriose + dextrinas limite.<br>
+      • Trabalha em pH ótimo 6,7-7,0 (pH salivar normal).<br>
+      • <strong>Inativada no estômago</strong> pelo pH ácido (pH&lt;4). Portanto, digestão do amido na boca é LIMITADA.<br>
+      • Concentração salivar: ~0,3 mg/mL. Representa ~40-50% das proteínas salivares.</p>
+      <br>
+      <p><strong>Lipase Lingual</strong> (= Lipase de Ebner):<br>
+      • Produzida pelas glândulas de von Ebner (base da língua).<br>
+      • Hidrolisa triglicerídeos → ácidos gordos + diglicerídeos.<br>
+      • pH ótimo 4,5-5,4 → <em>funciona no estômago</em> (sobrevive ao ácido!).<br>
+      • Responsável por ~30% da digestão lipídica em RN (recém-nascidos) e adultos com insuficiência pancreática.</p>
+    </div>
+    <div id="t3" class="tab-panel tab-saliva">
+      <p><strong>IgA Secretora (sIgA):</strong><br>
+      Principal imunoglobulina da saliva. Forma de IgA dimérica + peça J + componente secretor. Liga-se a antigénios bacterianos/virais → neutralização + prevenção de adesão à mucosa. Barreira imune de 1ª linha.</p>
+      <br>
+      <p><strong>Lisozima (Muramidase):</strong><br>
+      Hidrolisa a parede celular bacteriana (ligação β-1,4 do peptidoglicano). Ação antibacteriana especialmente vs bactérias gram-positivas.</p>
+      <br>
+      <p><strong>Lactoferrina:</strong><br>
+      Liga-se ao ferro → priva bactérias do ferro (necessário para crescimento). Efeito bacteriostático.</p>
+      <br>
+      <p><strong>Histatinas:</strong><br>
+      Peptídeos ricos em histidina com ação antifúngica (contra <em>Candida albicans</em>) e antibacteriana.</p>
+      <br>
+      <p><strong>Mucinas (MUC5B, MUC7):</strong><br>
+      Glicoproteínas de alto peso molecular. Lubrificação → reduz atrito durante mastigação/deglutição. Protegem mucosa de desidratação e acidez.</p>
+    </div>
+    <div id="t4" class="tab-panel tab-saliva">
+      <p><strong>pH Salivar:</strong> normalmente 6,5-7,5 (levemente ácido a neutro).</p>
+      <br>
+      <p><strong>Sistemas Tampão:</strong><br>
+      1. <strong>Bicarbonato/CO₂</strong>: principal tampão. HCO₃⁻ aumenta com estimulação → neutraliza ácidos da placa bacteriana.<br>
+      2. <strong>Fosfato (H₂PO₄⁻/HPO₄²⁻)</strong>: ativo em pH 6-7.<br>
+      3. <strong>Proteínas</strong>: tampão menor.</p>
+      <br>
+      <div class="equation-box">
+        CO₂ + H₂O ⇌ H₂CO₃ ⇌ H⁺ + HCO₃⁻
+        <div class="equation-label">Equação de tampão bicarbonato na saliva — mais HCO₃⁻ = mais capacidade de neutralizar ácido</div>
+      </div>
+      <p>A saliva estimulada tem muito mais HCO₃⁻ (até 60 mEq/L) → proteção superior contra cáries após refeição! A secreção salivar noturna (mínima) explica porque cáries avançam mais de noite.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-tag tag-green" style="margin: 1.5rem 0 0.5rem">MECANISMO MOLECULAR DE FORMAÇÃO DA SALIVA</div>
+
+<div class="manga-panel panel-green">
+  <div class="speech green">
+    <div class="speech-avatar">🔬</div>
+    <div class="speech-bubble">
+      <div class="speech-name text-green">PROF. MOLECULAR</div>
+      A secreção salivar acontece em 2 fases distintas: primeiro os ácinos criam um fluido inicial, depois os ductos modificam-no. É como um serviço de personalização!
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">🔬 FASE 1 — ÁCINOS (Secreção Primária)</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Como os ácinos secretam?</div>
+        <div class="timeline-text">
+          <strong>Estimulação parassimpática → ACh (Acetilcolina)</strong> liga-se a receptores M3 (muscarínicos) na membrana basolateral dos ácinos.<br><br>
+          → Ativa <em>fosfolipase C (PLC)</em> → IP₃ + DAG<br>
+          → IP₃ liberta Ca²⁺ do retículo endoplasmático<br>
+          → Ca²⁺ ativa canais de Cl⁻ (TMEM16A/Anoctamina) na membrana apical<br>
+          → Cl⁻ sai para o lúmen<br>
+          → Cria gradiente osmótico → Na⁺ e água seguem (via paracelular e aquaporinas AQP5)<br>
+          → Fluido primário = <strong>isotônico com o plasma</strong>!<br><br>
+          Simultaneamente, Ca²⁺ dispara a <strong>exocitose dos grânulos</strong> de zimogênio (amilase, mucinas, etc.).
+        </div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent4)"></div>
+      <div class="timeline-time">🔬 FASE 2 — DUCTOS (Modificação)</div>
+      <div class="timeline-content">
+        <div class="timeline-title">Os ductos tornam a saliva hipotônica</div>
+        <div class="timeline-text">
+          O epitélio ductal é <strong>impermeável à água</strong>. Então:<br><br>
+          → Células do ducto estriado reabsorvem <strong>Na⁺ (via ENaC — Epithelial Na Channel)</strong> e <strong>Cl⁻</strong> sem deixar água sair<br>
+          → Secretam <strong>K⁺ e HCO₃⁻</strong> para o lúmen<br>
+          → Resultado: saliva final HIPOTÔNICA (menos Na⁺, mais K⁺, mais HCO₃⁻)<br><br>
+          A bomba Na⁺/K⁺-ATPase basolateral mantém o gradiente. A aldosterona (hormônio suprarrenal) pode aumentar a reabsorção de Na⁺ nos ductos → a saliva fica ainda mais hipotônica e com mais K⁺ na hiperaldosteronismo!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-tag tag-orange" style="margin: 1.5rem 0 0.5rem">REGULAÇÃO NEUROENDÓCRINA DA SALIVAÇÃO</div>
+
+<div class="manga-panel panel-orange">
+  <div class="card-grid">
+    <div class="info-card card-green">
+      <div class="card-icon">✅</div>
+      <div class="card-title">Parassimpático → ESTIMULA</div>
+      <div class="card-text">
+        <strong>Via:</strong> N. Facial (VII) → Corda do Tímpano → N. Lingual → Gânglio Submandibular (sub. e sublingual). N. Glossofaríngeo (IX) → N. Timpânico → N. Petroso Menor → Gânglio Ótico (parótida).<br><br>
+        <strong>Mediador:</strong> ACh → receptores M3 → ↑Ca²⁺ intracelular → secreção abundante, fluida, rica em água e enzimas.<br><br>
+        <strong>Também:</strong> VIP (Vasoactive Intestinal Peptide) co-libertado → vasodilatação local → mais fluxo sanguíneo → mais substrato para saliva.
+      </div>
+    </div>
+    <div class="info-card card-orange">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Simpático → MODULA (não inibe totalmente)</div>
+      <div class="card-text">
+        <strong>Via:</strong> T1-T3 → gânglio cervical superior → nervos simpáticos pós-ganglionares.<br><br>
+        <strong>Mediador:</strong> Noradrenalina → receptores β-adrenérgicos → ↑AMPc → secreção de volume MENOR mas rico em proteínas (enzimas, mucinas).<br><br>
+        <strong>Efeito prático:</strong> stress → boca seca (xerostomia) por vasoconstrição (↓fluxo sanguíneo) e competição com parassimpático.
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight highlight-warning" style="margin-top:1rem">
+    <div class="highlight-label text-orange">🎯 REFLEXO SALIVAR — OS ESTÍMULOS</div>
+    <strong>Reflexo Incondicionado (inato):</strong> alimento na boca → mecanorreceptores + quimiorreceptores → nervo lingual (V3) + corda do tímpano (VII) → Núcleos Salivares (Superior = VII, Inferior = IX) → salivação.<br><br>
+    <strong>Reflexo Condicionado (Pavlov):</strong> ver, cheirar ou imaginar comida → córtex → hipotálamo → núcleos salivares → salivação antecipada. É por isso que a boca enche de água só de ver uma pizza!<br><br>
+    <strong>Inibição:</strong> desidratação, ansiedade extrema (simpático domina), dormir (↓parassimpático), radioterapia na região da cabeça e pescoço (destrói glândulas).
+  </div>
+</div>
+
+<div class="highlight highlight-clinical">
+  <div class="highlight-label text-green">🏥 CLÍNICA — XEROSTOMIA E SIALORREIA</div>
+  <strong>Xerostomia</strong> (boca seca; do grego <em>xeros</em> = seco + <em>stoma</em> = boca):<br>
+  Causas: medicamentos anticolinérgicos (antidepressivos tricíclicos, anti-histamínicos, antipsicóticos), Síndrome de Sjögren (autoimune, destroi glândulas), radioterapia, desidratação.<br>
+  Consequências: cáries dentárias aceleradas (sem tampão do HCO₃⁻), disfagia, disartria, candidose oral.<br>
+  Tratamento: pilocarpina (agonista muscarínico), cevimelina, saliva artificial.<br><br>
+  <strong>Sialorreia/Ptialismo</strong> (excesso de saliva):<br>
+  Causas: rabiva, intoxicação por organofosforados (inibem AChE → ACh acumula), Doença de Parkinson (dificuldade de deglutir, não excesso de produção!), gravidez precoce (náuseas).<br>
+  Tratamento da sialorreia em Parkinson: toxina botulínica intraparotídea, anticolinérgicos (glicopirrônio).
+</div>
+
+<!-- ===========================
+     CAPÍTULO 4 — DEGLUTIÇÃO
+     =========================== -->
+<div class="divider"></div>
+<section id="cap4" class="chapter">
+  <div class="chapter-number">04</div>
+  <div class="chapter-tag tag-green">CAPÍTULO 4</div>
+  <h2 class="chapter-title">🌀 A Grande Manobra — Deglutição<br><small style="font-size:0.5em;color:var(--text2)">A Sequência Perfeita em 3 Fases</small></h2>
+</section>
+
+<div class="speech green">
+  <div class="speech-avatar">🌀</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-green">COORDENADOR DA DEGLUTIÇÃO</div>
+    A deglutição (latim <em>deglutire</em> = engolir) é um dos atos mais complexos do nosso corpo! Em apenas <strong>1-2 segundos</strong>, mais de <strong>30 músculos</strong> têm de se coordenar perfeitamente para que o alimento vá para o esôfago e NÃO para os pulmões. Uma falha = aspiração!
+  </div>
+</div>
+
+<div class="manga-panel panel-green">
+  <div class="chapter-tag tag-green" style="margin-bottom:1.5rem">AS 3 FASES DA DEGLUTIÇÃO</div>
+
+  <!-- FASE 1 -->
+  <div class="accordion open" id="acc-fase1">
+    <div class="accordion-header" onclick="toggleAccordion('acc-fase1')">
+      <span>🟡 FASE 1 — Oral (Voluntária) · Duração: 1-2 seg</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>O que acontece:</strong> A língua empurra o bolo alimentar para trás, em direção à faringe. Esta é a única fase voluntária!</p>
+      <br>
+      <p><strong>Sequência molecular e muscular:</strong></p>
+      <div class="timeline" style="margin-top:1rem">
+        <div class="timeline-item visible">
+          <div class="timeline-dot" style="border-color:var(--accent3)"></div>
+          <div class="timeline-time">🔹 PASSO A</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Formação do Bolo</div>
+            <div class="timeline-text">O bolo alimentar foi mastigado, impregnado de saliva (lubrificação pelas mucinas). A língua modela-o numa massa coesa e o posiciona no seu dorso.</div>
+          </div>
+        </div>
+        <div class="timeline-item visible">
+          <div class="timeline-dot" style="border-color:var(--accent3)"></div>
+          <div class="timeline-time">🔹 PASSO B</div>
+          <div class="timeline-content">
+            <div class="timeline-title">Propulsão Lingual</div>
+            <div class="timeline-text">A ponta da língua sobe e toca o palato duro → contração progressiva dos músculos intrínsecos da língua (N. XII) → movimento em "pistão" → bolo empurrado para a orofaringe → ESTA AÇÃO DISPARA A FASE 2 (reflexo faríngeo).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="accordion" id="acc-fase2" style="margin-top:0.8rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-fase2')">
+      <span>🔴 FASE 2 — Faríngea (Reflexa) · Duração: ~1 seg</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>A fase mais crítica!</strong> É completamente involuntária. O bolo entra na faringe e dispara o <em>reflexo da deglutição</em>, orquestrado pelo <strong>Centro da Deglutição</strong> no tronco cerebral (Bulbo + Ponte).</p>
+      <br>
+      <p><strong>5 Eventos Simultâneos (a ordem importa!):</strong></p>
+      
+      <div class="flow" style="flex-direction:column; align-items:flex-start; padding:1rem">
+        <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem">
+          <div class="flow-step pink" style="min-width:120px">1. Fecha Nasofaringe</div>
+          <div style="font-size:0.82rem; color:var(--text2)">Palato mole eleva-se (tensor + levantador do véu palatino, N. X + N. V3) → sela a nasofaringe → impede alimento de subir para o nariz</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem">
+          <div class="flow-step orange" style="min-width:120px">2. Para Respiração</div>
+          <div style="font-size:0.82rem; color:var(--text2)">Inibição do centro respiratório → apneia de deglutição (~1 seg). <em>Apneia de deglutição</em> = proteção das vias aéreas!</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem">
+          <div class="flow-step yellow" style="min-width:120px">3. Fecha Laringe</div>
+          <div style="font-size:0.82rem; color:var(--text2)">
+            <strong>3 níveis de proteção:</strong><br>
+            • Pregas ariepiglóticas + aritenóides (nível mais alto)<br>
+            • Pregas ventriculares (falsas cordas vocais) — fecham<br>
+            • Pregas vocais verdadeiras — aduam (aproximam-se)<br>
+            • EPIGLOTE desce sobre a glote (ajuda mas NÃO é o principal protetor!)
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem">
+          <div class="flow-step green" style="min-width:120px">4. EES Relaxa</div>
+          <div style="font-size:0.82rem; color:var(--text2)">Músculo cricofaríngeo (normalmente contraído) relaxa → abre o EES → permite entrada do bolo no esôfago. Duração de abertura: ~0,5-1 seg.</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:0.8rem">
+          <div class="flow-step" style="min-width:120px">5. Constritores Puxam</div>
+          <div style="font-size:0.82rem; color:var(--text2)">Constritores faríngeos (superior → médio → inferior, N. X via Plexo Faríngeo) contraem sequencialmente → propulsão do bolo para baixo pelo esôfago.</div>
+        </div>
+      </div>
+
+      <div class="highlight highlight-warning" style="margin-top:1rem">
+        <div class="highlight-label text-orange">⚠️ MITO COMUM — A EPIGLOTE</div>
+        A epiglote NÃO é o principal protetor das vias aéreas! Pacientes sem epiglote (após laringectomia parcial) podem deglutir sem aspiração. O que realmente protege são as <strong>cordas vocais verdadeiras e as pregas ariepiglóticas</strong>. A epiglote é uma proteção adicional que ajuda a desviar o bolo lateralmente (pelos recessos piriformes) em direção ao esôfago.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="accordion" id="acc-fase3" style="margin-top:0.8rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-fase3')">
+      <span>🔵 FASE 3 — Esofágica (Peristáltica) · Duração: 8-20 seg</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>O bolo entrou no esôfago!</strong> Agora o esôfago toma o comando por via do seu sistema nervoso entérico e extrínseco.</p>
+      <br>
+      <p>Dois tipos de peristálise esofágica:</p>
+      <div class="card-grid">
+        <div class="info-card card-blue">
+          <div class="card-icon">▶️</div>
+          <div class="card-title">Peristálse Primária</div>
+          <div class="card-text">Continuação do reflexo da deglutição. Iniciada pela fase faríngea. Uma onda de contração propulsiva que desce do EES → EEI. Velocidade: <em>2-4 cm/segundo</em>. É a principal onda para sólidos.</div>
+        </div>
+        <div class="info-card card-green">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">Peristálse Secundária</div>
+          <div class="card-text">Induzida por distensão da parede esofágica (reflexo local). Ocorre quando a primária não limpa todo o bolo, ou no refluxo. Não precisa de deglutição → reflexo puramente entérico (Plexo Mioentérico de Auerbach).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="highlight highlight-clinical">
+  <div class="highlight-label text-green">🏥 CLÍNICA — DISFAGIA E ASPIRAÇÃO</div>
+  <strong>Disfagia</strong> (grego: <em>dys</em> = difícil + <em>phagia</em> = comer):<br>
+  • <em>Disfagia Orofaríngea</em>: dificuldade em iniciar a deglutição. Causas: AVC (lesão corticobulbar ou bulbar), Parkinson, miastenia gravis, ELA. Risco de aspiração!<br>
+  • <em>Disfagia Esofágica</em>: sensação de alimento "preso" no tórax. Causas: acalásia, espasmo esofágico difuso, estenose, cancro, DRGE complicada.<br><br>
+  <strong>Aspiração</strong>: alimento/líquido vai para a via aérea. Pode causar pneumonia aspirativa. <em>Aspiração silenciosa</em> = sem tosse (comum em AVC, demência) → muito perigosa!<br><br>
+  <strong>Avaliação</strong>: Videofluoroscopia (VFSS) = gold standard para fase faríngea. Manometria esofágica de alta resolução (HRM) para fase esofágica. Sinal de alerta: disfagia progressiva para sólidos → estenose mecânica; para sólidos E líquidos desde início → problema motor (acalásia).
+</div>
+
+<div class="chapter-tag tag-purple" style="margin: 1.5rem 0 0.5rem">NEUROLOGIA DA DEGLUTIÇÃO — CENTRO DE CONTROLO</div>
+
+<div class="manga-panel panel-blue">
+  <div class="speech">
+    <div class="speech-avatar">🧠</div>
+    <div class="speech-bubble">
+      <div class="speech-name text-blue">CENTRO DE DEGLUTIÇÃO</div>
+      Moro no bulbo (medula oblongata), especificamente nos <strong>Núcleos do Trato Solitário (NTS)</strong> e <strong>Núcleo Ambíguo</strong>! Recebo aferências e envio as ordens para coordenar toda a operação!
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Nervo Craniano</th>
+        <th>Sensitivo (Afferência)</th>
+        <th>Motor (Eferência)</th>
+        <th>Estrutura-alvo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--accent3)">V — Trigémino</strong></td>
+        <td>Palato, gengivas, dentes, ATM</td>
+        <td>V3: músculos mastigadores, milo-hioide</td>
+        <td>Mastigação</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent2)">VII — Facial</strong></td>
+        <td>Gustação 2/3 anteriores língua</td>
+        <td>Glândulas sublingual e submandibular</td>
+        <td>Salivação + gustação</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent4)">IX — Glossofaríngeo</strong></td>
+        <td>Orofaringe, 1/3 post. língua, gustação</td>
+        <td>Glândula parótida (via N. timpânico)</td>
+        <td>Reflexo de engasgamento</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent5)">X — Vago</strong></td>
+        <td>Laringofaringe, laringe, esôfago</td>
+        <td>Músculos faríngeos + laríngeos + esôfago</td>
+        <td>Toda a deglutição esofágica + EEI</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent1)">XII — Hipoglosso</strong></td>
+        <td>—</td>
+        <td>Todos os músculos intrínsecos e extrínsecos da língua</td>
+        <td>Movimentos da língua</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="highlight highlight-memory" style="margin-top:1rem">
+    <div class="highlight-label text-yellow">🧠 RESUMO NEURAL</div>
+    <strong>Afferências</strong> (entrada de informação): principalmente via IX (orofaringe) e X (laringofaringe) → NTS (Núcleo do Trato Solitário) no bulbo.<br>
+    <strong>Centro integrador</strong>: NTS + Núcleo Ambíguo + Formação Reticular → "padrão sequencial" de deglutição.<br>
+    <strong>Eferências</strong> (saída de ordens): V, VII, X, XII → músculos em sequência perfeita.<br><br>
+    Lesão do bulbo (ex: infarto bulbar lateral = Síndrome de Wallenberg) → disfagia grave por lesão direta do centro de deglutição.
+  </div>
+</div>
+
+<!-- ===========================
+     CAPÍTULO 5 — ESÔFAGO + PERISTÁLSE
+     =========================== -->
+<div class="divider"></div>
+<section id="cap5" class="chapter">
+  <div class="chapter-number">05</div>
+  <div class="chapter-tag tag-pink">CAPÍTULO 5</div>
+  <h2 class="chapter-title">🌊 O Tubo Mágico — Esôfago<br><small style="font-size:0.5em;color:var(--text2)">Peristálse, EEI e Motilidade Detalhada</small></h2>
+</section>
+
+<div class="speech pink">
+  <div class="speech-avatar">🌊</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-pink">PERIS — EXPLICANDO A ONDA</div>
+    Deixem-me explicar como funciono! A peristálise não é magia — é física + fisiologia molecular trabalhando em perfeita harmonia. Contraio atrás do bolo e relaxo à frente. É como "espremer um tubo de pasta dos dentes"!
+  </div>
+</div>
+
+<div class="manga-panel panel-pink">
+  <div class="chapter-tag tag-pink" style="margin-bottom:1rem">MECANISMO MOLECULAR DA PERISTÁLSE</div>
+
+  <div class="muscle-viz">
+    <h3 style="font-family:'Bangers',cursive;color:var(--accent5);font-size:1.5rem;margin-bottom:0.5rem">ESÔFAGO EM AÇÃO ⬇️</h3>
+    <div style="display:flex; align-items:center; gap:2rem; flex-wrap:wrap; justify-content:center">
+      <div class="esoph-tube">
+        <div class="bolus-ball"></div>
+        <div class="peristalsis-wave"></div>
+      </div>
+      <div style="max-width:300px">
+        <p style="font-size:0.8rem; color:var(--text2)">
+          <span class="text-yellow">🟡 Bola laranja</span> = Bolo alimentar descendo<br><br>
+          <span class="text-pink">🔴 Onda rosa</span> = Onda peristáltica de contração<br><br>
+          A contração acontece <em>ATRÁS</em> do bolo e o relaxamento <em>À FRENTE</em> — Reflexo Peristáltico de Bayliss-Starling!
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">🔬 EVENTO 1 — DISTENSÃO</div>
+      <div class="timeline-content">
+        <div class="timeline-title">O bolo distende a parede → ativa neurónios sensoriais</div>
+        <div class="timeline-text">Mecanorreceptores na submucosa e muscular detetam o aumento de tensão parietal. Ativam neurónios aferentes intrínsecos do <strong>Plexo Mioentérico de Auerbach</strong> (entre camadas circulares e longitudinais da muscular). Esta é a "central de comando local" do intestino!</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent5)"></div>
+      <div class="timeline-time">🔬 EVENTO 2 — RESPOSTA ASCENDENTE (ACIMA DO BOLO)</div>
+      <div class="timeline-content">
+        <div class="timeline-title">CONTRAÇÃO acima do bolo</div>
+        <div class="timeline-text">
+          Neurónios excitatórios ascendentes libertam <strong>Acetilcolina (ACh)</strong> + <strong>Substância P</strong> → receptores M2/M3 e NK1/NK2 nas células musculares lisas.<br><br>
+          → ACh → IP₃ → ↑Ca²⁺ intracelular → Ca²⁺ liga-se à Calmodulina → ativa MLCK (Myosin Light Chain Kinase = Quinase de Cadeia Leve da Miosina) → fosforilação da cabeça de miosina → <strong>ponte actina-miosina = CONTRAÇÃO!</strong>
+        </div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="border-color:var(--accent4)"></div>
+      <div class="timeline-time">🔬 EVENTO 3 — RESPOSTA DESCENDENTE (ABAIXO DO BOLO)</div>
+      <div class="timeline-content">
+        <div class="timeline-title">RELAXAMENTO abaixo do bolo</div>
+        <div class="timeline-text">
+          Neurónios inibitórios descendentes libertam <strong>NO (Óxido Nítrico)</strong> + <strong>VIP (Peptídeo Vasoativo Intestinal)</strong>.<br><br>
+          <strong>NO:</strong> → ativa Guanilato Ciclase → ↑GMPc → ativa PKG (Protein Kinase G) → ativa MLCP (Myosin Light Chain Phosphatase) → desfosforila miosina → <strong>RELAXAMENTO!</strong><br><br>
+          <strong>VIP:</strong> → receptores VPAC → ↑AMPc → ativa PKA → fosforila MLCK (inativa-o) + abre canais K⁺ (hiperpolarização) → RELAXAMENTO!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="equation-box">
+    Ca²⁺ + Calmodulina → Ca²⁺-CaM → MLCK ativa → MLC-P → Actina + Miosina → CONTRAÇÃO
+    <div class="equation-label">Cascata molecular da contração do músculo liso esofágico</div>
+  </div>
+</div>
+
+<div class="chapter-tag tag-orange" style="margin: 1.5rem 0 0.5rem">O ESFÍNCTER ESOFÁGICO INFERIOR (EEI) — O GUARDIÃO</div>
+
+<div class="manga-panel panel-orange">
+  <div class="speech orange">
+    <div class="speech-avatar">🔒</div>
+    <div class="speech-bubble">
+      <div class="speech-name text-orange">ESFÍNCTER EEI — O GUARDIÃO</div>
+      Sou o mais incompreendido! Não sou um esfíncter "anatômico" com músculo espesso como o esfíncter pilórico. Sou uma <strong>zona de alta pressão funcional</strong> de 3-4 cm, criada por tónus muscular basal permanente. Mas faço o meu trabalho de evitar refluxo!
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="info-card card-green">
+      <div class="card-icon">⬆️</div>
+      <div class="card-title">O que AUMENTA a pressão do EEI (bom!)</div>
+      <div class="card-text">
+        • Proteínas na refeição<br>
+        • Gastrina (hormônio do antro)<br>
+        • Motilina<br>
+        • Metaclopramida (pró-cinético)<br>
+        • Domperidona<br>
+        • Posição vertical<br>
+        • ACh (parassimpático)
+      </div>
+    </div>
+    <div class="info-card card-pink">
+      <div class="card-icon">⬇️</div>
+      <div class="card-title">O que DIMINUI a pressão do EEI (mau!)</div>
+      <div class="card-text">
+        • Gorduras, chocolate, álcool, menta<br>
+        • Tabaco (nicotina)<br>
+        • Secretina, CCK, GIP<br>
+        • Progesterona (gravidez → DRGE!)<br>
+        • Nitrato, bloqueadores Ca²⁺<br>
+        • Sonda nasogástrica<br>
+        • NO (excesso → acalásia?)
+      </div>
+    </div>
+    <div class="info-card card-blue">
+      <div class="card-icon">🔓</div>
+      <div class="card-title">Relaxamento Transitório do EEI (TLESR)</div>
+      <div class="card-text">
+        Fenômeno fisiológico: relaxamento súbito do EEI sem deglutição. Mediado por reflexo vagal. Causa principal dos episódios de refluxo gastroesofágico fisiológico (arroto) e patológico (DRGE). Distensão gástrica é o principal gatilho.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="highlight highlight-clinical">
+  <div class="highlight-label text-green">🏥 CLÍNICA — ACALÁSIA vs DRGE</div>
+  <strong>Acalásia</strong> (grego: <em>a</em> = sem + <em>chalasis</em> = relaxamento):<br>
+  Falha no relaxamento do EEI durante a deglutição + aperistálsia esofágica. Causa: destruição dos neurónios inibitórios (NO/VIP) do plexo mioentérico. Etiologia: autoimune, infecção por Trypanosoma cruzi (Doença de Chagas em África/América Latina = Megaesôfago).<br>
+  Sintoma clássico: disfagia para sólidos E líquidos desde o início, regurgitação não ácida, emagrecimento.<br>
+  Diagnóstico: Manometria (pressão EEI elevada + falha relaxamento). RX contrastado: esôfago dilatado em "bico de pássaro".<br>
+  Tratamento: dilatação pneumática, miotomia de Heller (corta músculo do EEI), POEM (miotomia endoscópica oral).<br><br>
+  <strong>DRGE</strong> (Doença do Refluxo Gastroesofágico):<br>
+  Falha do EEI (pressão ↓ ou muitos TLESRs). Ácido gástrico contacta epitélio esofágico → esofagite. Complicação: Esôfago de Barrett (metaplasia → risco de adenocarcinoma). Tratamento: IBP (Inibidores da Bomba de Protões — omeprazol, pantoprazol).
+</div>
+
+<!-- ===========================
+     CAPÍTULO 6 — NEUROENDÓCRINO
+     =========================== -->
+<div class="divider"></div>
+<section id="cap6" class="chapter">
+  <div class="chapter-number">06</div>
+  <div class="chapter-tag tag-purple">CAPÍTULO 6</div>
+  <h2 class="chapter-title">🧠 A Matrix Neural — Regulação<br><small style="font-size:0.5em;color:var(--text2)">Sistema Nervoso Entérico + Autonômico + Endócrino</small></h2>
+</section>
+
+<div class="speech pink">
+  <div class="speech-avatar">⚡</div>
+  <div class="speech-bubble">
+    <div class="speech-name text-pink">SNE — O SEGUNDO CÉREBRO</div>
+    Sou o <strong>Sistema Nervoso Entérico (SNE)</strong>! Tenho mais neurónios do que a medula espinal — cerca de <em>100-500 milhões</em>! Posso funcionar completamente sem o cérebro. Por isso dizem que o intestino é o "segundo cérebro"!
+  </div>
+</div>
+
+<div class="manga-panel panel-blue">
+  <div class="chapter-tag tag-blue" style="margin-bottom:1rem">OS 2 PLEXOS DO SNE</div>
+  
+  <div class="card-grid">
+    <div class="info-card card-orange">
+      <div class="card-icon">🕸️</div>
+      <div class="card-title">Plexo Mioentérico de Auerbach</div>
+      <div class="card-text">
+        Localização: <em>entre as 2 camadas musculares</em> (circular interna e longitudinal externa).<br><br>
+        Função: controla principalmente a <strong>motilidade</strong> (peristálse, segmentação). Neurónios motores para o músculo liso.<br><br>
+        Destruição → Doença de Hirschsprung (colon) ou Acalásia (esôfago).
+      </div>
+    </div>
+    <div class="info-card card-blue">
+      <div class="card-icon">🕸️</div>
+      <div class="card-title">Plexo Submucoso de Meissner</div>
+      <div class="card-text">
+        Localização: <em>na submucosa</em>.<br><br>
+        Função: controla principalmente a <strong>secreção e absorção</strong> (regula glândulas e transporte de iões/água). Responde ao conteúdo luminal.<br><br>
+        Mais importante no intestino delgado e cólon do que no esôfago.
+      </div>
+    </div>
+  </div>
+
+  <div class="chapter-tag tag-purple" style="margin: 1.5rem 0 0.5rem">NEUROTRANSMISSORES ENTÉRICOS — A FARMACOLOGIA NATURAL</div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Neurotransmissor</th>
+        <th>Efeito</th>
+        <th>Localização/Receptor</th>
+        <th>Relevância Clínica</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong style="color:var(--accent2)">ACh (Acetilcolina)</strong></td>
+        <td>↑ motilidade, ↑ contração</td>
+        <td>M2 (músculo cardíaco) M3 (liso + glândulas)</td>
+        <td>Neostigmina ↑ACh → ↑motilidade</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent4)">NO (Óxido Nítrico)</strong></td>
+        <td>↓ tónus, relaxamento (EEI, esfíncteres)</td>
+        <td>Difunde livremente, ativa guanilato ciclase</td>
+        <td>Sildenafil (↑NO) → relaxa EEI → refluxo</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent3)">VIP</strong></td>
+        <td>↓ tónus, vasodilatação, ↑ secreção</td>
+        <td>VPAC1/VPAC2 → ↑AMPc</td>
+        <td>VIPoma → diarreia aquosa profusa</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent5)">Substância P</strong></td>
+        <td>↑ contração, pro-inflamatório, pró-nociceptivo</td>
+        <td>NK1/NK2</td>
+        <td>Causa náusea e vómito; bloqueado por aprepitant</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent1)">Serotonina (5-HT)</strong></td>
+        <td>↑ motilidade (reflexo peristáltico)</td>
+        <td>5-HT3 (náusea), 5-HT4 (pró-cinético)</td>
+        <td>Ondansetron (anti-5HT3) → antiemético</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--accent6)">GRP (Gastrin-Releasing Peptide)</strong></td>
+        <td>↑ gastrina, ↑ motilidade</td>
+        <td>Receptores GRPR</td>
+        <td>Análogos terapêuticos em oncologia</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="chapter-tag tag-yellow" style="margin: 1.5rem 0 0.5rem">HORMONAS GI QUE AFETAM O TRATO SUPERIOR</div>
+
+<div class="manga-panel panel-yellow">
+  <div class="accordion" id="acc-gastrina">
+    <div class="accordion-header" onclick="toggleAccordion('acc-gastrina')">
+      <span>🟡 Gastrina — O Hormônio do Estômago</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Origem:</strong> Células G do antro pilórico e duodeno.</p>
+      <p><strong>Estímulos de secreção:</strong> proteínas/aminoácidos no estômago, distensão gástrica, GRP, vago (ACh).</p>
+      <p><strong>Efeitos no trato superior:</strong> ↑ pressão do EEI, ↑ motilidade esofágica, ↑ secreção ácida gástrica (principal efeito).</p>
+      <p><strong>Inibição:</strong> pH &lt; 2 (feedback negativo — quando há ácido suficiente, para de secretar).</p>
+      <p><strong>Clínica:</strong> Síndrome de Zollinger-Ellison (gastrinoma = tumor secretor de gastrina) → hipergastrinemia → úlceras pépticas múltiplas + diarreia.</p>
+    </div>
+  </div>
+  
+  <div class="accordion" id="acc-motilina" style="margin-top:0.5rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-motilina')">
+      <span>🔵 Motilina — A Faxineira</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Origem:</strong> Células Mo do intestino delgado proximal.</p>
+      <p><strong>Estímulo:</strong> Liberada em jejum, a cada ~90 minutos.</p>
+      <p><strong>Efeitos:</strong> Inicia o CMM (Complexo Motor Migrante = Migrating Motor Complex) — "varredura" do trato GI durante jejum. ↑ pressão EEI, ↑ peristálse esofágica, esvaziamento gástrico.</p>
+      <p><strong>Clínica:</strong> Eritromicina (antibiótico macrólido) = agonista dos receptores de motilina → usado como pró-cinético em gastroparesia! Doses baixas (125-250mg) são suficientes.</p>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc-cck" style="margin-top:0.5rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-cck')">
+      <span>🔴 CCK (Colecistoquinina) — A Gordurosa</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Origem:</strong> Células I do duodeno e jejuno.</p>
+      <p><strong>Estímulo:</strong> Gorduras e proteínas no duodeno.</p>
+      <p><strong>Efeitos no trato superior:</strong> ↓ pressão do EEI (por isso refeições gordurosas causam refluxo!), retarda esvaziamento gástrico, estimula vesícula biliar e pâncreas.</p>
+      <p><strong>Clínica:</strong> Antagonistas de CCK (devazepide) foram estudados para obesidade (CCK causa saciedade). Octreotida (análogo de somatostatina) inibe CCK e outras hormonas GI → usado em tumores neuroendócrinos GI.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     CAPÍTULO 7 — CLÍNICA AVANÇADA
+     =========================== -->
+<div class="divider"></div>
+<section id="cap7" class="chapter">
+  <div class="chapter-number">07</div>
+  <div class="chapter-tag tag-pink">CAPÍTULO 7</div>
+  <h2 class="chapter-title">🏥 Casos Clínicos — O Battlefield<br><small style="font-size:0.5em;color:var(--text2)">Diagnóstico, Tratamento e Aplicação Prática</small></h2>
+</section>
+
+<div class="manga-panel panel-pink">
+  <div class="chapter-tag tag-pink" style="margin-bottom:1rem">⚔️ CASOS CLÍNICOS ESSENCIAIS</div>
+
+  <div class="accordion" id="acc-c1">
+    <div class="accordion-header" onclick="toggleAccordion('acc-c1')">
+      <span>🩺 CASO 1 — Homem 45 anos, disfagia progressiva, pirose, emagrecimento</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Apresentação:</strong> Disfagia iniciada para sólidos, depois também para líquidos. Pirose há 10 anos. 8kg de peso perdido em 3 meses.</p>
+      <p><strong>Suspeita:</strong> Adenocarcinoma esofágico (complicação de Esôfago de Barrett/DRGE crónica). Sinais de alerta: disfagia progressiva + emagrecimento.</p>
+      <p><strong>Investigação:</strong> Endoscopia digestiva alta (EDA) + biópsia → confirma adenocarcinoma. TC tórax/abdómen/pelve para estadiamento.</p>
+      <p><strong>Fisiologia subjacente:</strong> Refluxo ácido crónico → lesão do epitélio pavimentoso esofágico → metaplasia para epitélio colunar intestinalizado (células caliciformes) = Esôfago de Barrett → displasia → adenocarcinoma. O EEI disfuncional + aumento dos TLESRs foi o gatilho!</p>
+      <p><strong>Tratamento:</strong> Cirurgia (esofagectomia) se resecável + quimiorradioterapia. IBP de alta dose (não cura o Barrett mas controla sintomas).</p>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc-c2" style="margin-top:0.5rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-c2')">
+      <span>🩺 CASO 2 — Mulher 32 anos, disfagia sólidos E líquidos, regurgitação não ácida</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Apresentação:</strong> Disfagia para sólidos e líquidos desde o início. Regurgita alimentos não digeridos, sem ácido. Tosse noturna, aspiração. Vive em região com Doença de Chagas (Moçambique/África rural = Trypanosoma cruzi).</p>
+      <p><strong>Suspeita:</strong> Acalásia (provável Chagásica = Megaesôfago).</p>
+      <p><strong>Fisiologia:</strong> T. cruzi infecta e destrói os neurónios inibitórios (NO/VIP) do plexo mioentérico esofágico → perda do relaxamento do EEI + aperistálsia → dilatação progressiva do esôfago.</p>
+      <p><strong>Diagnóstico:</strong> 1) Manometria: ↑pressão EEI basal (&gt;45 mmHg) + relaxamento incompleto + aperistálsia. 2) RX contrastado: esôfago dilatado com estreitamento distal em "bico de pássaro". 3) Sorologia para T. cruzi.</p>
+      <p><strong>Tratamento:</strong> Miotomia de Heller (corta as fibras musculares do EEI por laparoscopia) + fundoplicatura parcial (para evitar refluxo pós-cirúrgico). POEM (Per-Oral Endoscopic Myotomy) como alternativa minimamente invasiva.</p>
+    </div>
+  </div>
+
+  <div class="accordion" id="acc-c3" style="margin-top:0.5rem">
+    <div class="accordion-header" onclick="toggleAccordion('acc-c3')">
+      <span>🩺 CASO 3 — Bebé 2 meses, regurgitação após cada mamada, sem ganho de peso</span>
+      <span class="accordion-arrow">▼</span>
+    </div>
+    <div class="accordion-body">
+      <p><strong>Apresentação:</strong> Lactente com regurgitação "em jacto" após cada mamada. Chora muito, irritável. Sem febre.</p>
+      <p><strong>Suspeita:</strong> DRGE do lactente (muito comum, EEI imaturo) vs Estenose Pilórica Hipertrófica (EPH).</p>
+      <p><strong>Diferenciação:</strong><br>
+      • DRGE: regurgitação ácida, melhor com postura supina elevada e espessamento da fórmula.<br>
+      • EPH: vómito projectil (em jacto), aumento de peso nulo, palpação da "azeitona" pilórica no hipocôndrio direito, alcalose metabólica hipoclorémica hipocaliémica. Confirmação: ecografia abdominal (piloro espessado).</p>
+      <p><strong>Fisiologia do EEI no lactente:</strong> O EEI tem pressão basal menor + mais TLESRs proporcionalmente → refluxo mais frequente. Matura progressivamente até ~12-18 meses. Tratamento da DRGE: posicionamento, espessamento, ranitidina (H2) ou omeprazol se sintomático.</p>
+    </div>
+  </div>
+</div>
+
+<div class="chapter-tag tag-blue" style="margin: 1.5rem 0 0.5rem">TABELA DE ORIENTAÇÃO DIAGNÓSTICA RÁPIDA</div>
+
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Sintoma</th>
+      <th>Localização Provável</th>
+      <th>Suspeitar de</th>
+      <th>1º Exame</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Disfagia só sólidos, progressiva</td>
+      <td>Esofágica</td>
+      <td>Estenose mecânica (cancro, peptica)</td>
+      <td>EDA + biópsia</td>
+    </tr>
+    <tr>
+      <td>Disfagia sólidos + líquidos desde início</td>
+      <td>Esofágica motora</td>
+      <td>Acalásia, espasmo esofágico</td>
+      <td>Manometria de alta resolução</td>
+    </tr>
+    <tr>
+      <td>Disfagia inicia deglutição + tosse</td>
+      <td>Orofaríngea</td>
+      <td>AVC, Parkinson, miopatia</td>
+      <td>Videofluoroscopia</td>
+    </tr>
+    <tr>
+      <td>Pirose + regurgitação ácida</td>
+      <td>Esofágica / EEI</td>
+      <td>DRGE</td>
+      <td>pHmetria 24h ou IBP empiricamente</td>
+    </tr>
+    <tr>
+      <td>Boca seca + cáries múltiplas</td>
+      <td>Glândulas salivares</td>
+      <td>Sjögren, medicação anticolinérgica</td>
+      <td>Fluxo salivar estimulado + Ac anti-SSA/SSB</td>
+    </tr>
+    <tr>
+      <td>Engasgamento/regurgitação nasal</td>
+      <td>Velofaríngea</td>
+      <td>Insuficiência velofaríngea, fenda palatina</td>
+      <td>Nasofaringoscopia, videofluoroscopia</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ===========================
+     CAPÍTULO 8 — QUIZ
+     =========================== -->
+<div class="divider"></div>
+<section id="cap8" class="chapter">
+  <div class="chapter-number">08</div>
+  <div class="chapter-tag tag-purple">CAPÍTULO 8</div>
+  <h2 class="chapter-title">🧪 Arena do Teste<br><small style="font-size:0.5em;color:var(--text2)">Consolida o Teu Conhecimento!</small></h2>
+</section>
+
+<!-- QUIZ 1 -->
+<div class="quiz-box" id="quiz1">
+  <div class="quiz-title">⚡ QUESTÃO 1</div>
+  <div class="quiz-question">Um paciente com Síndrome de Wallenberg (infarto bulbar lateral) apresenta disfagia grave. Qual é o mecanismo fisiológico principal?</div>
+  <div class="quiz-options">
+    <button class="quiz-option" onclick="answerQuiz('quiz1',this,false)">A) Lesão do nervo hipoglosso (XII) com paralisia lingual</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz1',this,true)">B) Lesão do centro de deglutição no bulbo (NTS + Núcleo Ambíguo) com perda de coordenação faríngea</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz1',this,false)">C) Destruição do plexo mioentérico esofágico</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz1',this,false)">D) Redução da pressão do EEI por desnervação vagal</button>
+  </div>
+  <div class="quiz-feedback correct" id="quiz1-correct">✅ CORRETO! O bulbo lateral contém o NTS (recebe aferências da deglutição) e o Núcleo Ambíguo (envia eferências motoras via X e IX). Lesão aqui = caos na coordenação da deglutição faríngea = aspiração frequente!</div>
+  <div class="quiz-feedback wrong" id="quiz1-wrong">❌ Tenta de novo! Pensa: onde está o "centro de deglutição"? No bulbo! O Síndrome de Wallenberg é um infarto do bulbo lateral.</div>
+</div>
+
+<!-- QUIZ 2 -->
+<div class="quiz-box" id="quiz2" style="margin-top:1.5rem">
+  <div class="quiz-title">⚡ QUESTÃO 2</div>
+  <div class="quiz-question">A saliva tem concentração de HCO₃⁻ muito superior ao plasma quando estimulada (~60 mEq/L vs 24 mEq/L). Qual é o mecanismo responsável por isso e qual a sua importância clínica?</div>
+  <div class="quiz-options">
+    <button class="quiz-option" onclick="answerQuiz('quiz2',this,false)">A) Os ácinos secretam muito HCO₃⁻ primariamente, e os ductos amplificam esse efeito absorvendo H⁺</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz2',this,false)">B) É um artefato — a saliva diluída tem mais HCO₃⁻ aparente por hemoconcentração</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz2',this,true)">C) As células dos ductos estriados secretam ativamente HCO₃⁻ para o lúmen (via trocador Cl⁻/HCO₃⁻ e anidrase carbônica) e o efeito aumenta com o fluxo estimulado — importante para neutralizar ácidos da placa bacteriana e do refluxo</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz2',this,false)">D) O HCO₃⁻ plasmático atravessa livremente para a saliva por difusão simples</button>
+  </div>
+  <div class="quiz-feedback correct" id="quiz2-correct">✅ PERFEITO! As células do ducto estriado têm anidrase carbônica que gera HCO₃⁻ + H⁺. O H⁺ é exportado para o interstício e o HCO₃⁻ é secretado para o lúmen. É por isso que Xerostomia → mais cáries: sem HCO₃⁻ para tamponar os ácidos bacterianos!</div>
+  <div class="quiz-feedback wrong" id="quiz2-wrong">❌ Não! Os ductos têm um papel ativo importantíssimo na modificação da saliva. Lembra: ducto = personalização da composição iónica!</div>
+</div>
+
+<!-- QUIZ 3 -->
+<div class="quiz-box" id="quiz3" style="margin-top:1.5rem">
+  <div class="quiz-title">⚡ QUESTÃO 3</div>
+  <div class="quiz-question">Durante a fase faríngea da deglutição, qual evento é absolutamente essencial para proteger as vias aéreas de aspiração?</div>
+  <div class="quiz-options">
+    <button class="quiz-option" onclick="answerQuiz('quiz3',this,false)">A) Descida da epiglote sobre a glote (é o principal protetor)</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz3',this,true)">B) Adução das cordas vocais verdadeiras + fechamento das pregas ariepiglóticas + apneia de deglutição</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz3',this,false)">C) Elevação do palato mole para fechar a nasofaringe</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz3',this,false)">D) Relaxamento do EES para desviar o bolo do fluxo de ar</button>
+  </div>
+  <div class="quiz-feedback correct" id="quiz3-correct">✅ EXATO! A epiglote é um MITO como principal protetor. O que realmente protege são as 3 camadas de fechamento: pregas ariepiglóticas + falsas cordas + cordas vocais verdadeiras. A apneia de deglutição garante que não há corrente de ar que possa arrastar partículas para os pulmões!</div>
+  <div class="quiz-feedback wrong" id="quiz3-wrong">❌ Cuidado com o mito da epiglote! Pacientes sem epiglote (laringectomia parcial) deglutam sem aspirar. A proteção real são as cordas vocais!</div>
+</div>
+
+<!-- QUIZ 4 -->
+<div class="quiz-box" id="quiz4" style="margin-top:1.5rem">
+  <div class="quiz-title">⚡ QUESTÃO 4 — FARMACOLOGIA APLICADA</div>
+  <div class="quiz-question">Um paciente com acalásia pergunta porque é que o médico prescreveu Nifedipina (bloqueador dos canais de Ca²⁺). Qual é a lógica fisiológica?</div>
+  <div class="quiz-options">
+    <button class="quiz-option" onclick="answerQuiz('quiz4',this,false)">A) Bloqueia receptores muscarínicos no EEI, diminuindo o tónus</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz4',this,true)">B) Bloqueia a entrada de Ca²⁺ nas células musculares lisas do EEI → menos Ca²⁺ disponível para ativar MLCK → menos fosforilação de miosina → relaxamento do EEI → ↓ disfagia</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz4',this,false)">C) Aumenta a produção de NO pelo plexo mioentérico residual</button>
+    <button class="quiz-option" onclick="answerQuiz('quiz4',this,false)">D) Inibe a adenilato ciclase, reduzindo AMPc e consequente contração</button>
+  </div>
+  <div class="quiz-feedback correct" id="quiz4-correct">✅ BRILHANTE! A contração muscular lisa depende de Ca²⁺ → MLCK → fosforilação de miosina. Bloquear Ca²⁺ = menos contração no EEI = relaxamento = alimento consegue passar. A Nifedipina é um tratamento paliativo (não cura) para acalásia quando a cirurgia não é possível!</div>
+  <div class="quiz-feedback wrong" id="quiz4-wrong">❌ Pensa na cascata: Ca²⁺ → Calmodulina → MLCK → Miosina-P → Contração. O que acontece se bloquearmos o Ca²⁺?</div>
+</div>
+
+<!-- MAPA FINAL -->
+<div class="divider"></div>
+<div class="manga-panel panel-orange" style="margin: 2rem 0">
+  <div class="chapter-tag tag-orange" style="margin-bottom:1rem">🗺️ MAPA MENTAL FINAL — A GRANDE JORNADA</div>
+  
+  <div class="flow" style="flex-direction:column; gap:0.8rem">
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap">
+      <div class="flow-step orange" style="flex:1;min-width:150px;text-align:left">
+        👅 BOCA<br>
+        <small>Mastigação (V3+CPG)<br>Salivação (VII+IX)<br>α-Amilase + Lipase Lingual<br>IgA + Lisozima + Mucinas</small>
+      </div>
+      <div class="flow-arrow">▼</div>
+      <div class="flow-step yellow" style="flex:1;min-width:150px;text-align:left">
+        🌀 FARINGE<br>
+        <small>3 fases deglutição<br>30+ músculos<br>5 eventos simultâneos<br>Centro bulbar (NTS)</small>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap">
+      <div class="flow-step green" style="flex:1;min-width:150px;text-align:left">
+        📏 ESÔFAGO<br>
+        <small>25cm, 3 segmentos<br>Peristálse 1ª + 2ª<br>ACh→contração<br>NO+VIP→relaxamento</small>
+      </div>
+      <div class="flow-arrow">▼</div>
+      <div class="flow-step pink" style="flex:1;min-width:150px;text-align:left">
+        🔒 EEI<br>
+        <small>Zona pressão 15-35mmHg<br>TLESRs (refluxo fisiológico)<br>Gastrina↑ | Gordura↓<br>Acalásia vs DRGE</small>
+      </div>
+    </div>
+  </div>
+  
+  <div style="text-align:center; margin-top:1.5rem; padding: 1rem; background: rgba(255,107,53,0.05); border-radius:0.8rem; border: 1px solid rgba(255,107,53,0.2)">
+    <div style="font-family:'Bangers',cursive; font-size:1.5rem; color:var(--accent3); margin-bottom:0.5rem">⚡ REGRA DE OURO ⚡</div>
+    <p style="color:var(--text); font-size:0.9rem"><strong>Tudo o que acontece neste sistema serve um único objetivo:</strong><br>
+    Transformar alimento em bolo lubrificado → transportar com segurança → proteger via aérea → entregar ao estômago.<br><br>
+    Quando este sistema falha → <em>aspiração</em> (imediato, fatal) ou <em>disfunção motora/secretora</em> (crónica, qualidade de vida).</p>
+  </div>
+</div>
+
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">UNIVERSIDADE LICUNGO</div>
+  <div class="footer-text">
+    Fisiologia do Trato Digestivo Superior<br>
+    Boca · Faringe · Esôfago · Motilidade & Regulação Neuroendócrina<br><br>
+    <em>Baseado em: Boron & Boulpaep — Medical Physiology | Guyton & Hall | Deranged Physiology | Margarida Matos</em><br><br>
+    <strong style="color:var(--accent1)">2º Ano de Medicina · Ano 2026</strong><br>
+    <span style="color:var(--text2);font-size:0.75rem">© DemilMed-UL · Universidade Licungo · Todos os direitos reservados</span>
+  </div>
+</footer>
+
+<script>
+  // ===== SCROLL PROGRESS =====
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    const prog = (d.scrollTop || document.body.scrollTop) / (d.scrollHeight - d.clientHeight) * 100;
+    document.getElementById('scroll-progress').style.width = prog + '%';
+  });
+
+  // ===== SCROLL TO SECTION =====
+  function scrollTo(selector) {
+    const el = document.querySelector(selector);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ===== ACCORDION =====
+  function toggleAccordion(id) {
+    const acc = document.getElementById(id);
+    acc.classList.toggle('open');
+  }
+
+  // ===== TABS =====
+  function switchTab(btn, tabId, group) {
+    document.querySelectorAll('.' + group).forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.onclick && b.onclick.toString().includes(group)) b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+
+  // ===== QUIZ =====
+  function answerQuiz(quizId, btn, isCorrect) {
+    const quiz = document.getElementById(quizId);
+    const options = quiz.querySelectorAll('.quiz-option');
+    options.forEach(o => o.disabled = true);
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      quiz.querySelector('#' + quizId + '-correct').classList.add('show');
+    } else {
+      btn.classList.add('wrong');
+      quiz.querySelector('#' + quizId + '-wrong').classList.add('show');
+      // Show correct after 2s
+      setTimeout(() => {
+        options.forEach(o => {
+          if (o.onclick && o.onclick.toString().includes('true')) {
+            o.classList.add('correct');
+          }
+        });
+      }, 1500);
+    }
+  }
+
+  // ===== TIMELINE ANIMATION =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, i * 120);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.timeline-item').forEach(item => observer.observe(item));
+
+  // ===== NAV ACTIVE STATE =====
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = ['#cap1','#cap2','#cap3','#cap4','#cap5','#cap6','#cap7','#cap8'].map(s => document.querySelector(s)).filter(Boolean);
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 150) current = '#' + s.id;
+    });
+    navBtns.forEach((btn, i) => {
+      const ids = ['#cap1','#cap2','#cap3','#cap4','#cap5','#cap6','#cap7','#cap8'];
+      btn.classList.toggle('active', ids[i] === current);
+    });
+  });
+
+  // ===== ATOM TOOLTIPS =====
+  document.querySelectorAll('.atom').forEach(atom => {
+    atom.addEventListener('mouseenter', () => {
+      atom.style.transform = 'scale(1.25) rotate(10deg)';
+    });
+    atom.addEventListener('mouseleave', () => {
+      atom.style.transform = '';
+    });
+  });
+
+  // Open first accordions by default for better UX
+  setTimeout(() => {
+    const a2 = document.getElementById('acc-fase2');
+    if (a2) a2.classList.add('open');
+  }, 500);
+</script>
+</body>
+</html>

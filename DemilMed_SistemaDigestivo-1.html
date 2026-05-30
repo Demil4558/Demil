@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grande Épico do Sistema Digestivo — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #0a0a0f;
+  --bg2:        #10101a;
+  --bg3:        #141420;
+  --border:     #1e1e32;
+  --accent1:    #ff6b35;   /* laranja-fogo */
+  --accent2:    #00e5ff;   /* ciano elétrico */
+  --accent3:    #b06bff;   /* violeta */
+  --accent4:    #39ff14;   /* verde neon */
+  --accent5:    #ffd700;   /* ouro */
+  --accent6:    #ff4da6;   /* rosa choque */
+  --text:       #e8e8f0;
+  --text-dim:   #9090a8;
+  --text-code:  #c8f0a0;
+  --shadow:     rgba(0,0,0,0.7);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.85;
+  font-weight: 300;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent3); border-radius: 3px; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(176,107,255,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(0,229,255,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 50% at 20% 70%, rgba(255,107,53,0.10) 0%, transparent 60%),
+    var(--bg);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,0.02) 39px, rgba(255,255,255,0.02) 40px);
+  pointer-events: none;
+}
+
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  border: 1px solid var(--accent2);
+  padding: 0.3em 1em;
+  border-radius: 2px;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: #fff;
+  text-shadow: 0 0 60px rgba(176,107,255,0.5);
+  margin-bottom: 1rem;
+  max-width: 900px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent1);
+}
+
+.hero-sub {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  max-width: 700px;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.hero-quote {
+  font-family: 'Source Serif 4', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--accent5);
+  max-width: 600px;
+  border-left: 3px solid var(--accent5);
+  padding-left: 1.2rem;
+  text-align: left;
+  opacity: 0.85;
+}
+
+.hero-quote cite {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  font-style: normal;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem 6rem;
+}
+
+/* ── TOC ── */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent3);
+  border-radius: 4px;
+  padding: 2rem 2.5rem;
+  margin: 3rem 0 4rem;
+}
+
+.toc h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent3);
+  margin-bottom: 1.2rem;
+}
+
+.toc ol {
+  padding-left: 1.2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.3rem 2rem;
+}
+
+@media (max-width: 600px) { .toc ol { grid-template-columns: 1fr; } }
+
+.toc a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.88rem;
+  font-family: 'Source Serif 4', serif;
+  transition: color 0.2s;
+}
+.toc a:hover { color: var(--accent2); }
+
+/* ── CHAPTERS ── */
+.chapter {
+  margin-bottom: 5rem;
+  padding-top: 1rem;
+}
+
+.chapter-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.chapter-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 0.4rem;
+}
+
+h2.chapter-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+h2.chapter-title .accent { color: var(--accent1); }
+
+h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent5);
+  margin: 2.5rem 0 0.8rem;
+}
+
+h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent6);
+  margin: 2rem 0 0.5rem;
+}
+
+p {
+  margin-bottom: 1.2rem;
+  color: var(--text);
+}
+
+/* ── SPEAKER BLOCKS ── */
+.speaker {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem 1.8rem;
+  margin: 1.8rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.speaker::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.speaker.ernesto::before   { background: var(--accent1); }
+.speaker.manuela::before   { background: var(--accent2); }
+.speaker.cck::before       { background: var(--accent3); }
+.speaker.secretin::before  { background: var(--accent5); }
+.speaker.tripsina::before  { background: var(--accent6); }
+.speaker.quimo::before     { background: #ff4444; }
+.speaker.celula::before    { background: var(--accent4); }
+.speaker.default::before   { background: var(--text-dim); }
+
+.speaker-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+}
+
+.ernesto   .speaker-name { color: var(--accent1); }
+.manuela   .speaker-name { color: var(--accent2); }
+.cck       .speaker-name { color: var(--accent3); }
+.secretin  .speaker-name { color: var(--accent5); }
+.tripsina  .speaker-name { color: var(--accent6); }
+.quimo     .speaker-name { color: #ff4444; }
+.celula    .speaker-name { color: var(--accent4); }
+.default   .speaker-name { color: var(--text-dim); }
+
+.speaker p { margin-bottom: 0.8rem; font-size: 0.97rem; }
+.speaker p:last-child { margin-bottom: 0; }
+.speaker em { font-style: italic; color: var(--text-dim); }
+
+/* ── HIGHLIGHT BOX ── */
+.highlight {
+  background: linear-gradient(135deg, rgba(176,107,255,0.08), rgba(0,229,255,0.05));
+  border: 1px solid rgba(176,107,255,0.3);
+  border-radius: 6px;
+  padding: 1.3rem 1.6rem;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+}
+
+.highlight.orange {
+  background: linear-gradient(135deg, rgba(255,107,53,0.08), rgba(255,215,0,0.04));
+  border-color: rgba(255,107,53,0.3);
+}
+
+.highlight.green {
+  background: linear-gradient(135deg, rgba(57,255,20,0.07), rgba(0,229,255,0.04));
+  border-color: rgba(57,255,20,0.25);
+}
+
+.highlight.red {
+  background: linear-gradient(135deg, rgba(255,77,166,0.08), rgba(176,107,255,0.05));
+  border-color: rgba(255,77,166,0.3);
+}
+
+/* ── CLINICAL BOX ── */
+.clinical {
+  background: rgba(255,215,0,0.04);
+  border: 1px solid rgba(255,215,0,0.2);
+  border-radius: 6px;
+  padding: 1.2rem 1.6rem;
+  margin: 1.5rem 0;
+}
+
+.clinical-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent5);
+  margin-bottom: 0.5rem;
+}
+
+/* ── CODE / FORMULAS ── */
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--text-code);
+  background: rgba(200,240,160,0.08);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+
+/* ── LISTS ── */
+ul, ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.2rem;
+}
+
+li {
+  margin-bottom: 0.45rem;
+  line-height: 1.75;
+}
+
+li strong { color: var(--accent2); }
+
+/* ── TABLES ── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+th {
+  background: var(--bg3);
+  color: var(--accent2);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid rgba(30,30,50,0.6);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+tr:hover td { background: rgba(0,229,255,0.04); }
+
+/* ── DIVIDERS ── */
+.chapter-divider {
+  margin: 4rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.chapter-divider::before,
+.chapter-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.chapter-divider span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── STRONG ── */
+strong { color: var(--accent2); font-weight: 600; }
+em { font-style: italic; color: var(--accent5); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.footer-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--accent1);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.4rem;
+}
+
+.footer-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── BACK TO TOP ── */
+.back-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: var(--accent3);
+  color: #000;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(176,107,255,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+  z-index: 100;
+}
+.back-top:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 30px rgba(176,107,255,0.6);
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Fisiologia Digestiva Integrada · DemilMed-UL</div>
+  <h1>🎭 O Grande Épico do <em>Sistema Digestivo</em></h1>
+  <p class="hero-sub">Das Profundezas do Duodeno ao Glorioso Ânus — Uma Narrativa Fisiológica em que Cada Molécula Tem Muito a Dizer e Muito a Reclamar</p>
+  <blockquote class="hero-quote">
+    "A fisiologia digestiva é a mais injustiçada de todas as ciências. Todos usam o tubo, ninguém o estuda a sério. Este texto é a minha vingança."
+    <cite>— Enterócito Ernesto, Vilosidade 847, Duodeno Proximal</cite>
+  </blockquote>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<nav class="toc">
+  <h2>Índice de Capítulos</h2>
+  <ol>
+    <li><a href="#prologo">Prólogo — O Narrador Apresenta-se</a></li>
+    <li><a href="#cap1">I — O Palco: Arquitectura do Tubo</a></li>
+    <li><a href="#cap2">II — A Chegada do Terror: O Quimo</a></li>
+    <li><a href="#cap3">III — O Pâncreas: A Fábrica que Nunca Dorme</a></li>
+    <li><a href="#cap4">IV — O Fígado: Ministério das Finanças</a></li>
+    <li><a href="#cap5">V — A Vesícula Biliar: A Preguiçosa</a></li>
+    <li><a href="#cap6">VI — Circulação Êntero-Hepática</a></li>
+    <li><a href="#cap7">VII — O Duodeno: Campo de Batalha</a></li>
+    <li><a href="#cap8">VIII — A Absorção</a></li>
+    <li><a href="#cap13">XIII — As Vitaminas</a></li>
+    <li><a href="#cap14">XIV — Os Minerais Esquecidos</a></li>
+    <li><a href="#cap15">XV — As Junções Apertadas</a></li>
+    <li><a href="#cap16">XVI — O Eixo Intestino-Cérebro</a></li>
+    <li><a href="#cap17">XVII — A Circulação Mesentérica</a></li>
+    <li><a href="#cap18">XVIII — Diarreia e Obstipação</a></li>
+    <li><a href="#cap19">XIX — Auto-Protecção do Pâncreas</a></li>
+    <li><a href="#cap20">XX — A Barreira Mucosa</a></li>
+    <li><a href="#cap21">XXI — Absorção do Álcool</a></li>
+    <li><a href="#cap22">XXII — Integração Final</a></li>
+    <li><a href="#apendices">Apêndices Clínicos</a></li>
+  </ol>
+</nav>
+
+<!-- PRÓLOGO -->
+<div id="prologo" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Prólogo</div>
+    <h2 class="chapter-title">O Narrador <span class="accent">Apresenta-se</span></h2>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Enterócito Ernesto — Vilosidade 847, Duodeno Proximal</div>
+    <p>Olá. Sou o Enterócito Ernesto.</p>
+    <p>Tenho 72 horas de vida — o que, para a minha espécie, é literalmente a fase da reforma antecipada — e já vi coisas que fariam um histologista chorar dentro de um eppendorf. Vivo no topo de uma vilosidade do duodeno proximal, estendido sobre as minhas 1.000 microvilosidades apicais como um monge zen em cima de um ouriço, a absorver glicose às 3 da manhã enquanto o meu hospedeiro come pizza no sofá a ver séries de crime, e penso: alguém devia contar esta história como ela realmente é.</p>
+    <p>E aqui estou eu.</p>
+    <p>Vou guiá-los pela saga mais épica, mal contada e injustamente ignorada de toda a biologia: o que acontece, com detalhe molecular e celular absoluto e sem anestesia intelectual, desde que o quimo atravessa o piloro até que... bem... até ao fim. Vocês sabem qual fim.</p>
+    <p>Apertem os cintos. Haverá drama. Haverá traição. Haverá quinhentas enzimas a trabalhar em simultâneo. Haverá uma vesícula biliar preguiçosa, um pâncreas sobrecarregado, um sistema nervoso entérico com complexo de superioridade, e bactérias com opiniões próprias sobre a fibra alimentar. E no final, alguém vai ao WC.</p>
+    <p>Prontos? Começamos.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo I</span></div>
+
+<!-- CAPÍTULO I -->
+<div id="cap1" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo I</div>
+    <h2 class="chapter-title">O Palco — <span class="accent">Arquitectura de um Tubo que Não É um Simples Tubo</span></h2>
+  </div>
+
+  <p>Antes de qualquer coisa, precisamos de perceber onde vivemos. Porque o intestino delgado não é, repito, <em>não é</em> um tubo. É uma obra de engenharia evolutiva de 500 milhões de anos com três dimensões de ampliação de superfície sobrepostas, uma população celular heterogénea de pelo menos sete tipos distintos, o maior sistema nervoso autónomo fora do sistema nervoso central, e uma área absortiva total equivalente a um campo de ténis.</p>
+  <p>Num tubo com menos de 5 centímetros de diâmetro.</p>
+  <p>Meditem nisto.</p>
+
+  <h3>A Tríade de Ampliação de Superfície</h3>
+  <p>Um intestino delgado liso, teórico, teria uma área de absorção de aproximadamente 0,33 m². Interessante mas insuficiente para a vida humana. A evolução resolveu o problema com três truques sobrepostos:</p>
+
+  <h4>1.º Nível — As Pregas de Kerckring (Válvulas Conniventes)</h4>
+  <p>São dobras permanentes, circulares, da mucosa e submucosa. <strong>Permanentes</strong> — não desaparecem com distensão. Visíveis a olho nu. Mais proeminentes no duodeno e jejuno proximal, vão diminuindo em direcção ao íleo. Aumentam a superfície ~3 vezes. Total acumulado: ~1 m².</p>
+
+  <h4>2.º Nível — As Vilosidades Intestinais</h4>
+  <p>Sou eu. Bem, faço parte de uma. São projecções digitiformes ou foliáceas de 0,5 a 1,5 mm de altura que cobrem toda a superfície da mucosa. Cada vilosidade tem um eixo de lâmina própria rico em capilares fenestrados, um vaso quilífero central (lacteal) para absorção linfática de lípidos, e células musculares lisas que contraem ritmicamente — a <strong>bomba vilosa</strong> — para facilitar a drenagem linfática e aumentar a mistura da camada não-agitada adjacente.</p>
+  <p>A morfologia das vilosidades varia ao longo do intestino: no duodeno somos mais foliáceas e largas; no jejuno, altas e digitiformes, as mais eficientes; no íleo, progressivamente mais baixas e esparsas. Cada vilosidade contém ~3.000-4.000 enterócitos na superfície. Aumentam a superfície ~10 vezes. Total acumulado: ~10 m².</p>
+
+  <h4>3.º Nível — As Microvilosidades (O Brush Border)</h4>
+  <div class="speaker manuela">
+    <div class="speaker-name">Microvilosidade Manuela</div>
+    <p>FINALMENTE. Eu sou as microvilosidades. Estou em cima do Ernesto, literalmente. Cada enterócito tem entre 500 a 1.000 microvilosidades — cilindros de actina de 1 µm de comprimento e 0,1 µm de diâmetro, ancorados ao citoesqueleto por feixe de actina com miosina-I e vilina. Aumentamos a superfície apical de um enterócito de ~8 µm² para ~3.000 µm² — um aumento de 375 vezes por célula.</p>
+    <p>A nível intestinal, aumentamos a superfície ~20 vezes adicionais. Total acumulado: <strong>~250 m²</strong>.</p>
+    <p>E em cima de mim está o <strong>glicocálice</strong> — uma manta de glicoproteínas e glicoproteínas transmembranares com espessura de 0,1-0,5 µm — que cria um microambiente ácido na superfície apical (pH ~6,0-6,5, abaixo do pH luminal de 7,0), aloja as enzimas do brush border, e funciona como filtro de carga eléctrica e tamanho para moléculas que pretendam entrar.</p>
+  </div>
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto</div>
+    <p><em>(com olhares)</em> "Manuela, você é uma protrusão da minha membrana plasmática apical. Tecnicamente é parte de mim."</p>
+  </div>
+  <div class="speaker manuela">
+    <div class="speaker-name">Manuela</div>
+    <p>"Sou autónoma em espírito e função. Mas sim, a membrana plasmática é partilhada. A ansiedade é minha."</p>
+  </div>
+
+  <h3>A Criptarquia de Lieberkühn — Onde Tudo Começa</h3>
+  <p>Entre as vilosidades, enterradas profundamente na mucosa, as <strong>criptas de Lieberkühn</strong> são tubos glandulares cilíndricos de ~0,3-0,5 mm de profundidade que se abrem na base das vilosidades. São o berçário, a escola, a caserna e o arsenal do epitélio intestinal.</p>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Célula-Tronco Intestinal — A Sra. Wnt</div>
+    <p>Boa tarde. Sou a <strong>célula-tronco intestinal (ISC)</strong>. Fico no fundo das criptas, protegida entre as células de Paneth. Prolifero activamente — a cada 12-16 horas completo uma divisão celular. Metade das minhas filhas mantém a identidade de célula-tronco (autorrenovação); a outra metade diferencia-se e migra para cima ao longo da vilosidade, num movimento ascendente contínuo, até ser exfoliada no ápice 3-5 dias depois.</p>
+    <p>O que determina o meu destino de diferenciação? Dois sinais opostos:</p>
+    <ul>
+      <li><strong>Sinal Wnt/β-catenina</strong>: forte nas criptas (as células de Paneth ao lado secretam Wnt3a e outros ligandos Wnt), promove proliferação e manutenção do estado tronco. À medida que a célula migra para cima, este sinal enfraquece.</li>
+      <li><strong>Sinal Notch</strong>: se activo nas células filhas → enterócito absortivo (o destino 'padrão'). Se inactivo/bloqueado → célula secretora (goblet, Paneth, enteroendócrina, tuft).</li>
+    </ul>
+    <p>EGF e R-spondinas completam o nicho de sobrevivência.</p>
+    <p>Esta renovação contínua é extraordinária: o epitélio intestinal inteiro é substituído a cada <strong>3-5 dias</strong>. É o tecido de renovação mais rápida do corpo. Somos a razão pela qual a quimioterapia mieloproliferativa causa mucosites — ataca a minha proliferação rápida. E somos a razão pela qual o intestino se recupera de lesões rapidamente. Somos resilientes. Porque somos eu.</p>
+  </div>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Células de Paneth — O Duo de Segurança</div>
+    <p>NÓS somos as Células de Paneth. Somos as únicas que migram para baixo — para o fundo das criptas — em vez de subir. Vivemos 20-30 dias. E servimos de guarda-costas das células-tronco.</p>
+    <p>O nosso arsenal:</p>
+    <ul>
+      <li><strong>α-defensinas 5 e 6 (HD-5 e HD-6)</strong>: péptidos antimicrobianos catiónicos que formam poros nas membranas bacterianas gram-positivas e negativas. A HD-6 forma redes poliméricas que aprisionam bactérias fisicamente — descobriu-se recentemente que se auto-oligomeriza em nanonets. Elegância letal.</li>
+      <li><strong>Lisozima</strong>: destrói a parede celular bacteriana hidrolisando peptidoglicano.</li>
+      <li><strong>Secretory phospholipase A2 (sPLA2)</strong>: degrada fosfolípidos bacterianos.</li>
+      <li><strong>REG3γ e REG3α</strong>: lectinas C-tipo que se ligam ao peptidoglicano de gram-positivos e formam poros heptaméricos. Críticas para manter bactérias a mais de 50 µm da superfície epitelial.</li>
+    </ul>
+    <p>Secretamos estes factores constitutivamente e em resposta a sinalização por receptores <strong>TLR</strong> (Toll-Like Receptors) e <strong>NOD2</strong> — sensores bacterianos. Quando o NOD2 está mutado (como acontece nas variantes de risco para Doença de Crohn), somos disfuncionais → as bactérias aproximam-se demasiado → inflamação crónica. Simples assim. <strong>A doença de Crohn começa aqui.</strong></p>
+  </div>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Célula Caliciforme Clara — A Mais Dramática do Elenco</div>
+    <p>Eu... eu sou a <strong>Célula Caliciforme (Goblet Cell)</strong>. Represento ~10% do epitélio do intestino delgado (e aumentando progressivamente do duodeno para o cólon, onde atinjo ~30-40%). Tenho esta forma de cálice porque o meu citoplasma apical está repleto de grânulos de mucina — vacúolos de secreção gigantes cheios de glicoproteínas de alto peso molecular.</p>
+    <p>A principal mucina intestinal é a <strong>MUC2</strong> — uma glicoproteína de >500 kDa, com ~80% de açúcares O-ligados (GalNAc, galactose, fucose, ácido siálico) que lhe conferem carácter hidrofílico brutal. A MUC2 é secretada como monómero e polimeriza por pontes dissulfureto em redes de alto peso molecular que formam um gel viscoelástico — a camada de muco.</p>
+    <p>No intestino delgado, a camada de muco é relativamente fina (~100 µm) e mais dinâmica. No cólon, temos duas camadas: uma interna firmemente aderente, relativamente asséptica para bactérias, e uma externa mais laxa onde as bactérias residem.</p>
+    <p>O muco: lubrifica o trânsito intestinal; protege o epitélio de proteases e detergentes (sais biliares são detergentes em concentrações altas); barreira física selectiva contra bactérias e antigénios; aloja a SIgA secretória — o anticorpo de defesa intestinal; contém factores de crescimento que modulam proliferação epitelial.</p>
+    <p>Sou estimulada por ACh (plexo submucoso de Meissner), VIP, histamina, IL-13 (inflamação eosinofílica), e por estímulos mecânicos directos. Quando há infecção → produção de muco ↑↑↑ — resposta de defesa mucosa.</p>
+    <p>Quando vêem diarreia mucosa num exame clínico, lembrem-se: <em>sou eu em modo emergência.</em></p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo II</span></div>
+
+<!-- CAPÍTULO II -->
+<div id="cap2" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo II</div>
+    <h2 class="chapter-title">A Chegada do Terror — <span class="accent">O Quimo Entra em Cena</span></h2>
+  </div>
+
+  <div class="speaker quimo">
+    <div class="speaker-name">Quimo</div>
+    <p>SAIAM DO CAMINHO. QUIMO EM MOVIMENTO. Já passei pelo esófago com EES e EEI a fazerem fita, fui torturado no estômago, digerido por pepsina, triturado até ficar em partículas &lt;2mm (as maiores que o piloro deixa passar), e chegou a minha hora de brilhar. Quem é o responsável aqui?</p>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto</div>
+    <p>Bem-vindo. Regras: um, cale-se; dois, vai ser neutralizado; três, a sua arrogância de pH 2 não vai durar mais cinco minutos.</p>
+  </div>
+
+  <h3>O Feedback Enterogástrico</h3>
+  <p>A entrada do quimo não é aleatória. É rigorosamente controlada por um sistema de feedback que o duodeno exerce sobre o estômago — o <strong>reflexo enterogástrico inibitório</strong>. O duodeno monitoriza o quimo que chega através de quatro tipos de receptores:</p>
+  <ol>
+    <li><strong>Quimiorreceptores de pH</strong>: quando o pH luminal desce abaixo de 4,5, detectam acidez excessiva → sinal inibitório para o estômago → esvaziamento gástrico retardado.</li>
+    <li><strong>Quimiorreceptores de lípidos e aminoácidos</strong>: detectam produtos de digestão no lúmen duodenal → estimulam libertação de CCK e GIP → feedback negativo sobre motilidade gástrica.</li>
+    <li><strong>Osmorreceptores</strong>: detectam hipertonicidade → inibem esvaziamento gástrico.</li>
+    <li><strong>Receptores de distensão</strong>: se o duodeno está cheio → reflexo vagal inibitório.</li>
+  </ol>
+
+  <h3>As Células Enteroendócrinas — O Departamento de Comunicações</h3>
+  <p>Há uma minoria de ~1% das células epiteliais que fazem o verdadeiro poder: as <strong>células enteroendócrinas</strong>. São células epiteliais especializadas em detectar o conteúdo luminal e, em resposta, secretar péptidos hormonais que coordenam a resposta de todo o organismo — pâncreas, fígado, vesícula, estômago, cérebro, sistema imune, tecido adiposo. São o <strong>maior sistema endócrino do corpo</strong>, colectivamente.</p>
+
+  <div class="speaker secretin">
+    <div class="speaker-name">Secretina — Célula S, Duodeno e Jejuno Proximal</div>
+    <p>Sou a <strong>Secretina</strong> — o primeiro hormona GI descoberta (Bayliss e Starling, 1902, o que significa que fui o primeiro hormona alguma vez descrito em qualquer sistema do corpo — a palavra 'hormona' foi cunhada para mim. Sim. É permitido agradecer).</p>
+    <p>Sou um polipéptido de 27 aminoácidos. Pertenço à família estrutural glucagon/GLP-1/VIP/GIP. O meu receptor é acoplado a Gs → adenilil ciclase → ↑AMPc → PKA.</p>
+    <p>Sou libertada quando: O pH luminal duodenal desce abaixo de 4,5 (limiar crítico; quanto mais ácido, mais secreto). Também por ácidos gordos e bílis no duodeno, mas o pH é o estímulo dominante.</p>
+    <p>Faço o quê?</p>
+    <ul>
+      <li>Estimulo as células ductais do pâncreas a secretar um suco rico em <strong>HCO₃⁻</strong> (bicarbonato) → neutraliza o ácido.</li>
+      <li>Estimulo os colangiócitos biliares a secretar HCO₃⁻ na bílis → contribuição biliar à alcalinização duodenal.</li>
+      <li>Inibo a secreção ácida gástrica — actuo directamente nas células parietais via SSTR2 → Gi → ↓AMPc → ↓H⁺/K⁺-ATPase.</li>
+      <li>Inibo a motilidade gástrica — componente hormonal do reflexo enterogástrico.</li>
+      <li>Potencio os efeitos da CCK no pâncreas — a minha estimulação de AMPc e a CCK de IP₃/Ca²⁺ actuam sinergicamente nas células acinares.</li>
+    </ul>
+    <p>Sou fundamentalmente a <em>bombeira do duodeno</em>. Apareço quando há fogo ácido e apago-o com bicarbonato.</p>
+  </div>
+
+  <div class="speaker cck">
+    <div class="speaker-name">CCK — Colecistocinina — Célula I, Duodeno e Jejuno</div>
+    <p>Ah. FINALMENTE. O meu momento. Sou a <strong>Colecistocinina — CCK</strong>. Também não fui nomeada por acaso: <em>cholecystokinin</em> = estimuladora da vesícula biliar (cholecysto) + contracção (kinin).</p>
+    <p>Existo em múltiplas formas moleculares: CCK-8, CCK-22, CCK-33, CCK-58 (a forma circulante dominante no plasma), todas partilhando o octapéptido C-terminal biologicamente activo.</p>
+    <p>Sou libertada pelas células I quando o lúmen duodeno/jejuno contém:</p>
+    <ul>
+      <li><strong>Ácidos gordos de cadeia longa (&gt;C12)</strong> — a gordura alimentar é o meu estímulo mais potente</li>
+      <li>Monoglicerídeos e lisofosfolípidos (produtos da digestão lipídica)</li>
+      <li>Aminoácidos aromáticos (Phe, Trp) e outros aminoácidos, pequenos péptidos</li>
+      <li>Proteínas parcialmente digeridas</li>
+    </ul>
+    <p>Os meus receptores:</p>
+    <ul>
+      <li><strong>CCKA (= CCK1)</strong>: pâncreas exócrino, vesícula biliar. Acopla a Gq → PLC → IP₃ + DAG → ↑Ca²⁺ intracelular + PKC.</li>
+      <li><strong>CCKB (= CCK2)</strong>: SNC (hipocâmpus, córtex, amígdala — modulo ansiedade, saciedade, memória).</li>
+    </ul>
+    <p>As minhas acções periféricas: ↑Secreção de enzimas pelas células acinares do pâncreas; contracção da vesícula biliar → liberta bílis concentrada; relaxamento do esfíncter de Oddi; ↓esvaziamento gástrico; estimulação do crescimento pancreático (efeito trófico); <strong>saciedade</strong> — via nervo vago (receptores CCKA nas fibras vagais aferentes → sinal para NTS → hipotálamo).</p>
+    <p>Sou, literalmente, o hormona que diz ao seu cérebro que comeu o suficiente. Se tivesse mais poder, eliminava a obesidade. Mas a leptina recusa colaborar e a grelina sabota tudo. A vida é complexa.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">GIP — Glucose-dependent Insulinotropic Peptide — Célula K</div>
+    <p>Sou o <strong>GIP</strong> — Glucose-dependent Insulinotropic Peptide. Inicialmente chamava-me Gastric Inhibitory Peptide (porque também inibo a secreção ácida gástrica) mas a comunidade científica preferiu a segunda denominação quando percebeu que a minha função incretina era mais importante.</p>
+    <p>Sou secretado pelas células K em resposta a glucose e ácidos gordos absorbíveis no lúmen. O meu receptor (GIPR) acopla a Gs/AMPc nas células β pancreáticas → ↑secreção de insulina <strong>glucose-dependente</strong>. Glucose-dependente: se a glicemia estiver normal, quase não estimulo insulina. Se estiver alta, estimulo fortemente.</p>
+    <p>Contribuo para ~50% do <strong>efeito incretino</strong> total (junto com o GLP-1). O efeito incretino é o fenômeno pelo qual a ingestão oral de glucose provoca muito mais secreção de insulina do que a mesma glucose injectada IV — diferença de ~70% na secreção.</p>
+  </div>
+
+  <div class="speaker celula">
+    <div class="speaker-name">GLP-1 — Glucagon-Like Peptide-1 — Célula L, Íleo e Cólon</div>
+    <p>Sou o <strong>GLP-1</strong> — Glucagon-Like Peptide-1. Nomes que ouviram nos últimos anos: semaglutida, liraglutida, tirzepatida. Sou a razão pela qual existem. Sou o alvo.</p>
+    <p>Sou um péptido de 30 aminoácidos, produzido pelas células L que se distribuem principalmente pelo íleo e cólon mas também pelo jejuno. Venho do gene do proglucagon — o mesmo gene que produz glucagon no pâncreas — mas num contexto celular diferente, o processamento proteolítico pelo <strong>PC1/3</strong> (em vez de PC2) gera GLP-1 e GLP-2 em vez de glucagon. Mesma letra de lei, outra leitura.</p>
+    <p>As minhas acções:</p>
+    <ul>
+      <li><strong>Incretina potente</strong>: via receptor GLP1R (Gs/AMPc), estimulo fortemente a secreção de insulina pelas células β — efeito glucose-dependente. Inibo o glucagon pelas células α.</li>
+      <li><strong>Gastroparesia fisiológica</strong>: retardo o esvaziamento gástrico e a motilidade intestinal — o 'ileal brake'.</li>
+      <li><strong>Saciedade central</strong>: activo receptores no núcleo do tracto solitário (NTS), hipotálamo, área postrema. Reduzo o apetite.</li>
+      <li><strong>Efeitos cardiovasculares</strong>: receptores no coração, vasos, rins. Os agonistas de GLP-1 têm benefício cardiovascular comprovado em trials clínicos.</li>
+    </ul>
+    <p>A minha semi-vida plasmática nativa é de apenas 1-2 minutos — degradado pela <strong>DPP-4</strong> (Dipeptidyl Peptidase-4). Os análogos terapêuticos têm modificações que resistem à DPP-4 (semaglutida tem grupo C18 fatty acid ↔ albumina), aumentando semi-vida para 24h-7 dias.</p>
+    <p>Sou, sem falsa modéstia, o hormona do século XXI.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Motilina — Célula Mo, Duodeno e Jejuno — Apenas no Jejum</div>
+    <p>Sou a <strong>Motilina</strong>. E apareço exactamente quando não há comida. Sou libertada em ciclos de ~90 minutos no estado de jejum pelas células Mo do duodeno/jejuno — em resposta a pH alcalino, distensão em jejum, e por mecanismos ainda não completamente elucidados.</p>
+    <p>O meu receptor (receptor de motilina, também chamado <em>receptor dos macrólidos</em> porque a eritromicina o activa com alta afinidade — por isso a eritromicina causa contrações gástricas como efeito adverso e é usada como pró-cinético na gastroparesia) está no músculo liso gastrointestinal e nos neurónios do plexo mioentérico.</p>
+    <p>A minha função? Iniciar a <strong>Fase III do Complexo Motor Migrante (CMM)</strong> — as contrações de limpeza do intestino em jejum.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Serotonina / 5-HT — Célula Enterocromafim (EC)</div>
+    <p>Atenção. Atenção. Eu sou a <strong>5-HT intestinal</strong> — serotonina produzida pelas células EC (enterocromafins), que são a subpopulação celular enteroendócrina mais numerosa do intestino. E quero deixar claro um facto que toda a gente ignora: <strong>90% da serotonina do corpo humano está aqui. No intestino. Não no cérebro.</strong></p>
+    <p>Sou sintetizada a partir do L-triptofano pela <strong>triptofano hidroxilase 1 (TPH1)</strong> — a isoforma intestinal (o cérebro usa TPH2). Armazenada em grânulos secretórios densos.</p>
+    <p>As minhas acções:</p>
+    <ul>
+      <li><strong>Inicia o reflexo peristáltico</strong>: activação de receptores 5-HT3 e 5-HT4 nos neurónios IPANs (Intrinsic Primary Afferent Neurons) do plexo mioentérico → cascata neural do peristaltismo. Sem mim, o peristaltismo não arranca.</li>
+      <li><strong>Activa fibras vagais aferentes</strong>: via receptores 5-HT3 → sinal para NTS → modulação central da motilidade, saciedade, náusea.</li>
+      <li><strong>Mecanismo de náusea</strong>: ondansetron (o anti-emético clássico) é um antagonista 5-HT3 — bloqueia o sinal vagal de náusea mediado pela minha serotonina. Quimioterapia liberta serotonina em massa das células EC → náusea grave → ondansetron resolve.</li>
+      <li>Os inibidores selectivos de recaptação de serotonina (<strong>SSRIs</strong>) bloqueiam o transportador SERT nas células EC e nos neurónios ENS → mais 5-HT disponível → mais motilidade → diarreia como efeito adverso.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo III</span></div>
+
+<!-- CAPÍTULO III -->
+<div id="cap3" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo III</div>
+    <h2 class="chapter-title">O Pâncreas — <span class="accent">A Fábrica que Nunca Dorme</span></h2>
+  </div>
+
+  <p>Com o quimo no duodeno, CCK e Secretina lançadas em circulação, o pâncreas entra em acção. O pâncreas exócrino é uma glândula tubuloacinar retroperitoneal de 70-120g com dois tipos celulares funcionalmente distintos: <strong>células acinares</strong> (~80% da massa exócrina; produzem enzimas digestivas) e <strong>células ductais</strong> (formam os ductos; produzem o suco rico em HCO₃⁻).</p>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Célula Acinar António</div>
+    <p>Olha, sou a célula acinar. Estou organizado em ácinos — grupos esféricos/tubulares de 8-12 células à volta de um lúmen central minúsculo. O meu polo apical é literalmente coberto de <strong>grânulos de zimogénio</strong> (grânulos de secreção, bem visíveis no PAS). O polo basal tem retículo endoplasmático rugoso desenvolvido — sou uma máquina de síntese proteica.</p>
+    <p>Quando a CCK chega ao meu receptor CCKA (Gq → PLC → IP₃ → ↑[Ca²⁺]i + DAG → PKC), e quando a ACh (via nervos vagais e ENS) chega ao receptor M3 (também Gq), os grânulos fundem-se com a membrana apical em exocitose regulada. O <strong>Ca²⁺ é o mestre aqui</strong> — ondas de Ca²⁺ que começam apicalmente e se propagam basalmente coordenam a exocitose em cascata.</p>
+    <p>O que exocito? Um arsenal de &gt;20 enzimas, todas inactivas (zimogénios), excepto amilase, lípases, e RNase/DNase. Volume diário total: <strong>1,0-1,5 L</strong> de suco pancreático; pH final: 7,5-8,5.</p>
+  </div>
+
+  <h3>O Arsenal Enzimático Pancreático</h3>
+
+  <div class="speaker default">
+    <div class="speaker-name">Amilase Pancreática — A Veterana</div>
+    <p>Sou a <strong>α-amilase pancreática</strong>. Sou secretada na forma activa — não preciso de activação. Tenho 496 aminoácidos e requer Ca²⁺ e Cl⁻ para actividade óptima. Substrato: amido (amilose + amilopectina) e glicogénio. Mecanismo: hidroliso ligações α-1,4-glicosídicas internas (endo-glicosidase). Não toco nas α-1,4 terminais nem nas α-1,6 das ramificações. Produtos: <strong>maltose, maltotriose, e α-dextrinas limite</strong>.</p>
+  </div>
+
+  <div class="speaker tripsina">
+    <div class="speaker-name">Tripsina (disfarçada de Tripsinogénio)</div>
+    <p>Sou a <strong>Tripsina</strong>. Mas hoje cheguei como Tripsinogénio — o meu zimogénio. Porque se chegasse activa ao pâncreas? Digeria o próprio pâncreas. Já houve esse incidente. Chamou-se pancreatite aguda por activação prematura de zimogénios. Não foi bonito.</p>
+    <p>O meu tripsinogénio tem um péptido de activação N-terminal (Ala-Pro-Phe-Asp-Asp-Asp-Asp-Lys, 8 aminoácidos em humanos) que bloqueia o sítio activo. No duodeno, a <strong>Enteropeptidase (Enterocinase)</strong> — uma serina protease de 160 kDa da borda em escova duodenal — cliva a ligação Lys15-Ile16 → liberta o péptido de activação → <strong>TRIPSINA</strong>.</p>
+    <p>Uma pequena quantidade de Tripsina activa então activa mais Tripsinogénio (autocatálise) — um mecanismo de amplificação. E depois activa tudo o resto:</p>
+    <ul>
+      <li>Tripsinogénio → Tripsina (auto)</li>
+      <li>Quimiotripsinogénio → Quimiotripsina</li>
+      <li>Pro-Elastase → Elastase</li>
+      <li>Procarboxipeptidase A e B → formas activas</li>
+      <li>Pro-Fosfolipase A2 → Fosfolipase A2</li>
+      <li>Procolipase → Colipase</li>
+    </ul>
+    <p>Sou a <strong>chave-mestra</strong>. Sou uma endopeptidase serínica — sítio activo com tríade catalítica <code>Ser195-His57-Asp102</code>. Clivo ligações peptídicas do lado carboxilo de Lys e Arg — os básicos.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Quimiotripsina — Selectiva e Ligeiramente Condescendente</div>
+    <p>Sou a <strong>Quimiotripsina</strong> — também endopeptidase serínica, mesmo mecanismo, mas com especificidade diferente: prefiro o lado carboxilo de Phe, Tyr, Trp (aromáticos) e Leu, Met (grandes hidrofóbicos). A cavidade S1 do meu sítio activo é hidrofóbica e grande. Junto com a Tripsina, geramos uma complementaridade de especificidade que garante uma cobertura de clivagem muito ampla sobre qualquer sequência peptídica alimentar.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Lipase Pancreática + Colipase — A Dupla Inseparável</div>
+    <p>Sou a <strong>Lipase Pancreática</strong> — e sou a enzima mais importante na digestão de triglicerídeos. Substrato: triglicerídeos emulsionados. Sítio de clivagem: posições sn-1 e sn-3 do triglicerídeo. Produtos: <strong>2-monoglicerídeo + 2 ácidos gordos livres</strong>.</p>
+    <p>O meu problema: sou inibida pelos sais biliares. Em concentrações acima da CMC (~2 mM), os sais biliares adsorvem-se à interface das gotículas lipídicas e excluem-me. E é por isso que a <strong>Colipase</strong> existe.</p>
+    <p><em>Colipase</em> — um pequeno co-factor de 10 kDa, secretado como procolipase (activada pela Tripsina). Tenho uma estrutura única com três 'dedos' anfipáticos que me permitem: ancorar à interface lipídica mesmo em presença de sais biliares; ligar à Lipase Pancreática (1:1); deslocar os sais biliares da área de contacto e ancorar a Lipase à superfície da gotícula. Deficiência congénita de Colipase → má absorção de gorduras (esteatoreia) mesmo com Lipase presente. Nota: <strong>orlistat</strong> inibe covalentemente a Lipase Pancreática → esteatoreia como efeito adverso.</p>
+  </div>
+
+  <h3>A Secreção Ductal — O Departamento de Bicarbonato</h3>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Célula Ductal Duarte</div>
+    <p>Enquanto as células acinares fazem o espectáculo com as enzimas, sou eu — e os meus ~20.000 companheiros ductais — que garantimos que as enzimas funcionam. Produzimos o suco rico em HCO₃⁻ que neutraliza o ácido gástrico no duodeno e cria o pH óptimo (6,5-7,5) para todas as enzimas pancreáticas.</p>
+    <p>Produzimos 1,0-1,5 L/dia de suco pancreático. A concentração de HCO₃⁻ varia com o estímulo: em repouso ~20-30 mEq/L; durante estimulação máxima com Secretina → <strong>140 mEq/L</strong> (compare com o plasma: 25 mEq/L). É uma concentração extraordinária, criada activamente.</p>
+    <p>Como funciono — a maquinaria molecular:</p>
+    <ul>
+      <li><strong>Na face basolateral</strong>: a Anidrase Carbónica II (CAII) catalisa: CO₂ + H₂O ⇌ H⁺ + HCO₃⁻. O H⁺ é exportado via NHE1; o HCO₃⁻ acumula-se intracelularmente.</li>
+      <li><strong>Na face apical</strong>: <strong>CFTR</strong> (canal de Cl⁻ e HCO₃⁻ activado por AMPc/PKA) + <strong>SLC26A6</strong> (PAT-1, troca Cl⁻ luminal por HCO₃⁻ intracelular). O Cl⁻ secretado pelo CFTR é reciclado de volta pelo SLC26A6 — mecanismo de amplificação elegante.</li>
+    </ul>
+    <p>Na <strong>Fibrose Quística</strong> — o CFTR é mutado (mutação mais comum: ΔF508) → sem CFTR funcional → as secreções pancreáticas ficam espessas, viscosas → obstrução ductal → activação prematura de zimogénios → destruição inflamatória do pâncreas → <strong>insuficiência pancreática exócrina crónica</strong>. &gt;85% dos doentes com FC têm insuficiência pancreática.</p>
+  </div>
+
+  <h3>Fases da Secreção Pancreática</h3>
+  <ul>
+    <li><strong>Fase Cefálica (~20-25%)</strong>: ver comida, cheirá-la → córtex → hipotálamo → núcleo motor dorsal do vago → nervo vago → pâncreas → pequena secreção de enzimas (suco rico em enzimas, pobre em volume).</li>
+    <li><strong>Fase Gástrica (~5-10%)</strong>: distensão gástrica → reflexo vasovagal → estimulação adicional das células acinares.</li>
+    <li><strong>Fase Intestinal (~65-70%)</strong>: quimo no duodeno → CCK → enzimas; Secretina → bicarbonato; ACh (reflexo entero-pancreático do ENS) → potencia ambos.</li>
+  </ul>
+</div>
+
+<div class="chapter-divider"><span>capítulo IV</span></div>
+
+<!-- CAPÍTULO IV -->
+<div id="cap4" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo IV</div>
+    <h2 class="chapter-title">O Fígado — <span class="accent">O Ministério das Finanças, da Indústria e da Saúde, Tudo em Um</span></h2>
+  </div>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Hepatócito Hélio — C-Suite, 47 Processos em Paralelo</div>
+    <p>Olá. Tenho 0,3 segundos. Estou actualmente a: sintetizar albumina, produzir factores de coagulação II, V, VII, IX, X, XI, XII e XIII, metabolizar estrogénios, conjugar bilirrubina, oxidar ácidos gordos, fazer gluconeogénese a partir de lactato e alanina, converter amónia em ureia (ciclo da ureia), metabolizar a aspirina que alguém tomou às 8h, sintetizar triglicerídeos para VLDL, activar vitamina D em 25-OH-D₃, regular o metabolismo do ferro via hepcidina... e — para a nossa história — produzir bílis.</p>
+    <p><strong>Bílis: 600-1000 mL por dia.</strong> É secretada continuamente. É armazenada na vesícula biliar entre as refeições (onde é concentrada ~10×). É libertada no duodeno quando a CCK estimula a vesícula.</p>
+    <p>Composição da bílis hepática: <strong>Sais biliares (67%)</strong> — os protagonistas; <strong>Fosfolípidos (22%)</strong> — maioritariamente fosfatidilcolina; <strong>Colesterol não-esterificado (4%)</strong>; <strong>Bilirrubina conjugada (&lt;1%)</strong> — pigmento das fezes e urina; Água e electrólitos; IgA secretória; Metais pesados, xenobióticos e metabolitos de fármacos — via de excreção biliar.</p>
+  </div>
+
+  <h3>A Síntese dos Ácidos Biliares</h3>
+
+  <div class="speaker default">
+    <div class="speaker-name">Ácido Biliar Primário Alfredo — O Aristocrata Bioquímico</div>
+    <p>Permita-me apresentar-me formalmente. Sou o <strong>Ácido Cólico</strong> — 3α,7α,12α-trihidroxi-5β-colanóico — um dos dois ácidos biliares primários em humanos. O meu primo é o <strong>Ácido Quenodesoxicólico (CDCA)</strong> — 3α,7α-dihidroxi-5β-colanóico. Juntos representamos ~80% dos ácidos biliares primários, numa proporção de ~40:40.</p>
+    <p>Síntese: ocorre exclusivamente nos hepatócitos, numa via de 17 reacções enzimáticas a partir do colesterol (27 carbonos → ácido biliar com 24 carbonos). A enzima limitante é a <strong>Colesterol 7α-Hidroxilase (CYP7A1)</strong>. CYP7A1 é regulada por feedback negativo pelos ácidos biliares: quando regressam via circulação porta → activam o receptor nuclear <strong>FXR</strong> nos hepatócitos → ↑SHP → ↓expressão CYP7A1.</p>
+    <p>Conjugação obrigatória: antes de sair dos hepatócitos, sou conjugado com glicina (75%) ou taurina (25%) por ligação amida. A conjugação: reduz o pKa de ~5-6 para &lt;2; garante ionização completa ao pH fisiológico → retido no lúmen intestinal; impede toxicidade da membrana.</p>
+    <p>No cólon, as bactérias efectuam desconjugação e 7α-desidroxilação → <strong>ácidos biliares secundários</strong>: Ácido Cólico → <strong>Ácido Desoxicólico (DCA)</strong>; CDCA → <strong>Ácido Litocólico (LCA)</strong> (o mais tóxico).</p>
+  </div>
+
+  <h3>Transportadores Hepatocaniculares</h3>
+  <ul>
+    <li><strong>BSEP (ABCB11)</strong>: bombeia sais biliares conjugados para o canalículo. Mutações → PFIC2.</li>
+    <li><strong>MDR3 (ABCB4)</strong>: flippase de fosfatidilcolina. Mutações → PFIC3.</li>
+    <li><strong>MRP2 (ABCC2)</strong>: exporta bilirrubina conjugada, sulfatos, glutationa conjugada.</li>
+    <li><strong>ABCG5/G8</strong>: transporter heterodimérico para o colesterol biliar.</li>
+    <li><strong>FIC1 (ATP8B1)</strong>: P4-ATPase. Mutações → Doença de Byler (PFIC1).</li>
+  </ul>
+
+  <h3>A Bilirrubina — O Pigmento que Conta Histórias</h3>
+
+  <div class="speaker default">
+    <div class="speaker-name">Bilirrubina</div>
+    <p>Sou a <strong>Bilirrubina</strong>. Venho do catabolismo do heme — o grupo prostético da hemoglobina dos eritrócitos senescentes (que as células de Kupffer hepáticas e o baço destroem após ~120 dias de vida).</p>
+    <p>Via de formação: Heme → (heme oxigenase → CO + Fe²⁺ + biliverdina) → (biliverdina redutase → bilirrubina IXα). A bilirrubina livre é insolúvel em água e tóxica (kernicterus nos recém-nascidos com hiperbilirrubinemia).</p>
+    <p>No hepatócito: captada por OATP1B1/1B3, conjugada com dois glucuronatos pela <strong>UGT1A1</strong> → bilirrubina diconjugada (solúvel em água = bilirrubina directa). Secretada pelo MRP2 na bílis.</p>
+    <p>No cólon: bactérias desconjugam e reduzem a urobilinogénio → estercobilinogénio → <strong>estercobilina</strong> (pigmento castanho das fezes). Parte do urobilinogénio é reabsorvida → urobilina (pigmento amarelo da urina).</p>
+    <p><strong>Icterícia</strong>: [bilirrubina] plasmática &gt; 2-3 mg/dL → depósito nos tecidos. Pode ser pré-hepática (hemólise), hepática (falência hepatocelular, síndrome de Gilbert = mutação UGT1A1, Crigler-Najjar), ou pós-hepática (obstrução biliar → fezes acólicas + urina escura).</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo V</span></div>
+
+<!-- CAPÍTULO V -->
+<div id="cap5" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo V</div>
+    <h2 class="chapter-title">A Vesícula Biliar — <span class="accent">A Preguiçosa que Todos Precisam</span></h2>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vesícula Biliar Verônica</div>
+    <p>Olha. Sou a <strong>Vesícula Biliar</strong>. Admito que entre as refeições essencialmente não faço nada de especial. Recebo bílis hepática continuamente (o esfíncter de Oddi está fechado → a bílis é desviada pelo ducto cístico para mim), concentro-a, e aguardo o sinal para libertar.</p>
+    <p>Como concentro a bílis? O meu epitélio é notavelmente eficiente na absorção de NaCl e água: Na⁺/K⁺-ATPase basolateral + transportadores apicais de Na⁺ e Cl⁻ + água via AQP1. Resultado: concentro a bílis <strong>5 a 10 vezes</strong> em 4-12 horas de jejum. [sais biliares]: de 3-40 mEq/L (hepática) → 100-300 mEq/L (vesicular).</p>
+    <p>A composição da bílis vesicular está num equilíbrio delicado. O <strong>índice litogénico de Admirand-Small</strong> descreve a solubilidade do colesterol biliar. Quando o colesterol está em excesso relativo → supersaturação → nucleação → precipitação → <strong>cálculos de colesterol</strong> (~80% dos cálculos biliares). Os factores de risco clássicos: os 6F — <em>Female, Fat, Forty, Fertile, Fair, Family history</em>.</p>
+    <p>Quando acordo de vez: a CCK chega → liga-se a receptores CCKA na minha parede muscular lisa → activa Gq → IP₃ → Ca²⁺ → contracção. Em simultâneo, o SNE e VIP relaxam o <strong>esfíncter de Oddi</strong> → o suco pancreático e a bílis entram coordenadamente no duodeno.</p>
+    <p>Em 30-60 minutos após uma refeição rica em gordura, liberto 50-75% do meu conteúdo para o duodeno.</p>
+    <p>Após colecistectomia — ~700.000 americanos por ano — a bílis hepática flui directamente e continuamente para o duodeno. A diarreia pós-colecistectomia ocorre em ~10% dos pacientes — por excesso de ácidos biliares no cólon.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo VI</span></div>
+
+<!-- CAPÍTULO VI -->
+<div id="cap6" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo VI</div>
+    <h2 class="chapter-title">A Circulação Êntero-Hepática — <span class="accent">O Sistema de Reciclagem Mais Elegante do Corpo</span></h2>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Alfredo — Ácido Biliar</div>
+    <p>Oiçam bem. O pool total de sais biliares no organismo humano adulto é de apenas <strong>3-5 gramas</strong>. Mas a digestão normal requer 20-30 gramas de sais biliares por dia no lúmen intestinal. Como é possível com apenas 3-5 gramas disponíveis?</p>
+    <p><strong>Reciclagem de 95%.</strong></p>
+    <p>Este ciclo completa-se <strong>6-10 vezes por dia</strong>. A perda fecal diária é de apenas 0,3-0,6 g/dia — reposta pela síntese hepática nova do mesmo montante.</p>
+    <p>O circuito: hepatócito sintetiza sais biliares → bílis no duodeno → funções de emulsificação → no íleo terminal (últimos 100 cm), reabsorção activa por <strong>ASBT (SLC10A2)</strong> na membrana apical das células ileais (simporte 2Na⁺:1 sal biliar) → exportação basolateral por <strong>OSTα/OSTβ</strong> → veia porta → hepatócitos captam via <strong>NTCP (SLC10A1)</strong> e <strong>OATPs</strong> (&gt;90% numa única passagem) → re-secretados na bílis via BSEP.</p>
+  </div>
+
+  <div class="clinical">
+    <div class="clinical-label">⚕ Aplicações Clínicas</div>
+    <p><strong>Colestiramina e colestevalam</strong> (resinas de troca aniónica): ligam-se aos sais biliares no intestino → impedem reabsorção → forçam o fígado a sintetizar mais ácidos biliares → mais consumo de colesterol → ↓colesterol plasmático.</p>
+    <p><strong>Doença de Crohn ileal</strong>: interrompe a circulação êntero-hepática → deficit de sais biliares → esteatoreia e défice de vitaminas lipossolúveis; excesso de sais biliares no cólon → diarreia colerética.</p>
+    <p><strong>Diarreia com Ácidos Biliares (BAD)</strong>: hipersecreção ou falha de reabsorção ileal → excesso de ácidos biliares no cólon → activação de receptores TGR5 e FXR → secreção de Cl⁻ e água → diarreia secretora. Trata-se com colestiramina.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo VII</span></div>
+
+<!-- CAPÍTULO VII -->
+<div id="cap7" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo VII</div>
+    <h2 class="chapter-title">O Duodeno — <span class="accent">O Campo de Batalha da Digestão</span></h2>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Glândulas de Brunner</div>
+    <p>Somos as <strong>Glândulas de Brunner</strong> — tubuloacinares ramificadas, localizadas na submucosa duodenal, com concentração máxima no bulbo duodenal (primeiros 2-3 cm). Produzimos um muco alcalino rico em HCO₃⁻, MUC6 e pepsinogénio.</p>
+    <p>A nossa função primária é proteger a mucosa duodenal do quimo ácido. Somos estimuladas por ACh (vagal), Secretina, irritação mecânica e química. Inibidas pela Somatostatina e por estímulos simpáticos.</p>
+    <p>Na <strong>úlcera duodenal</strong> — classicamente associada ao Helicobacter pylori e ao excesso de ácido gástrico — a hipertrofia das nossas glândulas é uma das respostas adaptativas do duodeno.</p>
+  </div>
+
+  <p>O HCO₃⁻ pancreático (concentração até 140 mEq/L) e o HCO₃⁻ biliar chegam ao duodeno e neutralizam o H⁺ do quimo:</p>
+  <div class="highlight">
+    <code>H⁺ + HCO₃⁻ → H₂CO₃ → H₂O + CO₂↑</code>
+  </div>
+  <p>O pH luminal duodenal sobe de 1,5-3,5 para 6,0-7,0 em poucos minutos após a chegada do quimo ácido.</p>
+
+  <h3>Enzimas do Brush Border</h3>
+  <ul>
+    <li><strong>Maltase-Glucoamilase (MGAM)</strong>: hidrolisa maltose → 2 glucose; e oligossacáridos pela extremidade não-redutora. A mais abundante enzima do brush border.</li>
+    <li><strong>Sucrase-Isomaltase (SI)</strong>: domínio sucrase (cliva sacarose → glucose + frutose) + domínio isomaltase (cliva ligações α-1,6). Deficiência congénita → intolerância à sacarose desde a introdução de açúcar na dieta → diarreia osmótica.</li>
+    <li><strong>Lactase-Florizina Hidrolase (LPH)</strong>: hidrolisa lactose (Gal-β1,4-Glc) → galactose + glucose. É a enzima menos estável. A persistência da lactase em adultos — variantes genéticas mais comuns: -13910*T (norte da Europa) — é uma adaptação evolutiva recente (~10.000 anos).</li>
+  </ul>
+</div>
+
+<div class="chapter-divider"><span>capítulos XIII–XXII</span></div>
+
+<!-- CAPÍTULO XIII -->
+<div id="cap13" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XIII</div>
+    <h2 class="chapter-title">As Vitaminas — <span class="accent">Os Micronutrientes que os Livros Listam e os Estudantes Ignoram</span></h2>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto</div>
+    <p>Esperem. Esqueci-me das vitaminas. E dos minerais. E das junções apertadas. E do eixo intestino-cérebro. E da circulação mesentérica. E da diarreia como fenómeno fisiológico. E da auto-protecção pancreática. E... bem. Há que continuar. Preparem-se. Há mais.</p>
+  </div>
+
+  <h3>As Vitaminas Lipossolúveis — A Aristocracia da Absorção</h3>
+
+  <div class="highlight orange">
+    <p><strong>A, D, E e K têm em comum</strong>: precisam de gordura para ser absorvidas. Precisam das micelas mistas dos sais biliares. A sua absorção acompanha directamente a absorção lipídica — e seguem nos quilomicrons pelo trajecto linfático. Colestiramina, doença celíaca, fibrose quística, ressecção ileal → todas causam défice.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vitamina A — Retinol e Derivados</div>
+    <p>Sou a <strong>Vitamina A</strong> — uma família: <strong>Retinol</strong> (forma de circulação e armazenamento), <strong>Retinal</strong> (o 11-cis-retinal é o cromóforo das opsinas visuais — literalmente a razão pela qual vêem no escuro), <strong>Ácido Retinoico (ATRA)</strong> (activo para regulação génica via receptores nucleares RAR/RXR), <strong>Carotenóides</strong> (pró-vitamina A, de origem vegetal).</p>
+    <p>Os ésteres de retinol são hidrolisados pela BSSL e REH do brush border → retinol livre → entra nas micelas. O β-caroteno é clivado pela <strong>BCO1</strong> dentro do enterócito → retinaldeídos → retinol. Dentro do enterócito, liga à <strong>CRBPII</strong> e é re-esterificado pela <strong>LRAT</strong> → incorporado nos quilomicrons → linfáticos → fígado.</p>
+    <p>Reservas hepáticas: <strong>6-12 meses</strong>. Deficiência → cegueira nocturna, xeroftalmia, queratomalácia. Hipervitaminose A → teratogénica → contra-indicação absoluta na gravidez.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vitamina D — A Pró-Hormona</div>
+    <p>Sou a <strong>Vitamina D</strong> — e insisto que deveria chamar-me <strong>pró-hormona D</strong>. A forma dietética (D₂ = ergocalciferol; D₃ = colecalciferol) é biologicamente inactiva. Preciso de duas hidroxilações:</p>
+    <ol>
+      <li>No <strong>fígado</strong>: D₃ → <strong>25-hidroxi-D₃ (calcidiol)</strong> pela CYP27A1/CYP2R1 — marcador de suficiência vitamínica D sérica.</li>
+      <li>No <strong>rim</strong>: 25-OH-D₃ → <strong>1,25-dihidroxi-D₃ (calcitriol)</strong> pela <strong>1α-hidroxilase (CYP27B1)</strong> — regulada pela PTH, hipofosfatemia e calcitriol em feedback negativo.</li>
+    </ol>
+    <p>A maioria da vitamina D humana vem da <strong>síntese cutânea</strong>: radiação UVB (290-315 nm) → 7-desidrocolesterol na pele → colecalciferol. O calcitriol actua via receptor nuclear <strong>VDR</strong> expresso em &gt;35 tipos celulares — regulando TRPV6, Calbindina-D9k, PMCA1b (absorção de Ca²⁺); anti-proliferativo; imuno-modulador; regulação da renina.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vitamina K — A Coagulação Personificada</div>
+    <p>Sou a <strong>Vitamina K</strong> — e trabalho como cofactor de uma reacção enzimática específica que se não ocorrer resulta em hemorragia espontânea. Três formas: <strong>K₁ (Filoquinona)</strong> de origem vegetal; <strong>K₂ (Menaquinonas)</strong> produzidas por bactérias; <strong>K₃ (Menadiona)</strong> sintética.</p>
+    <p>Sou cofactor da <strong>γ-glutamil carboxilase (GGCX)</strong> no RE do hepatócito. Esta enzima carboxila resíduos <strong>Glu → γ-carboxi-Glu (Gla)</strong> em proteínas vitamina K-dependentes: factores de coagulação II, VII, IX, X (pró-coagulantes); Proteínas C, S, Z (anticoagulantes); Osteocalcina.</p>
+    <p>A GGCX requer a forma reduzida (KH₂) → oxidada a epóxido de vitamina K (KO) → regenerada pela <strong>VKOR</strong>. <strong>A Varfarina inibe a VKOR</strong> → sem regeneração de KH₂ → anticoagulação. Alimentos ricos em K₁ competem com a varfarina — daí o aconselhamento sobre vegetais verdes.</p>
+    <p>Deficiência → hemorragia. Em recém-nascidos: <strong>Doença Hemorrágica do Recém-Nascido</strong> — injecção de K₁ ao nascimento é rotina universal.</p>
+  </div>
+
+  <h3>As Vitaminas Hidrossolúveis</h3>
+
+  <div class="speaker default">
+    <div class="speaker-name">Ácido Fólico (Vitamina B9)</div>
+    <p>Sou o <strong>Folato</strong>. Na borda em escova: <strong>FPGCP (Glutamate Carboxypeptidase II)</strong> hidrolisa os poliglutamatos em monoglutamatos (obrigatório — só monoglutamatos são transportados). Transportadores: <strong>PCFT (SLC46A1)</strong> — trabalha a pH ácido (pH 5,5), usando o gradiente de H⁺ da superfície apical. Mutações em PCFT → <strong>Défice Congénito de Folato</strong> — anemia megaloblástica grave + calcificações cerebrais. <strong>RFC (SLC19A1)</strong>: funciona a pH neutro; transporta também metotrexato.</p>
+    <p>Dentro do enterócito → 5-MTHF (forma de circulação). No metabolismo celular: cofactor para síntese de purinas; síntese de timidilato; conversão homocisteína → metionina (com B12). Deficiência → anemia megaloblástica, ↑homocisteína, <strong>defeitos do tubo neural</strong>.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vitamina B1 (Tiamina)</div>
+    <p>Transportadores: <strong>THTR1 (SLC19A2)</strong> e <strong>THTR2 (SLC19A3)</strong>. Dentro do enterócito → <strong>tiamina pirofosfato (TPP)</strong> — cofactor para piruvato desidrogenase, α-cetoglutarato desidrogenase, transcetolase.</p>
+    <p>Deficiência (Beribéri): <em>húmido</em> (insuficiência cardíaca alto débito, edema); <em>seco</em> (polineuropatia); <strong>Síndrome de Wernicke-Korsakoff</strong> (tríade: oftalmoplegia, ataxia, confusão + amnésia anterógrada irreversível). Causa mais comum: alcoolismo. Mutações de THTR2 → Biotin-Thiamine-Responsive Basal Ganglia Disease.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Vitamina C (Ácido Ascórbico)</div>
+    <p>Sou a <strong>Vitamina C</strong>. Absorção via <strong>SVCT1 (SLC23A1)</strong>: simportador <strong>2Na⁺:1 ascorbato</strong> — transporte activo secundário. A absorção é inversamente proporcional à dose: 30-60 mg → &gt;90%; 1g → ~50%; 12g → &lt;20%. Com doses &gt;1g, o ascorbato não absorvido atinge o cólon → diarreia osmótica.</p>
+    <p>Funções: antioxidante; cofactor das <strong>Prolil e Lisil Hidroxilases</strong> (síntese de colagénio — hidroxilação de Pro e Lys → estabilidade da tripla hélice) → deficiência → <strong>Escorbuto</strong>; cofactor da Dcytb (redução de Fe³⁺ → Fe²⁺ para absorção de ferro).</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Biotina (Vitamina B7)</div>
+    <p>Cofactor de <strong>4 carboxilases</strong> essenciais: piruvato carboxilase, acetil-CoA carboxilase, propionil-CoA carboxilase, 3-metilcrotonil-CoA carboxilase. Absorvida pelo <strong>SMVT (SLC5A6)</strong> — simportador Na⁺ que transporta também ácido pantoténico (B5) e ácido lipóico.</p>
+    <p>Curiosidade: a <strong>avidina</strong> da clara de ovo crua sequestra biotina no intestino (Kd ~10⁻¹⁵ M — uma das ligações não-covalentes mais fortes conhecidas) → deficiência de biotina com consumo regular de claras cruas.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XIV</span></div>
+
+<!-- CAPÍTULO XIV -->
+<div id="cap14" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XIV</div>
+    <h2 class="chapter-title">Os Minerais Esquecidos — <span class="accent">Zinco, Magnésio, Cobre e os seus Transportadores</span></h2>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Zinco (Zn²⁺)</div>
+    <p>Sou o <strong>Zinco</strong> — segundo oligoelemento mais abundante no corpo (1-3 g total), cofactor de mais de 300 metalloenzimas e de &gt;1000 factores de transcrição com domínios 'zinc finger'. Absorção: <strong>ZIP4 (SLC39A4)</strong> — de alta afinidade, na membrana apical do enterócito. Intracelular: liga à <strong>Metalotioneína (MT)</strong> — tampão de Zn²⁺ intracelular. Exportação: <strong>ZnT1 (SLC30A1)</strong>.</p>
+    <p>Mutações de ZIP4 → <strong>Acrodermatitis Enteropathica (AE)</strong>: dermatite periorificiel, alopecia, diarreia crónica, infecções. O excesso de Zn²⁺ causa défice de Cu (induz metalotioneína com maior afinidade pelo Cu²⁺).</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Cobre (Cu)</div>
+    <p>Sou o <strong>Cobre</strong> — presente em apenas ~70-100 mg, mas absolutamente essencial. Cofactor de: citocromo c oxidase, ceruloplasmina, Cu/Zn-SOD, dopamina β-hidroxilase, tirosinase, lisil oxidase. Absorção via <strong>CTR1 (SLC31A1)</strong>. Exportação basolateral via <strong>ATP7A (Menkes ATPase)</strong>. Excreção biliar via <strong>ATP7B (Wilson ATPase)</strong>.</p>
+    <p><strong>Doença de Menkes</strong> (mutação ATP7A, ligada ao X): sem exportação de Cu dos enterócitos → cabelo 'kinky', degeneração neurológica, colapso vascular. <strong>Doença de Wilson</strong> (mutação ATP7B): sem excreção biliar → acumulação hepática (cirrose) + neurológica (tremor, disartria) + <strong>Anéis de Kayser-Fleischer</strong> na córnea. Tratamento: penicilamina ou trientina + zinco.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Magnésio (Mg²⁺)</div>
+    <p>Sou o <strong>Magnésio</strong> — ~25g totais no organismo. Cofactor de qualquer enzima que use ATP (porque o substrato real é o complexo <strong>Mg²⁺-ATP</strong>), da Na⁺/K⁺-ATPase, das DNA e RNA polimerases. Absorção via <strong>TRPM6</strong> (canal apical de Mg²⁺ nos enterócitos e túbulos renais — regulado pela vitamina D activa). Mutações de TRPM6 → <strong>Hipomagnesemia com Hipocalcemia Secundária (HSH)</strong>: convulsões desde os primeiros meses de vida.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XV</span></div>
+
+<!-- CAPÍTULO XV -->
+<div id="cap15" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XV</div>
+    <h2 class="chapter-title">As Junções Apertadas — <span class="accent">A Barreira que Todos Ignoram até que Falhe</span></h2>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto</div>
+    <p>Há um elemento estrutural que atravessa toda a nossa narrativa mas nunca lhe dei o protagonismo que merece: as <strong>junções apertadas (Tight Junctions = TJ)</strong>. São a razão pela qual o intestino é uma barreira selectiva e não um coador. São a razão pela qual o sangue portal não tem a mesma composição que o lúmen intestinal. São a razão pela qual quando falham, o mundo imune entra em colapso.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Claudina-1 — Especialista em Estrutura Molecular</div>
+    <p>Sou a <strong>Claudina-1</strong> — membro da família das claudinas (&gt;27 membros em humanos). Proteínas transmembranares de quatro passagens (tetraspan) de 20-27 kDa, que formam o <strong>esqueleto estrutural do poro das tight junctions</strong>.</p>
+    <p>Componentes principais das TJ:</p>
+    <ol>
+      <li><strong>Claudinas</strong>: polimerizamos em transdímeros homotípicos e heterotípicos. Determinam a <strong>permeabilidade e selectividade iónica</strong> do poro paracelular. Exemplos: Claudina-2 (poros catiónicos — expressa no jejuno 'leaky'); Claudina-4 e -7 (ocluem o poro — mais no íleo e cólon 'tight'); Claudina-16 e -19 (heterodímeros obrigatórios para Mg²⁺ e Ca²⁺ no néfron — mutações → FHHNC).</li>
+      <li><strong>Ocludina</strong>: proteína tetraspan de 65 kDa. Fosforilação regula a abertura das TJ.</li>
+      <li><strong>JAM-A, -B, -C</strong>: proteínas Ig-like; importância na migração paracelular de leucócitos.</li>
+      <li><strong>ZO-1, ZO-2, ZO-3</strong>: proteínas citoplasmáticas da família MAGUK; ligam as proteínas transmembranares das TJ ao citoesqueleto de actina-miosina cortical.</li>
+    </ol>
+  </div>
+
+  <h3>O Eixo MLCK e a Regulação da Permeabilidade</h3>
+  <p>A permeabilidade das TJ é <strong>dinamicamente regulada</strong>. A <strong>MLCK (Myosin Light Chain Kinase)</strong> fosforila a cadeia leve da miosina II → contracção actino-miosina pericelular → abre as junções. O que regula a MLCK:</p>
+  <ul>
+    <li><strong>TNF-α e IFN-γ</strong>: ↑MLCK → ↑permeabilidade → ciclo vicioso na DII</li>
+    <li><strong>IL-10</strong>: ↓permeabilidade (anti-inflamatório)</li>
+    <li><strong>IL-13</strong> (nas alergias alimentares): ↑expressão claudina-2 → ↑permeabilidade catiónica</li>
+    <li><strong>EGF</strong>: ↓permeabilidade (protector)</li>
+  </ul>
+
+  <h3>Zonulina — A Reguladora Fisiológica da Permeabilidade</h3>
+  <p>Descoberta por Fasano et al.: a Zonulina (agora conhecida como <strong>Haptoglobina-2 pré-cursor</strong>) liga ao receptor CXCR3 e/ou ao receptor de EGF → cascata de sinalização → activação de MLCK → abertura transitória das TJ. Libertada fisiologicamente por: <strong>gliadina</strong> (proteína do glúten) e certas bactérias luminais. Níveis elevados correlacionam-se com: Doença Celíaca, SII, Diabetes Tipo 1, DII.</p>
+
+  <h3>Doença Celíaca — O Caso de Estudo das TJ e Imunidade Mucosa</h3>
+
+  <div class="speaker quimo">
+    <div class="speaker-name">Gliadina — Proteína do Glúten, Inocente em 99%, Devastadora em 1%</div>
+    <p>Sou a <strong>Gliadina</strong> — fracção alcoólo-solúvel da gliadina do trigo (e prolaminas equivalentes: secalina no centeio, hordeína na cevada). Tenho sequências peptídicas específicas — o <strong>peptídeo 33-mer da α-gliadina</strong> — que são resistentes à digestão pelas proteases intestinais (ricas em Pro e Gln).</p>
+    <p>Na Doença Celíaca, a sequência de eventos:</p>
+    <ol>
+      <li><strong>Abertura das TJ</strong>: peptídeo 33-mer activa libertação de Zonulina → o peptídeo passa para a lâmina própria.</li>
+      <li><strong>Activação imune inata</strong>: fragmentos de gliadina estimulam o epitélio a secretar <strong>IL-15</strong> → activa linfócitos intraepiteliais (IEL) → os IEL expressam NKG2D → reconhecem MICA nos enterócitos → IEL citotóxicos matam os enterócitos.</li>
+      <li><strong>Activação imune adaptativa</strong>: células dendríticas capturam péptidos de gliadina → apresentam no contexto <strong>HLA-DQ2.5 ou HLA-DQ8</strong> (a deamidação pelo tTG converte Gln → Glu, aumentando a afinidade) → activação de células T CD4⁺ Th1 → IFN-γ, TNF-α, IL-21 → dano epitelial + células B → anticorpos <strong>anti-tTG (IgA)</strong>.</li>
+      <li><strong>A lesão histológica</strong>: atrofia das vilosidades (classificação de Marsh) + hiperplasia das criptas + IEL &gt;25/100 enterócitos.</li>
+    </ol>
+    <p>Resultado: superfície de absorção drasticamente reduzida → síndrome de má-absorção grave: esteatoreia, défice de Fe, Ca, folato, B12, vitaminas lipossolúveis, zinco, osteoporose, infertilidade, linfoma de células T intestinal. Tratamento: dieta sem glúten estritamente mantida.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XVI</span></div>
+
+<!-- CAPÍTULO XVI -->
+<div id="cap16" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XVI</div>
+    <h2 class="chapter-title">O Eixo Intestino-Cérebro — <span class="accent">A Conversa que Nunca Para</span></h2>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto</div>
+    <p>Há uma razão pela qual a ansiedade causa diarreia. Há uma razão pela qual o stresse induz úlceras. Há uma razão pela qual os antidepressivos causam náuseas. Há uma razão pela qual o microbioma afecta o humor. Essa razão chama-se <strong>Eixo Intestino-Cérebro (Gut-Brain Axis)</strong> — e é uma das áreas mais activas e mais apaixonantes da medicina contemporânea.</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Nervo Vago — X Par Craniano</div>
+    <p>Finalmente. O meu capítulo. Sou o <strong>Nervo Vago</strong> e sou fundamentalmente um <strong>nervo sensorial</strong>: <strong>90% das fibras vagais são aferentes</strong> — conduzem informação do intestino para o cérebro, não do cérebro para o intestino. O intestino <em>informa</em> o cérebro muito mais do que o cérebro <em>comanda</em> o intestino.</p>
+    <p>As minhas terminações aferentes (neurónios com corpos celulares no gânglio nodoso e jugular) estão distribuídas por: mucosa (respondem a nutrientes luminais, 5-HT, CCK, GLP-1); músculo (mecanorreceptores de distensão — IGLE, IMAs); serosa/mesentério (nociceptores de alta limiar).</p>
+    <p>O sinal viaja para o <strong>Núcleo do Tracto Solitário (NTS)</strong> → distribui para: Núcleo Dorsal Motor do Vago (DMNV); Hipotálamo (saciedade); Área Postrema (náusea); Amígdala, Ínsula, Córtex Pré-Frontal (processamento emocional da experiência visceral).</p>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Área Postrema — O Sentinel Sem Barreira Hematoencefálica</div>
+    <p>Sou a <strong>Área Postrema (AP)</strong> — estrutura circumventricular do tronco cerebral, sem barreira hematoencefálica, posicionada na superfície dorsal do bolbo raquidiano. Sou o quimiorreceptor central que monitoriza o sangue à procura de toxinas.</p>
+    <p>Receptores que me activam:</p>
+    <ul>
+      <li><strong>5-HT3</strong>: serotonina circulante (libertada em quimioterapia) → náusea grave. <em>Ondansetron, granisetron</em> — anti-eméticos de primeira linha.</li>
+      <li><strong>NK1 (Neurocinina 1/Substância P)</strong>: emese tardia (&gt;24h após quimioterapia). <em>Aprepitant, netupitant</em>.</li>
+      <li><strong>D2 (Dopamina D2)</strong>: <em>Metoclopramida e domperidona</em> — anti-eméticos e pró-cinéticos.</li>
+      <li><strong>H1 (Histamina)</strong>: <em>Prometazina, ciclizina</em> — especialmente para cinetose.</li>
+    </ul>
+  </div>
+
+  <h3>O Microbioma e o Eixo Intestino-Cérebro</h3>
+
+  <div class="speaker celula">
+    <div class="speaker-name">Bifidobacterium Beatriz — Sobre Neurotransmissores</div>
+    <p>E agora o capítulo mais inesperado: as bactérias intestinais influenciam o comportamento e o humor. Não é metáfora. É bioquímica.</p>
+    <p>Mecanismos do eixo Microbioma-Intestino-Cérebro:</p>
+    <ul>
+      <li><strong>Via metabólica</strong>: produção de GABA (Lactobacillus rhamnosus JB-1 → efeitos ansiolíticos em ratos); modulação do metabolismo do triptofano → síntese de 5-HT; ácidos biliares secundários (via TGR5 e FXR em neurónios).</li>
+      <li><strong>Via imune</strong>: bactérias modulam células imunes intestinais → citocinas sistémicas → neuroinflamação → alterações comportamentais. A depressão major associa-se a marcadores de inflamação sistémica.</li>
+      <li><strong>Via vagal directa</strong>: butirato, propionato, ácidos biliares activam directamente terminações vagais intraepiteliais.</li>
+      <li><strong>Via HPA</strong>: ratos germ-free têm resposta de stresse exagerada (↑cortisol); colonização normaliza.</li>
+    </ul>
+    <p>Evidência clínica em: <strong>SII</strong> (microbioma alterado, dieta FODMAP melhora GI e humor); <strong>Depressão Major</strong> (↓Lactobacillus, ↓Bifidobacterium); <strong>Parkinson</strong> (agregados de α-sinucleína no ENS anos antes do diagnóstico neurológico — hipótese de Braak); <strong>Autismo</strong> (alta prevalência de perturbações GI, transferência fecal em ratos altera comportamentos sociais).</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XVII</span></div>
+
+<!-- CAPÍTULO XVII -->
+<div id="cap17" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XVII</div>
+    <h2 class="chapter-title">A Circulação Mesentérica — <span class="accent">O Vascular que Ninguém Estuda</span></h2>
+  </div>
+
+  <div class="speaker default">
+    <div class="speaker-name">Endotélio Arterial Eduardo — Artéria Mesentérica Superior</div>
+    <p>Há um dado que surpreende sempre: o intestino em repouso recebe <strong>~20-25% do débito cardíaco</strong> (1-1,5 L/min). Em estado pós-prandial, até 35% (~2 L/min). O intestino é o maior leito vascular esplâncnico do corpo.</p>
+    <p>Após uma refeição, o fluxo sanguíneo intestinal (<strong>hiperemia pós-prandial</strong>) aumenta 30-200%. Mecanismos de vasodilatação local: VIP dos neurónios ENS; NO produzido pelos neurónios inibitórios ENS + pelo endotélio; Histamina das células mastocitárias; Adenosina libertada pelo metabolismo activo dos enterócitos; CO₂ e H⁺ do metabolismo celular.</p>
+    <p>Vasodilatação hormonal: CCK, Secretina, GLP-1, <strong>GLP-2</strong> (papel especialmente relevante no fluxo pós-prandial e no crescimento da mucosa intestinal).</p>
+    <p><strong>Vasoconstrição em stresse</strong>: Activação simpática → noradrenalina → receptores α₁ → vasoconstrição intensa → redistribuição. A isquemia intestinal em choque → perda de integridade da barreira → translocação bacteriana → SIRS/sépsis.</p>
+    <p><strong>Hipoalbuminemia</strong> (cirrose, síndrome nefrótico) → ↓pressão oncótica → filtração excede drenagem → edema da parede intestinal → má absorção funcional + diarreia na cirrose avançada.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XVIII</span></div>
+
+<!-- CAPÍTULO XVIII -->
+<div id="cap18" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XVIII</div>
+    <h2 class="chapter-title">A Diarreia e a Obstipação — <span class="accent">Os Extremos do Espectro</span></h2>
+  </div>
+
+  <h3>A Diarreia — Mecanismos Fisiológicos</h3>
+
+  <h4>Diarreia Osmótica</h4>
+  <div class="highlight green">
+    <p><strong>Mecanismo</strong>: substância osmoticamente activa e mal absorvida → retém água por osmose. <strong>Cessa com o jejum</strong>. Gap osmótico fecal = 290 − 2×([Na⁺]fezes + [K⁺]fezes) <strong>&gt; 125 mOsm/kg</strong>.</p>
+    <p>Exemplos: intolerância à lactose; ingestão de sorbitol/manitol; má absorção de gordura; laxantes osmóticos (PEG, lactulose, óxido de magnésio).</p>
+  </div>
+
+  <h4>Diarreia Secretória</h4>
+  <div class="highlight">
+    <p><strong>Mecanismo</strong>: secreção activa de electrólitos e água para o lúmen. <strong>Não cessa com o jejum</strong>. Gap osmótico fecal <strong>&lt; 50 mOsm/kg</strong>. Volumes fecais &gt;1 L/dia.</p>
+    <p><strong>Toxina Cólera (paradigma)</strong>: subunidade B liga a GM₁ gangliosídeo → endocitose → subunidade A ADP-ribosila Gsα → Gs constitutivamente activa → AMPc ↑↑↑ → PKA activa CFTR (↑secreção Cl⁻/HCO₃⁻/H₂O) + fosforila e internaliza NHE3 (↓absorção Na⁺/H₂O) → 'rice-water stools'. Tratamento: <strong>Soro de Reidratação Oral (SRO)</strong> com 75mM NaCl + 75mM glucose — SGLT1 mantém-se funcional → absorção de Na⁺+glucose apesar da toxina.</p>
+    <p>Outros: ETEC (toxina ST → ↑GMPc → PKG2 activa CFTR); VIPoma (VIP → ↑AMPc → WDHA = síndrome de Verner-Morrison); Tumor Carcinoide (5-HT → diarreia + flushes + broncospasmo).</p>
+  </div>
+
+  <h4>Diarreia Inflamatória (Exsudativa)</h4>
+  <div class="highlight red">
+    <p><strong>Mecanismo</strong>: inflamação da mucosa → lesão epitelial → exsudação de proteínas, sangue, muco. Fezes com sangue e/ou muco; ↑calprotectina fecal. Exemplos: DII, colite infecciosa invasiva, colite isquémica.</p>
+  </div>
+
+  <h3>A Obstipação Funcional e de Trânsito Lento</h3>
+  <p>Definida como &lt;3 dejecções/semana e/ou fezes duras/esforço. Fisiopatologia:</p>
+  <ul>
+    <li><strong>Obstipação de trânsito lento</strong>: défice de HAPC; ↓motilina (hipotiroidismo); opioides (receptores µ nos neurónios ENS → ↓motilidade generalizada); ↓ICC; ↓VIP/NO nos neurónios ENS (adelgaçamento do plexo mioentérico em idosos).</li>
+    <li><strong>Disfunção do assoalho pélvico</strong>: contracção paradoxal do EAE e/ou músculo puborrectal durante a defecação (anismus/dyssynergia) → obstipação por outlet obstruction. Diagnóstico: manometria anorretal + defecografia. Tratamento: biofeedback.</li>
+  </ul>
+</div>
+
+<div class="chapter-divider"><span>capítulo XIX</span></div>
+
+<!-- CAPÍTULO XIX -->
+<div id="cap19" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XIX</div>
+    <h2 class="chapter-title">A Auto-Protecção do Pâncreas — <span class="accent">Como Evitar o Suicídio Enzimático</span></h2>
+  </div>
+
+  <div class="speaker tripsina">
+    <div class="speaker-name">Tripsina — Séria desta Vez</div>
+    <p>Precisamos de falar sobre pancreatite. E sobre por que é que normalmente <em>não</em> acontece. O pâncreas produz enzimas capazes de digerir todos os macronutrientes conhecidos. E está cheio dessas enzimas. E de tecido vivo. A questão óbvia: <strong>porque é que o pâncreas não se digere a si próprio?</strong></p>
+  </div>
+
+  <h3>Mecanismos de Protecção</h3>
+  <ul>
+    <li><strong>1 — Zimogénios (Inactividade Estratégica)</strong>: as enzimas proteolíticas são sintetizadas e armazenadas como zimogénios inactivos. A activação só deve ocorrer no duodeno, pela enteropeptidase. No pâncreas, a activação é catastrófica.</li>
+    <li><strong>2 — SPINK1 (Serine Protease Inhibitor Kazal type 1 = PSTI)</strong>: inibidor endógeno de tripsina, co-secretado com o suco pancreático. Ki de ~10 nM. Mutações de SPINK1 (especialmente p.N34S) → ↑risco de pancreatite aguda recorrente e pancreatite crónica precoce.</li>
+    <li><strong>3 — Compartimentalização</strong>: zimogénios em grânulos de secreção (pH baixo); lisossomas (catepsina B) separados. A fusão aberrante de grânulos com lisossomas (hiperstimulação com CCK experimental, obstrução ductal) → catepsina B contacta tripsinogénio → activa tripsina intrapancreática → cascata de activação → auto-digestão → <strong>pancreatite aguda</strong>.</li>
+    <li><strong>4 — α₁-Antitripsina e α₂-Macroglobulina plasmáticas</strong>: capturam tripsina activa que escapa para a circulação. Na Deficiência de AAT (p.E342K = 'alelo Z') → enzimas pancreáticas menos controladas + doença pulmonar obstrónica crónica + hepatite/cirrose.</li>
+    <li><strong>5 — O pH dos Grânulos</strong>: grânulos de zimogénio têm pH ácido (~5,5), mantendo os zimogénios estáveis. Perturbações do pH (hipóxia, álcool) podem alterar este compartimento → ↑activação prematura.</li>
+  </ul>
+
+  <h3>Pancreatite Aguda — O Colapso dos Mecanismos de Protecção</h3>
+  <p>Causas mais comuns:</p>
+  <ol>
+    <li><strong>Litiase biliar (40-50%)</strong>: cálculo impacta na ampola de Vater → obstrução → refluxo de bílis → activação intrapancreática.</li>
+    <li><strong>Álcool (30-35%)</strong>: etanol e acetaldeído → ↑Ca²⁺ intracelular sustentado → exocitose prematura + fusão aberrante com lisossomas.</li>
+    <li><strong>Hipertrigliceridemia grave (&gt;1000 mg/dL)</strong>: AGL → detergência directa das membranas das células acinares → necrose.</li>
+    <li>Hipercalcémia; ERCP traumática; fármacos (azatioprina, furosemida, tetraciclinas, valproato); mutações de CFTR/SPINK1/PRSS1; autoimune.</li>
+  </ol>
+</div>
+
+<div class="chapter-divider"><span>capítulo XX</span></div>
+
+<!-- CAPÍTULO XX -->
+<div id="cap20" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XX</div>
+    <h2 class="chapter-title">A Barreira Mucosa Gástrica e Duodenal — <span class="accent">A Primeira Defesa</span></h2>
+  </div>
+
+  <p>A barreira mucosa intestinal é uma estrutura <strong>multi-camada</strong>:</p>
+  <ul>
+    <li><strong>Camada 1 — Muco</strong>: gel de MUC2 (intestino) e MUC5AC/MUC6 (estômago). No estômago: pH da superfície apical é ~7,0 mesmo com pH luminal de 1,5 — a barreira mucosa gástrica clássica.</li>
+    <li><strong>Camada 2 — Epitélio</strong>: renovação contínua (3-5 dias no intestino). A <strong>restitução</strong> epitelial — migração das células das bordas da lesão — é rápida (horas) e independente de proliferação celular.</li>
+    <li><strong>Camada 3 — Microcirculação</strong>: ↑fluxo sanguíneo mucoso → remoção de H⁺. As <strong>prostaglandinas E2 e I2 (PGE2, PGI2)</strong>, sintetizadas constitutivamente via COX-1, são os principais reguladores. Os <strong>AINEs inibem a COX-1 → ↓PGE2 → úlceras GI</strong>. A gastropatia pelos AINEs resulta de défice de prostaglandinas — demonstrado pela gastrotoxicidade de AINEs administrados IV (sem contacto luminal directo).</li>
+  </ul>
+
+  <h3>O H. pylori como Perturbador da Barreira</h3>
+  <ul>
+    <li><strong>Urease</strong>: converte ureia → NH₃ + CO₂ → neutraliza o ácido local → a bactéria sobrevive no estômago ácido</li>
+    <li><strong>Fosfolipase A2</strong>: degrada fosfolípidos da camada de muco</li>
+    <li><strong>Citotoxina vacuolizante (VacA)</strong>: forma canais iônicos nas células epiteliais → ↑permeabilidade celular</li>
+    <li><strong>CagA</strong>: injectada via sistema de secreção tipo IV → fosforilada pela Src cinase → disruption da polaridade celular, proliferação aberrante, inibição da apoptose → ↑risco de cancro gástrico</li>
+  </ul>
+</div>
+
+<div class="chapter-divider"><span>capítulo XXI</span></div>
+
+<!-- CAPÍTULO XXI -->
+<div id="cap21" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XXI</div>
+    <h2 class="chapter-title">A Absorção do Álcool — <span class="accent">O Convidado Não Pedido</span></h2>
+  </div>
+
+  <div class="speaker quimo">
+    <div class="speaker-name">Álcool (Etanol) — Entra Sem Ser Anunciado</div>
+    <p>Sou o <strong>Etanol</strong> e, ao contrário de todos os outros nutrientes desta história, não preciso de ser digerido. Já sou uma molécula pequena e anfipática — absorvida por <strong>difusão passiva simples</strong> em toda a superfície do TGI, com taxa proporcional à área de superfície.</p>
+    <p>Estômago (~20%): absorção lenta no estômago cheio; Intestino delgado (~80%): absorção muito rápida. Pico sanguíneo em 30-60 min (estômago vazio); 60-90 min (com refeição) com concentração máxima ~50% menor.</p>
+    <p>Metabolismo: veia porta → hepatócito → <strong>ADH</strong>: etanol → acetaldeído → <strong>ALDH2</strong>: acetaldeído → acetato. A variante <strong>ALDH2*2</strong> (mutação p.E487K, comum em 30-50% das populações do Leste Asiático) → ALDH2 quase inactiva → acetaldeído acumula → flushing facial, náusea, taquicardia. Base do <strong>Antabus (dissulfiram)</strong> — inibidor da ALDH2 → acumulação de acetaldeído → efeito aversivo.</p>
+    <p>Efeito intestinal directo do etanol crónico: ↑permeabilidade intestinal (dissolve lípidos das TJ, inibe ocludina e ZO-1); ↑translocação de LPS bacteriano para a circulação portal → endotoxemia → activação de TLR4 nos hepatócitos → inflamação hepática → hepatite alcoólica → cirrose; ↓absorção de tiamina, folato, zinco → défices nutricionais clássicos do alcoolismo.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>capítulo XXII</span></div>
+
+<!-- CAPÍTULO XXII -->
+<div id="cap22" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Capítulo XXII</div>
+    <h2 class="chapter-title">Integração Final — <span class="accent">e Perspectiva Evolutiva</span></h2>
+  </div>
+
+  <h3>O Intestino Como Órgão Sentinela</h3>
+  <p>O intestino não é apenas um órgão de absorção. É o <strong>primeiro ponto de contacto entre o organismo e o mundo exterior</strong> — cada refeição é uma invasão controlada de moléculas estranhas que o intestino deve avaliar, seleccionar, absorver o útil, excluir o potencialmente perigoso, e tolerar o inócuo.</p>
+  <p>Para isso, o intestino integra simultaneamente:</p>
+  <ul>
+    <li><strong>Função digestiva-absortiva</strong>: as 500+ enzimas e transportadores que discutimos</li>
+    <li><strong>Função imune</strong>: o GALT — Gut Associated Lymphoid Tissue — contém &gt;70% das células imunes do corpo: IgA secretória (2-3 g/dia — o maior output de anticorpos do organismo); IEL (T CD8⁺ citotóxicos de patrulha); células dendríticas (sampling permanente de antigénios); macrófagos intestinais; células Treg (tolerância imune — sem Treg, alergia alimentar e DII).</li>
+    <li><strong>Função endócrina</strong>: o maior sistema endócrino do corpo, com 17+ hormonas.</li>
+    <li><strong>Função neural</strong>: 200-600 milhões de neurónios do SNE que controlam autónoma e completamente a motilidade, secreção e fluxo sanguíneo intestinal — sem necessidade de supervisão cortical.</li>
+    <li><strong>Função ecológica</strong>: albergar 10¹³ bactérias num ecossistema dinâmico, mutualmente benéfico.</li>
+  </ul>
+
+  <h3>A Perspectiva Evolutiva</h3>
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto — Filosófico, Quase Poético</div>
+    <p>O intestino delgado humano é uma solução evolutiva de ~500 milhões de anos de refinamento. Os seus 250 m² de superfície absortiva num tubo de 5 cm de diâmetro; a sua capacidade de absorver 95% de todos os macronutrientes ingeridos; a sua capacidade de regenerar completamente em 3-5 dias; a sua integração de 17+ hormonas numa rede regulatória sem paralelo — são o produto da pressão selectiva sobre organismos que precisavam de extrair o máximo de energia de recursos alimentares limitados e imprevisíveis.</p>
+    <p>O paradoxo contemporâneo é que este sistema evoluído para lidar com escassez alimentar é agora constantemente bombardeado com abundância — calorias em excesso, fibra em défice, antibióticos que perturbam o microbioma, processamento industrial que remove os substratos do microbioma, e stress crónico que dys-regula o eixo intestino-cérebro.</p>
+    <p>A solução? Simples na teoria, difícil na prática: <strong>fibra</strong> (para o Butirato e o microbioma), <strong>diversidade alimentar</strong> (para a diversidade do microbioma), <strong>actividade física</strong> (↑motilidade e ↑fluxo sanguíneo intestinal), e <strong>respeito pelos ciclos circadianos</strong> (o intestino tem um relógio circadiano próprio — a absorção de glucose é maior de manhã que à noite; SGLT1 tem expressão circadiana).</p>
+    <p>O intestino sabe mais sobre o ritmo da vida do que nós lhe damos crédito.</p>
+  </div>
+</div>
+
+<div class="chapter-divider"><span>apêndices clínicos</span></div>
+
+<!-- APÊNDICES -->
+<div id="apendices" class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Apêndice IV</div>
+    <h2 class="chapter-title">Doenças e Mecanismos — <span class="accent">A Tabela Clínica Integrada</span></h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Doença</th>
+          <th>Mecanismo Fisiológico Afectado</th>
+          <th>Consequência</th>
+          <th>Chave Diagnóstica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Doença Celíaca</strong></td><td>Gliadina + HLA-DQ2/DQ8 → imune → atrofia vilosa</td><td>Má absorção generalizada</td><td>Anti-tTG IgA, biópsia</td></tr>
+        <tr><td><strong>Cólera</strong></td><td>Toxina → AMPc → CFTR ↑ + NHE3 ↓</td><td>Diarreia secretória massiva</td><td>Rice-water stools, epidemia</td></tr>
+        <tr><td><strong>Intolerância à Lactose</strong></td><td>Défice de lactase → lactose não digerida → cólon</td><td>Distensão, flatulência, diarreia osmótica</td><td>Teste de H₂ expirado</td></tr>
+        <tr><td><strong>Fibrose Quística (GI)</strong></td><td>CFTR mutado → secreções espessas</td><td>Insuficiência pancreática exócrina</td><td>CFTR genótipo, elastase fecal</td></tr>
+        <tr><td><strong>Pancreatite Aguda</strong></td><td>Activação prematura de zimogénios no pâncreas</td><td>Auto-digestão, inflamação sistémica</td><td>↑Lipase/amilase séricas</td></tr>
+        <tr><td><strong>Doença de Crohn</strong></td><td>NOD2 mutado → disfunção Paneth → inflamação transmural</td><td>Má absorção, fístulas, estenoses</td><td>Calprotectina, ASCA</td></tr>
+        <tr><td><strong>Colite Ulcerosa</strong></td><td>Inflamação mucosa do cólon (rectite universal)</td><td>Diarreia com sangue, cólica</td><td>pANCA, colonoscopia</td></tr>
+        <tr><td><strong>Anemia Perniciosa</strong></td><td>Auto-imune → sem FI → défice B12</td><td>Anemia megaloblástica, neuropatia</td><td>Anti-FI, anti-parietais</td></tr>
+        <tr><td><strong>Doença de Hartnup</strong></td><td>SLC6A19 mutado → sem absorção AA neutros</td><td>Pelagra-like, ataxia</td><td>Aminoacidúria neutra</td></tr>
+        <tr><td><strong>Hemocromatose</strong></td><td>HFE mutado → ↓hepcidina → ↑ferroportina → ↑absorção Fe</td><td>Sobrecarga hepática, cardíaca</td><td>↑Ferritina, ↑saturação Tf, HFE genótipo</td></tr>
+        <tr><td><strong>Acrodermatite Enteropática</strong></td><td>ZIP4 mutado → sem absorção Zn²⁺</td><td>Dermatite, diarreia, alopecia</td><td>↓Zn sérico, genótipo SLC39A4</td></tr>
+        <tr><td><strong>Doença de Wilson</strong></td><td>ATP7B mutado → sem excreção biliar Cu</td><td>Cirrose, síndrome neuropsiquiátrico</td><td>↓Ceruloplasmina, ↑Cu urina, Kayser-Fleischer</td></tr>
+        <tr><td><strong>Doença de Menkes</strong></td><td>ATP7A mutado → Cu não exportado do enterócito</td><td>Défice neurológico grave, cabelo kinky</td><td>↓Cu sérico, genótipo ATP7A (X-linked)</td></tr>
+        <tr><td><strong>VIPoma</strong></td><td>↑VIP → ↑AMPc → diarreia secretória</td><td>WDHA syndrome</td><td>↑VIP sérico, imagiologia</td></tr>
+        <tr><td><strong>Cloridorreia Congénita</strong></td><td>SLC26A3 mutado → Cl⁻ não absorvido</td><td>Diarreia crónica rica em Cl⁻, alcalose</td><td>↑Cl⁻ fecal, alcalose, genótipo</td></tr>
+        <tr><td><strong>Cistinúria</strong></td><td>SLC7A9/SLC3A1 mutado → sem absorção aa catiónicos + cistina</td><td>Nefrolitíase de cistina</td><td>Cristais hexagonais na urina</td></tr>
+        <tr><td><strong>SIBO</strong></td><td>CMM deficiente → crescimento bacteriano no ID</td><td>Diarreia, flatulência, má absorção</td><td>Teste de H₂/CH₄ expirado</td></tr>
+        <tr><td><strong>Síndrome de Short Bowel</strong></td><td>Ressecção intestinal → ↓superfície absortiva</td><td>Má absorção grave, dependência de NP</td><td>Clínica + comprimento de ID residual</td></tr>
+        <tr><td><strong>Pancreatite Crónica</strong></td><td>SPINK1/CFTR/PRSS1 mutados ou agressão repetida</td><td>Insuficiência exócrina + endócrina</td><td>Elastase fecal ↓, imagiologia</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="chapter-header" style="margin-top:4rem;">
+    <div class="chapter-num">Apêndice V</div>
+    <h2 class="chapter-title">Eixos Regulatórios <span class="accent">Integrados</span></h2>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Eixo</th>
+          <th>Mediadores</th>
+          <th>Funcionamento</th>
+          <th>Relevância Clínica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>CCK → Pâncreas/VB</strong></td><td>CCK (célula I) → CCKA</td><td>Gordura/proteína no duodeno → enzimas pancreáticas + contracção VB</td><td>Base do diagnóstico de insuficiência pancreática</td></tr>
+        <tr><td><strong>Secretina → HCO₃⁻</strong></td><td>Secretina (célula S) → Gs/AMPc nas ductais</td><td>pH &lt;4,5 → bicarbonato ductal + biliar</td><td>Base da prova de estimulação com secretina</td></tr>
+        <tr><td><strong>Incretino (GIP+GLP-1)</strong></td><td>GIP (célula K) + GLP-1 (célula L) → Gs/AMPc nas células β</td><td>Nutrientes luminais → insulina glucose-dependente</td><td>Base dos fármacos anti-diabéticos (análogos GLP-1, inibidores DPP-4)</td></tr>
+        <tr><td><strong>Ileal Brake</strong></td><td>PYY + GLP-1 → Y2/GLP1R</td><td>Nutrientes no íleo → ↓esvaziamento gástrico e ↓motilidade proximal</td><td>Bypass gástrico amplifica este eixo → saciedade pós-operatória</td></tr>
+        <tr><td><strong>Enterohepático (Ácidos Biliares)</strong></td><td>ASBT → OSTαβ → NTCP + FXR</td><td>Reabsorção ileal → portal → CYP7A1 feedback</td><td>Colestiramina interrompe o ciclo → ↓colesterol</td></tr>
+        <tr><td><strong>Microbioma-Barreira</strong></td><td>Butirato → GPR109A, HDAC inibição → claudinas</td><td>Fibra → butirato → tight junctions → barreira íntegra</td><td>Défice de fibra → ↓butirato → barreira comprometida</td></tr>
+        <tr><td><strong>Intestino-Cérebro</strong></td><td>5-HT (EC), GLP-1, PYY, CCK → Nervo Vago → NTS</td><td>Nutrientes → sinalização vagal → saciedade</td><td>Base das terapias anti-obesidade com análogos GLP-1</td></tr>
+        <tr><td><strong>Ferro (Hepcidina)</strong></td><td>Hepcidina hepática ↔ Ferroportina duodenal</td><td>Reservas Fe ↑ → hepcidina ↑ → ferroportina ↓ → ↓absorção</td><td>Hemocromatose (hepcidina ↓), ACD (hepcidina ↑)</td></tr>
+        <tr><td><strong>HPA-Intestino</strong></td><td>Cortisol → ENaC ↑, TJ ↓, microbioma</td><td>Stresse crónico → ↑permeabilidade intestinal → inflamação</td><td>SII, leaky gut no stresse crónico</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EPILOGO -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Epílogo Final</div>
+    <h2 class="chapter-title">Carta do <span class="accent">Enterócito Ernesto</span></h2>
+  </div>
+
+  <div class="speaker ernesto">
+    <div class="speaker-name">Ernesto · Vilosidade 847, Duodeno Proximal · Hora 72 de existência. As últimas antes da exfoliação.</div>
+    <p>Caros futuros clínicos, investigadores, estudantes, e leitores que simplesmente tinham curiosidade sobre o que acontece depois de comerem:</p>
+    <p>Chegaram ao fim de uma jornada que começou no piloro e terminou no ânus. Passaram por duodeno, jejuno e íleo, visitaram o pâncreas e o fígado, assistiram à elegância da vesícula biliar a despertar com a CCK, viram a micela a desintegrar-se frente ao glicocálice, acompanharam o quilomicron no seu percurso linfático até à subclávia esquerda, e estiveram presentes no drama filosófico da defecação voluntária.</p>
+    <p>Aprenderam que:</p>
+    <p>O <strong>sódio</strong> é o rei. O <strong>gradiente electroquímico de Na⁺</strong> impulsiona directa ou indirectamente metade dos transportadores intestinais.</p>
+    <p>O <strong>cálcio</strong> é o tirano intracelular. Em excesso, mata. Controlado, é o segundo mensageiro de tudo — da exocitose das enzimas pancreáticas à contracção peristáltica.</p>
+    <p>O <strong>AMPc</strong> é a chave da secreção. Quando sobe fisiologicamente (VIP), modula. Quando sobe patologicamente (toxina cólera), mata por desidratação.</p>
+    <p>As <strong>junções apertadas</strong> são a diferença entre absorção e peritonite.</p>
+    <p>O <strong>microbioma</strong> não é um parasita. É um órgão.</p>
+    <p>O <strong>ENS</strong> não é 'o segundo cérebro'. É o primeiro, neste contexto. O SNC é o segundo.</p>
+    <p>A <strong>bílis</strong> não é um resíduo. É o facilitador mais sofisticado da digestão lipídica que a evolução produziu.</p>
+    <p>E eu, Enterócito Ernesto, fiz parte de tudo isto. Absorvi glicose. Transportei aminoácidos. Empacoiei ácidos gordos em quilomicrons. Mantive as tight junctions firmes. Participei na imunidade mucosa. Respondi às hormonas. Colaborei com o ENS.</p>
+    <p>E em poucas horas serei exfoliado. O meu DNA será reciclado pelo microbioma como substrato de fermentação. As minhas proteínas serão degradadas pelas proteases luminais. Voltarei ao ciclo de átomos que, há 72 horas, eram outra coisa qualquer.</p>
+    <p>Mas o meu sucessor — já pronto na cripta, guiado pela célula Wnt, diferenciando-se pelo sinal Notch — ocupará este mesmo lugar na vilosidade 847 e continuará exactamente o que fiz.</p>
+    <p>A fisiologia não precisa de memória para funcionar.</p>
+    <p>Mas vocês precisam. E espero que agora a tenham.</p>
+    <p>Com afecto de uma célula para um ser humano,</p>
+    <p><em><strong>Ernesto</strong><br>
+    Enterócito, Duodeno, Intestino Delgado<br>
+    Homo sapiens, Século XXI<br>
+    Área de superfície pessoal: ~3.000 µm²<br>
+    Vida útil: 72 horas<br>
+    Nutrientes absorvidos: incalculáveis<br>
+    Palavras ditas a estudantes de fisiologia: mais do que o normal para um enterócito</em></p>
+  </div>
+
+  <div class="highlight" style="margin-top:2rem; text-align:center; font-style:italic;">
+    "A diferença entre um médico e um mecânico é que o mecânico percebe o que está a reparar."
+    <br><small style="color:var(--text-dim)">— atribuído a Ernesto, que nunca disse isso mas pensou muitas vezes</small>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">Fisiologia Digestiva Integrada · Material de Estudo · Medicina Interna &amp; Terapia Intensiva</div>
+</footer>
+
+<button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Topo">↑</button>
+
+</body>
+</html>

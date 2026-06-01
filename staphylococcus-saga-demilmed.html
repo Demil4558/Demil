@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Saga dos Staphylococcus — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&family=Oswald:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #050810;
+    --bg-panel: #0a0f1e;
+    --bg-card: #0e1428;
+    --border-glow: #1a2545;
+    --accent-gold: #f5c518;
+    --accent-cyan: #00e5ff;
+    --accent-magenta: #ff2d78;
+    --accent-green: #39ff14;
+    --accent-purple: #bf5fff;
+    --accent-orange: #ff6b00;
+    --text-main: #dde4f5;
+    --text-dim: #7a8aaa;
+    --text-white: #f0f4ff;
+    --panel-border: 2px solid var(--border-glow);
+    --glow-gold: 0 0 18px #f5c51888, 0 0 40px #f5c51833;
+    --glow-cyan: 0 0 18px #00e5ff88, 0 0 40px #00e5ff33;
+    --glow-mag: 0 0 18px #ff2d7888, 0 0 40px #ff2d7833;
+    --glow-green: 0 0 18px #39ff1488, 0 0 40px #39ff1433;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg-deep);
+    color: var(--text-main);
+    font-family: 'Noto Serif', Georgia, serif;
+    font-size: 1.08rem;
+    line-height: 1.85;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 15% 10%, #0a1a4022 0%, transparent 60%),
+      radial-gradient(ellipse at 85% 90%, #1a001a22 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 3px; }
+
+  /* HEADER HERO */
+  .hero {
+    position: relative;
+    text-align: center;
+    padding: 80px 20px 60px;
+    overflow: hidden;
+    border-bottom: 3px solid var(--accent-cyan);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, #00e5ff18 0%, transparent 70%),
+      radial-gradient(ellipse at 20% 80%, #f5c51812 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 60%, #ff2d7810 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  /* Manga speed lines */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg,
+      transparent 1.5deg,
+      #ffffff04 1.5deg,
+      #ffffff04 2deg
+    );
+    z-index: 0;
+  }
+
+  .hero-inner { position: relative; z-index: 1; }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
+    padding: 4px 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--glow-cyan);
+    animation: pulse-cyan 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-cyan {
+    0%, 100% { box-shadow: var(--glow-cyan); }
+    50% { box-shadow: 0 0 30px #00e5ffaa, 0 0 60px #00e5ff55; }
+  }
+
+  .hero-emoji {
+    font-size: 4rem;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 0 20px #f5c518);
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .hero-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2.4rem, 6vw, 5rem);
+    letter-spacing: 4px;
+    color: var(--accent-gold);
+    text-shadow: var(--glow-gold), 4px 4px 0 #000, 6px 6px 0 #7a5000;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  .hero-subtitle {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.9rem, 2vw, 1.15rem);
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    font-style: italic;
+    max-width: 700px;
+    margin: 0 auto 30px;
+  }
+
+  .hero-tagline {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent-magenta);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: var(--glow-mag);
+  }
+
+  /* MANGA PANEL DIVIDERS */
+  .panel-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 50px 0 30px;
+  }
+
+  .panel-divider::before,
+  .panel-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  }
+
+  /* MAIN CONTAINER */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+  }
+
+  /* PART HEADERS */
+  .part-header {
+    position: relative;
+    margin: 70px 0 40px;
+    padding: 30px 30px 30px 90px;
+    background: linear-gradient(135deg, var(--bg-card) 0%, #080d1a 100%);
+    border-left: 6px solid var(--accent-magenta);
+    border-top: 1px solid var(--border-glow);
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 97% 100%, 0 100%);
+  }
+
+  .part-header::before {
+    content: attr(data-part);
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Bangers', cursive;
+    font-size: 3.5rem;
+    color: var(--accent-magenta);
+    opacity: 0.18;
+    text-shadow: var(--glow-mag);
+    line-height: 1;
+  }
+
+  .part-header::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent-magenta);
+    box-shadow: var(--glow-mag);
+  }
+
+  .part-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent-magenta);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    text-shadow: var(--glow-mag);
+  }
+
+  .part-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+    color: var(--text-white);
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-shadow: 2px 2px 0 #000;
+  }
+
+  /* CHAPTER HEADERS */
+  .chapter-header {
+    position: relative;
+    margin: 50px 0 24px;
+    padding: 18px 20px 18px 24px;
+    background: var(--bg-card);
+    border-left: 4px solid var(--accent-cyan);
+    border-bottom: 1px solid var(--border-glow);
+  }
+
+  .chapter-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent-cyan);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    text-shadow: var(--glow-cyan);
+  }
+
+  .chapter-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: var(--text-white);
+    letter-spacing: 1px;
+  }
+
+  /* SECTION HEADERS (###) */
+  .section-header {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--accent-gold);
+    margin: 36px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f5c51830;
+    letter-spacing: 1px;
+    text-shadow: 0 0 12px #f5c51855;
+  }
+
+  /* CONTENT */
+  .prose {
+    color: var(--text-main);
+  }
+
+  .prose p {
+    margin-bottom: 1.4em;
+    hyphens: auto;
+  }
+
+  /* DIALOGUE BOXES — manga speech bubbles */
+  .dialogue {
+    position: relative;
+    background: linear-gradient(135deg, #0d1530 0%, #111830 100%);
+    border: 2px solid var(--accent-gold);
+    border-radius: 4px 16px 16px 16px;
+    padding: 18px 22px 18px 28px;
+    margin: 22px 0;
+    box-shadow: var(--glow-gold), inset 0 0 30px #f5c51808;
+    font-style: italic;
+  }
+
+  .dialogue::before {
+    content: '❝';
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    font-size: 2rem;
+    color: var(--accent-gold);
+    font-style: normal;
+    line-height: 1;
+    text-shadow: var(--glow-gold);
+  }
+
+  .dialogue strong {
+    color: var(--accent-gold);
+    font-style: normal;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .dialogue em {
+    color: var(--accent-cyan);
+  }
+
+  /* CHARACTER DIALOGUE alt colors */
+  .dialogue.cyan {
+    border-color: var(--accent-cyan);
+    box-shadow: var(--glow-cyan), inset 0 0 30px #00e5ff08;
+  }
+  .dialogue.cyan::before { color: var(--accent-cyan); text-shadow: var(--glow-cyan); }
+  .dialogue.cyan strong { color: var(--accent-cyan); }
+
+  .dialogue.magenta {
+    border-color: var(--accent-magenta);
+    box-shadow: var(--glow-mag), inset 0 0 30px #ff2d7808;
+  }
+  .dialogue.magenta::before { color: var(--accent-magenta); text-shadow: var(--glow-mag); }
+  .dialogue.magenta strong { color: var(--accent-magenta); }
+
+  .dialogue.green {
+    border-color: var(--accent-green);
+    box-shadow: var(--glow-green), inset 0 0 30px #39ff1408;
+  }
+  .dialogue.green::before { color: var(--accent-green); text-shadow: var(--glow-green); }
+  .dialogue.green strong { color: var(--accent-green); }
+
+  .dialogue.purple {
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 18px #bf5fff88, 0 0 40px #bf5fff33;
+  }
+  .dialogue.purple::before { color: var(--accent-purple); }
+  .dialogue.purple strong { color: var(--accent-purple); }
+
+  /* INFO / CLINICAL BOXES */
+  .info-box {
+    border: 1px solid var(--border-glow);
+    background: #080d1a;
+    border-radius: 4px;
+    padding: 18px 22px;
+    margin: 24px 0;
+    position: relative;
+  }
+
+  .info-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -11px;
+    left: 18px;
+    background: var(--bg-deep);
+    padding: 0 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .info-box.clinical { border-color: var(--accent-green); }
+  .info-box.clinical::before { color: var(--accent-green); text-shadow: var(--glow-green); }
+
+  .info-box.note { border-color: var(--accent-cyan); }
+  .info-box.note::before { color: var(--accent-cyan); text-shadow: var(--glow-cyan); }
+
+  .info-box.warning { border-color: var(--accent-orange); }
+  .info-box.warning::before { color: var(--accent-orange); text-shadow: 0 0 12px #ff6b0088; }
+
+  .info-box.ref { border-color: var(--text-dim); }
+  .info-box.ref::before { color: var(--text-dim); }
+
+  /* HIGHLIGHT SPANS */
+  .hl-gold { color: var(--accent-gold); font-weight: bold; text-shadow: 0 0 8px #f5c51855; }
+  .hl-cyan { color: var(--accent-cyan); font-weight: bold; text-shadow: 0 0 8px #00e5ff55; }
+  .hl-mag { color: var(--accent-magenta); font-weight: bold; }
+  .hl-green { color: var(--accent-green); font-weight: bold; text-shadow: 0 0 8px #39ff1455; }
+  .hl-purple { color: var(--accent-purple); font-weight: bold; }
+  .hl-orange { color: var(--accent-orange); font-weight: bold; }
+
+  /* PROLOGUE / INTRO BOX */
+  .intro-panel {
+    border: 2px solid var(--accent-purple);
+    background: linear-gradient(135deg, #0a0518 0%, #0a0f1e 100%);
+    padding: 30px;
+    margin: 30px 0;
+    position: relative;
+    box-shadow: 0 0 30px #bf5fff22;
+    clip-path: polygon(0 0, 100% 0, 100% 92%, 97% 100%, 0 100%);
+  }
+
+  .intro-panel h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: var(--accent-purple);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    text-shadow: 0 0 20px #bf5fff;
+  }
+
+  /* LISTS */
+  ul, ol {
+    padding-left: 24px;
+    margin-bottom: 1.2em;
+  }
+
+  li {
+    margin-bottom: 0.5em;
+    color: var(--text-main);
+  }
+
+  li::marker { color: var(--accent-cyan); }
+
+  /* HRULE replacement */
+  .manga-hr {
+    display: flex;
+    align-items: center;
+    margin: 40px 0;
+    gap: 12px;
+  }
+
+  .manga-hr::before { content: '◆'; color: var(--accent-gold); font-size: 0.8rem; }
+  .manga-hr::after { content: '◆'; color: var(--accent-gold); font-size: 0.8rem; }
+
+  .manga-hr span {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent-gold)66, transparent);
+  }
+
+  /* SUMMARY BOX */
+  .summary-block {
+    background: linear-gradient(135deg, #080d1a 0%, #060b18 100%);
+    border: 2px solid var(--accent-gold);
+    border-radius: 2px;
+    padding: 28px 30px;
+    margin: 30px 0;
+    box-shadow: var(--glow-gold);
+  }
+
+  .summary-block h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    color: var(--accent-gold);
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+    text-shadow: var(--glow-gold);
+  }
+
+  .summary-block p, .summary-block ul { margin-bottom: 1em; }
+
+  /* REFERENCES */
+  .references {
+    margin-top: 60px;
+    padding: 30px;
+    background: var(--bg-card);
+    border-top: 3px solid var(--border-glow);
+  }
+
+  .references h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .references p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 0.8em;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #020509;
+    border-top: 3px solid var(--accent-gold);
+    text-align: center;
+    padding: 32px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, #f5c51810 0%, transparent 60%);
+  }
+
+  .footer-logo {
+    font-family: 'Bangers', cursive;
+    font-size: 2rem;
+    color: var(--accent-gold);
+    letter-spacing: 6px;
+    text-shadow: var(--glow-gold);
+    margin-bottom: 8px;
+  }
+
+  .footer-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .footer-year {
+    font-family: 'Oswald', sans-serif;
+    font-size: 0.85rem;
+    color: var(--accent-cyan);
+    letter-spacing: 2px;
+  }
+
+  /* DECORATION dots */
+  .dot-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .dot-row span {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent-gold);
+    opacity: 0.4;
+  }
+  .dot-row span:nth-child(3) { opacity: 1; background: var(--accent-cyan); box-shadow: var(--glow-cyan); }
+
+  /* STRONG in prose */
+  .prose strong { color: var(--accent-gold); }
+  .prose em { color: var(--accent-cyan); font-style: italic; }
+
+  /* INLINE CODE / TERM */
+  code {
+    font-family: 'Share Tech Mono', monospace;
+    background: #0f1a30;
+    color: var(--accent-cyan);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.88em;
+    border: 1px solid var(--border-glow);
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glow);
+    border-left: 4px solid var(--accent-purple);
+    padding: 24px 28px;
+    margin: 30px 0;
+  }
+
+  .toc h3 {
+    font-family: 'Oswald', sans-serif;
+    color: var(--accent-purple);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { margin-bottom: 6px; padding-left: 12px; border-left: 1px solid #ffffff15; }
+  .toc a { color: var(--text-dim); text-decoration: none; font-family: 'Share Tech Mono', monospace; font-size: 0.8rem; letter-spacing: 1px; }
+  .toc a:hover { color: var(--accent-cyan); text-shadow: var(--glow-cyan); }
+  .toc .toc-part { color: var(--text-main); font-weight: bold; font-family: 'Oswald', sans-serif; font-size: 0.85rem; margin-top: 8px; letter-spacing: 1px; }
+
+  /* MNEMONIC box */
+  .mnemonic {
+    background: linear-gradient(135deg, #100515 0%, #0a0f1e 100%);
+    border: 2px dashed var(--accent-purple);
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-radius: 4px;
+    box-shadow: 0 0 20px #bf5fff22;
+  }
+
+  .mnemonic::before {
+    content: '⭐ MNEMÔNICO';
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: var(--accent-purple);
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 12px 14px 40px; }
+    .hero { padding: 50px 14px 40px; }
+    .part-header { padding: 20px 16px 20px 70px; }
+    .dialogue { padding: 14px 16px 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">DemilMed-UL · Microbiologia · 2º Ano</div>
+    <span class="hero-emoji">🦠</span>
+    <h1 class="hero-title">A Saga dos Staphylococcus</h1>
+    <p class="hero-subtitle"><em>Uma Épica de Ouro, Biofilme e Resistência</em><br>
+    Ou: Como um Coco Gram-Positivo Aprendeu a Dominar o Mundo e Fazer a Vida dos Médicos Muito, Muito Complicada</p>
+    <div class="hero-tagline">Universidade Licungo · 2026</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h3>◆ Índice da Saga</h3>
+    <ul>
+      <li><a href="#prologo">Prólogo — O Universo Antes do Caos</a></li>
+      <li class="toc-part">Parte I — Quem São Eles?</li>
+      <li><a href="#cap1">Cap. 1 — A Reunião da Família: Taxonomia e Classificação</a></li>
+      <li class="toc-part">Parte II — Aureus em Ação: O Arsenal</li>
+      <li><a href="#cap2">Cap. 2 — O Conselho de Guerra de S. aureus</a></li>
+      <li class="toc-part">Parte III — A Invasão</li>
+      <li><a href="#cap3">Cap. 3 — A Porta de Entrada: Patogênese Molecular</a></li>
+      <li><a href="#cap4">Cap. 4 — A Resposta do Hospedeiro</a></li>
+      <li><a href="#cap5">Cap. 5 — As Manifestações Clínicas</a></li>
+      <li class="toc-part">Parte IV — O Monstro Evolui</li>
+      <li><a href="#cap6">Cap. 6 — MRSA: O Vilão que Aprendeu a Ignorar os Antibióticos</a></li>
+      <li class="toc-part">Parte V — Os Outros Vilões</li>
+      <li><a href="#cap7">Cap. 7 — S. epidermidis: O Maestro do Biofilme</a></li>
+      <li><a href="#cap8">Cap. 8 — S. saprophyticus: O Romântico Perturbado</a></li>
+      <li><a href="#cap9">Cap. 9 — S. lugdunensis: O Lobo em Pele de Ovelha</a></li>
+      <li class="toc-part">Parte VI — A Sala de Investigação</li>
+      <li><a href="#cap10">Cap. 10 — O Diagnóstico Laboratorial: Os Detetives</a></li>
+      <li class="toc-part">Parte VII — A Batalha Terapêutica</li>
+      <li><a href="#cap11">Cap. 11 — Os Antibióticos: O Exército que Chegou Atrasado Mas Chegou</a></li>
+      <li class="toc-part">Parte VIII — A Prevenção</li>
+      <li><a href="#cap12">Cap. 12 — A Defesa do Castelo</a></li>
+      <li><a href="#epilogo">Epílogo &amp; Resumo Esquemático</a></li>
+    </ul>
+  </nav>
+
+  <!-- PRÓLOGO -->
+  <section id="prologo">
+    <div class="intro-panel">
+      <h2>PRÓLOGO — O Universo Antes do Caos</h2>
+      <div class="prose">
+        <p>Era uma vez um mundo invisível. Um mundo paralelo ao nosso, silencioso, ignorado pelo olho humano desarmado, mas fervilhante de personalidade, ambição e drama.</p>
+        <p>Nesse mundo — a superfície da pele humana, as fossas nasais, a garganta, o solo, os utensílios de cozinha, as maçanetas de porta de hospital — vivia uma das famílias bacterianas mais antigas, mais versáteis e, sem dúvida alguma, mais dramáticas da história natural: a família <strong>Staphylococcaceae</strong>.</p>
+        <p>E no centro dessa família, como uma estrela de cinema convencida de que o tapete vermelho foi inventado exclusivamente para ela, reinava <span class="hl-gold">Staphylococcus aureus</span> — o Estafilococo Dourado.</p>
+        <p>Mas a história não começou com uma invasão. Toda boa história começa com um contexto. E o contexto aqui é fundamental.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTE I -->
+  <div class="part-header" data-part="I" id="parte1">
+    <div class="part-label">Parte I</div>
+    <div class="part-title">Quem São Eles?</div>
+  </div>
+
+  <section id="cap1">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 1</div>
+      <div class="chapter-title">A Reunião da Família: Taxonomia e Classificação</div>
+    </div>
+    <div class="prose">
+      <p>Numa tarde qualquer — porque para bactérias, toda tarde é qualquer tarde —, a grande família Staphylococcus decidiu se reunir.</p>
+      <p>O local escolhido: a fossa nasal anterior de um estudante de medicina em período de provas. O ambiente era quente, úmido, ligeiramente salgado, e completamente irrelevante do ponto de vista do estudante, que estava mais preocupado com sua prova de bioquímica do que com o ecossistema que prosperava literalmente dentro do seu nariz.</p>
+      <p>A reunião foi convocada pelo patriarca da família, um senhor imponente que se apresentou de forma solene:</p>
+
+      <div class="dialogue">
+        <strong>— Meu nome é Staphylococcus</strong> — disse ele, carregando o nome com a dignidade de quem sabe sua etimologia. — <strong><em>Staphy</em></strong>, do grego <em>staphylé</em>, que significa "cacho de uvas". E <strong><em>coccus</em></strong>, do grego <em>kokkos</em>, que significa "grão" ou "baga". Sou, literalmente, um cacho de grãos. Olhem para mim e digam que não sou belo.
+      </div>
+
+      <p>E ele não estava errado. Ao microscópio eletrônico, os Staphylococcus formam arranjos em cachos tridimensionais irregulares — diferente dos estreptococos, que se organizam em cadeias como um rosário religioso, ou dos diplococos, que andam sempre dois a dois como um casal inseparável.</p>
+      <p>Esse arranjo em cacho acontece por um motivo molecular elegante: quando uma célula de Staphylococcus se divide, ela o faz em múltiplos planos. A divisão celular ocorre alternando os planos perpendiculares entre si — plano X, depois Y, depois Z — de forma irregular, criando esse amontoado tridimensional característico que lembra um grão de uva preto maduro.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Bom</strong> — disse uma voz nervosa vinda do fundo —, <strong>posso me apresentar também?</strong>
+      </div>
+
+      <p>Era <span class="hl-cyan">Staphylococcus epidermidis</span>, um sujeito pequeno, pálido, com aparência totalmente inofensiva. Vestia camisa bege, óculos de aros finos, e carregava um briefcase de polissacarídeo viscoso.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Eu sou o Epidermi.</strong> Trabalho nas superfícies. Sou discreto. Não gosto de conflito. Prefiro me estabelecer calmamente em cateteres venosos centrais, válvulas protéticas, próteses articulares e marcapassos. Sem alarde. Sem drama.
+      </div>
+
+      <div class="dialogue">
+        <strong>— Sem alarde?</strong> — explodiu <strong>Staphylococcus aureus</strong>, o protagonista indiscutível da história, entrando na sala com uma vibe entre superstar e chefe da máfia. Sua colônia, ao crescer em ágar-sangue, tinha uma coloração amarelo-dourada inconfundível — daí o nome <em>aureus</em>, do latim <em>aurum</em>, que significa ouro. — <strong>Você, Epidermi, causou uma endocardite de válvula protética semana passada. Não me venha com papo de "sou discreto".</strong>
+      </div>
+
+      <div class="dialogue cyan">
+        <strong>— Eu não causei</strong> — respondeu Epidermidis, ajustando os óculos. — <strong>A válvula estava lá. Eu apenas... aproveitei a oportunidade.</strong>
+      </div>
+
+      <p>Do canto da sala, <span class="hl-magenta">Staphylococcus saprophyticus</span> suspirou romanticamente.</p>
+
+      <div class="dialogue magenta">
+        <strong>— Meninos, meninos.</strong> Saprophyticus era o tipo sonhador da família. <em>Sapro</em> vem do grego <em>saprós</em>, que significa "putrefato" ou "podre", e <em>phyticus</em> de <em>phyton</em>, planta — mas não deixe esse nome enganar você, pois ele não tem nada de podre no comportamento. Ele é, na verdade, o especialista em bexiga e trato urinário inferior, com uma preferência notória por mulheres jovens, sexualmente ativas. <strong>— Enquanto vocês brigam, eu já colonizei a uretra de três universitárias essa semana. Cada uma delas vai ao banheiro com urgência, ardência e dor. É minha obra.</strong>
+      </div>
+
+      <div class="dialogue green">
+        <strong>— Isso é patético</strong> — comentou <strong>Staphylococcus lugdunensis</strong>, encostado na parede com os braços cruzados. Lugdunensis é nome derivado de <em>Lugdunum</em>, o nome romano da cidade de Lyon, na França, onde foi descrito pela primeira vez. Era o membro mais subestimado da família, mas também o mais perigoso entre os coagulase-negativos. — <strong>Ao menos eu causo endocardite de válvula nativa. Endocardite de verdade. A médicos, infectologistas, cardiologistas — todos ficam chocados quando me identificam no hemocultura. "Mas é coagulase-negativo!", eles dizem. Sim. E daí?</strong>
+      </div>
+
+      <p>Havia outros na sala — <em>S. haemolyticus</em>, <em>S. warneri</em>, <em>S. hominis</em>, <em>S. capitis</em> — mas, honestamente, eles eram um pouco secundários nessa narrativa. Existem mais de cinquenta espécies descritas no gênero Staphylococcus. Mas, para fins desta história — e para fins da sua prova de microbiologia —, os protagonistas são claros.</p>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">A Grande Divisão da Família: Coagulase-Positivos vs. Coagulase-Negativos</h3>
+
+      <p>O patriarca bateu a bengala no chão e chamou a atenção de todos.</p>
+
+      <div class="dialogue">
+        <strong>— Há uma linha divisória nesta família</strong> — disse ele. — <strong>E essa linha se chama coagulase.</strong>
+      </div>
+
+      <p>A coagulase é uma enzima. Uma enzima extraordinária. Ela imita parcialmente a ação da trombina — a proteína que normalmente coagula o sangue no corpo humano — ligando-se à protrombina e ativando a conversão de fibrinogênio em fibrina. Resultado: o sangue ao redor da bactéria se coagula, formando uma espécie de escudo de fibrina que protege o micro-organismo dos fagócitos do sistema imune.</p>
+
+      <div class="dialogue">
+        <strong>— Quem tem coagulase?</strong> — perguntou o patriarca.
+      </div>
+
+      <p><strong>Staphylococcus aureus</strong> ergueu a mão orgulhosamente. Há também <em>S. intermedius</em> e <em>S. pseudintermedius</em> (mais relevantes em veterinária), mas na medicina humana, <em>aureus</em> é o coagulase-positivo por excelência.</p>
+
+      <div class="dialogue">
+        <strong>— E quem não tem coagulase?</strong> — continuou ele.
+      </div>
+
+      <p>Todos os outros ergueram a mão, incluindo Epidermidis, Saprophyticus e Lugdunensis. Eles são os <span class="hl-cyan">CoNS</span> — <em>Coagulase-Negative Staphylococci</em> (Estafilococos Coagulase-Negativos).</p>
+
+      <div class="dialogue cyan">
+        <strong>— Ser CoNS</strong> — disse Epidermidis com uma dignidade levemente ferida — <strong>não é uma fraqueza. É uma estratégia diferente. Nós somos os especialistas em biofilme, em dispositivos implantados, em infecções insidiosas que se desenvolvem lentamente. Vocês, aureus, fazem barulho. Nós fazemos estragos silenciosos.</strong>
+      </div>
+
+      <div class="dialogue">
+        <strong>— Barulho é meu estilo. E funciona.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">A Identidade Gram-Positiva: A Parede que Define</h3>
+
+      <p>Antes de ir adiante, é necessário entender quem eles são estruturalmente. Porque um personagem bem escrito tem uma anatomia interna coerente.</p>
+      <p>Todos os Staphylococcus são <span class="hl-gold">bactérias Gram-positivas</span>. Esse nome vem de Hans Christian Gram, um bacteriologista dinamarquês que, em 1884, desenvolveu a famosa coloração diferencial. O método envolve quatro passos: cristal violeta (corante primário), lugol (mordente que fixa o corante), álcool-acetona (descolorador) e safranina ou fucsina (contra-corante vermelho).</p>
+      <p>Nas bactérias Gram-positivas, a parede celular é composta por uma camada espessa de <span class="hl-gold">peptidoglicano</span> — uma malha tridimensional de cadeias de açúcares (N-acetilglicosamina e ácido N-acetilmurâmico) interligadas por pontes peptídicas. Essa parede grossa retém o cristal violeta mesmo após a descoloração com álcool, e por isso a célula aparece <strong>roxa</strong> ao microscópio.</p>
+      <p>Nas bactérias Gram-negativas, há uma camada fina de peptidoglicano envelopada por uma membrana externa lipopolissacarídica, que não retém o cristal violeta e aparece <strong>vermelha/rosada</strong> com o contra-corante.</p>
+      <p>Esse peptidoglicano não é apenas estrutural — é <span class="hl-magenta">o alvo dos antibióticos beta-lactâmicos</span> (penicilinas, cefalosporinas, carbapenêmicos) e dos <span class="hl-magenta">glicopeptídeos</span> (vancomicina). Voltar a esse ponto mais tarde será inevitável — e dramaticamente necessário.</p>
+      <p>Além do peptidoglicano, a parede dos Staphylococcus contém:</p>
+      <p><span class="hl-gold">Ácidos teicóicos</span> — polímeros de ribitol ou glicerol fosfato ligados ao peptidoglicano. São antígenos importantes (antígeno de superfície), contribuem para a adesão a superfícies mucosas e têm papel na patogênese.</p>
+      <p><span class="hl-gold">Ácidos lipoteicóicos</span> — ancorados na membrana citoplasmática, projetando-se para fora. Estimulam o sistema imune inato via <strong>TLR-2</strong> (Toll-Like Receptor 2 — Receptor do Tipo Toll 2).</p>
+      <p><span class="hl-gold">Proteína A</span> — exclusiva de <em>S. aureus</em> e um dos seus truques moleculares mais elegantes. Mais detalhes logo adiante, com toda a dramaturgia que esse tema merece.</p>
+    </div>
+  </section>
+
+  <!-- PARTE II -->
+  <div class="part-header" data-part="II" id="parte2">
+    <div class="part-label">Parte II</div>
+    <div class="part-title">Aureus em Ação — O Arsenal</div>
+  </div>
+
+  <section id="cap2">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 2</div>
+      <div class="chapter-title">O Conselho de Guerra de Staphylococcus aureus</div>
+    </div>
+    <div class="prose">
+      <p>Após a reunião familiar, Aureus convocou seu círculo interno. Era uma colônia densa, bem organizada, localizada na mucosa nasal anterior do estudante de medicina — que, aliás, estava transportando <em>S. aureus</em> assintomaticamente, como fazem aproximadamente <span class="hl-gold">30% da população humana</span> de forma persistente e outros 30% de forma intermitente. Apenas cerca de 40% da população é não-colonizada.</p>
+
+      <div class="dialogue">
+        <strong>— Senhoras e senhores</strong> — disse Aureus, ajeitando a cápsula de polissacarídeo que usava como terno —, <strong>temos uma oportunidade. O hospedeiro está estressado. Dormiu pouco. Está com a imunidade reduzida. E mais importante: tem um folículo piloso inflamado na nuca. Uma pequena lesão. Uma porta.</strong>
+      </div>
+
+      <p>Na sala, estavam reunidos os seus generais — os fatores de virulência. E que generais eram eles.</p>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Proteína A — O Mestre do Disfarce</h3>
+
+      <div class="dialogue">
+        <strong>— Coronel Proteína A, presente!</strong> — disse um sujeito esguio com um uniforme coberto de anticorpos pendurados de cabeça para baixo, como troféus.
+      </div>
+
+      <p>Proteína A é um componente da parede celular de <em>S. aureus</em> codificado pelo gene <strong><em>spa</em></strong>. Ela tem a propriedade única de se ligar à <span class="hl-gold">porção Fc das imunoglobulinas IgG</span> — especificamente as subclasses IgG1, IgG2 e IgG4.</p>
+      <p>Para entender a elegância diabólica disso: normalmente, um anticorpo (IgG) funciona da seguinte forma: a porção <strong>Fab</strong> (<em>Fragment Antigen Binding</em> — Fragmento de Ligação ao Antígeno) se liga ao antígeno bacteriano, e a porção <strong>Fc</strong> (<em>Fragment Crystallizable</em> — Fragmento Cristalizável) fica "de fora" apontando para os fagócitos do hospedeiro, sinalizando "venham comer essa bactéria". Esse processo se chama <span class="hl-cyan">opsonização</span>.</p>
+      <p>Proteína A faz exatamente o contrário: ela captura os anticorpos IgG do hospedeiro pelo Fc, deixando as porções Fab apontando para fora — incapazes de reconhecer nada. É como pegar um detector de metais e cobrir o sensor com fita isolante. O anticorpo existe, mas não funciona.</p>
+
+      <div class="dialogue">
+        <strong>— Resultado?</strong> — disse Proteína A com um sorriso. <strong>— Os anticorpos do hospedeiro ficam pendurados em mim como enfeites de natal. Belos. Inúteis.</strong>
+      </div>
+
+      <div class="info-box note" data-label="Aplicação Diagnóstica">
+        <p>A Proteína A é usada em laboratórios de imunologia para purificação de anticorpos — ligando-se ao Fc, ela captura IgG de amostras com alta especificidade. O que é veneno para o sistema imune humano é ferramenta para a biotecnologia.</p>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Coagulase — O Construtor de Muralhas</h3>
+
+      <div class="dialogue">
+        <strong>— Coagulase, presente!</strong> — anunciou um personagem corpulento, vestido com uma armadura de fibrina solidificada.
+      </div>
+
+      <p>Como mencionado, a coagulase liga-se à protrombina formando um complexo chamado <span class="hl-gold">estafilotrombina</span>, que converte fibrinogênio em fibrina. Isso envolve a bactéria em um coágulo protetor que dificulta enormemente a fagocitose pelos neutrófilos e macrófagos.</p>
+      <p>Há duas formas:</p>
+      <p>A <strong>coagulase ligada</strong> (ou <em>clumping factor</em>) está ancorada na superfície bacteriana e causa aglutinação direta em plasma — é o que testamos no <span class="hl-cyan">teste da coagulase em lâmina</span> (slide test), que é rápido mas com menor sensibilidade.</p>
+      <p>A <strong>coagulase livre</strong> é secretada para o meio e age à distância — é detectada pelo <span class="hl-cyan">teste da coagulase em tubo</span> (tube test), mais sensível e definitivo, após incubação de 4 horas e/ou 24 horas.</p>
+
+      <div class="dialogue">
+        <strong>— Sou a primeira linha de defesa</strong> — disse Coagulase. <strong>— Ninguém passa pela minha muralha de fibrina facilmente.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Hialuronidase — O Abridor de Estradas</h3>
+
+      <div class="dialogue">
+        <strong>— Hialuronidase, à disposição!</strong> — disse um sujeito magro e ágil, carregando o que parecia ser uma tesoura molecular.
+      </div>
+
+      <p>O ácido hialurônico é o componente principal da matriz extracelular do tecido conjuntivo — a "cola" que une as células dos tecidos. Hialuronidase o degrada, dissolvendo literalmente o tecido que separa as células, abrindo caminho para a disseminação bacteriana.</p>
+      <p>É por isso que <em>S. aureus</em> não fica confinado ao local da infecção inicial: ele se espalha. Por isso furúnculos viram carbúnculos. Por isso uma celulite pode progredir para fascite. A hialuronidase é o motivo pelo qual Aureus é um invasor tão bom em penetrar tecidos.</p>
+
+      <div class="dialogue">
+        <strong>— Chamo essa enzima de <em>spreading factor</em> — o fator espalhador</strong> — disse ele. <strong>— Onde eu passo, o caminho se abre.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General TSST-1 — O Superantígeno</h3>
+
+      <p>E aqui a reunião ficou tensa. Porque <span class="hl-magenta">TSST-1</span> (<em>Toxic Shock Syndrome Toxin-1</em> — Toxina-1 da Síndrome do Choque Tóxico) entrou na sala com a energia de quem sabe que pode destruir um sistema imune inteiro com um único movimento.</p>
+
+      <div class="dialogue magenta">
+        <strong>— Eu não sou uma toxina comum</strong> — disse TSST-1, com uma arrogância completamente justificada. <strong>— Eu sou um superantígeno.</strong>
+      </div>
+
+      <p>Um antígeno normal estimula entre 0,01% e 0,1% dos linfócitos T do sistema imune. TSST-1, sendo um <span class="hl-magenta">superantígeno</span>, faz algo radicalmente diferente: ele não precisa ser processado por células apresentadoras de antígeno. Ele se liga diretamente ao complexo <strong>MHC classe II</strong> (<em>Major Histocompatibility Complex</em> — Complexo Principal de Histocompatibilidade) da célula apresentadora de antígeno E ao receptor <strong>Vβ</strong> (V-beta) da cadeia beta do <strong>TCR</strong> (<em>T Cell Receptor</em> — Receptor de Célula T) do linfócito T, de forma inespecífica.</p>
+      <p>Resultado: em vez de estimular 0,01% dos linfócitos T, TSST-1 pode ativar até <span class="hl-magenta">20-30% de todos os linfócitos T do organismo simultaneamente</span>.</p>
+      <p>Isso provoca uma tempestade de citocinas — IL-1 (Interleucina-1), IL-2, IL-6, TNF-α (<em>Tumor Necrosis Factor-alpha</em> — Fator de Necrose Tumoral-alfa) — em concentrações astronômicas. O sistema imune não defende o corpo; ele ataca o próprio corpo. Vasodilatação maciça, extravasamento vascular, hipotensão, falência de múltiplos órgãos.</p>
+
+      <div class="dialogue magenta">
+        <strong>— Isso se chama Síndrome do Choque Tóxico</strong> — disse TSST-1 com uma seriedade impressionante. <strong>— E posso garantir que nem o hospedeiro nem seu médico assistente vão esquecer de mim tão cedo.</strong>
+      </div>
+
+      <div class="info-box clinical" data-label="Nota Clínica — TSS">
+        <p>TSS (<em>Toxic Shock Syndrome</em> — Síndrome do Choque Tóxico) estafilocócica pode ocorrer em contextos de tampons vaginais (especialmente os de alta absorção, que ficam retidos por longos períodos), infecções pós-cirúrgicas, feridas, sinusite, osteomielite e outros focos. Os critérios diagnósticos incluem febre ≥38,9°C, rash eritematoso difuso (como queimadura solar), descamação da pele 1-2 semanas após o início (particularmente palmas e solas), hipotensão, e envolvimento de pelo menos três sistemas orgânicos.</p>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Leucocidina de Panton-Valentine — O Destruidor de Células de Defesa</h3>
+
+      <p><span class="hl-gold">PVL</span> (<em>Panton-Valentine Leukocidin</em> — Leucocidina de Panton-Valentine), nomeada em homenagem a Philip Noel Panton e Fernando Valentine, que a descreveram em 1932, era um personagem de aparência discreta mas com histórico devastador.</p>
+
+      <div class="dialogue">
+        <strong>— Minha especialidade</strong> — disse PVL, com voz calma e fria — <strong>são os leucócitos. Particularmente os neutrófilos e os macrófagos. Eu formo poros nas suas membranas e os destruo.</strong>
+      </div>
+
+      <p>PVL é uma toxina binária composta por duas subunidades: <strong>LukS-PV</strong> e <strong>LukF-PV</strong>. Cada uma se liga independentemente à superfície do leucócito e depois se combinam para formar um poro heptamérico na membrana celular. Esse poro permite entrada maciça de cálcio, saída de potássio, despolarização da membrana e morte celular por apoptose ou necrose — dependendo da concentração.</p>
+
+      <div class="dialogue">
+        <strong>— Minha presença está fortemente associada a dois quadros clínicos</strong> — continuou PVL. <strong>— Pneumonia necrotizante hemorrágica em jovens saudáveis, e furúnculos recorrentes graves. Se um jovem saudável desenvolve pneumonia fulminante após influenza, com febre alta, hemoptise e rápida deterioração... procurem-me.</strong>
+      </div>
+
+      <div class="info-box note" data-label="Dado Epidemiológico">
+        <p>PVL é codificada por um bacteriófago (vírus que infecta bactérias) e está presente em apenas 2-5% das cepas de <em>S. aureus</em>, mas é encontrada em mais de 90% das cepas de <strong>CA-MRSA</strong> (<em>Community-Acquired MRSA</em> — MRSA Adquirido na Comunidade), especialmente a cepa USA300, que é a cepa dominante de MRSA comunitário nos Estados Unidos. Essa associação é central para entender a epidemiologia atual.</p>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Toxina Esfoliativa — O Descascador</h3>
+
+      <p><span class="hl-orange">Exfoliative Toxin A (ETA)</span> e <span class="hl-orange">Exfoliative Toxin B (ETB)</span> — as Toxinas Esfoliativas A e B — entraram juntas, com aparência de dois irmãos inseparáveis.</p>
+
+      <div class="dialogue purple">
+        <strong>— Nós fazemos algo muito específico</strong> — disseram em uníssono. <strong>— Clivamos a desmogleína 1.</strong>
+      </div>
+
+      <p>A desmogleína 1 é uma caderina desmosomal — uma proteína de adesão que mantém as células da camada granulosa da epiderme unidas entre si. É o que mantém a pele coesa e estruturalmente íntegra.</p>
+      <p>As toxinas esfoliativas são <strong>serino-proteases</strong> com especificidade altíssima: elas cortam a desmogleína 1 em um único sítio. Resultado: a epiderme se separa da derme na camada granulosa, formando bolhas superficiais que se rompem facilmente, deixando a pele com aspecto de escalda. A criança parece ter sofrido uma queimadura — mas não houve queimadura.</p>
+
+      <div class="dialogue purple">
+        <strong>— Isso se chama SSSS</strong> — disseram as duas com orgulho. — <strong><em>Staphylococcal Scalded Skin Syndrome</em> (Síndrome da Pele Escaldada Estafilocócica). Em neonatos e crianças pequenas, a doença pode ser generalizada. Em adultos, geralmente é localizada — porque adultos têm anticorpos contra nós e uma função renal capaz de excretar a toxina antes que ela se dissemine.</strong>
+      </div>
+
+      <div class="info-box warning" data-label="Diagnóstico Diferencial Crucial">
+        <p>SSSS deve ser diferenciada de <strong>Síndrome de Stevens-Johnson</strong> e <strong>Necrólise Epidérmica Tóxica</strong> (TEN — <em>Toxic Epidermal Necrolysis</em>). Na SSSS, o plano de clivagem é na camada granulosa (mais superficial), a biópsia mostra clivagem intraepidérmica, o sinal de Nikolsky é positivo, e não há lesão de mucosa. Na SJS/TEN, o plano de clivagem é na junção dermo-epidérmica, há necrose epidérmica completa e frequentemente acometimento de mucosas.</p>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Enterotoxina — A Terrorista do Trato Digestivo</h3>
+
+      <p><span class="hl-orange">Enterotoxinas Estafilocócicas</span> (SE — <em>Staphylococcal Enterotoxins</em>) — tipos A, B, C, D, E, G, H, I, J e outros — entraram na sala representadas pela mais prevalente: <strong>Enterotoxina A</strong>.</p>
+
+      <div class="dialogue">
+        <strong>— Vocês me conhecem, mesmo que nunca tenham pronunciado meu nome</strong> — disse ela. <strong>— Sou a causa do surto de intoxicação alimentar que derrubou 47 pessoas em um casamento em Recife. A maionese ficou fora da geladeira por quatro horas. Produzi minhas toxinas tranquilamente. E quando as pessoas comeram, eu já não precisava estar viva. Minha obra já estava feita.</strong>
+      </div>
+
+      <p>E aí está o ponto mais importante sobre a intoxicação alimentar estafilocócica: <span class="hl-magenta">ela não é uma infecção. É uma intoxicação.</span> As enterotoxinas são pré-formadas no alimento e ingeridas prontas. São <strong>termoestáveis</strong> (<em>heat-stable</em>) — resistem a 100°C por 30 minutos. Portanto, mesmo que você cozinhe o alimento e mate todas as bactérias, a toxina permanece ativa.</p>
+
+      <div class="dialogue">
+        <strong>— Meu período de incubação é vergonhosamente curto</strong> — continuou Enterotoxina A. <strong>— 1 a 6 horas após a ingestão. Vômitos projectivos, náuseas intensas, dor abdominal em cólica, diarreia aquosa. O quadro dura no máximo 24-48 horas e resolve espontaneamente. Mas é um inferno enquanto dura.</strong>
+      </div>
+
+      <div class="info-box note" data-label="Mecanismo & Epidemiologia">
+        <p><strong>Mecanismo:</strong> As enterotoxinas estafilocócicas também funcionam como superantígenos (estimulação inespecífica de linfócitos T). Além disso, estimulam diretamente os receptores vagais entéricos, provocando o reflexo do vômito através do sistema nervoso autônomo.</p>
+        <p><strong>Dado epidemiológico:</strong> A enterotoxina tipo A é responsável por aproximadamente 50% dos surtos de intoxicação alimentar estafilocócica. Alimentos mais frequentemente envolvidos: produtos lácteos, carnes processadas, ovos, maionese, saladas com molho cremoso, e qualquer alimento manipulado por um portador nasal de <em>S. aureus</em> e mantido em temperatura inadequada.</p>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">General Alpha-Toxina — O Perfurador</h3>
+
+      <div class="dialogue green">
+        <strong>— Sou uma proteína monomérica que, ao contato com a membrana celular lipídica, se auto-oligomeriza em um heptâmero</strong> — disse ela com linguagem técnica impecável. — <strong>Formo um poro de 1-2 nm de diâmetro que atravessa a membrana e desequilibra todo o gradiente eletroquímico da célula.</strong>
+      </div>
+
+      <p>Isso afeta eritrócitos (destruição → hemólise), plaquetas, monócitos, células endoteliais e queratinócitos. A hemólise produzida é <strong>beta-hemólise</strong> — destruição completa das hemácias com zona de hemólise clara ao redor da colônia em ágar-sangue. Isso contrasta com a hemólise alfa (verde, oxidação parcial de hemoglobina) dos estreptococos viridans, por exemplo.</p>
+
+      <div class="dialogue green">
+        <strong>— Além de destruir células</strong> — acrescentou Alpha-Toxina —, <strong>estimulo a produção de IL-1β e IL-18 através da ativação do inflamassoma NLRP3. Contribuo para a resposta inflamatória sistêmica descontrolada que caracteriza a sepse estafilocócica.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">Os FnBPs — Os Infiltrados</h3>
+
+      <p>Por último, <span class="hl-cyan">FnBP-A</span> e <span class="hl-cyan">FnBP-B</span> (<em>Fibronectin-Binding Proteins</em> — Proteínas de Ligação à Fibronectina) se levantaram discretamente.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Nossa função é simples mas essencial</strong> — disseram. — <strong>A fibronectina é uma glicoproteína da matriz extracelular e das superfícies celulares do hospedeiro. Nós nos ligamos a ela. E através dessa ligação, nos ligamos a integrinas da célula hospedeira, particularmente a integrina α5β1. Isso permite que <em>S. aureus</em> seja internalizado por células não-fagocíticas — células endoteliais, fibroblastos, osteoblastos, células epiteliais.</strong>
+      </div>
+
+      <p>Isso é extraordinariamente importante. <em>S. aureus</em> pode invadir células que teoricamente não deveriam fagocitar bactérias. Uma vez dentro, fica protegido de antibióticos que não penetram bem intracelularmente. É um dos motivos pelos quais infecções estafilocócicas são tão difíceis de erradicar completamente e tão propensas a recidivas.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Somos também os responsáveis pela adesão a válvulas cardíacas danificadas</strong> — continuaram os FnBPs. <strong>— A endocardite bacteriana começa com a ligação à fibronectina depositada sobre a válvula lesionada. Nós somos o primeiro passo.</strong>
+      </div>
+
+      <div class="dialogue">
+        <em>Aureus olhou para seus generais reunidos. Uma expressão de satisfação — quase ternura — cruzou sua face.</em><br><br>
+        <strong>— Estamos prontos</strong> — disse ele. <strong>— Vamos começar.</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTE III -->
+  <div class="part-header" data-part="III" id="parte3">
+    <div class="part-label">Parte III</div>
+    <div class="part-title">A Invasão</div>
+  </div>
+
+  <section id="cap3">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 3</div>
+      <div class="chapter-title">A Porta de Entrada: Patogênese Molecular Passo a Passo</div>
+    </div>
+    <div class="prose">
+      <p>O estudante de medicina, cuja nuca estava com um folículo piloso inflamado por ter passado um dia inteiro encostado no encosto de uma cadeira mal lavada, levou a mão distraidamente ao local e coçou.</p>
+      <p>Naquele gesto de 0,3 segundos, aconteceu o seguinte:</p>
+
+      <div class="info-box note" data-label="Cronologia Molecular da Invasão">
+        <p><span class="hl-gold">Segundo 0:</span> O epitélio folicular, já levemente irritado, sofreu uma microabrasão. A barreira epitelial, que normalmente é impermeável a <em>S. aureus</em> graças à produção de peptídeos antimicrobianos como defensinas e catelicidinas, ficou momentaneamente comprometida.</p>
+        <p><span class="hl-gold">Segundos 0 a 30:</span> Moléculas de <strong>fibronectina</strong>, <strong>fibrinogênio</strong> e <strong>colágeno</strong> expostas pela microlesão foram reconhecidas pelos <strong>MSCRAMMs</strong> (<em>Microbial Surface Components Recognizing Adhesive Matrix Molecules</em> — Componentes de Superfície Microbiana que Reconhecem Moléculas de Matriz Adesivas) de <em>S. aureus</em>. Entre os MSCRAMMs estão os FnBPs, o <em>clumping factor A</em> (ClfA) que se liga ao fibrinogênio, e o <em>collagen-binding adhesin</em> (Cna) que se liga ao colágeno. Cada um desses é como um gancho molecular específico para um substrato específico. A bactéria se fixou. A colonização inicial estava feita.</p>
+        <p><span class="hl-gold">Minutos 1 a 30:</span> <em>S. aureus</em> começou a se multiplicar. Com um tempo de geração de aproximadamente 20-30 minutos em condições favoráveis, uma única célula pode gerar uma colônia de milhões em poucas horas. A multiplicação é exponencial: 1 → 2 → 4 → 8 → 16 → 32 → ... → 1.000.000 em aproximadamente 20 gerações (≈ 7 horas).</p>
+      </div>
+
+      <div class="dialogue">
+        <strong>— Pronto. Estamos dentro</strong> — disse Aureus, satisfeito. <strong>— Activem a hialuronidase. Quero me espalhar.</strong>
+      </div>
+
+      <p>Hialuronidase foi ativada. A matriz extracelular do derma subjacente começou a se dissolver. A infecção, que começara como uma pequena microlesão folicular, iniciou sua expansão lateral e em profundidade.</p>
+      <p>Isso correspondeu, clinicamente, ao início de um <span class="hl-gold">foliculite</span> — inflamação do folículo piloso —, que progrediu para <span class="hl-gold">furúnculo</span> (infecção profunda do folículo piloso e tecido subcutâneo adjacente, com necrose central e formação de um "pus" central, tecnicamente chamado de <em>bultão</em> ou núcleo necrótico).</p>
+    </div>
+  </section>
+
+  <section id="cap4">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 4</div>
+      <div class="chapter-title">A Resposta do Hospedeiro: Os Policiais Chegam</div>
+    </div>
+    <div class="prose">
+      <div class="dialogue green">
+        <strong>— ALARME!</strong> — gritou um mastócito tecidual que havia detectado ácidos lipoteicóicos bacterianos via TLR-2. <strong>— Invasão na nuca! Invasão na nuca! Todos os neutrófilos respondam!</strong>
+      </div>
+
+      <p>O sistema de defesa inato foi ativado de forma quase instantânea.</p>
+      <p>Os <strong>mastócitos</strong> (células do tecido conjuntivo derivadas de precursores hematopoiéticos, carregadas de histamina, heparina e outros mediadores) liberaram seu conteúdo granular. Histamina provocou vasodilatação local e aumento da permeabilidade vascular. Resultado macroscópico imediato: <span class="hl-magenta">rubor</span> (vermelhidão pela vasodilatação), <span class="hl-magenta">calor</span> (pelo aumento do fluxo sanguíneo local), <span class="hl-magenta">tumor</span> (edema pelo extravasamento de plasma), e <span class="hl-magenta">dor</span> (pela pressão das células edemaciadas sobre terminações nervosas e pela ação direta de prostaglandinas e bradicinina). Eram os quatro sinais cardinais da inflamação descritos há 2.000 anos por <strong>Celso</strong> no <em>De Medicina</em>: <em>rubor, calor, tumor, dolor</em> — à qual Rudolf Virchow adicionou no século XIX o quinto: <em>functio laesa</em> (perda de função).</p>
+      <p><span class="hl-gold">Seis horas depois da invasão</span>, os neutrófilos chegaram em massa. <strong>PMNs</strong> (<em>Polymorphonuclear Neutrophils</em> — Neutrófilos Polimorfonucleares) — chamados de polimorfonucleares pela forma multilobada de seu núcleo —, os primeiros respondedores do sistema imune, chegaram pela corrente sanguínea seguindo o gradiente quimiotático de <strong>IL-8</strong> (Interleucina-8, também chamada <strong>CXCL8</strong>), <strong>C5a</strong> (produto do complemento), e <strong>formil-Met-Leu-Phe</strong> (fMLP — peptídeo formilado liberado pelas próprias bactérias e que age como sinal quimiotático potente).</p>
+      <p>Os neutrófilos saíram dos capilares por <span class="hl-cyan">diapedese</span> (do grego <em>diapedein</em>, "pular através de") — um processo em que as células atravessam a parede dos capilares passando pelos espaços entre as células endoteliais, guiados por selectinas, integrinas e ICAM-1 (<em>Intercellular Adhesion Molecule 1</em> — Molécula de Adesão Intercelular 1).</p>
+
+      <div class="dialogue green">
+        <strong>— Lá estão eles</strong> — disse um neutrófilo, chegando ao local da infecção com a energia de quem está pronto para uma batalha. <strong>— Fagocitemos!</strong>
+      </div>
+
+      <div class="dialogue">
+        <strong>— Boa sorte com isso</strong> — disse Aureus, sereno dentro do seu escudo de fibrina.
+      </div>
+
+      <p>Os neutrófilos tentaram fagocitar. A opsonização estava parcialmente bloqueada pela Proteína A, que capturava os anticorpos IgG do hospedeiro. A fagocitose ficou prejudicada. Os neutrófilos frustrados liberaram seu conteúdo granular no espaço extracelular — elastase, mieloperoxidase, espécies reativas de oxigênio — tentando destruir as bactérias por ataque à distância.</p>
+      <p>Esse bombardeio extracelular destruiu tanto bactérias quanto células do próprio hospedeiro.</p>
+      <p>O resultado: necrose central da lesão, acúmulo de neutrófilos mortos (o que é o <span class="hl-gold">pus</span> — tecnicamente: exsudato rico em neutrófilos, restos celulares, proteínas plasmáticas e bactérias). A pressão interna aumentou. O folículo necrosou. E o estudante de medicina sentiu uma dor latejante, pulsátil na nuca.</p>
+      <p>A lesão tinha agora todas as características de um <span class="hl-gold">furúnculo maduro</span>: nódulo eritematoso, quente, doloroso, flutuante ao toque (sinal de flutuação = indicador de coleção purulenta), com o bultão central amarelado visível.</p>
+    </div>
+  </section>
+
+  <section id="cap5">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 5</div>
+      <div class="chapter-title">As Manifestações Clínicas: O Catálogo das Tragédias</div>
+    </div>
+    <div class="prose">
+      <div class="dialogue">
+        <em>Aureus estirou-se numa cadeira imaginária, lendo um catálogo de doenças que podia causar, como quem lê um cardápio gourmet.</em><br><br>
+        <strong>— Vamos ver... O que me apetece hoje?</strong>
+      </div>
+
+      <h3 class="section-header">1. Infecções de Pele e Tecidos Moles</h3>
+
+      <p><span class="hl-gold">Foliculite:</span> inflamação superficial do folículo piloso. Pequenas pústulas eritematosas centradas no folículo. Comum em áreas de atrito (axilas, virilhas, nuca). Geralmente autolimitada.</p>
+      <p><span class="hl-gold">Furúnculo</span> (<em>Boil</em>): infecção profunda do folículo piloso com necrose central. O popular "espinho". Causa dor intensa, formação de pus, flutuação. Tratamento: incisão e drenagem (I&D) para lesões flutuantes > 2 cm, com ou sem antibioticoterapia dependendo do contexto.</p>
+      <p><span class="hl-gold">Carbúnculo:</span> coalescência de múltiplos furúnculos com extensão para o tecido subcutâneo, múltiplos orifícios de drenagem. Maior tendência à bacteremia. Sempre requer antibioticoterapia sistêmica.</p>
+      <p><span class="hl-gold">Impetigo:</span> infecção superficial da pele, mais comum em crianças. Pode ser bolhoso (pela esfoliativa — bolhas flácidas que se rompem, deixando crosta melicérica dourada: cor de mel) ou não-bolhoso. O impetigo não-bolhoso também pode ser causado por <em>Streptococcus pyogenes</em> (estreptococo do grupo A).</p>
+      <p><span class="hl-gold">Celulite:</span> infecção da derme profunda e tecido subcutâneo. Eritema difuso, quente, doloroso, sem bordas bem definidas (isso a diferencia de erisipela, que tem bordas elevadas e bem delimitadas — a erisipela é mais superficial, acometendo derme e linfáticos superficiais, e é causada principalmente por <em>S. pyogenes</em>).</p>
+      <p><span class="hl-gold">Abscesso:</span> coleção localizada de pus. Pode ocorrer em qualquer localização — pele, músculo, órgãos internos. Trata-se com I&D.</p>
+
+      <h3 class="section-header">2. Bacteremia e Sepse</h3>
+
+      <div class="dialogue">
+        <strong>— Ah, meu preferido</strong> — disse Aureus com um sorriso sombrio.
+      </div>
+
+      <p>Quando <em>S. aureus</em> entra na corrente sanguínea, tem-se a <span class="hl-magenta">bacteremia estafilocócica</span> (BSA — Bacteremia por <em>S. aureus</em>). Isso pode acontecer por extensão direta de um foco infeccioso local, por disseminação linfática, ou por inoculação direta (cateter venoso, usuário de drogas intravenosas, procedimento cirúrgico).</p>
+      <p>A bacteremia estafilocócica tem <span class="hl-magenta">mortalidade de 20-30%</span> mesmo com tratamento adequado. É uma das infecções bacterianas com maior mortalidade em ambiente hospitalar.</p>
+      <p>O perigo específico da BSA está na capacidade de <em>S. aureus</em> de criar <strong>focos metastáticos</strong> — isto é, semear bactérias em múltiplos locais do organismo através da corrente sanguínea. Pulmões, rins, articulações, ossos, cérebro e, crucialmente, as válvulas cardíacas.</p>
+
+      <h3 class="section-header">3. Endocardite Infecciosa</h3>
+
+      <div class="dialogue">
+        <strong>— Aqui está o mais dramático</strong> — disse Aureus, abrindo um capítulo especial do catálogo.
+      </div>
+
+      <p>A <span class="hl-gold">endocardite infecciosa estafilocócica</span> (EI) é uma infecção do endocárdio valvular. <em>S. aureus</em> é hoje a causa mais comum de EI em países desenvolvidos, superando os estreptococos.</p>
+      <p>A EI por <em>S. aureus</em> tem características específicas:</p>
+      <p>É frequentemente <strong>aguda e fulminante</strong> (EI aguda, em contraste com a EI subaguda causada por <em>Streptococcus viridans</em>). Progride em dias a semanas, com destruição valvular rápida, abscesso perivalvular, embolias sépticas para múltiplos órgãos, e morte se não tratada.</p>
+      <p>As <strong>vegetações</strong> — massas de fibrina, plaquetas e bactérias que se formam sobre a válvula — são visíveis ao ecocardiograma (eco transesofágico tem sensibilidade superior ao transtorácico para lesões pequenas).</p>
+      <p>Os <strong>critérios de Duke</strong> (revisados por Li et al., 2000) são utilizados para o diagnóstico. Incluem critérios maiores (hemoculturas positivas com micro-organismo típico, evidência de envolvimento endocárdico ao eco) e critérios menores (febre, fenômenos vasculares, fenômenos imunológicos, hemoculturas positivas que não preenchem critério maior). (Li JS et al., <em>Clin Infect Dis</em> 2000;30:633–638.)</p>
+
+      <div class="info-box clinical" data-label="Manifestações Clássicas da EI">
+        <ul>
+          <li><strong>Petéquias conjuntivais</strong> (vasos sangrando)</li>
+          <li><strong>Manchas de Roth</strong> (hemorragias retinianas com centro claro, visíveis na fundoscopia)</li>
+          <li><strong>Lesões de Janeway</strong> (máculas hemorrágicas não dolorosas nas palmas e plantas — são êmbolos sépticos)</li>
+          <li><strong>Nódulos de Osler</strong> (nódulos dolorosos nos dedos das mãos e pés — são fenômenos imunológicos, complexos imunes depositados)</li>
+          <li><strong>Hemorragias em estilhaço</strong> (<em>splinter hemorrhages</em> — hemorragias lineares subungueais)</li>
+          <li><strong>Esplenomegalia</strong></li>
+          <li><strong>Sopro cardíaco</strong> de aparecimento novo ou mudança de sopro pré-existente</li>
+          <li><strong>Glomerulonefrite</strong> por complexos imunes, hematúria, proteinúria</li>
+        </ul>
+      </div>
+
+      <div class="mnemonic">
+        <strong>FROM JANE</strong> — <em>F</em>ever (febre), <em>R</em>oth spots, <em>O</em>sler nodes, <em>M</em>urmur (sopro), <em>J</em>aneway lesions, <em>A</em>nemia, <em>N</em>ail hemorrhages (hemorragias subungueais), <em>E</em>mboli (êmbolos).
+      </div>
+
+      <h3 class="section-header">4. Pneumonia</h3>
+
+      <p>A pneumonia por <em>S. aureus</em> merece atenção especial em dois contextos:</p>
+      <p><span class="hl-gold">Pneumonia pós-influenza:</span> após uma infecção viral por influenza, o epitélio respiratório fica devastado. A integridade da barreira mucociliar é perdida. Receptores virais expostos são reconhecidos por proteínas de superfície de <em>S. aureus</em>. Uma pneumonia bacteriana secundária se instala, frequentemente com curso fulminante. Estudos retrospectivos das pandemias de influenza de 1918 e 2009 mostraram que a grande maioria das mortes foram devidas a pneumonias bacterianas secundárias, predominantemente estafilocócicas. (Morens DM, Taubenberger JK, Fauci AS. <em>N Engl J Med</em> 2008;359:1).</p>
+      <p><span class="hl-gold">Pneumonia necrotizante com PVL:</span> cepas PVL-positivas (particularmente CA-MRSA/USA300) podem causar pneumonia hemorrágica necrotizante em jovens previamente saudáveis, com mortalidade >50%. O quadro é dramático: hemoptise, febre muito alta, leucopenia (os leucócitos estão sendo destruídos pelo PVL), infiltrado bilateral ao Rx/TC, rápida progressão para insuficiência respiratória. (Gillet Y et al., <em>Lancet</em> 2002;359:753–759.)</p>
+
+      <h3 class="section-header">5. Osteomielite e Artrite Séptica</h3>
+
+      <div class="dialogue">
+        <strong>— Ah, os ossos</strong> — disse Aureus. <strong>— Longe dos antibióticos, bem perfundidos na infância, pouco perfundidos na vida adulta. Um paraíso de longa duração.</strong>
+      </div>
+
+      <p><em>S. aureus</em> é a causa mais comum de <span class="hl-gold">osteomielite hematogênica</span> em crianças e adultos. Na criança, afeta preferencialmente a <strong>metáfise dos ossos longos</strong> (fêmur distal, tíbia proximal, úmero proximal) — região de alta atividade metabólica e fluxo sanguíneo relativamente lento nos sinusoides venosos metafisários, o que favorece a deposição bacteriana.</p>
+      <p>A osteomielite crônica pode persistir por anos, com formação de <strong>sequestro</strong> (tecido ósseo necrótico avascular, que serve de reservatório bacteriano permanente) e <strong>involucro</strong> (novo osso formado ao redor do sequestro). O sequestro é terrível do ponto de vista terapêutico: os antibióticos não chegam lá dentro, e a única solução é cirúrgica.</p>
+      <p>A <span class="hl-gold">artrite séptica</span> estafilocócica — infecção do espaço articular — é uma emergência ortopédica. O pus no espaço articular contém enzimas proteolíticas que degradam a cartilagem em horas a dias. Um atraso no diagnóstico e na drenagem pode resultar em destruição articular irreversível.</p>
+
+      <h3 class="section-header">6. Síndrome do Choque Tóxico e SSSS</h3>
+
+      <p>Já descritos pela voz de seus próprios agentes causadores. Apenas o resumo clínico:</p>
+      <p><span class="hl-gold">TSS:</span> febre ≥38,9°C, rash eritematoso difuso, descamação posterior (especialmente palmas e plantas), hipotensão, envolvimento multissistêmico (≥3 sistemas). Tratamento: suporte hemodinâmico agressivo, controle do foco (drenagem cirúrgica, remoção de corpo estranho), antibioticoterapia anti-estafilocócica, imunoglobulina intravenosa em casos graves para neutralizar a toxina.</p>
+      <p><span class="hl-gold">SSSS:</span> bolhas superficiais, sinal de Nikolsky positivo, sem acometimento de mucosas, clivagem intraepidérmica (camada granulosa). Predomina em < 5 anos e imunodeprimidos. Tratamento: antibioticoterapia sistêmica (não tópica — a toxina é produzida remotamente e age sistemicamente), cuidados com a pele como queimaduras superficiais.</p>
+    </div>
+  </section>
+
+  <!-- PARTE IV -->
+  <div class="part-header" data-part="IV" id="parte4">
+    <div class="part-label">Parte IV</div>
+    <div class="part-title">O Monstro Evolui</div>
+  </div>
+
+  <section id="cap6">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 6</div>
+      <div class="chapter-title">MRSA: O Vilão que Aprendeu a Ignorar os Antibióticos</div>
+    </div>
+    <div class="prose">
+      <p>Era uma noite fria no corredor da UTI (Unidade de Terapia Intensiva) do Hospital Universitário.</p>
+      <p>Aureus estava sendo tratado. A equipe médica havia identificado a bacteremia e iniciado <span class="hl-cyan">oxacilina</span> — um antibiótico beta-lactâmico resistente a penicilinase, da classe das isoxazoilpenicilinas. A oxacilina, assim como toda a família dos beta-lactâmicos, mata bactérias inibindo as <strong>PBPs</strong> (<em>Penicillin-Binding Proteins</em> — Proteínas Ligadoras de Penicilina).</p>
+      <p>As PBPs são enzimas transpeptidases responsáveis por criar as pontes peptídicas que ligam as cadeias de peptidoglicano entre si, consolidando a estrutura da parede bacteriana. Sem essas pontes, o peptidoglicano fica fraco, a célula bacteriana não resiste à pressão osmótica interna, e se lisi — literalmente explode.</p>
+      <p><em>Aureus</em> normalmente produz <strong>penicilinase</strong> (beta-lactamase) — uma enzima que hidrolisa o anel beta-lactâmico das penicilinas simples (como a penicilina G), inativando-as. As penicilinases-resistentes (oxacilina, nafcilina, dicloxacilina, meticilina — hoje desusada clinicamente) têm radicais químicos que protegem o anel beta-lactâmico da hidrólise enzimática.</p>
+
+      <div class="dialogue">
+        <strong>— Oxacilina</strong> — leu Aureus no relatório do laboratório. — <strong>Sério? Oxacilina?</strong>
+      </div>
+
+      <p>Aureus franziu o cenho. Mas então, de uma célula no canto da colônia, uma figura diferente se ergueu. Maior. Com uma membrana celular levemente diferente. E com uma expressão que misturava arrogância e serenidade absoluta.</p>
+
+      <div class="dialogue magenta">
+        <strong>— Permita-me</strong> — disse a figura.
+      </div>
+
+      <p>Era <span class="hl-magenta">MRSA</span> — <em>Methicillin-Resistant Staphylococcus aureus</em> (Staphylococcus aureus Resistente à Meticilina). Meticilina (ou meticillina, na grafia britânica) é um antibiótico beta-lactâmico introduzido em 1959, especificamente para tratar infecções por <em>S. aureus</em> penicilinase-positivas. Em 1961 — dois anos depois, acredita-se que não por coincidência —, o primeiro isolado de MRSA foi descrito. (Jevons MP, <em>Brit Med J</em> 1961;1:124–125.)</p>
+
+      <div class="dialogue magenta">
+        <strong>— Meu segredo</strong> — disse MRSA, exibindo seu cromossoma — <strong>está no elemento genético móvel chamado SCCmec (<em>Staphylococcal Cassette Chromosome mec</em> — Cassete Cromossômico Estafilocócico <em>mec</em>). Dentro dele, há um gene chamado <em>mecA</em>, que codifica uma proteína chamada PBP2a — ou PBP2' — uma versão modificada das PBPs normais.</strong>
+      </div>
+
+      <p>PBP2a tem <span class="hl-magenta">baixíssima afinidade para todos os beta-lactâmicos</span> — penicilinas, cefalosporinas (exceto ceftaroline), carbapenêmicos — porque a geometria do seu sítio ativo foi modificada. Os antibióticos beta-lactâmicos não conseguem se ligar a ela com eficiência suficiente para inibi-la. Resultado: mesmo na presença de concentrações terapêuticas de oxacilina, a parede bacteriana continua sendo construída por PBP2a. A bactéria sobrevive.</p>
+
+      <div class="dialogue magenta">
+        <strong>— Sou resistente a todos os beta-lactâmicos disponíveis clinicamente</strong> — disse MRSA —, <strong>com a exceção do ceftaroline e do ceftobiprole, cefalosporinas de quinta geração que têm afinidade suficiente pela PBP2a. Mas isso é recente. Por décadas, fui literalmente intratável com os antibióticos mais usados da medicina.</strong>
+      </div>
+
+      <p>A equipe médica da UTI ficou consternada. O antibiograma chegou: <span class="hl-magenta">Oxacilina: RESISTENTE.</span></p>
+
+      <div class="dialogue green">
+        <strong>— Bom</strong> — disse o infectologista, com a equanimidade de quem já viu isso muitas vezes. <strong>— Vamos com vancomicina.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">Epidemiologia do MRSA: Dois Mundos, Dois Inimigos</h3>
+
+      <div class="dialogue magenta">
+        <strong>— Importante</strong> — disse MRSA, levantando a mão para uma aula. <strong>— Não sou uma entidade única. Sou duas epidemias em uma.</strong>
+      </div>
+
+      <p><span class="hl-gold">HA-MRSA</span> (<em>Healthcare-Associated MRSA</em> — MRSA Associado a Serviços de Saúde) é o MRSA hospitalar clássico. Descrito desde a década de 1960, disseminado em hospitais, UTIs, hemodiálise, residências de longa permanência. Afeta principalmente pacientes com fatores de risco bem definidos: hospitalização prolongada, procedimentos invasivos, uso prévio de antibióticos, imunossupressão, cateterismo urinário ou venoso. As cepas de HA-MRSA frequentemente carregam o <strong>SCCmec tipos I, II ou III</strong> — elementos maiores, com múltiplos genes de resistência a outros antibióticos além dos beta-lactâmicos. São multirresistentes.</p>
+      <p><span class="hl-gold">CA-MRSA</span> (<em>Community-Acquired MRSA</em> — MRSA Adquirido na Comunidade) emergiu nos anos 1990-2000 como um fenômeno distinto. Afeta pessoas jovens, saudáveis, sem fatores de risco clássicos para infecção hospitalar. Atletas de contato, presidiários, militares, populações indígenas, creches. As cepas de CA-MRSA carregam o <strong>SCCmec tipo IV ou V</strong> — menores, mais ágeis, sem tanta multirresistência, mas frequentemente PVL-positivas. A cepa <strong>USA300</strong> é dominante na América do Norte; a <strong>ST80</strong> na Europa.</p>
+
+      <div class="dialogue magenta">
+        <strong>— CA-MRSA é particularmente perigoso porque as pessoas acham que doenças de pele graves em jovens saudáveis não podem ser MRSA</strong> — disse ele. <strong>— Erram. E pagam o preço.</strong>
+      </div>
+
+      <div class="manga-hr"><span></span></div>
+
+      <h3 class="section-header">O Mecanismo da Vancomicina: O Último Recurso</h3>
+
+      <p>Vancomicina — do inglês <em>vanquish</em>, vencer — é um <strong>glicopeptídeo</strong> produzido por <em>Amycolatopsis orientalis</em> (anteriormente <em>Streptomyces orientalis</em>). Foi introduzida em 1958 e inicialmente subutilizada por ser considerada "tóxica". Com a emergência do MRSA, tornou-se o pilar do tratamento.</p>
+      <p>Seu mecanismo difere completamente dos beta-lactâmicos. Vancomicina <strong>não inibe enzimas</strong> — ela age como um <span class="hl-cyan">bloqueio estérico físico</span>. Liga-se ao dipeptídeo terminal <strong>D-Ala–D-Ala</strong> (D-Alanina–D-Alanina) das cadeias peptídicas precursoras do peptidoglicano, formando cinco ligações de hidrogênio. Esse complexo volumoso impede a transpeptidase (PBP) de acessar e processar o substrato. A síntese de peptidoglicano para. A parede bacteriana não é construída. A célula morre.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Por isso</strong> — disse a vancomicina personificada, chegando como um agente da lei — <strong>você, MRSA, não pode simplesmente mudar a geometria da sua PBP para escapar de mim. Eu não me ligo à PBP. Eu me ligo ao substrato. Para escapar de mim, você precisaria mudar o D-Ala–D-Ala do seu próprio peptidoglicano.</strong>
+      </div>
+
+      <div class="dialogue magenta">
+        <strong>— Impossível</strong> — disse MRSA. <strong>— D-Ala–D-Ala é tão fundamental para a síntese de parede que não posso mudá-lo sem...</strong>
+      </div>
+
+      <p>E então houve um silêncio dramático.</p>
+
+      <div class="dialogue magenta">
+        <strong>— ...a não ser que eu adquira os genes <em>vanA</em> do Enterococcus</strong> — completou MRSA, com um sorriso lento. <strong>— E aí, vira VRSA. <em>Vancomycin-Resistant Staphylococcus aureus</em>.</strong>
+      </div>
+
+      <div class="info-box warning" data-label="VRSA — Alerta">
+        <p>VRSA (<em>Vancomycin-Resistant S. aureus</em> — <em>S. aureus</em> Resistente à Vancomicina) foi descrita pela primeira vez em 2002 nos EUA. Resultado da transferência horizontal de plasmídeo contendo o gene <em>vanA</em> de <em>Enterococcus faecalis</em> resistente para <em>S. aureus</em>. Os genes <em>van</em> modificam o terminal D-Ala–D-Ala para <strong>D-Ala–D-Lac</strong> (D-Alanina–D-Lactato), um substrato que tem 1.000 vezes menos afinidade pela vancomicina. O medicamento não consegue mais se ligar. Felizmente, VRSA ainda é raro — apenas algumas dezenas de casos confirmados no mundo. Mas o potencial de disseminação mantém os infectologistas acordados à noite.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTE V -->
+  <div class="part-header" data-part="V" id="parte5">
+    <div class="part-label">Parte V</div>
+    <div class="part-title">Os Outros Vilões</div>
+  </div>
+
+  <section id="cap7">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 7</div>
+      <div class="chapter-title">Staphylococcus epidermidis: O Maestro do Biofilme</div>
+    </div>
+    <div class="prose">
+      <p>Enquanto a UTI lidava com Aureus, em uma ala cirúrgica, um paciente havia recebido uma prótese de válvula cardíaca mecânica três semanas antes. A cirurgia tinha sido imaculada. Mas o cateter venoso central estava há 10 dias no mesmo sítio.</p>
+
+      <div class="dialogue cyan">
+        Epidermidis esfregou as mãos.<br><br>
+        <strong>— Minha hora</strong> — disse ele suavemente.
+      </div>
+
+      <p><em>Staphylococcus epidermidis</em> deve seu nome ao fato de ser o habitante dominante da pele humana — <em>epiderme</em>, do grego <em>epi</em> (sobre) + <em>derma</em> (pele). É o comensal mais abundante da flora normal cutânea. Em condições normais, ele é inofensivo e até benéfico, competindo com patógenos.</p>
+      <p>Mas em contextos de dispositivos implantados ou procedimentos invasivos, Epidermidis é um oportunista calculista.</p>
+      <p>O passo 1 da patogênese é a <strong>adesão primária</strong> — a superfície do cateter de poliuretano ou silicone é rapidamente coberta por proteínas plasmáticas do hospedeiro (fibronectina, fibrinogênio, vitronectina, laminina). Epidermidis expressa MSCRAMMs específicos para esses substratos e adere em questão de horas.</p>
+
+      <div class="dialogue cyan">
+        <strong>O passo 2 é o que torna Epidermidis verdadeiramente aterrorizante: o biofilme.</strong><br><br>
+        <strong>— Biofilme</strong> — disse ele, com reverência, abrindo os braços —, <strong>é a minha grande obra. A minha tese de doutoramento em engenharia biológica.</strong>
+      </div>
+
+      <p>Um <span class="hl-cyan">biofilme</span> é uma comunidade estruturada de micro-organismos envolvida em uma matriz de <strong>EPS</strong> (<em>Extracellular Polymeric Substance</em> — Substância Polimérica Extracelular), composta principalmente de <strong>PIA</strong> (<em>Polysaccharide Intercellular Adhesin</em> — Adesina Intercelular de Polissacarídeo), também chamada de <strong>PNAG</strong> (<em>Poly-N-Acetylglucosamine</em>). Essa matriz é secretada pelas próprias bactérias e cimenta a comunidade à superfície.</p>
+
+      <div class="info-box warning" data-label="Por que o Biofilme é Clinicamente Devastador?">
+        <p><strong>1.</strong> Funciona como uma <strong>barreira física</strong> que impede a penetração de antibióticos. A difusão de vancomicina é reduzida em 100 a 1.000 vezes em biofilmes densos em comparação ao meio livre.</p>
+        <p><strong>2.</strong> Dentro do biofilme, as bactérias entram em estado de <strong>crescimento lento</strong> (<em>slow-growing state</em>) ou são metabolicamente quiescentes. Como a maioria dos antibióticos bactericidas mata bactérias atacando processos ativos (síntese de parede, síntese de DNA, síntese proteica), eles são muito menos eficazes contra bactérias em divisão lenta.</p>
+        <p><strong>3.</strong> No biofilme existem células chamadas <strong>persister cells</strong> (células persistidoras) — uma subpopulação de bactérias em estado de quase-hibernação metabólica que são virtualmente inatingíveis por qualquer antibiótico em doses clinicamente toleráveis.</p>
+      </div>
+
+      <div class="dialogue cyan">
+        <strong>— Resultado prático</strong> — disse Epidermidis. <strong>— Você não erradica uma infecção relacionada a cateter por <em>S. epidermidis</em> só com antibióticos. Precisa remover o dispositivo.</strong>
+      </div>
+
+      <div class="info-box ref" data-label="Referência">
+        <p>Esta é uma das lições mais importantes da infectologia de dispositivos: ALWAYS consider device removal in infections by biofilm-forming CoNS. (Zimmerli W, Trampuz A, Ochsner PE. <em>N Engl J Med</em> 2004;351:1645–1654.)</p>
+      </div>
+
+      <div class="mnemonic">
+        <strong>SESE e SARa</strong> — <em>S. <strong>E</strong>pidermidis</em> é <strong>S</strong>ensível (à novobiocina); <em>S. <strong>Sa</strong>prophyticus</em> é <strong>R</strong>esistente. <em>S. epidermidis</em> → sensível à novobiocina (halo > 16 mm). <em>S. saprophyticus</em> → resistente (halo < 12 mm).
+      </div>
+    </div>
+  </section>
+
+  <section id="cap8">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 8</div>
+      <div class="chapter-title">Staphylococcus saprophyticus: O Romântico Perturbado</div>
+    </div>
+    <div class="prose">
+      <p>Do outro lado da cidade, uma estudante universitária de 22 anos começou a sentir uma ardência devastadora ao urinar. Frequência urinária aumentada — ia ao banheiro a cada 30-45 minutos. Urgência — sentia que precisava ir imediatamente, sem conseguir segurar. Dor suprapúbica. E uma quantidade modesta de hematúria.</p>
+
+      <div class="dialogue magenta">
+        Saprophyticus corou levemente.<br><br>
+        <strong>— Sou eu</strong> — disse ele.
+      </div>
+
+      <p><em>Staphylococcus saprophyticus</em> é a <span class="hl-gold">segunda causa mais comum de ITU</span> (<em>Infecção do Trato Urinário</em>) em mulheres jovens sexualmente ativas, perdendo apenas para <em>Escherichia coli</em>. Estudos estimam que <em>S. saprophyticus</em> seja responsável por 5-20% das ITUs nessa população. (Nicolle LE et al., <em>Eur J Clin Microbiol Infect Dis</em> 1994;13:645–647.)</p>
+      <p>O tropismo de Saprophyticus pelo trato urinário inferior feminino é multifatorial: ele expressa uma <strong>hemaglutinina</strong> (proteína de superfície capaz de aglutinar eritrócitos) que funciona como adesina ao uroepitélio. Também produz <strong>urease</strong> — enzima que hidrolisa ureia em amônia e dióxido de carbono, alcalinizando a urina, o que favorece a formação de <strong>cálculos de estruvita</strong> (fosfato de amônio magnésio) em infecções recorrentes.</p>
+
+      <div class="dialogue magenta">
+        <strong>— A atividade sexual feminina</strong> — disse Saprophyticus com uma expressão que misturava orgulho e vergonha — <strong>facilita minha ascensão da flora perineal para a uretra. O mecanismo uretral de limpeza existe, mas o trajeto é curto. Em mulheres, a uretra tem apenas 4 cm — em homens tem 20 cm. Essa é a razão anatômica principal pela qual ITUs são 50 vezes mais comuns em mulheres.</strong>
+      </div>
+
+      <div class="info-box clinical" data-label="Diagnóstico & Tratamento de S. saprophyticus">
+        <p><strong>Diagnóstico laboratorial:</strong> No sedimento urinário: leucocitúria (piúria), hematúria, bacteriúria. Na urocultura: crescimento de colônias brancas/opacas. Identificação diferencial: novobiocina-resistente, catalase-positivo, coagulase-negativo, urease-positivo.</p>
+        <p><strong>Tratamento:</strong> Trimetoprima-sulfametoxazol (TMP-SMX) ou nitrofurantoína por 3-7 dias para ITU baixa não-complicada. <em>S. saprophyticus</em> é geralmente sensível a ambos, ao contrário de outros CoNS frequentemente multirresistentes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cap9">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 9</div>
+      <div class="chapter-title">Staphylococcus lugdunensis: O Lobo em Pele de Ovelha</div>
+    </div>
+    <div class="prose">
+      <p>A reunião voltou ao assunto de <em>S. lugdunensis</em>.</p>
+
+      <div class="dialogue">
+        <strong>— Precisamos falar sobre o elefante na sala</strong> — disse Aureus. <strong>— Lugdunensis não é um CoNS comum.</strong>
+      </div>
+
+      <p>Lugdunensis estava encostado na parede, calmo.</p>
+
+      <div class="dialogue green">
+        <strong>— Agradeço a menção</strong> — disse ele. <strong>— Sou coagulase-negativo. Mas tenho o perfil clínico de coagulase-positivo. Causo endocardite de válvula nativa com a mesma agressividade e a mesma mortalidade que <em>S. aureus</em>. Médicos que veem um CoNS na hemocultura frequentemente assumem contaminação — e ignoram. Quando sou eu, esse erro é fatal.</strong>
+      </div>
+
+      <p><em>S. lugdunensis</em> possui um arsenal de fatores de virulência incomum para CoNS: coagulase ligada funcionalmente (<em>clumping factor</em>), PBP2a (em algumas cepas), capacidade de formar biofilme, e o gene <em>fbl</em> que codifica uma proteína de ligação ao fibrinogênio.</p>
+
+      <div class="info-box warning" data-label="Dados Clínicos Importantes">
+        <p>A endocardite por <em>S. lugdunensis</em> tem mortalidade de 42-67% em algumas séries — comparável à de <em>S. aureus</em>. Cirurgia valvular é frequentemente necessária. (Frank KL et al., <em>J Clin Microbiol</em> 2008;46:2468–2471.)</p>
+        <p><strong>Identificação laboratorial:</strong> Pirrolidonil arilamidase (PYR) positivo. Produção de ornitina descarboxilase. Fermentação de manose e trehalose. (PYR positivo pode gerar confusão inicial com <em>S. pyogenes</em> e <em>Enterococcus</em>.)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTE VI -->
+  <div class="part-header" data-part="VI" id="parte6">
+    <div class="part-label">Parte VI</div>
+    <div class="part-title">A Sala de Investigação</div>
+  </div>
+
+  <section id="cap10">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 10</div>
+      <div class="chapter-title">O Diagnóstico Laboratorial: Os Detetives</div>
+    </div>
+    <div class="prose">
+      <p>Uma microbiologa entrou no laboratório com espíritos detetivescos e amostras de sangue, urina, pus e escarro. Era hora de identificar o culpado.</p>
+
+      <div class="dialogue cyan">
+        <strong>— Todo diagnóstico bacteriológico começa com o mesmo ritual</strong> — disse ela, preparando seus materiais.
+      </div>
+
+      <h3 class="section-header">Passo 1: A Coloração de Gram</h3>
+
+      <div class="info-box note" data-label="Técnica — 4 Etapas em Sequência">
+        <ol>
+          <li><span class="hl-gold">Cristal violeta</span> (1 minuto): cora todas as células de roxo.</li>
+          <li><span class="hl-gold">Lugol</span> (1 minuto): o iodo forma um complexo insolúvel com o cristal violeta dentro da célula. Funciona como mordente.</li>
+          <li><span class="hl-gold">Álcool-acetona</span> (15-30 segundos): decolora. Nas Gram-negativas (parede fina com membrana externa lipídica), o álcool dissolve os lipídeos e extrai o complexo cristal violeta-iodo → célula fica incolor. Nas Gram-positivas (parede espessa de peptidoglicano sem membrana externa), a desidratação pelo álcool fecha os poros do peptidoglicano, aprisionando o complexo → célula permanece roxa.</li>
+          <li><span class="hl-gold">Safranina ou fucsina</span> (1 minuto): contra-corante. As células Gram-negativas ficam rosas/vermelhas.</li>
+        </ol>
+        <p style="margin-top:10px;"><strong>Resultado para Staphylococcus:</strong> cocos Gram-positivos em cachos — pequenas esferas roxas agrupadas como cachos de uva.</p>
+      </div>
+
+      <div class="info-box clinical" data-label="Importância Clínica Imediata">
+        <p>Ver cocos Gram-positivos em cachos no Gram do líquido sinovial de uma articulação dolorosa é uma emergência ortopédica — assume-se <em>S. aureus</em> até prova em contrário e drena-se imediatamente.</p>
+      </div>
+
+      <h3 class="section-header">Passo 2: A Cultura em Ágar</h3>
+
+      <p>As amostras são semeadas em:</p>
+      <p><span class="hl-gold">Ágar-sangue</span> (base de triptona-soja ou Columbia com 5% de sangue desfibrinado de carneiro): é o meio não-seletivo de crescimento principal. <em>S. aureus</em> cresce como colônias grandes (2-3 mm após 24h), <strong>amarelo-douradas</strong> ou amarelo-cremosas, com zona de <strong>beta-hemólise</strong> ao redor (hemólise completa → halo transparente). A coloração amarela deve-se à produção de <strong>carotenoides</strong> — pigmentos antioxidantes da família dos terpenos. <em>S. epidermidis</em> cresce como colônias brancas/cinzas, não pigmentadas, sem hemólise ou com alfa-hemólise discreta.</p>
+      <p><span class="hl-gold">Ágar-sal manitol</span> (<em>Mannitol Salt Agar</em> — Ágar Manitol Salgado, MSA): meio <strong>seletivo e diferencial</strong>. Contém 7,5% de NaCl (a maioria das bactérias não cresce nessa concentração salina alta — os Staphylococcus são halotolerantes) e o açúcar manitol com o indicador de pH vermelho de fenol. <em>S. aureus</em> fermenta o manitol → ácido → o indicador muda de vermelho para <strong>amarelo</strong> ao redor da colônia. <em>S. epidermidis</em> não fermenta o manitol → colônias rosas/vermelhas.</p>
+      <p><span class="hl-gold">Ágar cromogênico para MRSA</span> (ex.: CHROMagar MRSA, Brilliance MRSA): meios especializados que identificam MRSA por reações cromogênicas específicas. Colônias de MRSA aparecem em cores características (geralmente rosa, mauve ou azul, dependendo do fabricante), graças a cromógenos clivados por enzimas específicas. São usados para rastreamento de portadores de MRSA em admissões hospitalares.</p>
+
+      <h3 class="section-header">Passo 3: O Teste da Catalase</h3>
+
+      <p>A catalase é uma enzima que catalisa a reação:</p>
+      <div class="info-box note" data-label="Reação">
+        <p style="text-align:center; font-family: 'Share Tech Mono', monospace; font-size:1rem; color: var(--accent-cyan);">2 H₂O₂ → 2 H₂O + O₂</p>
+        <p><em>Hydrogen Peroxide</em> — Peróxido de Hidrogênio → <em>Water</em> — Água + <em>Oxygen</em> — Oxigênio</p>
+        <p><strong>Técnica:</strong> Coloca-se uma colônia bacteriana em uma lâmina de vidro e adiciona-se uma gota de H₂O₂ a 3%.</p>
+        <p><span class="hl-gold">Staphylococcus</span> → catalase positivo → borbulhamento imediato (produção de O₂ gasoso)</p>
+        <p><span class="hl-cyan">Streptococcus</span> → catalase negativo → sem borbulhamento</p>
+      </div>
+
+      <p><span class="hl-gold">Este é o teste mais importante para diferenciar Staphylococcus de Streptococcus</span> — ambos são cocos Gram-positivos, mas o tratamento pode ser completamente diferente.</p>
+
+      <div class="mnemonic">
+        <strong>Staph tem caTALAse; Strep não tem.</strong>
+      </div>
+
+      <h3 class="section-header">Passo 4: O Teste da Coagulase</h3>
+
+      <p>Feito apenas após confirmação de catalase-positivo (portanto é Staphylococcus). Diferencia <em>S. aureus</em> (coagulase-positivo) dos CoNS.</p>
+      <p><span class="hl-gold">Teste em lâmina (slide test):</span> Uma gota de plasma de coelho (ou humano) é misturada com uma alçada de colônia em uma lâmina. Observa-se aglutinação em 10-20 segundos. Positivo → aglutinação visível (coagulase ligada/clumping factor ativo). Sensibilidade 80-97%.</p>
+      <p><span class="hl-gold">Teste em tubo (tube test):</span> 0,5 mL de plasma de coelho + 0,1 mL de suspensão bacteriana em caldo. Incubação a 37°C por 4 horas. Observação: se houve formação de coágulo (plasma gelificado no tubo invertido) → positivo. Sensibilidade >99%.</p>
+
+      <div class="dialogue cyan">
+        <strong>— E assim</strong> — disse a microbiologa —, <strong>identificamos <em>S. aureus</em> com certeza. Cocos Gram-positivos em cachos, catalase positiva, coagulase positiva. Ágar sangue com colônias douradas beta-hemolíticas. Ágar manitol com fermentação (halo amarelo). Caso fechado.</strong>
+      </div>
+
+      <h3 class="section-header">Passo 5: Identificação de MRSA — O Teste de Sensibilidade</h3>
+
+      <p>O <strong>antibiograma</strong> (teste de sensibilidade a antimicrobianos) pode ser feito por:</p>
+      <p><span class="hl-gold">Difusão em disco</span> (<em>Kirby-Bauer test</em>): discos impregnados de antibióticos são colocados em ágar inoculado com a bactéria. Após 18-24h de incubação, medem-se os halos de inibição. Padrões do <strong>CLSI</strong> (<em>Clinical and Laboratory Standards Institute</em>) ou <strong>EUCAST</strong> (<em>European Committee on Antimicrobial Susceptibility Testing</em>) definem os pontos de corte (breakpoints) de sensibilidade, intermediário e resistência. Para MRSA: halo de oxacilina ≤ 10 mm = resistente. Ou usa-se o <strong>disco de cefoxitina</strong> — melhor indutor da expressão de PBP2a — com o ponto de corte de ≤ 21 mm = MRSA.</p>
+      <p><span class="hl-gold">E-test</span> (gradiente de concentração de antibiótico em fita): determina a <strong>CIM</strong> (<em>Concentração Inibitória Mínima</em> — <em>MIC, Minimum Inhibitory Concentration</em>) — a menor concentração de antibiótico capaz de inibir o crescimento visível da bactéria.</p>
+      <p><span class="hl-gold">PCR para <em>mecA</em>:</span> método molecular definitivo. Amplifica por reação em cadeia da polimerase o gene <em>mecA</em> (ou <em>mecC</em>, uma variante mais rara). Resultado em horas, com alta especificidade.</p>
+
+      <h3 class="section-header">Novobiocina e Urease para CoNS</h3>
+
+      <div class="info-box note" data-label="Diferenciação de CoNS">
+        <p><strong>S. epidermidis:</strong> novobiocina-sensível, urease-negativo</p>
+        <p><strong>S. saprophyticus:</strong> novobiocina-resistente, urease-positivo</p>
+        <p><strong>S. lugdunensis:</strong> PYR-positivo, ornitina descarboxilase-positivo, novobiocina-sensível</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARTE VII -->
+  <div class="part-header" data-part="VII" id="parte7">
+    <div class="part-label">Parte VII</div>
+    <div class="part-title">A Batalha Terapêutica</div>
+  </div>
+
+  <section id="cap11">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 11</div>
+      <div class="chapter-title">Os Antibióticos: O Exército que Chegou Atrasado Mas Chegou</div>
+    </div>
+    <div class="prose">
+      <p>A equipe médica se reuniu na sala da UTI. O infectologista olhou para os resultados do antibiograma. Era hora de escolher as armas.</p>
+
+      <div class="dialogue">
+        <strong>— Vamos estruturar por cenário</strong> — disse ele.
+      </div>
+
+      <h3 class="section-header">Cenário 1: S. aureus sensível à meticilina (MSSA)</h3>
+
+      <p><span class="hl-gold">MSSA</span> (<em>Methicillin-Susceptible S. aureus</em> — <em>S. aureus</em> Sensível à Meticilina).</p>
+      <p>A droga de escolha é uma <strong>penicilina resistente a penicilinase</strong>: <span class="hl-cyan">oxacilina</span> (IV) ou <span class="hl-cyan">nafcilina</span> (IV) para infecções graves como bacteremia, endocardite, osteomielite. Em infecções mais leves ou tratamento oral: <span class="hl-cyan">dicloxacilina</span> ou <span class="hl-cyan">flucloxacilina</span> (disponível em alguns países europeus e no Brasil).</p>
+      <p>Alternativas: <strong>cefalosporinas de 1ª geração</strong> (<span class="hl-cyan">cefazolina</span> IV — excelente opção para bacteremia, especialmente por boa distribuição tecidual e conveniência posológica; cefalexina oral para infecções cutâneas leves).</p>
+
+      <div class="info-box warning" data-label="Por que NÃO usar vancomicina para MSSA?">
+        <p>Ensaios clínicos e estudos observacionais mostram consistentemente que a vancomicina é <strong>inferior</strong> à oxacilina no tratamento de infecções graves por MSSA em termos de mortalidade e tempo para esterilização das hemoculturas. Vancomicina é hidrofílica, penetra mal em tecidos, tem eliminação dependente da função renal com necessidade de monitorização plasmática, e tem atividade bactericida mais lenta. Use oxacilina/nafcilina/cefazolina para MSSA — sempre. (Schweizer ML et al., <em>Clin Infect Dis</em> 2011;53:641–649.)</p>
+      </div>
+
+      <h3 class="section-header">Cenário 2: MRSA — Os Grandes Calibres</h3>
+
+      <p><span class="hl-gold">Vancomicina:</span> Glicopeptídeo. <em>Gold standard</em> para MRSA invasivo por décadas. Administração IV. Necessita monitorização da área sob a curva (AUC/MIC) — as diretrizes mais recentes (ASHP/IDSA/SIDP 2020) recomendam monitorização por AUC/MIC (alvo 400-600 mg·h/L) ao invés da monitorização de vale (trough) isolada, para balancear eficácia e nefrotoxicidade. Efeitos adversos: nefrotoxicidade (especialmente com aminoglicosídeos), "Síndrome do Homem Vermelho" (<em>Red Man Syndrome</em> — reação de infusão por liberação de histamina, não é alergia verdadeira — prevenida com infusão lenta e anti-histamínico prévio).</p>
+      <p><span class="hl-gold">Daptomicina:</span> Lipopeptídeo cíclico. Mecanismo único: insere-se na membrana bacteriana de forma dependente de Ca²⁺, formando poros que despolarizam a membrana e causam rápida morte celular. Bactericida de ação rápida. Usada em bacteremia por MRSA e endocardite do lado direito. <span class="hl-magenta">CONTRAINDICADA para pneumonia</span> — surfactante pulmonar inativa a daptomicina! (Silverman JA et al., <em>Antimicrob Agents Chemother</em> 2003;47:2538.)</p>
+      <p><span class="hl-gold">Linezolida:</span> Oxazolidinona. Inibe a síntese proteica bacteriana ligando-se à subunidade 23S do RNA ribossomal 50S, impedindo a formação do complexo de iniciação 70S. <strong>Bacteriostático</strong> para estafilococos. Excelente biodisponibilidade oral (≈100%) — rara entre antibióticos ativos para MRSA. Caro. Efeitos adversos com uso prolongado: mielossupressão (trombocitopenia, anemia), neuropatia periférica, neurite óptica. Síndrome serotoninérgica se usada com inibidores da MAO ou inibidores seletivos de recaptação de serotonina.</p>
+      <p><span class="hl-gold">Ceftaroline:</span> Cefalosporina de 5ª geração — única cefalosporina com afinidade suficiente pela PBP2a para ser ativa contra MRSA. Aprovada para pneumonia comunitária e infecções de pele. Experiência crescente em bacteremia por MRSA.</p>
+      <p><span class="hl-gold">Trimetoprima-sulfametoxazol (TMP-SMX):</span> Opção oral para infecções cutâneas por CA-MRSA. Inibe sequencialmente duas etapas na síntese de folato bacteriano. Muitas cepas de CA-MRSA permanecem sensíveis. (Liu C et al., <em>Clin Infect Dis</em> 2011;52:e18–e55.)</p>
+      <p><span class="hl-gold">Tedizolida, Delafloxacina, Oritavancina, Dalbavancina, Televancina:</span> novos agentes aprovados para MRSA em infecções de pele e tecidos moles, com mecanismos variados e perfis de conveniência posológica favoráveis (oritavancina e dalbavancina têm meia-vida de dias a semanas, permitindo dosagem única ou semanal — revolucionário para alguns contextos).</p>
+
+      <h3 class="section-header">Cenário 3: Infecção relacionada a dispositivo por S. epidermidis</h3>
+
+      <p><span class="hl-magenta">Remover o dispositivo</span> sempre que possível. Sem a remoção do cateter, válvula, prótese, marcapasso, a taxa de cura é irrisória.</p>
+      <p>Após remoção: rifampicina + TMP-SMX oral, ou rifampicina + ciprofloxacina, ou vancomicina IV para casos graves.</p>
+      <p><span class="hl-gold">Rifampicina</span> merece destaque especial: tem excelente penetração em biofilme e atividade contra bactérias em baixo crescimento. Nunca deve ser usada em monoterapia (seleção rápida de resistência), mas em combinação é poderosa.</p>
+    </div>
+  </section>
+
+  <!-- PARTE VIII -->
+  <div class="part-header" data-part="VIII" id="parte8">
+    <div class="part-label">Parte VIII</div>
+    <div class="part-title">A Prevenção</div>
+  </div>
+
+  <section id="cap12">
+    <div class="chapter-header">
+      <div class="chapter-num">Capítulo 12</div>
+      <div class="chapter-title">A Defesa do Castelo: Como Não Deixar os Vilões Entrarem</div>
+    </div>
+    <div class="prose">
+      <p>Aureus estava sendo derrotado. Lentamente, as hemoculturas começaram a negativar. A febre cedeu. O ecocardiograma repetido mostrou redução da vegetação.</p>
+      <p>Mas do lado de fora do hospital, em uma sala de reuniões do departamento de controle de infecção, a discussão era outra.</p>
+
+      <div class="dialogue green">
+        <strong>— Como evitamos que isso aconteça de novo?</strong> — perguntou a enfermeira de controle de infecção.
+      </div>
+
+      <p>E aí começava a batalha mais importante: a prevenção.</p>
+
+      <h3 class="section-header">1. Higienização das Mãos</h3>
+
+      <p>A medida mais simples, mais estudada, mais eficaz e mais negligenciada de toda a medicina hospitalar.</p>
+      <p><em>S. aureus</em> e MRSA sobrevivem em superfícies secas por horas a dias. As mãos dos profissionais de saúde são o principal vetor de transmissão hospitalar.</p>
+      <p><strong>Soluções alcoólicas</strong> (álcool gel 60-80%) são eficazes contra <em>S. aureus</em> e MRSA, rápidas (20-30 segundos) e menos irritantes que a lavagem repetida com sabão. Água e sabão são necessários quando as mãos estão visivelmente sujas ou após contato com <em>Clostridioides difficile</em> (esporos resistentes ao álcool).</p>
+
+      <div class="info-box note" data-label="5 Momentos para Higiene das Mãos (OMS)">
+        <ol>
+          <li>Antes de tocar o paciente</li>
+          <li>Antes de procedimento asséptico</li>
+          <li>Após risco de exposição a fluidos corporais</li>
+          <li>Após tocar o paciente</li>
+          <li>Após tocar o entorno do paciente</li>
+        </ol>
+      </div>
+
+      <h3 class="section-header">2. Descolonização de MRSA</h3>
+
+      <p>Em pacientes de alto risco (cirurgias cardíacas, ortopédicas, imunossuprimidos), o rastreamento e descolonização pré-operatória de MRSA é custo-efetivo.</p>
+      <p><span class="hl-gold">Mupirocina</span> (<em>Bactroban</em>) intranasal — pomada aplicada na fossa nasal anterior 2x/dia por 5 dias. Elimina a colonização nasal por <em>S. aureus</em> e MRSA. A fossa nasal anterior é o principal reservatório de <em>S. aureus</em> humano — de lá, o micro-organismo se espalha para a pele, mãos e ambiente por via de mão-nariz-superfície. (Kalmeijer MD et al., <em>J Clin Microbiol</em> 2002;40:3588–3591.)</p>
+      <p><span class="hl-gold">Banho com clorexidina</span> 4%: reduz a colonização cutânea por <em>S. aureus</em> e MRSA. Amplamente adotado em UTIs como protocolo de descolonização universal (para todos os pacientes) ou direcionada (apenas portadores identificados).</p>
+
+      <div class="info-box ref" data-label="Estudo REDUCE MRSA">
+        <p>Huang SS et al., <em>N Engl J Med</em> 2013;368:2255–2265: descolonização universal com mupirocina nasal + clorexidina tópica em UTI reduziu significativamente infecções por MRSA e bacteremias em geral.</p>
+      </div>
+
+      <h3 class="section-header">3. Precauções de Contato para Portadores de MRSA</h3>
+
+      <p>Pacientes identificados como portadores de MRSA devem ser colocados em <strong>quartos individuais</strong> (ou coorte com outros portadores) e manejados com <span class="hl-gold">precauções de contato</span>: avental e luvas para toda entrada no quarto, higienização rigorosa das mãos na saída.</p>
+      <p>O debate sobre a eficácia das precauções de contato é vivo na literatura, mas a maior parte das diretrizes internacionais as recomenda para contenção de MRSA. (Huang SS et al., <em>Ann Intern Med</em> 2019;171:150.)</p>
+
+      <h3 class="section-header">4. Bundles de Cateter Venoso Central</h3>
+
+      <p>O <span class="hl-gold">CLABSI Bundle</span> (<em>Central Line-Associated Bloodstream Infection</em> — Infecção de Corrente Sanguínea Associada a Cateter Central) é um conjunto de medidas preventivas que, aplicadas conjuntamente, reduzem dramaticamente a incidência de infecções relacionadas a cateter:</p>
+
+      <div class="info-box clinical" data-label="CLABSI Bundle — 5 Componentes">
+        <ol>
+          <li><strong>Higiene das mãos</strong> antes da inserção e manipulação.</li>
+          <li><strong>Precauções de barreira máxima</strong> durante a inserção (gorro, máscara, avental estéril, luvas estéreis, campo estéril amplo).</li>
+          <li><strong>Antissepsia da pele</strong> com clorexidina alcoólica 2% (superior ao PVPI — Polivinilpirrolidona Iodo).</li>
+          <li><strong>Sítio subclávia como preferência</strong> (menor taxa de infecção que jugular interna ou femoral).</li>
+          <li><strong>Revisão diária da necessidade</strong> do cateter e remoção quando não mais necessário.</li>
+        </ol>
+        <p style="margin-top:8px;">O Institute for Healthcare Improvement (IHI) demonstrou que a implementação rigorosa desse bundle reduziu CLABSI em mais de 66% nos hospitais participantes. (Pronovost P et al., <em>N Engl J Med</em> 2006;355:2725–2732.)</p>
+      </div>
+
+      <h3 class="section-header">5. Manipulação Adequada de Alimentos</h3>
+
+      <p>Para prevenir intoxicação alimentar estafilocócica:</p>
+      <p>Temperatura de armazenamento de alimentos perecíveis <strong>< 5°C</strong> (refrigerador) ou <strong>> 60°C</strong> (aquecimento). A "zona de perigo" é <span class="hl-magenta">5-60°C</span> — nessa faixa, <em>S. aureus</em> se multiplica e produz enterotoxinas.</p>
+      <p>Trabalhadores com lesões de pele purulenta (furúnculos, abscessos) <span class="hl-magenta">não devem manipular alimentos</span>.</p>
+      <p>Lembrar: cozinhar destrói a bactéria mas não a toxina pré-formada (termoestável). O controle é na produção, não no cozimento.</p>
+
+      <h3 class="section-header">6. Vacinação: A Utopia Ainda em Construção</h3>
+
+      <p><em>S. aureus</em> é um dos micro-organismos com maior pesquisa vacinal em andamento — e com mais fracassos clínicos registrados.</p>
+      <p>Múltiplas vacinas candidatas falharam em ensaios clínicos de fase III, incluindo:</p>
+      <p><strong>V710</strong> (Merck, antígeno IsdB — proteína de ligação ao heme de ferro): falha em 2011 — surpreendentemente maior mortalidade no grupo vacinado.</p>
+      <p><strong>SA3Ag</strong> e <strong>SA4Ag</strong> (Pfizer, polissacarídeos capsulares conjugados + FnBP + MntC): resultados negativos.</p>
+      <p>A complexidade imunológica da resposta contra <em>S. aureus</em> — que evade ativamente a imunidade humoral — é o grande obstáculo. A pesquisa continua. (Fowler VG Jr, Proctor RA. <em>J Infect Dis</em> 2014;209 Suppl 3:S16–19.)</p>
+    </div>
+  </section>
+
+  <!-- EPÍLOGO -->
+  <div class="manga-hr"><span></span></div>
+
+  <section id="epilogo">
+    <div class="intro-panel" style="border-color: var(--accent-gold);">
+      <h2 style="color: var(--accent-gold);">EPÍLOGO — O Fim (Provisório) de Uma História Que Nunca Termina</h2>
+      <div class="prose">
+        <p>Voltando ao quarto de UTI.</p>
+        <p>O estudante de medicina — que havia, no início desta história, carregado inocentemente a colônia de <em>S. aureus</em> nas fossas nasais — estava bem. Seu furúnculo havia sido incisado e drenado. A pequena bacteremia detectada na admissão havia sido tratada com sete dias de cefazolina (o paciente era MSSA sensível, para sorte de todos). As hemoculturas de controle negativaram em 72 horas.</p>
+        <p>Na alta hospitalar, recebeu mupirocina nasal por cinco dias e instrução sobre higiene das mãos.</p>
+        <p><em>S. aureus</em>, naturalmente, não foi erradicado. Ele retornou às fossas nasais após algumas semanas — como fazem os portadores assintomáticos recorrentes. Afinal, ele era <em>S. aureus</em>. E <em>S. aureus</em> não desiste.</p>
+
+        <div class="dialogue" style="margin:20px 0;">
+          <strong>— Voltarei</strong> — disse Aureus, pequenino na mucosa nasal, reorganizando sua colônia. <strong>— Sempre voltarei.</strong>
+        </div>
+
+        <p>Epidermidis, paciente e metódico, aguardava o próximo cateter. Saprophyticus aguardava o próximo encontro íntimo. Lugdunensis guardava segredo na pele do paciente, esperando o momento certo. E o MRSA, impassível, lia os resumos dos últimos antibióticos aprovados, buscando novas vulnerabilidades para explorar.</p>
+        <p>A medicina, por sua vez, continuava sua batalha infinita — de higiene das mãos, antibiogramas, bundles, watchful eyes nos hemocultivos —, consciente de que a guerra contra os Staphylococcus não seria ganha por KO. Seria, na melhor das hipóteses, uma dança cuidadosa de respeito mútuo, vigilância constante e humildade epistemológica.</p>
+        <p>Porque quando se trata de <em>S. aureus</em>, subestimar é o primeiro passo para a derrota.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESUMO ESQUEMÁTICO -->
+  <div class="manga-hr"><span></span></div>
+
+  <div class="summary-block">
+    <h3>◆ RESUMO ESQUEMÁTICO — Para Revisão Rápida Antes da Prova</h3>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-gold); margin-top:20px;">Staphylococcus aureus</h3>
+    <p>Gram-positivo em cachos. Catalase +. Coagulase +. Beta-hemólise. Colônias douradas. Manitol +. Proteína A (evasão de IgG). Coagulase (escudo de fibrina). Hialuronidase (espalhamento tecidual). TSST-1 (superantígeno, TSS). Exfoliatinas A e B (SSSS, clivagem da desmogleína 1). PVL (destruição de leucócitos, pneumonia necrotizante, furúnculos recorrentes). Enterotoxinas A-E (intoxicação alimentar pré-formada, termoestável, incubação 1-6h). Alpha-toxina (beta-hemólise, poros em membranas). FnBPs (adesão e invasão de células não-fagocíticas).</p>
+    <p><strong>Doenças:</strong> foliculite, furúnculo, carbúnculo, celulite, abscesso, impetigo bolhoso, SSSS, bacteremia, endocardite aguda, pneumonia (pós-influenza, necrotizante com PVL), osteomielite, artrite séptica, TSS, intoxicação alimentar.</p>
+    <p><strong>MRSA:</strong> gene <em>mecA</em> → PBP2a → resistência a todos os beta-lactâmicos. HA-MRSA (hospitalar, multirresistente) vs CA-MRSA (comunitário, PVL+, USA300). Tratamento: vancomicina, daptomicina (não para pneumonia!), linezolida, ceftaroline, TMP-SMX (CA-MRSA cutâneo).</p>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-cyan); margin-top:20px;">Staphylococcus epidermidis</h3>
+    <p>Gram-positivo em cachos. Catalase +. Coagulase -. Novobiocina sensível. Sem pigmento. Biofilme (PIA/PNAG). Infecções de dispositivos implantados. Raramente patogênico em imunocompetentes. Tratamento: remoção de dispositivo + vancomicina ± rifampicina.</p>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-magenta); margin-top:20px;">Staphylococcus saprophyticus</h3>
+    <p>Gram-positivo em cachos. Catalase +. Coagulase -. Novobiocina resistente. Urease +. ITU em mulheres jovens sexualmente ativas. Tratamento: TMP-SMX ou nitrofurantoína.</p>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-green); margin-top:20px;">Staphylococcus lugdunensis</h3>
+    <p>CoNS com perfil clínico de <em>S. aureus</em>. PYR +. Ornitina descarboxilase +. Endocardite de válvula nativa agressiva. Não confundir com contaminante. Mortalidade alta sem tratamento cirúrgico.</p>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-gold); margin-top:20px;">Diagnóstico Laboratorial</h3>
+    <ol>
+      <li>Gram: cocos Gram+ em cachos</li>
+      <li>Catalase: + (diferencia de Streptococcus)</li>
+      <li>Coagulase lâmina + tubo: + = <em>S. aureus</em>; - = CoNS</li>
+      <li>Ágar manitol: fermentação (amarelo) = <em>S. aureus</em></li>
+      <li>Novobiocina: sensível = <em>S. epidermidis</em>; resistente = <em>S. saprophyticus</em></li>
+      <li>PCR <em>mecA</em>: confirma MRSA</li>
+      <li>Antibiograma (Kirby-Bauer, E-test): guia terapêutica</li>
+    </ol>
+
+    <h3 style="font-size:1.1rem; color: var(--accent-purple); margin-top:20px;">Prevenção</h3>
+    <p>Higiene das mãos (5 momentos OMS). Descolonização (mupirocina nasal + banho de clorexidina). Precauções de contato para MRSA. CLABSI bundle (inserção asséptica + revisão diária). Manipulação adequada de alimentos (controle de temperatura).</p>
+  </div>
+
+  <!-- REFERÊNCIAS -->
+  <div class="references">
+    <h2>◆ Referências Principais</h2>
+    <p>Mandell GL, Bennett JE, Dolin R. <em>Mandell, Douglas, and Bennett's Principles and Practice of Infectious Diseases</em>, 9th ed. Elsevier, 2020.</p>
+    <p>Murray PR, Rosenthal KS, Pfaller MA. <em>Medical Microbiology</em>, 9th ed. Elsevier, 2020.</p>
+    <p>Tong SYC et al. "Staphylococcus aureus infections: epidemiology, pathophysiology, clinical manifestations, and management." <em>Clin Microbiol Rev</em> 2015;28:603–661.</p>
+    <p>Liu C et al. "Clinical Practice Guidelines by the IDSA for the Treatment of MRSA Infections in Adults and Children." <em>Clin Infect Dis</em> 2011;52:e18–e55.</p>
+    <p>Pronovost P et al. "An intervention to decrease catheter-related bloodstream infections in the ICU." <em>N Engl J Med</em> 2006;355:2725–2732.</p>
+    <p>Huang SS et al. "Targeted versus universal decolonization to prevent ICU infection." <em>N Engl J Med</em> 2013;368:2255–2265.</p>
+    <p>Zimmerli W, Trampuz A, Ochsner PE. "Prosthetic-joint infections." <em>N Engl J Med</em> 2004;351:1645–1654.</p>
+    <p>Li JS et al. "Proposed modifications to the Duke criteria for the diagnosis of infective endocarditis." <em>Clin Infect Dis</em> 2000;30:633–638.</p>
+    <p>Jevons MP. "'Celbenin'-resistant staphylococci." <em>Brit Med J</em> 1961;1:124–125.</p>
+    <p>Gillet Y et al. "Association between Staphylococcus aureus strains carrying gene for Panton-Valentine leukocidin and highly lethal necrotising pneumonia in young immunocompetent patients." <em>Lancet</em> 2002;359:753–759.</p>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-sub">Feito por DemilMed-UL · Universidade Licungo</div>
+  <div class="footer-year">2º Ano · Microbiologia · 2026</div>
+  <div class="dot-row">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div style="font-family:'Share Tech Mono',monospace; font-size:0.65rem; color:#2a3a5a; letter-spacing:2px; margin-top:8px;">
+    A SAGA DOS STAPHYLOCOCCUS
+  </div>
+</footer>
+
+</body>
+</html>

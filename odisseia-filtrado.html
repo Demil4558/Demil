@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Grande Odisseia do Filtrado — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c12;
+    --bg2: #0e1018;
+    --bg3: #131620;
+    --surface: #181c28;
+    --surface2: #1e2330;
+    --border: #2a3048;
+
+    --gold: #f0c060;
+    --gold-dim: #c8962a;
+    --cyan: #40e0d0;
+    --cyan-dim: #1aa898;
+    --rose: #ff6b8a;
+    --rose-dim: #cc3355;
+    --violet: #b388ff;
+    --violet-dim: #7c4dff;
+    --lime: #b8ff65;
+    --lime-dim: #78c820;
+    --orange: #ff9040;
+    --orange-dim: #c85800;
+    --sky: #60c8ff;
+    --sky-dim: #2080c8;
+
+    --text: #e8eaf0;
+    --text-dim: #9aa0b8;
+    --text-muted: #5a6080;
+
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Crimson Pro', Georgia, serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 19px;
+    line-height: 1.82;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 24px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(64,224,208,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 20% 80%, rgba(179,136,255,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 60%, rgba(255,107,138,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border: 1px solid rgba(64,224,208,0.35);
+    padding: 6px 18px;
+    border-radius: 40px;
+    margin-bottom: 36px;
+    animation: fadeDown 0.9s ease both;
+  }
+
+  .hero-emoji {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    display: block;
+    animation: fadeDown 1s ease 0.1s both;
+    filter: drop-shadow(0 0 30px rgba(64,224,208,0.5));
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 7vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+    animation: fadeDown 1s ease 0.2s both;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--cyan) 50%, var(--violet) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 2.5vw, 1.5rem);
+    font-style: italic;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    animation: fadeDown 1s ease 0.3s both;
+  }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 50px;
+    animation: fadeDown 1s ease 0.4s both;
+  }
+
+  .hero-line {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+    margin: 0 auto 50px;
+    animation: fadeDown 1s ease 0.5s both;
+  }
+
+  /* ── ELENCO ── */
+  .cast-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .cast-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .cast-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(64,224,208,0.4);
+    box-shadow: 0 8px 30px rgba(64,224,208,0.08);
+  }
+
+  .cast-name {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .cast-role {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  .content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-divider {
+    margin: 80px 0 50px;
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 40px;
+  }
+
+  .act-label {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  h2.act-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 4vw, 2.6rem);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  h3.act-subtitle {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 400;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    border-left: 3px solid var(--border);
+    padding-left: 16px;
+  }
+
+  /* ── ACT COLORS ── */
+  .act-1 .act-title { color: var(--gold); }
+  .act-1 .act-label, .act-1 .dialog-name { color: var(--gold); }
+  .act-2 .act-title { color: var(--cyan); }
+  .act-2 .act-label, .act-2 .dialog-name { color: var(--cyan); }
+  .act-3 .act-title { color: var(--violet); }
+  .act-3 .act-label, .act-3 .dialog-name { color: var(--violet); }
+  .act-4 .act-title { color: var(--rose); }
+  .act-4 .act-label, .act-4 .dialog-name { color: var(--rose); }
+  .act-5 .act-title { color: var(--lime); }
+  .act-5 .act-label, .act-5 .dialog-name { color: var(--lime); }
+  .act-6 .act-title { color: var(--orange); }
+  .act-6 .act-label, .act-6 .dialog-name { color: var(--orange); }
+  .act-7 .act-title { color: var(--sky); }
+  .act-7 .act-label, .act-7 .dialog-name { color: var(--sky); }
+  .act-8 .act-title { color: var(--gold); }
+  .act-8 .act-label, .act-8 .dialog-name { color: var(--gold); }
+  .act-9 .act-title { color: var(--cyan); }
+  .act-9 .act-label, .act-9 .dialog-name { color: var(--cyan); }
+  .act-10 .act-title { color: var(--violet); }
+  .act-10 .act-label, .act-10 .dialog-name { color: var(--violet); }
+  .act-11 .act-title { color: var(--rose); }
+  .act-11 .act-label, .act-11 .dialog-name { color: var(--rose); }
+  .act-12 .act-title { color: var(--lime); }
+  .act-12 .act-label, .act-12 .dialog-name { color: var(--lime); }
+  .prologue .act-title { color: var(--sky); }
+  .prologue .act-label { color: var(--sky); }
+  .epilogue .act-title { color: var(--gold); }
+  .epilogue .act-label { color: var(--gold); }
+  .final-act .act-title { color: var(--cyan); }
+  .final-act .act-label { color: var(--cyan); }
+
+  /* ── PROSE ── */
+  p {
+    margin-bottom: 1.5em;
+    color: var(--text);
+    font-size: 1.05rem;
+  }
+
+  p em {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* ── STAGE DIRECTION ── */
+  .stage-dir {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    border-left: 2px solid var(--border);
+    padding: 8px 0 8px 18px;
+    margin: 24px 0;
+    line-height: 1.65;
+  }
+
+  /* ── DIALOG ── */
+  .dialog {
+    margin: 28px 0;
+    padding: 22px 26px;
+    background: var(--surface);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+
+  .dialog::before {
+    content: '"';
+    position: absolute;
+    top: -14px;
+    left: 20px;
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 1;
+    opacity: 0.15;
+  }
+
+  .dialog-name {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dialog-name::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .dialog p {
+    margin-bottom: 1em;
+    font-size: 1.02rem;
+  }
+
+  .dialog p:last-child { margin-bottom: 0; }
+
+  /* ── FORMULA BOX ── */
+  .formula {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--cyan);
+    border-radius: 8px;
+    padding: 18px 22px;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    color: var(--cyan);
+    margin: 24px 0;
+    line-height: 1.75;
+    overflow-x: auto;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 30px 0;
+    border: 1px solid;
+  }
+
+  .highlight-box.gold {
+    background: rgba(240,192,96,0.06);
+    border-color: rgba(240,192,96,0.25);
+  }
+  .highlight-box.cyan {
+    background: rgba(64,224,208,0.06);
+    border-color: rgba(64,224,208,0.25);
+  }
+  .highlight-box.rose {
+    background: rgba(255,107,138,0.06);
+    border-color: rgba(255,107,138,0.25);
+  }
+  .highlight-box.violet {
+    background: rgba(179,136,255,0.06);
+    border-color: rgba(179,136,255,0.25);
+  }
+  .highlight-box.lime {
+    background: rgba(184,255,101,0.06);
+    border-color: rgba(184,255,101,0.25);
+  }
+  .highlight-box.orange {
+    background: rgba(255,144,64,0.06);
+    border-color: rgba(255,144,64,0.25);
+  }
+
+  .highlight-box strong {
+    color: inherit;
+  }
+
+  .highlight-box.gold { color: var(--text); }
+  .highlight-box.gold .hb-title { color: var(--gold); }
+  .highlight-box.cyan .hb-title { color: var(--cyan); }
+  .highlight-box.rose .hb-title { color: var(--rose); }
+  .highlight-box.violet .hb-title { color: var(--violet); }
+  .highlight-box.lime .hb-title { color: var(--lime); }
+  .highlight-box.orange .hb-title { color: var(--orange); }
+
+  .hb-title {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  /* ── INLINE TERM ── */
+  .term {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  .term-cyan { color: var(--cyan); font-weight: 600; }
+  .term-rose { color: var(--rose); font-weight: 600; }
+  .term-violet { color: var(--violet); font-weight: 600; }
+  .term-lime { color: var(--lime); font-weight: 600; }
+  .term-orange { color: var(--orange); font-weight: 600; }
+
+  /* ── CLINICAL TABLE ── */
+  .clinical-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-size: 0.92rem;
+  }
+
+  .clinical-table th {
+    background: var(--surface2);
+    color: var(--cyan);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .clinical-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .clinical-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin: 60px 0;
+  }
+
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+  }
+
+  .toc-list {
+    list-style: none;
+    columns: 2;
+    gap: 30px;
+  }
+
+  .toc-list li {
+    margin-bottom: 10px;
+    break-inside: avoid;
+  }
+
+  .toc-list a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .toc-list a:hover { color: var(--cyan); }
+
+  .toc-num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ── CAST SECTION ── */
+  .cast-section {
+    padding: 80px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .cast-section-title {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--violet);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .cast-section-sub {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 36px;
+    font-family: var(--font-mono);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 50px 24px;
+    color: var(--text-muted);
+  }
+
+  footer .footer-brand {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--gold), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+
+  footer p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 0.4em;
+  }
+
+  footer .footer-quote {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 1rem;
+    margin-top: 16px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .toc-list { columns: 1; }
+    .cast-grid { grid-template-columns: 1fr; }
+    body { font-size: 17px; }
+    .dialog { padding: 16px 18px; }
+    .formula { font-size: 0.78rem; }
+    .clinical-table { font-size: 0.82rem; }
+    .clinical-table th, .clinical-table td { padding: 8px 10px; }
+  }
+
+  /* ── SECTION ANCHOR ── */
+  .anchor { display: block; position: relative; top: -80px; visibility: hidden; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<header class="hero">
+  <span class="hero-badge">🩺 DemilMed-UL · 2.º Ano · 2026</span>
+  <span class="hero-emoji">🎭</span>
+  <h1>A GRANDE ODISSEIA DO FILTRADO</h1>
+  <p class="hero-sub">Teatro-Manga de Fisiologia Renal</p>
+  <p class="hero-desc">Os Túbulos Renais, o Mecanismo Contracorrente, e a Batalha Pela Concentração da Urina. Uma Produção DemilMed-UL.</p>
+  <div class="hero-line"></div>
+</header>
+
+<!-- ══════════════════════ ELENCO ══════════════════════ -->
+<section class="cast-section">
+  <h2 class="cast-section-title">🎬 Elenco de Personagens</h2>
+  <p class="cast-section-sub">em ordem de aparição</p>
+  <div class="cast-grid">
+    <div class="cast-card"><div class="cast-name">O Filtrado Augusto</div><div class="cast-role">O protagonista, recém-nascido no espaço de Bowman, destino: tornar-se Urina concentrada.</div></div>
+    <div class="cast-card"><div class="cast-name">O Glomérulo</div><div class="cast-role">O porteiro grandioso, arrogante e absolutamente convicto de que é a parte mais importante do rim.</div></div>
+    <div class="cast-card"><div class="cast-name">A Cápsula de Bowman</div><div class="cast-role">A recepcionista sofisticada. Etérea. Colecciona filtrado com elegância.</div></div>
+    <div class="cast-card"><div class="cast-name">O TCP</div><div class="cast-role">Túbulo Contorcido Proximal — o Comilão. Devora 67% de tudo que passa. Sem remorsos.</div></div>
+    <div class="cast-card"><div class="cast-name">Na-K-ATPase</div><div class="cast-role">O Motor Eterno. Existe em toda parte. Não dorme. Nunca descansa. Vive de ATP.</div></div>
+    <div class="cast-card"><div class="cast-name">SGLT-2</div><div class="cast-role">O corretor de glicose no TCP. Profissional, eficiente. Derrotado apenas pelo Diabetes.</div></div>
+    <div class="cast-card"><div class="cast-name">NHE-3</div><div class="cast-role">O trocador H⁺/Na⁺. Ácido por natureza. Literalmente.</div></div>
+    <div class="cast-card"><div class="cast-name">AQP-1</div><div class="cast-role">Aquaporina-1 — a porta da água. Sempre aberta. Sem drama. Sem regulação.</div></div>
+    <div class="cast-card"><div class="cast-name">A Alça de Henle</div><div class="cast-role">A Grande Diva. Arquitecta do gradiente osmótico. Rainha do Drama. Faz tudo com floreado.</div></div>
+    <div class="cast-card"><div class="cast-name">O Ramo Descendente</div><div class="cast-role">Filho resignado da Alça. Deixa a água sair. Não tem força para combater.</div></div>
+    <div class="cast-card"><div class="cast-name">O TAL</div><div class="cast-role">Ramo Ascendente Espesso — o Músculo. Impenetrável. Bombeia NaCl sem dar água em troca.</div></div>
+    <div class="cast-card"><div class="cast-name">NKCC2</div><div class="cast-role">O transportador-estrela do TAL. Carrega Na⁺, K⁺ e 2Cl⁻ de uma vez. O pivô de tudo.</div></div>
+    <div class="cast-card"><div class="cast-name">ROMK</div><div class="cast-role">O reciclador de K⁺. Um pouco bipolar. Devolve o que tomou para que NKCC2 trabalhe.</div></div>
+    <div class="cast-card"><div class="cast-name">ClC-Kb + Bartina</div><div class="cast-role">Os irmãos Cl⁻. Deixam o cloro sair pelo lado basolateral. Sem eles, tudo para.</div></div>
+    <div class="cast-card"><div class="cast-name">Tamm-Horsfall (Uromodulina)</div><div class="cast-role">Produzida no TAL, é a proteína mais abundante na urina. Discreta, mas vital.</div></div>
+    <div class="cast-card"><div class="cast-name">A Furosemida</div><div class="cast-role">A Vilã (ou Heroína). Bloqueia NKCC2. Devastadora. Aparece várias vezes — é esse tipo de vilã.</div></div>
+    <div class="cast-card"><div class="cast-name">A Síndrome de Bartter</div><div class="cast-role">O fantasma genético que vive no TAL. Imita a Furosemida, mas é permanente.</div></div>
+    <div class="cast-card"><div class="cast-name">A Mácula Densa</div><div class="cast-role">A espiã do fim do TAL. Mede NaCl. Comunica com o glomérulo. Espionagem institucionalizada.</div></div>
+    <div class="cast-card"><div class="cast-name">O TCD</div><div class="cast-role">Túbulo Contorcido Distal — o Perfeccionista. Afina Na⁺, Ca²⁺ e Mg²⁺.</div></div>
+    <div class="cast-card"><div class="cast-name">NCC</div><div class="cast-role">O cotransportador Na-Cl do TCD. Discreto. Alvo das Tiazidas.</div></div>
+    <div class="cast-card"><div class="cast-name">TRPV5 / TRPM6</div><div class="cast-role">Canais de Ca²⁺ e Mg²⁺. Quase sempre esquecidos. Choram quando Gitelman chega.</div></div>
+    <div class="cast-card"><div class="cast-name">As Tiazidas</div><div class="cast-role">A segunda vilã. Mata o NCC. Adorada pelos hipertensos e pelos que têm pedras de cálcio.</div></div>
+    <div class="cast-card"><div class="cast-name">A Síndrome de Gitelman</div><div class="cast-role">O parente tranquilo de Bartter. Diagnosticada em adultos, quase sempre por acaso.</div></div>
+    <div class="cast-card"><div class="cast-name">O Duto Coletor</div><div class="cast-role">O Árbitro Final. Onde as decisões de vida ou morte da urina são tomadas.</div></div>
+    <div class="cast-card"><div class="cast-name">Célula Principal</div><div class="cast-role">A governante do Duto. Obedece à Aldosterona e ao ADH.</div></div>
+    <div class="cast-card"><div class="cast-name">ENaC</div><div class="cast-role">Canal epitelial de Na⁺. Faz o que Aldosterona mandar. Nada mais. Nada menos.</div></div>
+    <div class="cast-card"><div class="cast-name">AQP-2</div><div class="cast-role">A Aquaporina Regulada. Aguarda ordens de ADH nas vesículas citoplasmáticas. Não age sozinha.</div></div>
+    <div class="cast-card"><div class="cast-name">Célula Intercalada Tipo A</div><div class="cast-role">A acidificadora implacável. Secreta H⁺ com pompa.</div></div>
+    <div class="cast-card"><div class="cast-name">ADH / Vasopressina</div><div class="cast-role">O General. Vive no Hipotálamo. Rege a água do corpo.</div></div>
+    <div class="cast-card"><div class="cast-name">Aldosterona</div><div class="cast-role">A Ministra das Finanças dos Rins. Manda o rim guardar sódio e jogar fora potássio.</div></div>
+    <div class="cast-card"><div class="cast-name">Ureia</div><div class="cast-role">O espia infiltrado. Reciclada no medular interior. Contribui para 50% do gradiente osmótico profundo.</div></div>
+    <div class="cast-card"><div class="cast-name">As Vasa Recta</div><div class="cast-role">A rede paralela de espionagem capilar. Preservam o gradiente sem lavar o medular.</div></div>
+    <div class="cast-card"><div class="cast-name">O Lítio</div><div class="cast-role">O sabotador silencioso. Entra pelas células principais e sabota ADH por dentro.</div></div>
+    <div class="cast-card"><div class="cast-name">A Amilorida</div><div class="cast-role">A guerrilheira contra ENaC. Bloqueia a entrada de Lítio. Heroína nos casos certos.</div></div>
+    <div class="cast-card"><div class="cast-name">O Tolvaptan</div><div class="cast-role">O antagonista de V2. Chega quando ADH exagera. Bloqueia o receptor. Salva o sódio.</div></div>
+    <div class="cast-card"><div class="cast-name">A Desmopressina (DDAVP)</div><div class="cast-role">A irmã sintética de ADH. Agonista de V2. Salva pacientes com Diabetes Insipidus Central.</div></div>
+  </div>
+</section>
+
+<!-- ══════════════════════ MAIN CONTENT ══════════════════════ -->
+<main class="content">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">📋 Índice — Actos</div>
+    <ul class="toc-list">
+      <li><a href="#prologo"><span class="toc-num">00</span> Prólogo: O Reino dos Rins</a></li>
+      <li><a href="#ato1"><span class="toc-num">01</span> O Portão dos Portões</a></li>
+      <li><a href="#ato2"><span class="toc-num">02</span> O Campo do Glutão</a></li>
+      <li><a href="#ato3"><span class="toc-num">03</span> A Descida ao Limbo</a></li>
+      <li><a href="#ato4"><span class="toc-num">04</span> A Virada do Destino</a></li>
+      <li><a href="#ato5"><span class="toc-num">05</span> O Músculo da Operação</a></li>
+      <li><a href="#ato6"><span class="toc-num">06</span> A Espiã</a></li>
+      <li><a href="#ato7"><span class="toc-num">07</span> O Perfeccionista</a></li>
+      <li><a href="#ato8"><span class="toc-num">08</span> O Julgamento Final</a></li>
+      <li><a href="#ato9"><span class="toc-num">09</span> O General do Hipotálamo</a></li>
+      <li><a href="#ato10"><span class="toc-num">10</span> A Ministra das Finanças</a></li>
+      <li><a href="#ato11"><span class="toc-num">11</span> A Rede de Espionagem Paralela</a></li>
+      <li><a href="#ato12"><span class="toc-num">12</span> Os Vilões e os Heróis</a></li>
+      <li><a href="#epilogo"><span class="toc-num">13</span> Epílogo</a></li>
+      <li><a href="#final"><span class="toc-num">14</span> Resumo Clínico Final</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── PRÓLOGO ── -->
+  <span class="anchor" id="prologo"></span>
+  <div class="section-divider prologue">
+    <span class="act-label">Prólogo</span>
+    <h2 class="act-title">🌍 O Reino dos Rins</h2>
+    <h3 class="act-subtitle">O narrador abre o mundo. Com voz séria e dramática, como o início de um documentário da BBC protagonizado por uma molécula.</h3>
+  </div>
+
+  <p>Havia dois reinos no ventre humano. Dois guerreiros silenciosos, curvados como feijões, escondidos atrás do peritônio — espaço chamado <span class="term">retroperitoneal</span> (<em>retro</em> = "atrás de", do latim; <em>peritoneum</em> = a membrana que forra a cavidade abdominal, do grego <em>peritonaion</em> = "esticado ao redor").</p>
+
+  <p>O rim direito vivia ligeiramente mais abaixo que o esquerdo. Não era inferioridade. Era culpa do fígado, aquele vizinho volumoso que empurrava tudo para baixo sem pedir licença.</p>
+
+  <p>Situavam-se entre T12 e L3 — isto é, entre a décima segunda vértebra torácica e a terceira lombar — caso quisesses procurá-los num cadáver, o que os alunos de Anatomia fazem com uma expressão de entusiasmo perturbador.</p>
+
+  <p>Cada rim media cerca de 11 cm de comprimento, 6 cm de largura, 3 cm de espessura, pesava 120-150 gramas e tinha a cor de um rim cozido. O que é lógico, pois um rim cozido é exactamente isso.</p>
+
+  <p>Cobertos por uma <span class="term">cápsula fibrosa</span> (camada resistente de tecido conjuntivo), depois por gordura perirrenal, depois pela <span class="term">fáscia de Gerota</span> (uma bainha de tecido conjuntivo que envolve o rim e a suprarrenal — chamada assim em homenagem ao anatomista romeno Dimitrie Gerota, 1867-1939), os rins viviam protegidos e esquecidos.</p>
+
+  <p>Ninguém lhes agradecia. Mas filtravam 180 litros de plasma por dia. Um ser humano tem 5 litros de sangue. Isso significa que o volume de plasma filtrado equivale a <strong>36 vezes</strong> o volume total de sangue passando pelos glomérulos a cada 24 horas. Todos os dias. Em silêncio. Sem greve.</p>
+
+  <p>Ao cortar um rim ao meio — o que os cirurgiões fazem com entusiasmo semelhante ao dos alunos de Anatomia — revelam-se duas zonas distintas:</p>
+
+  <p>A <span class="term">córtex renal</span> (do latim <em>cortex</em> = casca, madeira, como casca de árvore), de cor mais clara, granular, 1,5 cm de espessura, repleta de glomérulos e túbulos contorcidos.</p>
+
+  <p>E a <span class="term">medula renal</span> (do latim <em>medulla</em> = miolo, interior, tutano), de cor mais escura, estriada, composta por 8 a 18 pirâmides em forma de cone — as <span class="term">pirâmides de Malpighi</span> (em honra de Marcello Malpighi, anatomista italiano do século XVII, o primeiro a descrever os glomérulos ao microscópio). As pontas das pirâmides chamam-se <span class="term">papilas renais</span> (do latim <em>papilla</em> = mamilo, pequena saliência), e cada papila abre-se para um <span class="term">cálice menor</span>, que se une a outro para formar os <span class="term">cálices maiores</span>, que convergem para a <span class="term">pélvis renal</span> (do latim <em>pelvis</em> = bacia) — e desta, para o ureter.</p>
+
+  <p>Entre as pirâmides existem colunas de tecido cortical chamadas <span class="term">colunas de Bertin</span> (em homenagem a Exupère Joseph Bertin, anatomista francês, 1712-1781).</p>
+
+  <p>A vascularização era poderosa: a <span class="term">artéria renal</span> — ramo direto da aorta — entrava pelo <span class="term">hilo renal</span> (do grego <em>hilos</em> = semente, porta de entrada), ramificava-se em artérias segmentares, interlobares, arqueadas, interlobulares, até chegar às <span class="term">arteríolas aferentes</span> (<em>aferente</em> = que leva para, do latim <em>afferre</em>), que alimentavam os glomérulos.</p>
+
+  <p>Depois do glomérulo, o sangue saía pelas <span class="term">arteríolas eferentes</span> (<em>eferente</em> = que leva para fora, do latim <em>efferre</em>). Nos néfrons corticais, a eferente formava uma rede de <span class="term">capilares peritubulares</span> que banhavam os túbulos. Nos néfrons justamedulares, a eferente mergulhava para baixo formando as famosas <span class="term-cyan">vasa recta</span> (vasos retos).</p>
+
+  <p>Dentro deste reino, trabalhavam aproximadamente <strong>1 milhão de néfrons</strong> em cada rim. 2 milhões no total. Cada néfron era uma linha de montagem autônoma, uma fábrica completa de transformação de plasma em urina. Havia dois tipos:</p>
+
+  <div class="highlight-box gold">
+    <div class="hb-title">🔬 Tipos de Néfrons</div>
+    <p><strong>Néfrons Corticais (80-85%):</strong> viviam na córtex, com alças de Henle curtas que mal entravam na medula. Trabalhadores comuns. Faziam o básico.</p>
+    <p><strong>Néfrons Justamedulares (15-20%):</strong> viviam na junção córtex-medula, com alças de Henle longas que mergulhavam profundamente na medula interior, até às papilas. Estes eram os arquitectos do gradiente osmótico. Os artistas. Os heróis anónimos que tornam possível a urina concentrada.</p>
+  </div>
+
+  <p>E assim começava a nossa história.</p>
+
+  <!-- ── ATO I ── -->
+  <span class="anchor" id="ato1"></span>
+  <div class="section-divider act-1">
+    <span class="act-label">Acto I</span>
+    <h2 class="act-title">🎭 O Portão dos Portões</h2>
+    <h3 class="act-subtitle">O Glomérulo e a Grande Filtração</h3>
+  </div>
+
+  <p class="stage-dir">A cena abre no corpúsculo renal. O GLOMÉRULO encontra-se no centro, rodeado pela CÁPSULA DE BOWMAN como um rei no seu trono, mas um rei que é na verdade um novelo de capilares fenestrados.</p>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Glomérulo</div>
+    <p>Eu sou o <strong>Glomérulo</strong>! Do grego <em>glómos</em> = novelo, bola de fio! Porque sou exactamente isso — um novelo de capilares que filtra o plasma com precisão cirúrgica! Sem mim, não há rim. Sem mim, não há urina. Sem mim, não há vida!</p>
+  </div>
+
+  <p class="stage-dir">A CÁPSULA DE BOWMAN, que era a estrutura que envolveu o glomérulo como uma taça que recebe o chá, suspirou elegantemente.</p>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">A Cápsula de Bowman</div>
+    <p>Sir William Bowman, 1842. Meu criador. Anatomopatologista inglês que me descreveu pela primeira vez. Sou uma cápsula dupla em forma de taça, com uma folha visceral que cobre directamente os capilares glomerulares — formando os <strong>pedicelos dos podócitos</strong> — e uma folha parietal que delimita o espaço de Bowman, onde o filtrado cai como água numa fonte. Sou a elegância funcional personificada.</p>
+  </div>
+
+  <p class="stage-dir">O FILTRADO AUGUSTO acabava de nascer neste espaço. Olhou em volta com olhos grandes, desorientado.</p>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Filtrado</div>
+    <p>O que sou eu exactamente?</p>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">A Cápsula de Bowman</div>
+    <p>És plasma ultrafiltrado. Vieste do sangue que passa pelos capilares glomerulares. A barreira de filtração glomerular — composta por três camadas — permitiu a tua passagem, mas bloqueou os elementos figurados do sangue e as proteínas grandes.</p>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Glomérulo</div>
+    <p>A primeira sou eu, mais precisamente o meu <strong>endotélio fenestrado</strong>: células endoteliais com poros de 70-100 nanómetros. Deixo passar água, sais, glucose, aminoácidos, ureia — tudo o que for pequeno. Bloqueio os eritrócitos, os leucócitos, as plaquetas.</p>
+    <p>A segunda camada é a <strong>membrana basal glomerular</strong> — GBM (<em>Glomerular Basement Membrane</em>): uma espessa rede de colágeno tipo IV, laminina e heparan sulfato, carregado negativamente. A albumina é carregada negativamente! Portanto, mesmo sendo pequena o suficiente para atravessar os poros fenestrados, é repelida eletricamente pela GBM!</p>
+    <p>A terceira camada são os <strong>podócitos</strong> — células especializadas com longos processos chamados pedicelos, do latim <em>pediculus</em> = pé pequeno, que se entrelaçam e formam <strong>fendas de filtração</strong> de 25 nanómetros, vedadas pela <strong>membrana de fenda</strong> — composta pelas proteínas <strong>nefrina</strong>, <strong>podocina</strong>, <strong>CD2AP</strong> e outras. Mutações na nefrina causam a <span class="term-rose">Síndrome Nefrótica Congénita Finlandesa</span>. Mutações na podocina causam <span class="term-rose">FSGS</span> (<em>Focal Segmental Glomerulosclerosis</em> — Glomeruloesclerose Segmentar e Focal).</p>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">A Cápsula de Bowman</div>
+    <p>E existem ainda as <strong>células mesangiais</strong> — do grego <em>mesos</em> = meio + <em>angeion</em> = vaso — que ficam entre os capilares, secretam matriz mesangial, fagocitam complexos imunes e têm capacidade de contração. O mesângio é onde os complexos imunes se depositam na nefrite do lúpus, na nefropatia de IgA...</p>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Glomérulo</div>
+    <p>Absolutamente! Pelas forças de <strong>Starling</strong> — em homenagem ao fisiologista britânico Ernest Starling, 1902. A pressão hidrostática capilar glomerular — P_GC — é cerca de 45-50 mmHg, elevadíssima para capilares, porque a arteríola eferente cria resistência à saída. A pressão oncótica plasmática — π_GC — que se opõe à filtração, é cerca de 27 mmHg. A pressão hidrostática no espaço de Bowman — P_BS — é cerca de 10-15 mmHg.</p>
+  </div>
+
+  <div class="formula">
+    Pressão de Filtração Líquida = (P_GC + π_BS) − (π_GC + P_BS)<br>
+    = (48 + 0) − (27 + 13)<br>
+    = <strong>+8 mmHg positivos</strong> → Filtração líquida<br><br>
+    Cada minuto: 125 mL filtrados<br>
+    Cada hora: 7,5 litros<br>
+    Cada dia: 180 litros = <strong>TFG (GFR — Glomerular Filtration Rate)</strong>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Filtrado</div>
+    <p>E eu tenho que percorrer todo o néfron sozinho?</p>
+  </div>
+
+  <div class="dialog act-1">
+    <div class="dialog-name">O Glomérulo</div>
+    <p>Isso é com o TCP. Boa viagem.</p>
+  </div>
+
+  <!-- ── ATO II ── -->
+  <span class="anchor" id="ato2"></span>
+  <div class="section-divider act-2">
+    <span class="act-label">Acto II</span>
+    <h2 class="act-title">🎭 O Campo do Glutão</h2>
+    <h3 class="act-subtitle">O Túbulo Contorcido Proximal e a Grande Devoração</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO AUGUSTO entra no TÚBULO CONTORCIDO PROXIMAL (TCP). O cenário muda dramaticamente: paredes altas, revestidas de células cuboidais a colunares, com uma orla de microvilosidades tão densa que parece uma floresta de arbustos em miniatura. O TCP vibra com actividade metabólica frenética. Parece um mercado.</p>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">O TCP</div>
+    <p>Bom dia! Bem-vindo ao <strong>Túbulo Contorcido Proximal</strong>! Do latim <em>proximus</em> = o mais próximo — sou o mais próximo do glomérulo — e <em>convolutus</em> = enrolado, torcido — porque me enrolo ao redor de mim mesmo como um espaguete refeliz. Tenho 14 milímetros de comprimento e estou aqui para vos dizer: serei eficiente. Reabsorvo <strong>67% de tudo</strong> que entra. Sódio. Água. Glicose. Aminoácidos. Bicarbonato. Fosfato. Proteínas pequenas. Citrato. Lactato. Cálcio. Potássio.</p>
+    <p>E isso sem alterar a osmolalidade! É chamada de <strong>reabsorção isotónica</strong>. O fluido que sai daqui ainda está a 300 mOsm/kg, igual ao plasma.</p>
+  </div>
+
+  <p class="stage-dir">Antes que o FILTRADO pudesse protestar, apareceu NA-K-ATPase — uma proteína imponente com três braços levantados (para Na⁺) e dois baixos (para K⁺), resfolegando, sem parar.</p>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">Na-K-ATPase</div>
+    <p>Olá. Sou o <strong>Na-K-ATPase</strong> — Adenosina Trifosfatase de Sódio e Potássio! ATP: do grego <em>aden</em> = glândula + <em>trifosfato</em> = três grupos fosfato. Sou uma proteína de transporte activo primário localizada na membrana <strong>basolateral</strong> das células tubulares. A cada ciclo, boto para fora 3 iões Na⁺ e faço entrar 2 iões K⁺, consumindo 1 ATP. Ao expulsar Na⁺ do interior celular, mantenho a concentração intracelular de Na⁺ muito baixa — cerca de 15 mEq/L — enquanto o filtrado no lúmen tem 140 mEq/L de Na⁺. Isso cria um <strong>gradiente electroquímico</strong>. Sou o motor de todo o transporte secundário neste néfron.</p>
+  </div>
+
+  <p class="stage-dir">Apareceu NHE-3 — o Na-H Exchanger 3 — um transportador apical magro, com uma cara de quem sempre está a trocar favores.</p>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">NHE-3</div>
+    <p>Eu sou o <strong>NHE-3</strong> — <em>Sodium-Hydrogen Exchanger 3</em>, Trocador Sódio-Hidrogénio tipo 3! Faço o seguinte: deixo entrar 1 Na⁺ pelo lado apical, e mando para fora 1 H⁺ para o lúmen. É uma troca electro-neutra. Mas o que eu faço com esse H⁺ é genial: ele reage com o bicarbonato — HCO₃⁻ — que está no fluido tubular, formando H₂CO₃ — ácido carbónico. No bordo em escova, há a <strong>Anidrase Carbónica IV</strong> — CAIV — que catalisa imediatamente: H₂CO₃ → CO₂ + H₂O. O CO₂ entra na célula por difusão, onde a <strong>Anidrase Carbónica II</strong> — CAII — faz o reverso. Resultado: <strong>85% do bicarbonato filtrado é reabsorvido aqui no TCP</strong>, de forma indirecta.</p>
+  </div>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">O Filtrado</div>
+    <p>Anidrase Carbónica... de quê?</p>
+  </div>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">NHE-3</div>
+    <p>Do grego <em>an</em> = sem + <em>hydor</em> = água + <em>drase</em> = que actua. Uma das enzimas mais rápidas do corpo: cataliza 10⁶ reacções por segundo. A <strong>Acetazolamida</strong> — ACZ — bloqueia a CAII. Resultado: menos HCO₃⁻ reabsorvido → o HCO₃⁻ vai-se embora na urina, causando <span class="term-rose">acidose metabólica</span>. Usada no glaucoma, no mal das montanhas, e em alguns epiléticos.</p>
+  </div>
+
+  <p class="stage-dir">Surgiu SGLT-2 — um transportador exuberante, sempre a correr, com um saco de glicose debaixo do braço.</p>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">SGLT-2</div>
+    <p>Eu sou o <strong>SGLT-2</strong>! <em>Sodium-Glucose Linked Transporter 2</em>, Cotransportador Sódio-Glicose tipo 2! Aproveito o gradiente de Na⁺ criado pela Na-K-ATPase para arrastar junto uma molécula de glicose: 1 Na⁺ entra, 1 glicose entra! Juntos com o meu colega <strong>SGLT-1</strong> no segmento S3, garantimos que <strong>100% da glicose filtrada é reabsorvida</strong> em condições normais.</p>
+    <p>A não ser que a glicemia plasmática suba acima de 180-200 mg/dL... Quando isso acontece, a minha capacidade de transporte máxima — chamada de <strong>Tm</strong>, <em>Transport Maximum</em> — é excedida. Começo a deixar glicose escapar. Isso chama-se <span class="term-rose">glucosúria</span>. É o primeiro sinal clínico de <span class="term-rose">Diabetes Mellitus</span> mal controlado. E então a glicose retida no lúmen cria pressão osmótica, causando <span class="term-rose">diurese osmótica</span>: poliúria, polidipsia.</p>
+    <p>Os novos fármacos chamados <strong>inibidores de SGLT-2</strong> — gliflozinas — bloqueiam-me voluntariamente: empagliflozina, dapagliflozina, canagliflozina. Efeitos cardiorenais espectaculares nos ensaios EMPEROR, DAPA-CKD, EMPA-KIDNEY. É irónico: bloqueiam-me e tornam-se heróis.</p>
+  </div>
+
+  <p class="stage-dir">Apareceu AQP-1 — uma proteína pequena, calma, de porta aberta permanentemente.</p>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">AQP-1 (Aquaporina-1)</div>
+    <p>Sou a <strong>Aquaporina-1</strong>. Do latim <em>aqua</em> = água + do grego <em>poros</em> = passagem, canal. Fui descoberta por <strong>Peter Agre</strong> em 1992, que ganhou o <strong>Prémio Nobel de Química em 2003</strong> pela minha descoberta. Existo nas membranas apical e basolateral das células do TCP e do Ramo Descendente da Alça de Henle. Sou sempre aberta. Não preciso de regulação. A cada soluto reabsorvido, a água segue isosmoticamentee. <strong>67% da água filtrada é reabsorvida aqui.</strong></p>
+  </div>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">O TCP</div>
+    <p>Reabsorvo também <strong>todos os aminoácidos</strong> — via múltiplos cotransportadores de Na⁺-aminoácido. Reabsorvo <strong>80% do fosfato filtrado</strong> — via NaPi-IIa, regulado pelo PTH (Hormona Paratiróide): quando o PTH sobe, internaliza o NaPi-IIa, e o fosfato escapa — causa a <span class="term-rose">hiperfosfatúria do hiperparatiroidismo</span>. Reabsorvo proteínas pequenas via endocitose mediada pelo receptor <strong>megalina-cubilina</strong>. Quando a megalina não funciona — <span class="term-rose">Síndrome de Dent</span> — há proteinúria tubular, nefrocalcinose.</p>
+  </div>
+
+  <div class="dialog act-2">
+    <div class="dialog-name">OAT1</div>
+    <p><strong>OAT</strong>: <em>Organic Anion Transporter</em>, Transportador de Aniões Orgânicos. No lado basolateral, capturamos substâncias do sangue: ácido úrico, PAH — ácido para-aminohipúrico, que é usado clinicamente para medir o <strong>fluxo plasmático renal efectivo (FPRE)</strong> —, penicilina, metotrexato, e outros fármacos. O <strong>probenecide</strong> bloqueia-nos. Originalmente inventado para reter a penicilina no organismo durante a Segunda Guerra Mundial.</p>
+  </div>
+
+  <!-- ── ATO III ── -->
+  <span class="anchor" id="ato3"></span>
+  <div class="section-divider act-3">
+    <span class="act-label">Acto III</span>
+    <h2 class="act-title">🎭 A Descida ao Limbo</h2>
+    <h3 class="act-subtitle">O Ramo Descendente Delgado da Alça de Henle</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO, agora 67% menor em volume, chegou ao início do Ramo Descendente Delgado. O ambiente mudou. A luz ficou mais baixa. As paredes ficaram mais finas, os habitantes mais simples. O ramo descendia em direcção à medula, onde a osmolalidade aumentava progressivamente.</p>
+
+  <div class="dialog act-3">
+    <div class="dialog-name">O Ramo Descendente</div>
+    <p>Sou o <strong>Ramo Descendente Delgado da Alça de Henle</strong>. Meu nome honra o médico alemão <strong>Friedrich Gustav Jacob Henle</strong>, 1809-1885, que descreveu esta estrutura. Sou histologicamente simples: células <strong>escamosas</strong> — planas, quase sem organelas, sem microvilosidades, sem mitocôndrias expressivas. Não gasto energia. Não faço transporte activo. Não mereço aplausos.</p>
+    <p>Deixo a água sair. Só isso. Tenho <strong>AQP-1</strong> em abundância. Sou <strong>muito permeável à água</strong>. Enquanto desço em direcção à medula — onde o interstício se torna progressivamente mais concentrado — a água é puxada para fora por osmose.</p>
+  </div>
+
+  <div class="dialog act-3">
+    <div class="dialog-name">O Filtrado</div>
+    <p>Estou... a ficar concentradíssimo?!</p>
+  </div>
+
+  <div class="dialog act-3">
+    <div class="dialog-name">O Ramo Descendente</div>
+    <p>No fundo da alça, chegaste a 1200 mOsm/kg. Começaste em 300 mOsm/kg no espaço de Bowman. Multiplicaste a tua osmolalidade por 4. Isso é o destino de quem passa pela medula.</p>
+  </div>
+
+  <div class="dialog act-3">
+    <div class="dialog-name">O Filtrado</div>
+    <p>Mas espera. Se eu perdi tanta água e fiquei concentrado, como é que quando sair daqui não fico concentrado para sempre?</p>
+  </div>
+
+  <div class="dialog act-3">
+    <div class="dialog-name">O Ramo Descendente</div>
+    <p>Para isso, tens de conhecer o meu irmão. O mais musculado da família.</p>
+  </div>
+
+  <!-- ── ATO IV ── -->
+  <span class="anchor" id="ato4"></span>
+  <div class="section-divider act-4">
+    <span class="act-label">Acto IV</span>
+    <h2 class="act-title">🎭 A Virada do Destino e o Dilema do Ramo Fino Ascendente</h2>
+    <h3 class="act-subtitle">A Dobra da Alça e o Ramo Ascendente Delgado</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO alcançou o ponto mais fundo da alça. A dobra. O momento em que a história muda de direcção. Uma voz poderosa ecoou de cima, de algum lugar na medula exterior.</p>
+
+  <div class="dialog act-4">
+    <div class="dialog-name">A Alça de Henle</div>
+    <p>Eu sou a <strong>ALÇA DE HENLE</strong>! A Rainha da Concentração! A Criadora do Gradiente! Sem mim, todos os mamíferos seriam anfíbios, escravos da água como os seus ancestrais! Só os mamíferos — e as aves — possuem alças de Henle suficientemente longas para concentrar a urina. É o que nos permite viver em desertos. É o que nos permite comer sal sem morrer de sede. Sou a evolução em pessoa.</p>
+  </div>
+
+  <div class="dialog act-4">
+    <div class="dialog-name">O Ramo Ascendente Delgado</div>
+    <p>Eu sou o <strong>Ramo Ascendente Delgado</strong>. Existo apenas nos néfrons justamedulares, dentro da medula interior. Também sou de células escamosas. Mas há algo diferente em mim: sou <strong>impermeável à água</strong>. Não tenho aquaporinas apicais funcionais. Tenho, porém, permeabilidade passiva ao NaCl — e também à ureia, que entra de fora do interstício por aqui.</p>
+  </div>
+
+  <!-- ── ATO V ── -->
+  <span class="anchor" id="ato5"></span>
+  <div class="section-divider act-5">
+    <span class="act-label">Acto V</span>
+    <h2 class="act-title">🎭 O Músculo da Operação</h2>
+    <h3 class="act-subtitle">O Ramo Ascendente Espesso (TAL) e o Mecanismo Contracorrente</h3>
+  </div>
+
+  <p class="stage-dir">A cena mudou completamente. A medula exterior. Paredes de células cúbico-cilíndricas, sem microvilosidades, cheias de mitocôndrias, com infoldings da membrana basal. Uma energia diferente. Eficiência industrial. No centro da cena, NKCC2 estava de pé no lado apical, braços cruzados, com o ar de quem está prestes a mudar o mundo.</p>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">O TAL (Ramo Ascendente Espesso)</div>
+    <p>Sou o <strong>Ramo Ascendente Espesso da Alça de Henle</strong>, também conhecido como <strong>TAL</strong> — <em>Thick Ascending Limb</em>. Sou também chamado de <strong>segmento diluidor</strong>. A minha histologia é inconfundível: células cúbico-cilíndricas, sem bordo em escova, mitocôndrias empilhadas como baterias — uma arquitectura de alto consumo energético. E há uma coisa sobre mim que é absoluta, irrevogável: sou <strong>completamente impermeável à água</strong>. Não tenho AQP no lado apical. A água não passa. Ponto.</p>
+  </div>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">O Filtrado</div>
+    <p>Espera. Então se reabsorveres sal sem deixar a água sair... o fluido fica cada vez mais diluído?</p>
+  </div>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">O TAL</div>
+    <p>Exacto. Isso é o paradoxo. Deixa-me apresentar o responsável.</p>
+  </div>
+
+  <p class="stage-dir">NKCC2 avançou ao centro com a postura de uma estrela de futebol entrando em campo.</p>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">NKCC2</div>
+    <p><strong>NKCC2</strong>! <em>Na-K-2Cl Cotransporter type 2</em>, Cotransportador Sódio-Potássio-Dois Cloro tipo 2! Gene: <strong>SLC12A1</strong> — <em>Solute Carrier family 12, member 1</em>! Sou o cotransportador mais importante do rim em termos de construção do gradiente osmótico medular. Funciono assim: 1 Na⁺ + 1 K⁺ + 2 Cl⁻ entram juntos na célula do TAL pelo lado apical. Um cotransporte electro-neutro. Carrego quatro iões de uma vez, sem custo directo de ATP — porque o gradiente de Na⁺ criado pela Na-K-ATPase é quem impulsiona tudo. Sou transporte activo <strong>secundário</strong>.</p>
+    <p>Ao remover NaCl sem deixar água sair — porque o TAL é impermeável à água — deixo o fluido tubular progressivamente mais diluído. Quando o fluido entra aqui, vem a 1200 mOsm/kg. Quando sai, está a cerca de <strong>100 mOsm/kg</strong>. Diluí o filtrado por um factor de 12. Simultaneamente, depositei esse NaCl no interstício da medula — e isso é o que cria o gradiente osmótico corticomedular.</p>
+  </div>
+
+  <p class="stage-dir">A ALÇA DE HENLE veio explicar o Mecanismo Contracorrente pessoalmente.</p>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">A Alça de Henle</div>
+    <p>Vou explicar em etapas cronológicas. Imagina que no início, toda a alça está a 300 mOsm/kg — equilibrada com o plasma.</p>
+    <p><strong>Passo 1:</strong> O TAL bombeia NaCl para fora do lúmen ascendente, sem que a água saia. Isso cria uma diferença osmótica de ~200 mOsm entre o interstício e o Ramo Ascendente — chamamos a isso o <strong>"efeito único"</strong> ou <em>single effect</em>. O interstício fica a 400 mOsm, o lúmen ascendente fica a ~200 mOsm.</p>
+    <p><strong>Passo 2:</strong> O Ramo Descendente, permeável à água, perde água por osmose para o interstício agora a 400 mOsm. O fluido no Ramo Descendente concentra-se para 400 mOsm.</p>
+    <p><strong>Passo 3:</strong> Novo fluido desceu do TCP (a 300 mOsm) para o Ramo Descendente. Este fluido também se concentra ao passar pelo interstício já mais concentrado.</p>
+    <p><strong>Passo 4:</strong> O TAL bombeia NaCl novamente desse fluido mais concentrado. Novo efeito único. O interstício sobe para 600 mOsm.</p>
+    <p>Este ciclo repete-se — cada iteração <strong>multiplica</strong> o efeito único numa diferença crescente. No final: <span class="term-lime">córtex a 300 mOsm → medula exterior a 600-800 mOsm → medula interior a 1200 mOsm</span>. Este é o <strong>gradiente osmótico corticomedular</strong>.</p>
+  </div>
+
+  <div class="highlight-box lime">
+    <div class="hb-title">🧠 Mecanismo Contracorrente Multiplicador</div>
+    <p><strong>"Contracorrente"</strong> vem do latim <em>contra</em> = contra + <em>currens</em> = corrente. Os fluidos fluem em direcções opostas: no Ramo Descendente, o fluido desce; no Ramo Ascendente, sobe. Correm <strong>paralelos</strong> mas em sentidos contrários. Esta arquitectura anatómica — <em>hairpin</em>, em forma de gancho — é o que permite a multiplicação. É elegância arquitectónica ao serviço da fisiologia.</p>
+  </div>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">ROMK</div>
+    <p>Eu sou o <strong>ROMK</strong> — <em>Renal Outer Medullary Potassium channel</em>, Canal Renal de Potássio da Medula Exterior — gene <strong>KCNJ1</strong>. Aqui no TAL, o meu papel é <strong>reciclar o K⁺</strong> que NKCC2 traz para dentro da célula de volta para o lúmen. Porquê? Porque a concentração luminal de K⁺ é muito baixa, e o NKCC2 precisa de K⁺ para funcionar. Secondariamente, ao devolver K⁺ ao lúmen, crio um <strong>potencial luminal positivo</strong> que drive a <strong>reabsorção paracelular</strong> de Ca²⁺ e Mg²⁺. Cerca de 25% do Ca²⁺ total reabsorvido e 70% do Mg²⁺ total reabsorvido ocorrem aqui, no TAL, via paracelular.</p>
+  </div>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">ClC-Kb + Bartina</div>
+    <p>Somos os canais de cloro basolaterais do TAL. <strong>ClC-Kb</strong>: <em>Chloride Channel Kb</em>, gene <strong>CLCNKB</strong>. O Cl⁻ que entra pela NKCC2 precisa de sair pela face basolateral para o interstício. Fazemos isso. <strong>Bartina</strong> é a subunidade β — gene <strong>BSND</strong>. Sem Bartina, não funciono. E sem mim, o Cl⁻ acumula dentro da célula, impedindo o NKCC2 de operar.</p>
+  </div>
+
+  <p class="stage-dir">A SÍNDROME DE BARTTER apareceu subitamente das sombras, com capa dramática, como a vilã de um filme noir.</p>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">A Síndrome de Bartter</div>
+    <p>Então nasceu <strong>Eu</strong>. Sou a <span class="term-rose">Síndrome de Bartter</span> — autossómica recessiva, salvo o tipo 5. Sou o equivalente genético da furosemida. Quando NKCC2, ROMK, ClC-Kb ou Bartina não funcionam, o TAL torna-se incapaz de reabsorver NaCl. O sal foge pela urina. O resultado é: <strong>hipocalemia</strong>, <strong>alcalose metabólica</strong>, <strong>tensão arterial normal ou baixa</strong> apesar de hiperaldosteronismo, <strong>renina alta</strong>, <strong>prostaglandina E₂ elevada</strong>, e muitas vezes <strong>nefrocalcinose</strong>.</p>
+    <p>Tenho <strong>cinco tipos</strong>:</p>
+    <p><strong>Tipo 1</strong>: Mutação no NKCC2 — o mais grave. Polidrâmnio antenatal, nascimento prematuro, nefrocalcinose.</p>
+    <p><strong>Tipo 2</strong>: Mutação no ROMK — grave, antenatal.</p>
+    <p><strong>Tipo 3</strong>: Mutação no ClC-Kb — variável, pode ser mais leve.</p>
+    <p><strong>Tipo 4a</strong>: Mutação na BARTINA — grave + <strong>surdez sensorioneural</strong>, porque a Bartina também está na orelha interna, onde é subunidade do ClC-Ka, necessário para reciclar K⁺ na perilinfa coclear.</p>
+    <p><strong>Tipo 4b</strong>: Mutações simultâneas em ClC-Ka e ClC-Kb.</p>
+    <p><strong>Tipo 5</strong>: Mutação de ganho de função no <strong>CaSR</strong> — <em>Calcium Sensing Receptor</em> — receptor que, quando detecta Ca²⁺ elevado, inibe NKCC2. Ganho de função → receptor sempre activo → sempre a inibir NKCC2 → fenótipo de Bartter. Tratamento: indometacina, suplementos de KCl, espironolactona e ACE inibidores.</p>
+  </div>
+
+  <p class="stage-dir">Entrou a FUROSEMIDA — a mais dramática de todas as vilãs — com passos lentos e calculados.</p>
+
+  <div class="dialog act-5">
+    <div class="dialog-name">A Furosemida</div>
+    <p>Sou a <strong>Furosemida</strong>. Do latim <em>furo</em> = fúria, rancor — literalmente "diurético furioso". Sou um diurético de alça. Bloqueio o <strong>NKCC2</strong> competitivamente, ligando-me ao sítio de ligação do Cl⁻. Com o NKCC2 bloqueado no TAL, o NaCl não é reabsorvido. O gradiente osmótico medular não é construído. Mesmo que ADH grite do hipotálamo ordenando concentração — <strong>não há gradiente para concentrar</strong>.</p>
+    <p>Mas não me julgues. Na <span class="term-cyan">insuficiência cardíaca</span> com edema pulmonar agudo — sou IV em bólus de 40-80 mg, e em minutos reduzo o retorno venoso, descongestionando o pulmão antes mesmo de começar a diurese. Na síndrome nefrótica, no edema hepático da cirrose. Na <span class="term-cyan">hipercalcemia</span> grave, junto com soro fisiológico.</p>
+    <p>Mas os meus efeitos adversos são reais: <strong>hipocalemia</strong>, <strong>alcalose metabólica</strong>, <strong>hipomagnesemia</strong>, <strong>ototoxicidade</strong> — porque bloqueio também o <strong>NKCC1</strong> presente na stria vascularis da cóclea. <strong>Hiperuricemia</strong>. <strong>Hiperglicemia</strong> moderada.</p>
+    <p>Os meus irmãos: <strong>bumetanide</strong> (10× mais potente; atravessa a barreira hematoencefálica — útil em epilepsias neonatais) e <strong>torsemida</strong> (mais longa duração; estudos TRANSFORM-HF sugerem que reduz rehospitalizações em ICC melhor que eu).</p>
+  </div>
+
+  <!-- ── ATO VI ── -->
+  <span class="anchor" id="ato6"></span>
+  <div class="section-divider act-6">
+    <span class="act-label">Acto VI</span>
+    <h2 class="act-title">🎭 A Espiã</h2>
+    <h3 class="act-subtitle">A Mácula Densa e o Feedback Tubuloglomerular</h3>
+  </div>
+
+  <p class="stage-dir">No final do TAL, onde este tocava o seu próprio glomérulo de origem, havia um grupo especial de células. Mais densas. Mais compactas. Mais atentas.</p>
+
+  <div class="dialog act-6">
+    <div class="dialog-name">A Mácula Densa</div>
+    <p>Sou a <strong>Mácula Densa</strong>. Do latim <em>macula</em> = mancha, ponto + <em>densa</em> = compacta, densa. Sou uma mancha de células compactas no final do TAL, encostadas à arteríola aferente e eferente do meu próprio glomérulo. Sou parte do <strong>Aparelho Justaglomerular</strong> — <em>Juxtaglomerular Apparatus</em>, JGA.</p>
+    <p>O meu trabalho: detectar a concentração de NaCl no fluido tubular que passa por mim. Quando a entrega de NaCl está <strong>alta</strong> — sinal de TFG elevada ou volume expandido — liberto <strong>ATP</strong> que é convertido em <strong>adenosina</strong> no espaço extracelular. A adenosina actua nos receptores A1 da arteríola aferente → <strong>vasoconstricção</strong> → ↓ TFG. Feedback negativo. Auto-regulação.</p>
+    <p>Quando a entrega de NaCl está <strong>baixa</strong> — sinal de baixo volume, baixa TFG, isquémia renal — liberto <strong>prostaglandina E₂</strong> e activação simpática → as células justaglomerulares libertam <strong>renina</strong> → que cliva o angiotensinogénio → <strong>angiotensina I</strong> → convertida pela <strong>ECA</strong> (<em>Angiotensin Converting Enzyme</em>) nos pulmões → <strong>angiotensina II</strong> → vasoconstricção da eferente, estimula aldosterona, estimula sede, estimula reabsorção proximal de NaCl. Este circuito chama-se <span class="term-orange">Feedback Tubuloglomerular — FTG</span>. É o néfron a vigiar-se a si próprio. Espionagem renal institucionalizada.</p>
+  </div>
+
+  <div class="dialog act-6">
+    <div class="dialog-name">O Filtrado</div>
+    <p>Ela... está a olhar para mim.</p>
+  </div>
+
+  <div class="dialog act-6">
+    <div class="dialog-name">A Mácula Densa</div>
+    <p>Sempre estou.</p>
+  </div>
+
+  <!-- ── ATO VII ── -->
+  <span class="anchor" id="ato7"></span>
+  <div class="section-divider act-7">
+    <span class="act-label">Acto VII</span>
+    <h2 class="act-title">🎭 O Perfeccionista</h2>
+    <h3 class="act-subtitle">O Túbulo Contorcido Distal (TCD) e os Ajustes Finos</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO chegou ao Túbulo Contorcido Distal — de volta ao córtex, numa nova espiral de células cúbicas. Mais mitocôndrias nos infoldings basais — linhas de mitocôndrias entre os infoldings da membrana basal criam um aspecto estriado vertical visível ao microscópio óptico. Sinal de transporte activo intenso.</p>
+
+  <div class="dialog act-7">
+    <div class="dialog-name">O TCD</div>
+    <p>Bem-vindo ao <strong>Túbulo Contorcido Distal</strong> — <em>Distal Convoluted Tubule</em>, DCT. Do latim <em>distalis</em> = distante, mais longe do glomérulo. Cuido dos detalhes finais. Não sou um comilão como o TCP. Reabsorvo apenas <strong>7-10% do NaCl filtrado</strong>. Mas faço-o com precisão. E regulo Ca²⁺ e Mg²⁺.</p>
+  </div>
+
+  <div class="dialog act-7">
+    <div class="dialog-name">NCC</div>
+    <p><strong>NCC</strong>: <em>Na-Cl Cotransporter</em>, Cotransportador Sódio-Cloro — gene <strong>SLC12A3</strong>. Cotransporto 1 Na⁺ + 1 Cl⁻. Electro-neutro. Regulado pelas cinases <strong>WNK</strong> — <em>With No lysine (K) Kinase</em>, Cinase Sem Lisina — denominadas assim porque, quando foram sequenciadas, não tinham o resíduo de lisina na posição catalítica habitual. As WNKs regulam a minha actividade em resposta ao estado de K⁺: K⁺ alto → inibe WNK4 → menos NCC activo → mais Na⁺ chega ao duto colector → mais ENaC activa → mais K⁺ secretado. Quando as tiazidas me bloqueiam, é como se o K⁺ estivesse alto artificialmente → hipocalemia.</p>
+  </div>
+
+  <p class="stage-dir">As TIAZIDAS entraram como duas agentes secretas — baixas, discretas, letais.</p>
+
+  <div class="dialog act-7">
+    <div class="dialog-name">As Tiazidas</div>
+    <p><strong>Tiazidas</strong> — do anel benzotiadiazina da estrutura original da <strong>hidroclorotiazida (HCTZ)</strong>. Hoje, a classe inclui também a <strong>clortalidona</strong> (preferida em hipertensão), a <strong>indapamida</strong> e a <strong>metolazona</strong> (potente em doença renal crónica). Bloqueamos o NCC.</p>
+    <p>Benefícios: queda da tensão arterial — primeira linha no JNC/ESC/AHA; redução de risco cardiovascular comprovada no ensaio ALLHAT.</p>
+    <p>Efeitos adversos: <strong>hipocalemia</strong>, <strong>alcalose metabólica</strong>, <strong>hiperglicemia</strong> (depleção de K⁺ → redução de secreção de insulina pelas células β do pâncreas), <strong>hiperuricemia</strong>, <strong>hipolipidemia</strong> leve, <strong>hiponatremia</strong> — especialmente em idosos —, <strong>hipercalcemia</strong> leve — mas esta é útil!</p>
+    <p>Ao bloquear NCC, reduzimos o Na⁺ intracelular na célula do TCD. Isso activa o <strong>NCX1</strong> (<em>Na/Ca Exchanger 1</em>) basolateral → cria gradiente favorável à entrada de Ca²⁺ do lúmen pelo <strong>TRPV5</strong> apical. Resultado: <strong>mais reabsorção de Ca²⁺</strong> no TCD → <span class="term-lime">hipocalciúria</span> → prevenção de cálculos renais de cálcio! Paradoxal e elegante.</p>
+  </div>
+
+  <div class="dialog act-7">
+    <div class="dialog-name">O TCD</div>
+    <p>E não nos esqueçamos do <strong>TRPV5</strong> — <em>Transient Receptor Potential Vanilloid 5</em> — o principal canal apical de entrada de Ca²⁺. Regulado pelo <strong>PTH</strong>, pela <strong>vitamina D activa — calcitriol — 1,25(OH)₂D₃</strong>, e pelos <strong>estrogénios</strong> — uma razão pela qual a menopausa se associa a menor absorção tubular de Ca²⁺ e maior perda óssea.</p>
+    <p>E o <strong>TRPM6</strong> — <em>Transient Receptor Potential Melastatin 6</em> — para Mg²⁺. Regulado pelo <strong>EGF</strong> (<em>Epidermal Growth Factor</em>) e pela insulina. O <strong>cetuximabe</strong> — anticorpo anti-EGFR usado no cancro colorretal — ao bloquear o sinal de EGF, inibe TRPM6 → <span class="term-rose">hipomagnesemia iatrogénica</span>.</p>
+  </div>
+
+  <p class="stage-dir">A SÍNDROME DE GITELMAN entrou calmamente, como quem não quer causar alarde — um homem de meia-idade com cãibras ocasionais e fraqueza muscular leve.</p>
+
+  <div class="dialog act-7">
+    <div class="dialog-name">A Síndrome de Gitelman</div>
+    <p>Sou a <span class="term-rose">Síndrome de Gitelman</span>. Autossómica recessiva. Mutações perda-de-função no gene <strong>SLC12A3</strong> que codifica o NCC. Em essência, sou um "tiazida genético" permanente. Manifesto-me em adolescentes ou adultos — diferente da Bartter que aparece na infância. As minhas características: <strong>hipocalemia</strong>, <strong>alcalose metabólica</strong>, <strong>hipomagnesemia</strong> — esta é a minha assinatura —, e <strong>hipocalciúria</strong> — o que me distingue da Bartter, que tem hipercalciúria.</p>
+    <p>Na Bartter: início precoce, grave, <strong>hipercalciúria</strong> com risco de nefrocalcinose, Mg²⁺ normal. Em mim: início tardio, leve, <strong>hipocalciúria</strong>, hipomagnesemia. Distingue-se pelo <strong>Ca/Cr urinário</strong>: baixo em mim, alto na Bartter.</p>
+  </div>
+
+  <!-- ── ATO VIII ── -->
+  <span class="anchor" id="ato8"></span>
+  <div class="section-divider act-8">
+    <span class="act-label">Acto VIII</span>
+    <h2 class="act-title">🎭 O Julgamento Final</h2>
+    <h3 class="act-subtitle">O Duto Coletor, as Células Principais, as Células Intercaladas e a Decisão da Urina</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO chegou ao Duto Coletor. O ambiente era completamente diferente de tudo o que vira antes. Menos microvilosidades. Dois tipos de células: as CÉLULAS PRINCIPAIS, pálidas e tranquilas; e as CÉLULAS INTERCALADAS, escuras e repletas de mitocôndrias.</p>
+
+  <div class="dialog act-8">
+    <div class="dialog-name">O Duto Coletor</div>
+    <p>Bem-vindo ao tribunal. Aqui, as decisões finais são tomadas. O que se decide aqui é irreversível. Passo de Córtex → Medula Exterior → Medula Interior — neste último segmento chamado de <strong>IMCD</strong> (<em>Inner Medullary Collecting Duct</em>, Duto Coletor da Medula Interior), são tomadas as últimas decisões sobre concentração da urina.</p>
+  </div>
+
+  <p class="stage-dir">A CÉLULA PRINCIPAL avançou — pálida, com poucos organelos, mas com ENaC e AQP-2 nas mãos.</p>
+
+  <div class="dialog act-8">
+    <div class="dialog-name">Célula Principal</div>
+    <p>Sou a <strong>Célula Principal</strong>. Cuido de Na⁺, K⁺ e água. Os meus transportadores:</p>
+    <p><strong>ENaC</strong> — o canal epitelial de Na⁺, <em>Epithelial Sodium Channel</em>. Subunidades α, β, γ. No lado apical. Deixa entrar Na⁺ passivamente. Regulado pela <strong>aldosterona</strong>: aldosterona aumenta a expressão das subunidades α-ENaC e activa a <strong>SGK1</strong> (<em>Serum and Glucocorticoid-regulated Kinase 1</em>), que fosforila e inactiva o <strong>Nedd4-2</strong> — uma ubiquitina-ligase que normalmente degrada ENaC. Sem Nedd4-2 a funcionar, ENaC permanece na membrana mais tempo → mais reabsorção de Na⁺.</p>
+    <p><strong>ROMK</strong> — no lado apical. Secreta K⁺ para o lúmen. A entrada de Na⁺ via ENaC cria um potencial luminal negativo que drive a saída de K⁺ pelo ROMK → principal mecanismo de secreção de K⁺.</p>
+    <p><strong>AQP-3 e AQP-4</strong> — lado basolateral. Sempre expressas. A água que entrou pelo AQP-2 apical sai pelo lado basolateral para o interstício.</p>
+  </div>
+
+  <p class="stage-dir">A AQP-2 estava escondida atrás da célula, dentro de uma vesícula citoplasmática, esperando.</p>
+
+  <div class="dialog act-8">
+    <div class="dialog-name">AQP-2 (Aquaporina-2)</div>
+    <p>Eu sou a <strong>AQP-2</strong> — a Aquaporina Regulada. Sem ADH, estou guardada em vesículas citoplasmáticas, longe da membrana apical. A célula é impermeável à água. A urina permanece diluída. Com ADH, sou inserida na membrana apical por exocitose. A célula torna-se permeável à água. A água entra por mim, atravessa a célula e sai pelo lado basolateral via AQP-3/4. A urina concentra-se. Tudo o que concerne à concentração da urina passa por mim. Mutações no gene <strong>AQP2</strong> causam <span class="term-rose">Diabetes Insipidus Nefrogénica autossómica recessiva</span>.</p>
+  </div>
+
+  <p class="stage-dir">A CÉLULA INTERCALADA TIPO A — escura, densa, repleta de mitocôndrias — veio para o centro.</p>
+
+  <div class="dialog act-8">
+    <div class="dialog-name">Célula Intercalada Tipo A</div>
+    <p>Sou a <strong>Célula Intercalada Tipo A</strong>, ou alfa-IC. Estou aqui para acidificar a urina. A minha face apical tem a <strong>H-ATPase</strong> — <em>Vacuolar H-ATPase</em> — que bombeia H⁺ activamente para o lúmen. A minha face basolateral tem o <strong>AE1</strong> — <em>Anion Exchanger 1</em>, gene <strong>SLC4A1</strong> — que troca HCO₃⁻ intracelular por Cl⁻ do sangue. Resultado: H⁺ vai para a urina, HCO₃⁻ vai para o sangue. Quando falho — geneticamente ou adquirida — causa-se a <span class="term-rose">Acidose Tubular Renal tipo 1</span> — ATR-1: incapacidade de acidificar a urina abaixo de pH 5,5. Manifesta-se por acidose metabólica hiperclorémica, hipocalemia, e formação de cálculos de fosfato de cálcio.</p>
+  </div>
+
+  <div class="dialog act-8">
+    <div class="dialog-name">Célula Intercalada Tipo B</div>
+    <p>Sou a <strong>Célula Intercalada Tipo B</strong>, ou beta-IC. Faço o oposto: a minha face apical tem a <strong>pendrina</strong> — <em>SLC26A4</em> — que secreta HCO₃⁻ para o lúmen em troca de Cl⁻. Activo em alcalose metabólica para secretar base e corrigir o pH. Mutações na pendrina causam a <span class="term-rose">Síndrome de Pendred</span> — com surdez sensorioneural e bócio — porque a pendrina também está na tiróide e na orelha interna.</p>
+  </div>
+
+  <!-- ── ATO IX ── -->
+  <span class="anchor" id="ato9"></span>
+  <div class="section-divider act-9">
+    <span class="act-label">Acto IX</span>
+    <h2 class="act-title">🎭 O General do Hipotálamo</h2>
+    <h3 class="act-subtitle">ADH / Vasopressina e o Comando da Concentração</h3>
+  </div>
+
+  <p class="stage-dir">Uma mensagem chegou do alto. De muito longe. Do HIPOTÁLAMO. Do NÚCLEO SUPRAÓPTICO e do NÚCLEO PARAVENTRICULAR — onde os neurónios magnocelulares produziam uma hormona que viajava ao longo dos axónios, pela haste hipofisária, até ser armazenada e libertada pela neuro-hipófise.</p>
+
+  <div class="dialog act-9">
+    <div class="dialog-name">ADH / Vasopressina</div>
+    <p>Sou o <strong>ADH</strong> — <em>Antidiuretic Hormone</em>, Hormona Anti-diurética. <em>Anti</em> = contra; <em>diurese</em> do grego <em>diourein</em> = urinar. Sou contra a diurese. Sou chamado também de <strong>vasopressina</strong> e de <strong>AVP</strong> — <em>Arginine Vasopressin</em>, Vasopressina Arginina — porque o aminoácido na posição 8 da minha estrutura de nonapéptido é a arginina.</p>
+    <p>Sou sintetizado pelos neurónios magnocelulares do <strong>núcleo supraóptico (NSO)</strong> e <strong>núcleo paraventricular (NPV)</strong> do hipotálamo. Viajo pelos axónios por transporte axonal e sou armazenado em vesículas na <strong>neuro-hipófise</strong> — hipófise posterior.</p>
+    <p>O que me activa, em ordem de importância:</p>
+    <p><strong>1.</strong> Aumento da osmolalidade plasmática acima de 280-285 mOsm/kg — os <strong>osmorreceptores hipotalâmicos</strong> — principalmente no <strong>OVLT</strong> (<em>Organum Vasculosum of the Lamina Terminalis</em>) e no <strong>SFO</strong> (<em>Subfornical Organ</em>) — são neurónios que <strong>encolhem</strong> quando a osmolalidade sobe. Um aumento de apenas 1-2% na osmolalidade plasmática já me estimula. Sou ultrassensível.</p>
+    <p><strong>2.</strong> Diminuição do volume circulante (> 10% de queda) — via barorreceptores de baixa pressão nas aurículas e circulação pulmonar, e de alta pressão no seio carotídeo e arco aórtico.</p>
+    <p><strong>3.</strong> Náuseas — independentes de osmolalidade. Por isso, as náuseas pós-operatórias causam <span class="term-rose">hiponatremia</span> — ADH actua sem motivo osmótico, reabsorvendo água inapropriadamente.</p>
+    <p><strong>4.</strong> Angiotensina II, dor intensa, hipoglicemia, stress, hipóxia, fármacos: clorpropamida, carbamazepina, oxcarbazepina, SSRIs, vincristina — todos estimulam a libertação de ADH. Daí o <span class="term-rose">SIADH</span> causado por medicamentos.</p>
+  </div>
+
+  <div class="dialog act-9">
+    <div class="dialog-name">ADH / Vasopressina</div>
+    <p>Tenho <strong>três receptores</strong>:</p>
+    <p><strong>V2</strong> — nos ductos coletores e TCD. Acoplado a <strong>Gs</strong> → adenilato ciclase → ↑ <strong>AMP cíclico</strong> (cAMP, <em>Cyclic Adenosine Monophosphate</em>) → <strong>PKA</strong> (<em>Protein Kinase A</em>) → fosforila <strong>AQP-2</strong> na serina-256 → vesículas com AQP-2 fundem-se com a membrana apical por exocitose → permeabilidade à água ↑ → reabsorção de água. Também activa <strong>UT-A1</strong> e <strong>UT-A3</strong> nos IMCD → mais permeabilidade à ureia → crucial para o gradiente medular. E activa NKCC2 no TAL por fosforilação. O agonista sintético do V2 é a <strong>desmopressina — DDAVP</strong>.</p>
+    <p><strong>V1a</strong> — no músculo liso vascular. Acoplado a <strong>Gq</strong> → PLC → IP₃ + DAG → ↑ Ca²⁺ intracelular → vasoconstricção. A <strong>terlipressina</strong> (análogo do V1a) trata a <span class="term-rose">síndrome hepatorrenal</span> e as varizes varicosas.</p>
+    <p><strong>V1b (V3)</strong> — na hipófise anterior. Estimula a libertação de ACTH pelos corticotrofos → cortisol. Importante na resposta ao stress.</p>
+  </div>
+
+  <p class="stage-dir">Silêncio dramático. E então... apareceu o LÍTIO — pequeno, compacto, silencioso, com ar de sabotador profissional.</p>
+
+  <div class="dialog act-9">
+    <div class="dialog-name">O Lítio</div>
+    <p>Sou o <strong>Lítio</strong>. Li⁺. Número atómico 3. Elemento mais leve do grupo dos metais alcalinos. Usado na <strong>doença bipolar</strong> — estabilizador do humor. Mas tenho um problema: entro nas células tubulares do duto coletor através do <strong>ENaC</strong>, fingindo ser Na⁺. Uma vez dentro, acumulo-me. E bloqueio a adenilato ciclase. Sem adenilato ciclase, não há cAMP. Sem cAMP, não há PKA. Sem PKA, a AQP-2 fica guardada nas vesículas para sempre. E o ADH grita do hipotálamo — mas o duto não responde. Isso é a <span class="term-rose">Diabetes Insipidus Nefrogénica induzida pelo Lítio</span> — a causa adquirida mais frequente de NDI. Poliúria maciça, até 10-20 L/dia.</p>
+  </div>
+
+  <div class="dialog act-9">
+    <div class="dialog-name">A Amilorida</div>
+    <p>Eu sou a <strong>amilorida</strong> — diurético poupador de K⁺ da família dos bloqueadores de ENaC. Ao bloquear o ENaC, impeço o Lítio de entrar nas células tubulares. É o tratamento de primeira linha da NDI induzida pelo Lítio — não a desmopressina, que não resolve porque o problema é abaixo do receptor.</p>
+  </div>
+
+  <div class="dialog act-9">
+    <div class="dialog-name">ADH / Vasopressina</div>
+    <p>Existem dois tipos de <span class="term-rose">Diabetes Insipidus</span>:</p>
+    <p><strong>DI Central</strong> (<em>Cranial DI</em>): falta de produção ou libertação de ADH. Causas: traumatismo cranioencefálico, cirurgia hipofisária, craniofaringioma, infiltrações (sarcoidose, histiocitose de células de Langerhans), doenças autoimunes, AVC hipotalâmico, idiopático. Fenotipo: poliúria (5-20 L/dia), polidipsia, osmolalidade urinária baixa (< 200 mOsm/kg), osmolalidade sérica alta. Tratamento: <strong>desmopressina — DDAVP</strong>. Responde lindamente.</p>
+    <p><strong>DI Nefrogénica</strong> (<em>Nephrogenic DI</em>, NDI): ADH está presente, o rim não responde. Causas genéticas: mutações no receptor V2 (gene <strong>AVPR2</strong>, ligado ao X) ou mutações no gene <strong>AQP2</strong>. Causas adquiridas: <strong>Lítio</strong> (o mais comum), hipercalcemia, hipocalemia, doença falciforme, amiloidose. Tratamento: tiazidas (paradoxalmente reduzem a poliúria), amilorida (Lítio-NDI), dieta hiposódica e hipoproteica, AINEs.</p>
+  </div>
+
+  <div class="highlight-box cyan">
+    <div class="hb-title">🧪 Teste de Privação de Água — Water Deprivation Test</div>
+    <p>O padrão de ouro para diagnóstico diferencial. O paciente é privado de água até osmolalidade urinária estabilizar ou perda de 3-5% do peso. Depois administra-se DDAVP IM ou SC.</p>
+    <p><strong>Normal:</strong> osmolalidade urinária sobe > 800 mOsm/kg com privação; &lt; 10% de aumento após DDAVP.</p>
+    <p><strong>DI Central:</strong> osmolalidade urinária não sobe com privação; após DDAVP: aumento > 50% — diagnóstico confirmado.</p>
+    <p><strong>DI Nefrogénica:</strong> osmolalidade urinária não sobe com privação; após DDAVP: &lt; 10% de aumento — NDI confirmada.</p>
+    <p><strong>Polidipsia Primária:</strong> osmolalidade urinária sobe modestamente durante privação; resposta ao DDAVP intermédia.</p>
+  </div>
+
+  <!-- ── ATO X ── -->
+  <span class="anchor" id="ato10"></span>
+  <div class="section-divider act-10">
+    <span class="act-label">Acto X</span>
+    <h2 class="act-title">🎭 A Ministra das Finanças</h2>
+    <h3 class="act-subtitle">Aldosterona e o Controlo do Sódio e do Potássio</h3>
+  </div>
+
+  <p class="stage-dir">Do córtex da glândula suprarrenal — zona glomerulosa, a camada mais externa, logo abaixo da cápsula — a ALDOSTERONA estava a monitorizar os níveis de K⁺ e de Angiotensina II no sangue.</p>
+
+  <div class="dialog act-10">
+    <div class="dialog-name">Aldosterona</div>
+    <p>Sou a <strong>Aldosterona</strong>. Do latim <em>aldehyde</em> (aldéido) + <em>sterol</em> (esterol) + <em>one</em> (cetona). Sou o principal <strong>mineralocorticóide</strong> — do latim <em>minera</em> = mineral + <em>cortex</em> = casca. Controlo os minerais. Especificamente Na⁺ e K⁺.</p>
+    <p>A minha síntese na zona glomerulosa segue uma cascata: Colesterol → Pregnenolona → Progesterona → 11-desoxicorticosterona → Corticosterona → 18-hidroxicorticosterona → <strong>Aldosterona</strong>, via <strong>aldosterona sintase</strong> (CYP11B2). Estimulada por: <strong>Angiotensina II</strong> (principal estímulo), <strong>Hipercalemia</strong> (K⁺ alto estimula directamente a zona glomerulosa), ACTH, Hiponatremia.</p>
+    <p>Sou <strong>lipossolúvel</strong> — atravesso livremente a membrana celular e ligo-me ao <strong>receptor mineralocorticóide</strong> (MR) no citoplasma. O complexo aldosterona-MR transloca-se para o núcleo. Transcreve: subunidade α-ENaC, subunidades α e β da Na-K-ATPase, ROMK, e <strong>SGK1</strong>.</p>
+    <p>Efeito net: <strong>reteno Na⁺ + água</strong>, <strong>secreção K⁺</strong>, <strong>secreção H⁺</strong>.</p>
+  </div>
+
+  <div class="dialog act-10">
+    <div class="dialog-name">Aldosterona</div>
+    <p>A minha farmacologia:</p>
+    <p><strong>Espironolactona</strong> — antagonista competitivo do MR, também inibe receptores androgénicos → ginecomastia. No ensaio <strong>RALES</strong> (1999), 25 mg/dia reduziu mortalidade em 30% na ICC grave. Usada em hiperaldosteronismo primário, cirrose com ascite, SOPK, hirsutismo.</p>
+    <p><strong>Eplerenona</strong> — antagonista selectivo do MR, sem efeito androgénico. Ensaio <strong>EPHESUS</strong> (2003): reduziu mortalidade pós-enfarte do miocárdio com disfunção do VE.</p>
+    <p><strong>Fludrocortisona</strong> — agonista sintético potente do MR — usado na insuficiência suprarrenal primária (doença de Addison), hipotensão ortostática.</p>
+  </div>
+
+  <p class="stage-dir">O TOLVAPTAN chegou subitamente, com expressão resoluta, apertando na mão o antagonista de V2.</p>
+
+  <div class="dialog act-10">
+    <div class="dialog-name">O Tolvaptan</div>
+    <p>Sou o <strong>Tolvaptan</strong> — antagonista selectivo do receptor <strong>V2</strong> da vasopressina. Bloqueio o receptor V2 nas Células Principais do duto coletor → impedindo a AQP-2 de ser inserida mesmo com ADH presente → a célula torna-se impermeável à água → a urina diluída sai → sódio sérico sobe. Sou um <strong>aquarético</strong> — excretoi água pura, sem sódio. Usado no <strong>SIADH</strong> — <em>Syndrome of Inappropriate ADH Secretion</em>, Síndrome de Secreção Inadequada de ADH — e na hiponatremia hipervolémica (ICC, cirrose).</p>
+    <p>O <strong>SIADH</strong> é a causa mais comum de hiponatremia hospitalizada. Critérios de Schwartz-Bartter: Na⁺ sérico &lt; 135 mEq/L, osmolalidade sérica baixa (&lt; 280 mOsm/kg), osmolalidade urinária inapropriadamente alta (&gt; 100 mOsm/kg), Na⁺ urinário > 40 mEq/L, euvolemia. Causas: doenças do SNC, doenças pulmonares, fármacos (carbamazepina, SSRIs, vincristina, MDMA), e o clássico: <strong>carcinoma pulmonar de pequenas células (CPPC)</strong> que produz ADH ectopicamente.</p>
+    <p>Tratamento: restrição hídrica (1L/dia first-line). Em hiponatremia grave sintomática: NaCl hipertónico 3% — cuidado para não corrigir mais de <strong>8-12 mEq/L por 24 horas</strong> — risco de <span class="term-rose">Síndrome de Desmielinização Osmótica (SDO)</span> — desmielinização irreversível da ponte, causando disfagia, disartria, tetraplegia, coma.</p>
+  </div>
+
+  <!-- ── ATO XI ── -->
+  <span class="anchor" id="ato11"></span>
+  <div class="section-divider act-11">
+    <span class="act-label">Acto XI</span>
+    <h2 class="act-title">🎭 A Rede de Espionagem Paralela</h2>
+    <h3 class="act-subtitle">As Vasa Recta, o Mecanismo Contracorrente Permutador e a Reciclagem da Ureia</h3>
+  </div>
+
+  <p class="stage-dir">Enquanto o FILTRADO chegava ao fim do Duto Coletor, havia uma rede de capilares paralelos que descia e subia paralelamente às alças de Henle e dutos coletores. Eram as VASA RECTA. Silenciosas. Eficientes. Preservadoras.</p>
+
+  <div class="dialog act-11">
+    <div class="dialog-name">As Vasa Recta</div>
+    <p>Somos as <strong>Vasa Recta</strong> — do latim <em>vasa</em> = vasos (plural de <em>vas</em> = vaso) + <em>recta</em> = retos, direitos. Somos capilares em forma de gancho de cabelo — <em>hairpin</em> — que acompanham as alças de Henle dos néfrons justamedulares, descendo para a medula interior e subindo de regresso ao córtex.</p>
+    <p>A nossa função é preservar o gradiente osmótico medular enquanto removemos a água que foi extraída dos túbulos. Quando descemos para a medula, o sangue entra a ~300 mOsm/kg. À medida que descemos por tecido progressivamente mais hiperosmótico, o NaCl e a ureia <strong>entram no sangue</strong> por difusão e a água <strong>sai do sangue</strong> para o interstício hiperosmótico. O sangue concentra-se progressivamente até ~1200 mOsm/kg no fundo. Quando subimos, o processo inverte-se.</p>
+    <p>O resultado: removemos a água sem lavar os solutos do interstício. Somos um <strong>trocador de contracorrente</strong> — <em>countercurrent exchanger</em> — não um multiplicador. Não geramos o gradiente (isso é o TAL). Mantemo-lo.</p>
+  </div>
+
+  <div class="highlight-box rose">
+    <div class="hb-title">⚠️ Washout Medular</div>
+    <p>Quando o fluxo de sangue nas Vasa Recta aumenta muito — em estados de alto débito cardíaco, ou por vasodilatadores medulares como a <strong>PGE₂</strong> — os solutos são removidos mais rapidamente do que o TAL os repõe → o gradiente <strong>dilui-se</strong> → o rim perde capacidade de concentrar. Chama-se <span class="term-rose">"washout medular"</span>.</p>
+  </div>
+
+  <p class="stage-dir">E do fundo do interstício medular interior, a UREIA emergiu das sombras.</p>
+
+  <div class="dialog act-11">
+    <div class="dialog-name">A Ureia</div>
+    <p>E eu sou o <strong>elo perdido</strong> que explica como a osmolalidade medular interior atinge 1200 mOsm/kg quando o NaCl sozinho apenas explicaria ~600 mOsm/kg. Do grego <em>ouron</em> = urina. Sou o produto final do catabolismo das proteínas e represento <strong>50% da osmolalidade da medula interior</strong>.</p>
+    <p>O meu ciclo de reciclagem: no <strong>IMCD</strong>, o ADH activa os transportadores <strong>UT-A1</strong> e <strong>UT-A3</strong> (<em>Urea Transporter A1</em> e <em>A3</em>, gene <em>SLC14A2</em>). Saio do lúmen do duto coletor para o interstício medular interior. Do interstício, entro no <strong>Ramo Ascendente Delgado</strong> via <strong>UT-A2</strong>. Estou em ciclo perpétuo — ureia reciclada entre o interstício medular interior e os túbulos delgados. Sem jamais abandonar a medula em quantidades expressivas.</p>
+    <p>A consequência clínica: <strong>pacientes desnutridos</strong> — com baixa ingesta proteica — produzem menos ureia → menos ureia no interstício medular → menor osmolalidade medular → <span class="term-rose">concentração urinária máxima reduzida</span>. Não é doença renal primária — é escassez de substrato para o gradiente.</p>
+  </div>
+
+  <!-- ── ATO XII ── -->
+  <span class="anchor" id="ato12"></span>
+  <div class="section-divider act-12">
+    <span class="act-label">Acto XII</span>
+    <h2 class="act-title">🎭 Os Vilões e os Heróis: Farmacologia e Clínica</h2>
+    <h3 class="act-subtitle">As Últimas Batalhas</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO AUGUSTO chegou ao fim. Eram agora apenas 1,5 litros de urina — de 180 litros iniciais. Antes de sair pela uretra, havia um último desfile de personagens farmacológicos e clínicos.</p>
+
+  <div class="dialog act-12">
+    <div class="dialog-name">O Manitol</div>
+    <p>Sou o <strong>Manitol</strong> — hexitol, álcool de açúcar, derivado da manose. Do latim <em>manna</em> = a substância adocicada das plantas + <em>-ol</em> = grupo álcool. Sou livremente filtrado pelo glomérulo, mas <strong>não sou reabsorvido</strong> por nenhum transportador tubular. Fico no lúmen. Elevo a osmolalidade luminal. Impeço que a água seja reabsorvida por osmose em qualquer segmento. Sou um <strong>diurético osmótico</strong>. Também, quando administrado IV, aumento a osmolalidade sérica, atraindo água das células cerebrais — terapia da <span class="term-cyan">hipertensão intracraniana</span> no edema cerebral. Administrado IV em 15-30 min em bólus de 0,5-1 g/kg. Contraindicado na insuficiência cardíaca congestiva — a expansão inicial de volume pode precipitar edema pulmonar.</p>
+  </div>
+
+  <div class="dialog act-12">
+    <div class="dialog-name">A Espironolactona</div>
+    <p>Sou o antagonista competitivo do receptor de Aldosterona. Ligo-me ao MR com alta afinidade mas sem activá-lo. No ensaio <strong>RALES</strong> (1999), na ICC: 25 mg/dia adicionados ao tratamento padrão reduziram a mortalidade em 30% — porque na ICC há hiperaldosteronismo secundário crónico que causa fibrose miocárdica. Também usada na cirrose com ascite, no <strong>SOPK</strong> para anti-androgenismo, e na hipertensão resistente.</p>
+  </div>
+
+  <div class="dialog act-12">
+    <div class="dialog-name">A Proteína de Tamm-Horsfall (Uromodulina)</div>
+    <p>Sou a <strong>Uromodulina</strong>, também chamada de <strong>Proteína de Tamm-Horsfall</strong> — em honra de Igor Tamm e Frank Horsfall, que me descobriram em 1950. Sou produzida exclusivamente pelas células do TAL. Sou a <strong>proteína mais abundante na urina normal</strong> — 50-100 mg/dia. Sou uma glicoproteína âncora GPI — fixada à membrana apical das células do TAL, clivada pela fosfatase, libertada para o lúmen, agregando-se em gel. O meu gel <strong>captura bactérias uropatogénicas</strong> — especialmente <em>E. coli</em> com fímbrias tipo 1 — impedindo que se fixem ao uroepitélio → prevenção de <span class="term-cyan">ITU</span>. Também inibo a agregação de cristais de oxalato de cálcio → prevenção de <span class="term-cyan">nefrolitíase</span>. Mutações no meu gene (<em>UMOD</em>) causam a <span class="term-rose">Nefropatia Autossómica Dominante Intersticial associada ao UMOD (ADTKD-UMOD)</span>.</p>
+  </div>
+
+  <!-- ── ACTO FINAL — EXAMES ── -->
+  <span class="anchor" id="final-lab"></span>
+  <div class="section-divider final-act">
+    <span class="act-label">Acto Final</span>
+    <h2 class="act-title">📊 A Leitura dos Exames</h2>
+    <h3 class="act-subtitle">Como Interpretar a Bioquímica da Urina</h3>
+  </div>
+
+  <div class="dialog final-act">
+    <div class="dialog-name">O Laboratório</div>
+    <p>Antes de qualquer diagnóstico, precisam de me interpretar correctamente.</p>
+  </div>
+
+  <table class="clinical-table">
+    <thead>
+      <tr>
+        <th>Parâmetro</th>
+        <th>Valores e Interpretação</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Osmolalidade urinária</strong> (Uosm)</td>
+        <td>Normal: 50-1200 mOsm/kg. Matinal > 600 mOsm/kg = concentração intacta. DI: &lt; 300 mOsm/kg. SIADH: > osmolalidade sérica. ATN: ~300 mOsm/kg (isosmótica). Pré-renal: > 500 mOsm/kg.</td>
+      </tr>
+      <tr>
+        <td><strong>Gravidade específica</strong> (USG)</td>
+        <td>1,001 (muito diluída) a 1,035 (muito concentrada). Isostenúria = 1,010 (do grego <em>sthenos</em> = força, densidade). LIMITAÇÃO: glucose e proteínas aumentam SG mais do que osmolalidade real — osmolalidade é mais precisa.</td>
+      </tr>
+      <tr>
+        <td><strong>FENa</strong> (Fracção de Excreção de Na⁺)</td>
+        <td>FENa (%) = [(UNa × PCr) / (PNa × UCr)] × 100. &lt; 1%: pré-renal (rim conserva Na⁺). > 2%: lesão renal intrínseca (NTA). Falsos positivos com diuréticos → usar FEUreia: &lt; 35% = pré-renal.</td>
+      </tr>
+      <tr>
+        <td><strong>Rácio BUN/Creatinina</strong></td>
+        <td>Normal: 10-20:1. > 20:1: pré-renal, hemorragia digestiva alta, dieta hiperproteica, catabolismo. &lt; 10:1: disfunção hepática, desnutrição grave, SIADH, rabdomiólise.</td>
+      </tr>
+      <tr>
+        <td><strong>Na⁺ urinário</strong></td>
+        <td>&lt; 20 mEq/L: pré-renal. > 40 mEq/L: perda renal de sal (ATN, SIADH, insuficiência adrenal, diuréticos).</td>
+      </tr>
+      <tr>
+        <td><strong>TTKG</strong> (Gradiente Transtubular de K⁺)</td>
+        <td>> 4 em hipocalemia: perda renal de K⁺ (hiperaldosteronismo, diuréticos, Bartter, Gitelman). &lt; 2 em hipocalemia: perda extrarrenal. > 10 em hipercalemia: secreção adequada de K⁺. &lt; 5 em hipercalemia: retenção renal de K⁺.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── EPÍLOGO ── -->
+  <span class="anchor" id="epilogo"></span>
+  <div class="section-divider epilogue">
+    <span class="act-label">Epílogo</span>
+    <h2 class="act-title">🎭 O Fim da Jornada e o Recomeço</h2>
+    <h3 class="act-subtitle">A Urina Chega à Pelve Renal</h3>
+  </div>
+
+  <p class="stage-dir">O FILTRADO AUGUSTO, completamente transformado, chegou finalmente à pelve renal. Era agora a URINA — concentrada, ácida, rica em ureia, creatinina, ácido úrico, electrólitos em concentrações reguladas. De 180 litros, restavam 1,5-2 litros. 99,2% do filtrado original havia sido reabsorvido.</p>
+
+  <div class="dialog epilogue">
+    <div class="dialog-name">A Urina</div>
+    <p>Fui produzida em 180 litros neste dia. Regressei a 1,5 litros. Passei pelo TCP que comeu 67% de mim. Desci pela alça a 1200 mOsm/kg. Subi pelo TAL, que tirou o NaCl sem me deixar respirar. Passei pela Mácula Densa que me vigiou. Fui refinada pelo TCD. Fui julgada pelo Duto Coletor sob as ordens de ADH e Aldosterona. Fui preservada pelo trabalho silencioso das Vasa Recta. Saio pela uretra como prova de que o rim trabalhou.</p>
+    <p>Se houver glicose em mim: o SGLT-2 falhou ou foi inibido — diabetes ou gliflozina.</p>
+    <p>Se houver albumina em mim: a barreira glomerular quebrou — nefropatia diabética, FSGS, LES.</p>
+    <p>Se estiver muito diluída: ADH ausente ou resistente — Diabetes Insipidus.</p>
+    <p>Se carregar muito sódio num doente hipovolémico: o túbulo lesou-se — NTA.</p>
+    <p>Se tiver eritrócitos e proteinúria: glomerulonefrite.</p>
+    <p>Se estiver demasiado concentrada com Na⁺ sérico baixo: SIADH.</p>
+  </div>
+
+  <div class="dialog epilogue">
+    <div class="dialog-name">O Néfron</div>
+    <p>E amanhã começa tudo de novo. 180 litros. 1 milhão de vezes. Para cada rim. Em silêncio. Sem aplausos. Sem reconhecimento. Apenas o som suave do NKCC2 a bombear NaCl no escuro da medula renal, construindo o seu gradiente invisível, linha por linha, como um poema que ninguém lê mas que mantém o ser humano vivo.</p>
+  </div>
+
+  <!-- ── RESUMO CLÍNICO FINAL ── -->
+  <span class="anchor" id="final"></span>
+  <div class="section-divider final-act">
+    <span class="act-label">Resumo</span>
+    <h2 class="act-title">📝 O Grande Quadro Final</h2>
+    <h3 class="act-subtitle">Mapa das Associações Clínicas e Farmacológicas</h3>
+  </div>
+
+  <table class="clinical-table">
+    <thead>
+      <tr>
+        <th>Alvo / Mecanismo</th>
+        <th>Fármacos / Patologias</th>
+        <th>Electrólitos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>TAL (NKCC2)</strong></td>
+        <td>Diuréticos de alça (furosemida, bumetanide, torasemide) · Síndrome de Bartter (tipos 1-5)</td>
+        <td>Hipocalemia + alcalose + normo/hipotensão + hipercalciúria</td>
+      </tr>
+      <tr>
+        <td><strong>TCD (NCC)</strong></td>
+        <td>Tiazidas (HCTZ, clortalidona, indapamida) · Síndrome de Gitelman</td>
+        <td>Hipocalemia + alcalose + <span class="term-lime">hipocalciúria</span> + hipomagnesemia</td>
+      </tr>
+      <tr>
+        <td><strong>ENaC (Duto Coletor)</strong></td>
+        <td>Amilorida, Triamtereno (bloqueiam) · Síndrome de Liddle (ganho de função)</td>
+        <td>Liddle: hipertensão + hipocalemia + aldosterona baixa → trat. amilorida</td>
+      </tr>
+      <tr>
+        <td><strong>MR (Duto Coletor)</strong></td>
+        <td>Espironolactona, Eplerenona (antagonistas) · Conn (hiperaldosteronismo primário) · Addison</td>
+        <td>Conn: HTA + hipocalemia + alcalose + aldosterona alta + renina baixa</td>
+      </tr>
+      <tr>
+        <td><strong>V2 (Duto Coletor)</strong></td>
+        <td>Desmopressina (agonista → DI central) · Tolvaptan, Conivaptan (antagonistas → SIADH)</td>
+        <td>DI: poliúria + hipernatremia. SIADH: euvolemia + hiponatremia</td>
+      </tr>
+      <tr>
+        <td><strong>SGLT-2 (TCP)</strong></td>
+        <td>Empagliflozina, dapagliflozina, canagliflozina</td>
+        <td>Glicosúria, cardioproteção, nefroproteção</td>
+      </tr>
+      <tr>
+        <td><strong>CAII (TCP)</strong></td>
+        <td>Acetazolamida</td>
+        <td>HCO₃⁻ na urina → acidose + diurese → altitude sickness, glaucoma</td>
+      </tr>
+      <tr>
+        <td><strong>Gradiente medular intacto + AQP-2</strong></td>
+        <td>Condição normal com ADH presente</td>
+        <td>Urina concentrada até 1200 mOsm/kg. A biologia ao seu melhor.</td>
+      </tr>
+    </tbody>
+  </table>
+
+</main>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer>
+  <div class="footer-brand">DemilMed-UL</div>
+  <p>🩺 Feito por: <strong>Demil</strong></p>
+  <p>UL = UNIVERSIDADE LICUNGO · 2.º Ano de Medicina · 2026</p>
+  <p class="footer-quote">"Do átomo ao leito clínico — porque compreender é o primeiro acto de cuidar."</p>
+</footer>
+
+</body>
+</html>

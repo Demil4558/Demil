@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Grande Teatro do Sistema Digestório Superior — DemilMed-UL</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #050810;
+  --bg-mid: #0a0f1e;
+  --bg-card: #0d1428;
+  --bg-card2: #0f1830;
+  --neon-gold: #f0c040;
+  --neon-cyan: #00e5ff;
+  --neon-magenta: #ff2d78;
+  --neon-green: #39ff14;
+  --neon-purple: #bf5fff;
+  --neon-orange: #ff7c20;
+  --neon-blue: #4488ff;
+  --text-main: #e8eaf6;
+  --text-dim: #8899bb;
+  --text-bright: #ffffff;
+  --border-glow: rgba(0,229,255,0.18);
+  --accent1: #00e5ff;
+  --accent2: #f0c040;
+  --accent3: #ff2d78;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.85;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BACKGROUND TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(0,120,200,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 85%, rgba(191,95,255,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(255,45,120,0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 80px 20px 60px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(5,8,16,0.95) 100%),
+    repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,229,255,0.02) 80px, rgba(0,229,255,0.02) 81px),
+    repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(0,229,255,0.02) 80px, rgba(0,229,255,0.02) 81px);
+  z-index: -1;
+}
+
+.hero-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  opacity: 0.8;
+}
+
+.hero h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.6rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--neon-gold) 0%, var(--neon-cyan) 50%, var(--neon-magenta) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 0 20px rgba(240,192,64,0.3));
+}
+
+.hero h2 {
+  font-family: 'Crimson Pro', serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--neon-gold);
+  opacity: 0.85;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+
+.hero h3 {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--neon-magenta);
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  margin-bottom: 32px;
+}
+
+.hero-divider {
+  width: 200px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-magenta), transparent);
+  margin: 0 auto 40px;
+  border-radius: 2px;
+  box-shadow: 0 0 12px rgba(0,229,255,0.5);
+}
+
+/* ── STICKY NAV ── */
+.toc-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(5,8,16,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,229,255,0.12);
+  padding: 10px 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  scrollbar-color: var(--neon-cyan) transparent;
+}
+
+.toc-bar::-webkit-scrollbar { height: 3px; }
+.toc-bar::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
+
+.toc-inner {
+  display: inline-flex;
+  gap: 6px;
+  padding: 0 20px;
+}
+
+.toc-link {
+  display: inline-block;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 5px 12px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 20px;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+
+.toc-link:hover {
+  color: var(--neon-cyan);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0,229,255,0.25);
+  background: rgba(0,229,255,0.05);
+}
+
+/* ── MAIN CONTENT ── */
+.content-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── ACT HEADERS ── */
+.act-block {
+  margin: 60px 0 0;
+  scroll-margin-top: 60px;
+}
+
+.act-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: var(--neon-magenta);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: 0.7;
+}
+
+.act-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.15rem, 2.8vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 8px;
+}
+
+.act-title.gold { color: var(--neon-gold); text-shadow: 0 0 18px rgba(240,192,64,0.35); }
+.act-title.cyan { color: var(--neon-cyan); text-shadow: 0 0 18px rgba(0,229,255,0.35); }
+.act-title.magenta { color: var(--neon-magenta); text-shadow: 0 0 18px rgba(255,45,120,0.35); }
+.act-title.green { color: var(--neon-green); text-shadow: 0 0 18px rgba(57,255,20,0.3); }
+.act-title.purple { color: var(--neon-purple); text-shadow: 0 0 18px rgba(191,95,255,0.35); }
+.act-title.orange { color: var(--neon-orange); text-shadow: 0 0 18px rgba(255,124,32,0.35); }
+.act-title.blue { color: var(--neon-blue); text-shadow: 0 0 18px rgba(68,136,255,0.35); }
+
+.act-subtitle {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+.act-hr {
+  height: 1px;
+  border: none;
+  margin: 18px 0 28px;
+  border-radius: 1px;
+}
+.act-hr.gold { background: linear-gradient(90deg, transparent, var(--neon-gold), transparent); box-shadow: 0 0 8px rgba(240,192,64,0.4); }
+.act-hr.cyan { background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent); box-shadow: 0 0 8px rgba(0,229,255,0.4); }
+.act-hr.magenta { background: linear-gradient(90deg, transparent, var(--neon-magenta), transparent); box-shadow: 0 0 8px rgba(255,45,120,0.4); }
+.act-hr.green { background: linear-gradient(90deg, transparent, var(--neon-green), transparent); box-shadow: 0 0 8px rgba(57,255,20,0.3); }
+.act-hr.purple { background: linear-gradient(90deg, transparent, var(--neon-purple), transparent); box-shadow: 0 0 8px rgba(191,95,255,0.4); }
+.act-hr.orange { background: linear-gradient(90deg, transparent, var(--neon-orange), transparent); box-shadow: 0 0 8px rgba(255,124,32,0.4); }
+.act-hr.blue { background: linear-gradient(90deg, transparent, var(--neon-blue), transparent); box-shadow: 0 0 8px rgba(68,136,255,0.4); }
+
+/* ── SECTION HEADERS (H3) ── */
+.section-head {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(0.95rem, 2vw, 1.35rem);
+  font-weight: 700;
+  margin: 44px 0 16px;
+  padding-left: 16px;
+  border-left: 3px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+
+.section-head.gold { border-color: var(--neon-gold); color: var(--neon-gold); }
+.section-head.magenta { border-color: var(--neon-magenta); color: var(--neon-magenta); }
+.section-head.green { border-color: var(--neon-green); color: var(--neon-green); }
+.section-head.purple { border-color: var(--neon-purple); color: var(--neon-purple); }
+.section-head.orange { border-color: var(--neon-orange); color: var(--neon-orange); }
+
+/* ── CHARACTER SPEECH BLOCKS ── */
+.speech {
+  margin: 22px 0;
+  padding: 0;
+}
+
+.char-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+
+.char-name.gold { color: var(--bg-deep); background: var(--neon-gold); }
+.char-name.cyan { color: var(--bg-deep); background: var(--neon-cyan); }
+.char-name.magenta { color: var(--text-bright); background: var(--neon-magenta); }
+.char-name.green { color: var(--bg-deep); background: var(--neon-green); }
+.char-name.purple { color: var(--text-bright); background: var(--neon-purple); }
+.char-name.orange { color: var(--bg-deep); background: var(--neon-orange); }
+.char-name.blue { color: var(--text-bright); background: var(--neon-blue); }
+.char-name.grey { color: var(--text-bright); background: #334; }
+
+.speech-body {
+  border-left: 2px solid rgba(255,255,255,0.08);
+  padding: 10px 0 10px 18px;
+  margin-top: 4px;
+}
+
+/* ── STAGE DIRECTION ── */
+.stage-dir {
+  font-style: italic;
+  color: var(--text-dim);
+  font-size: 0.92rem;
+  margin: 18px 0;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.02);
+  border-left: 2px solid rgba(255,255,255,0.1);
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── REGULAR PARAGRAPHS ── */
+p {
+  margin-bottom: 1em;
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text-main);
+}
+
+p + p { margin-top: 0.3em; }
+
+/* ── EMPHASIS ── */
+strong {
+  color: var(--neon-gold);
+  font-weight: 600;
+}
+
+em {
+  color: var(--neon-cyan);
+  font-style: italic;
+}
+
+/* ── INLINE HIGHLIGHT ── */
+.hl-magenta { color: var(--neon-magenta); font-weight: 600; }
+.hl-green { color: var(--neon-green); font-weight: 600; }
+.hl-purple { color: var(--neon-purple); font-weight: 600; }
+.hl-orange { color: var(--neon-orange); font-weight: 600; }
+.hl-cyan { color: var(--neon-cyan); font-weight: 600; }
+.hl-blue { color: var(--neon-blue); }
+
+/* ── CARD / CALLOUT ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(0,229,255,0.1);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin: 22px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.card.cyan::before { background: linear-gradient(90deg, var(--neon-cyan), transparent); box-shadow: 0 0 10px var(--neon-cyan); }
+.card.gold::before { background: linear-gradient(90deg, var(--neon-gold), transparent); box-shadow: 0 0 10px var(--neon-gold); }
+.card.magenta::before { background: linear-gradient(90deg, var(--neon-magenta), transparent); box-shadow: 0 0 10px var(--neon-magenta); }
+.card.green::before { background: linear-gradient(90deg, var(--neon-green), transparent); box-shadow: 0 0 10px var(--neon-green); }
+.card.purple::before { background: linear-gradient(90deg, var(--neon-purple), transparent); }
+.card.orange::before { background: linear-gradient(90deg, var(--neon-orange), transparent); }
+
+.card-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  opacity: 0.7;
+}
+
+.card.cyan .card-title { color: var(--neon-cyan); }
+.card.gold .card-title { color: var(--neon-gold); }
+.card.magenta .card-title { color: var(--neon-magenta); }
+.card.green .card-title { color: var(--neon-green); }
+.card.purple .card-title { color: var(--neon-purple); }
+.card.orange .card-title { color: var(--neon-orange); }
+
+/* ── TABLES ── */
+.table-wrap {
+  overflow-x: auto;
+  margin: 30px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,229,255,0.1);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  background: var(--bg-card);
+}
+
+thead tr {
+  background: rgba(0,229,255,0.08);
+}
+
+thead th {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--neon-cyan);
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid rgba(0,229,255,0.2);
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.2s;
+}
+
+tbody tr:hover { background: rgba(0,229,255,0.04); }
+
+tbody td {
+  padding: 10px 14px;
+  color: var(--text-main);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+tbody td:first-child {
+  color: var(--neon-gold);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ── EVENT LIST (DEGLUTIÇÃO) ── */
+.event-list {
+  list-style: none;
+  margin: 14px 0;
+  padding: 0;
+}
+
+.event-list li {
+  display: flex;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  line-height: 1.6;
+}
+
+.event-num {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--neon-magenta);
+  min-width: 34px;
+  padding-top: 2px;
+  font-weight: 700;
+}
+
+.event-text { flex: 1; font-size: 0.95rem; }
+
+/* ── PHASE BLOCKS ── */
+.phase-block {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  margin: 18px 0;
+  overflow: hidden;
+}
+
+.phase-header {
+  padding: 12px 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.phase-header.oral-prep { background: rgba(240,192,64,0.08); color: var(--neon-gold); border-bottom: 1px solid rgba(240,192,64,0.15); }
+.phase-header.oral-prop { background: rgba(57,255,20,0.06); color: var(--neon-green); border-bottom: 1px solid rgba(57,255,20,0.12); }
+.phase-header.faringea { background: rgba(255,45,120,0.07); color: var(--neon-magenta); border-bottom: 1px solid rgba(255,45,120,0.15); }
+.phase-header.esofagica { background: rgba(0,229,255,0.06); color: var(--neon-cyan); border-bottom: 1px solid rgba(0,229,255,0.12); }
+
+.phase-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.badge-vol { background: rgba(57,255,20,0.15); color: var(--neon-green); }
+.badge-inv { background: rgba(255,45,120,0.15); color: var(--neon-magenta); }
+
+.phase-body { padding: 16px 18px; }
+
+/* ── DRUG CARDS ── */
+.drug-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.drug-card {
+  background: rgba(13,20,40,0.8);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  padding: 16px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.drug-card:hover {
+  border-color: rgba(0,229,255,0.25);
+  box-shadow: 0 0 20px rgba(0,229,255,0.08);
+}
+
+.drug-name {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--neon-cyan);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.drug-class {
+  font-size: 0.72rem;
+  color: var(--neon-gold);
+  opacity: 0.75;
+  margin-bottom: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  letter-spacing: 0.08em;
+}
+
+.drug-body { font-size: 0.88rem; line-height: 1.6; color: var(--text-main); }
+.drug-body strong { color: var(--neon-magenta); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-card);
+  border-top: 1px solid rgba(0,229,255,0.1);
+  padding: 40px 20px;
+  text-align: center;
+  margin-top: 60px;
+}
+
+.footer-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--neon-gold), var(--neon-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.footer-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  line-height: 2;
+}
+
+.footer-quote {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--neon-gold);
+  opacity: 0.75;
+  margin-top: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.footer-divider {
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+  margin: 20px auto;
+}
+
+/* ── SCROLL ANIMATION ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── BACK TO TOP ── */
+.back-top {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0,229,255,0.1);
+  border: 1px solid rgba(0,229,255,0.3);
+  color: var(--neon-cyan);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 200;
+  transition: all 0.25s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.back-top.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.back-top:hover {
+  background: rgba(0,229,255,0.2);
+  box-shadow: 0 0 16px rgba(0,229,255,0.4);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .drug-grid { grid-template-columns: 1fr; }
+  .hero { padding: 50px 16px 40px; }
+  .content-wrap { padding: 0 14px 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-label">🎭 DemilMed-UL Apresenta</div>
+  <h1>⚡ O Grande Teatro do Sistema Digestório Superior ⚡</h1>
+  <h2>"A Odisseia do Bolo Alimentar: Saliva, Drama, Peristaltismo e Traição nos Corredores do Corpo Humano"</h2>
+  <h3>— Uma Épica em Sete Actos —</h3>
+  <div class="hero-divider"></div>
+</header>
+
+<!-- STICKY NAV -->
+<nav class="toc-bar">
+  <div class="toc-inner">
+    <a class="toc-link" href="#prologo">Prólogo</a>
+    <a class="toc-link" href="#acto1">I · Mucosa Oral</a>
+    <a class="toc-link" href="#acto2">II · Os Dentes</a>
+    <a class="toc-link" href="#acto3">III · A Língua</a>
+    <a class="toc-link" href="#acto4">IV · Glândulas Salivares</a>
+    <a class="toc-link" href="#acto5">V · Mastigação</a>
+    <a class="toc-link" href="#acto6">VI · Deglutição</a>
+    <a class="toc-link" href="#acto7">VII · Esôfago</a>
+    <a class="toc-link" href="#acto8">VIII · Fisiopatologia</a>
+    <a class="toc-link" href="#acto9">IX · Diagnóstico</a>
+    <a class="toc-link" href="#acto10">X · Farmacologia</a>
+    <a class="toc-link" href="#epilogo">Epílogo</a>
+    <a class="toc-link" href="#tabelas">Tabelas</a>
+  </div>
+</nav>
+
+<div class="content-wrap">
+
+<!-- ═══════════════════ PRÓLOGO ═══════════════════ -->
+<section id="prologo" class="act-block fade-in">
+  <div class="act-label">🎬 Prólogo</div>
+  <h2 class="act-title cyan">Antes do Caos, o Silêncio</h2>
+  <hr class="act-hr cyan">
+
+  <div class="stage-dir">O cenário: uma câmara vasta, rosada e húmida, revestida de tecido suave. A iluminação é tênue. Uma criatura muscular dorme no chão — a Língua. Nas paredes laterais, duas colunatas de estruturas brancas e brilhantes aguardam em posição de sentido. Um cheiro adocicado paira no ar. Do lado de fora, passos se aproximam. Alguém está prestes a comer.</div>
+
+  <div class="speech">
+    <div class="char-name cyan">Cavidade Oral</div>
+    <div class="speech-body">
+      <p>— Atenção. Posição de combate.</p>
+      <div class="stage-dir">Silêncio electrificante.</div>
+      <p>— Eu sou a <strong>Cavidade Oral</strong> — do latim <em>cavum oris</em>: <em>cavus</em>, vazio, escavado; <em>os, oris</em>, boca. Chamam-me simplesmente de "boca", mas essa palavra não captura minha complexidade. Eu sou a <strong>primeira câmara do trato digestório</strong>, o local onde a digestão começa de verdade — não no estômago, como os leigos erroneamente acreditam. Aqui. Neste palácio.</p>
+      <div class="stage-dir">A Cavidade Oral varre o espaço com um olhar soberano.</div>
+      <p>— Deixa-me apresentar minha arquitectura, porque cada milímetro desta estrutura tem uma razão de existir. Tenho dois compartimentos, e eles adoram discutir sobre qual é mais importante.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Vestíbulo da Boca</div>
+    <div class="speech-body">
+      <p>— Sou eu quem recebe PRIMEIRO. Eu, o <strong>Vestíbulo</strong> — de <em>vestibulum</em>, latim, "sala de entrada, átrio". Estou entre os lábios e as bochechas externamente, e os dentes e a gengiva internamente. Sou estreito, sim. Mas sem mim, nada entra de forma organizada!</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Cavidade Oral Propriamente Dita</div>
+    <div class="speech-body">
+      <p>— E eu sou o que realmente importa. Limitada anteriormente pelos dentes, lateralmente pelas bochechas, superiormente pelo palato, inferiormente pelo assoalho da boca, e posteriormente comunicando-me com a faringe pelo <strong>istmo das fauces</strong> — de <em>fauces</em>, latim, "garganta, passagem estreita". Você, Vestíbulo, é apenas minha sala de espera.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Vestíbulo</div>
+    <div class="speech-body">
+      <p>— Sala de espera é FUNDAMENTAL! Pergunta ao Código de Defesa do Consumidor!</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">Uma vibração do lado de fora. O anfitrião está abrindo a boca. Algo está chegando.</div>
+</section>
+
+<!-- ═══════════════════ ACTO I ═══════════════════ -->
+<section id="acto1" class="act-block fade-in">
+  <div class="act-label">🎭 Acto I</div>
+  <h2 class="act-title gold">As Paredes do Palácio: A Histologia da Mucosa Oral</h2>
+  <hr class="act-hr gold">
+
+  <div class="stage-dir">Antes que o caos se instale, as paredes do palácio decidem se apresentar.</div>
+
+  <div class="speech">
+    <div class="char-name magenta">Mucosa Oral</div>
+    <div class="speech-body">
+      <p>— Permitam-me. Eu, a <strong>Mucosa Oral</strong>, sou revestimento interno desta câmara. Do grego <em>mukos</em>, muco, secreção. Não sou monótona — tenho três tipos de regiões, cada uma especializada para o ambiente local, e minha histologia varia de forma elegante e funcional.</p>
+      <div class="stage-dir">A Mucosa Oral estica um braço e aponta para diferentes regiões.</div>
+      <p>— Na maior parte da boca, sou <strong>epitélio estratificado pavimentoso NÃO queratinizado</strong> — <em>stratificatus</em>, disposto em camadas; <em>pavimentosus</em>, semelhante a paralelepípedos planos; <em>non keratinisatus</em>, sem a proteína queratina nas camadas superficiais. Isso me torna flexível e adaptável. Encontras-me nas bochechas, no lábio interno, no palato mole, no soalho da boca, na face ventral da língua. Sou macia, úmida, resistente ao atrito moderado.</p>
+      <p>— MAS — e isto é importante — nas regiões que recebem forças mastigatórias intensas, eu me torno <strong>queratinizada</strong>. Olha para o palato duro e para a gengiva aderida — aquelas regiões têm queratina, tornando-me dura como armadura. <em>Keratos</em>, do grego, "chifre". A queratina é a mesma proteína dos chifres dos animais, das unhas, do cabelo. Evolução não desperdiça boas invenções.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name green">Queratina</div>
+    <div class="speech-body">
+      <p>— Eu, a <strong>Queratina</strong>, sou uma proteína fibrosa da família das proteínas estruturais intermediárias. Sou composta de cadeias polipeptídicas dispostas em alfa-hélice, que se enrollam entre si formando uma tripla hélice superenrolada — a chamada estrutura <em>coiled-coil</em>. Tenho tipos: <strong>K1/K10</strong> nas células queratinizadas, <strong>K4/K13</strong> nas células não queratinizadas da mucosa oral. Quando estou presente em abundância nas células superficiais, elas morrem e formam uma camada protetora impermeável. Sim, eu mato células para protegê-las. Isso é dedicação.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Mucosa Oral</div>
+    <div class="speech-body">
+      <p>— Minhas camadas, de baixo para cima, são: a <strong>lâmina própria</strong> — tecido conjuntivo rico em colágeno e vasos sanguíneos — e a <strong>submucosa</strong>, onde vivem as glândulas salivares menores. Mas isso é uma história para depois.</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">Uma voz gritando vem de cima.</div>
+
+  <div class="speech">
+    <div class="char-name orange">Palato Duro</div>
+    <div class="speech-body">
+      <p>— EU SOU O TECTO! O <strong>Palato Duro</strong> — de <em>palatum</em>, latim, "céu da boca". Sou formado pelos <strong>processos palatinos dos ossos maxilares</strong> e pelas <strong>lâminas horizontais dos ossos palatinos</strong>. Sou coberto por mucosa queratinizada — levemente rugosa na região anterior, onde ficam as <strong>rugas palatinas</strong> — <em>ruga</em>, latim, "dobra, ruga" — que auxiliam na manipulação do alimento pela língua. Sou duro. Sou resistente. E sem mim, a língua não teria superfície contra a qual pressionar o bolo alimentar.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Palato Mole</div>
+    <div class="speech-body">
+      <p>— E eu sou a continuação suave do meu colega — o <strong>Palato Mole</strong> ou <strong>Véu Palatino</strong> — <em>velum palatinum</em>, latim, "véu do palato", de <em>velum</em>, "véu, vela". Sou composto de músculo esquelético e tecido conjuntivo, sem osso algum. Meus cinco músculos são minha identidade:</p>
+      <div class="stage-dir">O Palato Mole levanta cinco dedos dramaticamente.</div>
+      <p>— O <strong>Tensor do Véu Palatino</strong> — <em>tensor</em>, do latim, "o que tensiona" — inervado pelo nervo mandibular (V3). Eu abro a tuba auditiva durante a deglutição. Sim, é por isso que os teus ouvidos "estalão" quando engoles com o nariz tapado!</p>
+      <p>— O <strong>Levantador do Véu Palatino</strong> — <em>levator</em>, "o que levanta" — inervado pelo nervo vago (X) pelo plexo faríngeo. Quando eu me contrajo, elevo o palato e fecho a comunicação com a nasofaringe, impedindo que o alimento suba pelo nariz durante a deglutição. Esta acção é absolutamente essencial — e quando falha, o resultado é embaraçoso.</p>
+      <p>— O <strong>Músculo da Úvula</strong> — <em>uvula</em>, diminutivo de <em>uva</em>, latim, "uva pequena", porque minha apêndice se parece com uma uvinha pendurada. Encurta a úvula.</p>
+      <p>— O <strong>Palatoglosso</strong> — <em>palato</em> + <em>glossus</em> (grego, língua). Liga o palato à língua. Quando contrai, levanta a língua e fecha o istmo das fauces.</p>
+      <p>— O <strong>Palatofaríngeo</strong> — liga o palato à faringe, abaixando o palato mole e estreitando a faringe.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Úvula</div>
+    <div class="speech-body">
+      <p>— OLHEM PARA MIM. Eu sou a <strong>Úvula</strong> — de <em>uvula</em>, "uvazinha". Sou o apêndice pendurado no centro do palato mole, e por séculos os humanos debateram minha utilidade. Humilhante. Mas saibam: eu contribuo para a fala, especialmente para os sons uvulares do francês e do árabe. Também ajudo a selar a nasofaringe. E tenho tecido linfático. Não sou decoração!</p>
+      <div class="stage-dir">Pausa. Ninguém comenta. A Úvula suspira profundamente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO II ═══════════════════ -->
+<section id="acto2" class="act-block fade-in">
+  <div class="act-label">🎭 Acto II</div>
+  <h2 class="act-title magenta">Os Guerreiros do Trono: Os Dentes</h2>
+  <hr class="act-hr magenta">
+
+  <div class="stage-dir">Um estrondo. As duas arcadas dentárias se aproximam e cada dente se posiciona. São 32 personagens, cada um com sua identidade distinta. O ruído é ensurdecedor.</div>
+
+  <div class="speech">
+    <div class="char-name gold">Incisivo Central Superior Direito</div>
+    <div class="speech-body">
+      <p>— ORDEM! Sou o <strong>Incisivo Central Superior Direito</strong>, número <strong>11</strong> no sistema FDI — <em>Fédération Dentaire Internationale</em>, criado em 1971, o sistema mais usado no mundo clínico! Deixa-me explicar a lógica deste sistema porque ela é elegante.</p>
+      <div class="stage-dir">O dente desenha uma quadrante no ar.</div>
+      <p>— O sistema FDI divide a boca em quatro <strong>quadrantes</strong>: superior direito, superior esquerdo, inferior esquerdo, inferior direito — numerados <strong>1, 2, 3 e 4</strong> respectivamente, sempre em sentido horário a partir do quadrante superior direito do paciente. Em cada quadrante, os dentes são numerados de <strong>1 a 8</strong>, da linha mediana para trás. Portanto, eu sou o dente <strong>1</strong> do quadrante <strong>1</strong> — logo: <strong>11</strong>. O meu simétrico, o incisivo central superior esquerdo, é o <strong>21</strong>. Simples, funcional, universal.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Molar</div>
+    <div class="speech-body">
+      <p>— Aqui existe também o sistema de <strong>Palmer</strong> — criado por Corydon Palmer em 1891 — que usa uma cruz dividindo os quadrantes e números de 1 a 8. E há o sistema <strong>Universal Americano</strong>, que numera os 32 dentes de 1 a 32, começando pelo terceiro molar superior direito, indo pela face superior até o terceiro molar superior esquerdo (dentes 1-16), depois descendo pela face inferior da esquerda para a direita (dentes 17-32). Caótico para quem não cresceu nesse sistema.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Incisivo Central</div>
+    <div class="speech-body">
+      <p>— Somos os <strong>Incisivos</strong> — de <em>incisivus</em>, do latim <em>incidere</em>, "cortar, incidir". Temos formato de cinzel, com borda incisal afiada. Somos a <strong>vanguarda da mastigação</strong>: cortamos o alimento em porções manejáveis. Quatro em cima, quatro em baixo — oito guerreiros na linha de frente.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Incisivo Lateral</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Incisivo Lateral</strong> — menor que meu parceiro central, com forma levemente diferente. Na maxila, minha coroa tem uma fosseta cingular mais pronunciada. Clinicamente, sou relevante porque tenho maior frequência de <strong>agenesia</strong> — ausência congénita — especialmente em casos de síndromes como a hipodontia associada ao gene <em>PAX9</em>. Quando falto, o ortodontista tem muito trabalho.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Canino</div>
+    <div class="speech-body">
+      <p>— CANINO. Do latim <em>caninus</em>, "pertencente ao cão". Porque tenho a mesma ferocidade. Tenho uma única cúspide pontiaguda — dentes monocúspides — e sou o dente mais longo da boca, com a raiz mais comprida e robusta de todas. Minha função? <strong>Rasgar, dilacerar, perfurar</strong>. Sou o dente de presas da humanidade.</p>
+      <p>— Clinicamente, sou chamado de <strong>"cornerstone"</strong> da oclusão — a pedra angular. Minha posição na curvatura da arcada serve como guia para o <strong>movimento lateral da mandíbula</strong>. Na chamada <strong>"guia canina"</strong>, quando a mandíbula se move lateralmente, sou eu quem protejo os dentes posteriores de forças traumáticas. Se falto ou estou em má posição, toda a oclusão sofre.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Pré-Molar</div>
+    <div class="speech-body">
+      <p>— Sou o <strong>Pré-Molar</strong> — <em>prae</em>, antes; <em>molare</em>, molar. Também chamado de <strong>Dente Bicúspide</strong> — tenho duas cúspides, uma vestibular e uma palatina/lingual. Sou o dente de transição: nem o incisivo cortador, nem o molar triturador. Tenho particular relevância em <strong>ortodontia</strong>: frequentemente, nas extrações necessárias para correcção de apinhamento dentário, sou eu que sou sacrificado. Não é fácil ser o mártir da boca.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name orange">Molar 1</div>
+    <div class="speech-body">
+      <p>— E então chegamos ao poder bruto. <strong>Molar</strong> — de <em>mola</em>, latim, "mó de moinho". Literalmente, sou uma pedra de moer. Tenho quatro a cinco cúspides, coroa larga, múltiplas raízes — três na maxila, dois na mandíbula. Sou o dente que <strong>tritura</strong> o alimento em partículas finas, criando área de superfície máxima para as enzimas digestivas agirem.</p>
+      <p>— O <strong>Primeiro Molar Permanente</strong> erompe aos <strong>6 anos de idade</strong>. Por isso também me chamam de <strong>"dente dos seis anos"</strong>. Sou o primeiro dente permanente a aparecer, e por isso frequentemente sou confundido pelos pais com um dente de leite. <span class="hl-magenta">ERRO CLÍNICO GRAVE.</span> Quando me perco por cárie sem tratamento, o espaço não fecha naturalmente e compromete toda a dentição permanente.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Siso</div>
+    <div class="speech-body">
+      <p>— Oi. Sou o <strong>Siso</strong>. Também chamado de <strong>Terceiro Molar</strong> ou <strong>"Dente do Juízo"</strong> — em inglês, <em>wisdom tooth</em>, porque erompo tarde, entre os 17-25 anos, quando teoricamente a pessoa já tem "sabedoria". <em>Siso</em> vem do latim <em>sensu</em>, senso, razão. Não tenho certeza se isso é um elogio ou uma ironia.</p>
+      <p>— A verdade é que sou um vestigio evolutivo. Com a dieta processada moderna e o encurtamento das arcadas dentárias ao longo da evolução, muitas vezes <strong>não tenho espaço suficiente para erupcionar correctamente</strong>. Fico <strong>incluso</strong> — <em>inclusus</em>, latim, "fechado dentro" — total ou parcialmente aprisionado no osso ou gengiva, causando dor, infecção, cisto folicular e dano ao molar adjacente.</p>
+      <p>— Clinicamente, a <strong>pericoronarite</strong> — inflamação do tecido ao redor de minha coroa parcialmente erupcionada — é tratada com antibióticos (amoxicilina, metronidazol) e frequentemente a solução definitiva é minha extracção cirúrgica. Aceito isso com dignidade.</p>
+    </div>
+  </div>
+
+  <h3 class="section-head magenta">🦷 O Dente por Dentro: Histologia Dramática</h3>
+
+  <div class="stage-dir">O palco escurece. Um dente é seccionado ao meio, como num corte histológico. As estruturas internas saem aos gritos.</div>
+
+  <div class="speech">
+    <div class="char-name cyan">Esmalte</div>
+    <div class="speech-body">
+      <p>— EU SOU O <strong>ESMALTE</strong> — do germânico antigo <em>smeltan</em>, "fundir, derreter". Sou a <strong>estrutura mais dura do corpo humano</strong> — com dureza <strong>5 na escala de Mohs</strong>, chegando a 96-98% de minerais inorgânicos, predominantemente <strong>hidroxiapatita</strong> [Ca₁₀(PO₄)₆(OH)₂]. Os 2-4% restantes são água e proteínas orgânicas, principalmente <strong>amelogeninas</strong> e <strong>enamelinas</strong>.</p>
+      <p>— Sou formado pelos <strong>ameloblastos</strong> — de <em>amelus</em> + <em>blastos</em>, grego, "célula germinativa". Eles me secretam durante o desenvolvimento do dente e depois desaparecem. Isso significa: <strong>eu não me regenero. Nunca.</strong> Uma vez destruído, nunca mais voltarei. Isso é tanto minha tragédia quanto minha grandeza.</p>
+      <div class="stage-dir">Pausa dramática.</div>
+      <p>— A <strong>cárie dentária</strong> — <em>caries</em>, latim, "podridão, deterioração" — é o meu maior inimigo. As bactérias orais, especialmente o <em>Streptococcus mutans</em>, fermentam carboidratos produzindo <strong>ácido láctico</strong>. Quando o pH cai abaixo de <strong>5,5</strong> — o chamado <strong>pH crítico do esmalte</strong> — começa minha <strong>desmineralização</strong>. A <strong>flúorterapia</strong> funciona porque o flúor forma <strong>fluorapatita</strong> [Ca₁₀(PO₄)₆F₂], com pH crítico de 4,5 e muito mais resistente. Inteligente.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Dentina</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Dentina</strong> — do latim <em>dens, dentis</em>, "dente". Componho a maior parte do dente. Tenho ~70% de componente mineral (hidroxiapatita) e ~30% orgânico (principalmente <strong>colágeno tipo I</strong> e pequenas proteínas não colagenosas).</p>
+      <p>— Minha característica mais fascinante são os <strong>túbulos dentinários</strong> — milhares de canais microscópicos que percorrem toda minha espessura radialmente, da polpa até a junção amelodentinária. Dentro desses túbulos vivem os <strong>prolongamentos odontoblásticos</strong>. Isso explica a <strong>hipersensibilidade dentinária</strong>: quando meus túbulos ficam expostos, estímulos como frio, calor, doce ou toque mecânico movimentam o fluido nos túbulos, estimulando os prolongamentos odontoblásticos, que ativam as fibras nervosas da polpa. Os dentifrícios dessensibilizantes com <strong>nitrato de potássio (KNO₃)</strong> despolarizam os neurónios da polpa, reduzindo esse sinal.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Polpa Dentária</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Polpa</strong> — do latim <em>pulpa</em>, "carne mole, tutano". Estou no centro do dente, dentro da <strong>câmara pulpar</strong> e dos <strong>canais radiculares</strong>. Sou composta de tecido conjuntivo frouxo, vasos sanguíneos, nervos e os famosos <strong>odontoblastos</strong> na minha periferia. Tenho cinco funções principais:</p>
+      <div class="stage-dir">A Polpa conta nos dedos.</div>
+      <p>— <strong>Formativa</strong>: os odontoblastos produzem dentina ao longo de toda a vida — a chamada <strong>dentina secundária</strong> — diminuindo gradualmente o tamanho da câmara pulpar com o envelhecimento.</p>
+      <p>— <strong>Nutritiva</strong>: forneço nutrição para a dentina através dos prolongamentos odontoblásticos.</p>
+      <p>— <strong>Sensorial</strong>: sou rico em fibras <strong>A-delta</strong> (dor aguda, precisa, bem localizada) e fibras <strong>C</strong> (dor difusa, latejante, relacionada à inflamação pulpar grave).</p>
+      <p>— <strong>Defensiva</strong>: quando atacada por bactérias da cárie, produzo <strong>dentina terciária</strong> (reparativa/irritacional) como barreira de defesa.</p>
+      <p>— <strong>Proprioceptiva</strong>: junto ao periodonto, contribuo para a percepção da pressão durante a mastigação.</p>
+      <div class="stage-dir">A Polpa estremece.</div>
+      <p>— E quando as bactérias chegam a mim, desenvolvo <strong>pulpite</strong>. Pulpite reversível: dói, vai embora. Pulpite irreversível: precisa de <strong>tratamento de canal radicular</strong> — a famosa <strong>endodontia</strong> (<em>endon</em>, grego, "dentro"; <em>odon</em>, dente). O tratamento remove todo meu tecido, limpa os canais com limas endodônticas e <strong>hipoclorito de sódio (NaOCl)</strong>, e obtura com <strong>guta-percha</strong> e cimento selador.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Cemento</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Cemento</strong> — do latim <em>caementum</em>, "pedra tosca usada em construção". Sou um tecido mineralizado especializado que cobre a superfície radicular do dente. Tenho similaridade com o osso — ~45-50% mineral, ~50% orgânico — mas não tenho canais de Havers nem vascularização própria. As <strong>fibras de Sharpey</strong> — fibras colágenas do <strong>ligamento periodontal</strong> — se inserem em mim, ancorando o dente no osso alveolar.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name orange">Ligamento Periodontal</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Ligamento Periodontal</strong> — <em>peri</em>, ao redor; <em>odon</em>, dente; <em>ligamentum</em>, ligamento. Também chamado de <strong>desmodonto</strong> — <em>desmos</em>, grego, "ligamento, vínculo". Sou o tecido conjuntivo que une o cemento ao osso alveolar. Minhas fibras são as <strong>fibras de Sharpey</strong>, dispostas em várias direcções: horizontal, oblíquo (a maioria), apical, interradicular, crestal alveolar.</p>
+      <p>— Tenho largura de apenas <strong>0,15 a 0,38 mm</strong>, mas sou extraordinariamente funcional. Amortece as forças mastigatórias — até <strong>100 kg de força</strong> num único dente. Contém <strong>mecanorreceptores</strong> que fornecem <strong>propriocepção</strong> — você "sente" quando morde uma pedra na comida milissegundos antes de machucar o dente.</p>
+      <p>— A <strong>periodontite</strong> — destruição progressiva do periodonto por biofilme bacteriano — é a doença que me destrói. O <em>Aggregatibacter actinomycetemcomitans</em> e o <em>Porphyromonas gingivalis</em> são meus maiores inimigos. Tratamento: raspagem e alisamento radicular (RAR), antibióticos adjuvantes, cirurgia periodontal.</p>
+    </div>
+  </div>
+
+  <h3 class="section-head gold">🦷 A Fórmula Dentária: O Recenseamento do Exército</h3>
+
+  <div class="speech">
+    <div class="char-name grey">Dentes Decíduos</div>
+    <div class="speech-body">
+      <p>— Nós somos os <strong>dentes decíduos</strong> — <em>deciduus</em>, do latim <em>decidere</em>, "cair, desprender". Também chamados de dentes <strong>primários</strong>, <strong>de leite</strong> ou <strong>temporários</strong>. Somos 20 ao total. Nossa fórmula dentária é, por quadrante: <strong>2 incisivos, 1 canino, 0 pré-molares, 2 molares</strong> = 2i 1c 0pm 2m × 4 quadrantes = 20 dentes.</p>
+      <p>— Na notação FDI, usamos as dezenas <strong>5, 6, 7 e 8</strong> para os quadrantes. O incisivo central superior direito decíduo é o dente <strong>51</strong>. Erupcionamos entre os 6-30 meses de vida e começamos a esfoliar a partir dos 6 anos. Nossas raízes sofrem <strong>reabsorção fisiológica</strong> pelo próprio organismo à medida que os dentes permanentes se aproximam. Somos um milagre transitório.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Dentes Permanentes</div>
+    <div class="speech-body">
+      <p>— E nós somos os <strong>dentes permanentes</strong> — somos 32. Nossa fórmula por quadrante: <strong>2 incisivos, 1 canino, 2 pré-molares, 3 molares</strong> = 2I 1C 2PM 3M × 4 = 32 dentes.</p>
+      <p>— Cronologia da erupção: 1º molar (6 anos), incisivos centrais inferiores (6-7), incisivos centrais superiores (7-8), incisivos laterais (8-9), caninos inferiores (9-10), pré-molares (10-12), caninos superiores (11-12), 2º molares (11-13), 3º molares/sisos (17-25, se erupcionarem).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO III ═══════════════════ -->
+<section id="acto3" class="act-block fade-in">
+  <div class="act-label">🎭 Acto III</div>
+  <h2 class="act-title green">A Diva Multitarefa: A Língua</h2>
+  <hr class="act-hr green">
+
+  <div class="stage-dir">A grande criatura muscular que dormia no chão desperta devagar, espreguiça-se, e olha para todos com uma expressão que mistura arrogância e genuíno orgulho.</div>
+
+  <div class="speech">
+    <div class="char-name green">Língua</div>
+    <div class="speech-body">
+      <p>— Ah. Finalmente minha vez. Eu sou a <strong>Língua</strong> — do latim <em>lingua</em>, da raiz indo-européia <em>dnghu</em>, a mesma de "linguagem". Sou o órgão musculoso mais versátil desta cavidade. Sem mim, não há fala articulada, não há deglutição, não há gustação, não há posicionamento do alimento durante a mastigação.</p>
+      <div class="stage-dir">A Língua se levanta e gira lentamente para que todos a vejam.</div>
+      <p>— Morfologicamente, divido-me em <strong>dois terços anteriores</strong> — o <strong>corpo</strong> — e <strong>um terço posterior</strong> — a <strong>raiz</strong> ou base da língua. A fronteira entre essas duas porções é o <strong>sulco terminal</strong> — <em>sulcus terminalis</em>. No vértice desse V encontra-se o <strong>forame cego</strong> — <em>foramen caecum</em>, latim, "abertura cega, sem saída" — um orifício vestigial que marca o local onde a <strong>glândula tireoide</strong> emigrou para baixo durante o desenvolvimento embrionário. Uma cicatriz histórica!</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Papilas Filiformes</div>
+    <div class="speech-body">
+      <p>— Somos as <strong>Papilas Filiformes</strong> — <em>filum</em>, latim, "fio". As mais numerosas de todas. Distribuímo-nos por toda a superfície dorsal dos dois terços anteriores da língua. Somos <strong>cônicas, afiladas, queratinizadas</strong>, sem corpúsculos gustativos. Nossa função é <strong>mecânica</strong> — criamos a superfície áspera da língua, como a língua de um gato, que raspa e retém o alimento. Também nos ressecamos e aderimos detritos na <strong>glossite</strong> e na língua saburrosa — <em>saburra</em>, latim, "lastro, sujeira".</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Papilas Fungiformes</div>
+    <div class="speech-body">
+      <p>— Somos as <strong>Papilas Fungiformes</strong> — <em>fungus</em>, latim, "cogumelo". Parecemos pequenos cogumelos vermelhos dispersos entre as filiformes, principalmente na ponta e bordas laterais. Somos <strong>vascularizadas</strong> (daí a cor vermelha), e <strong>contemos botões gustativos</strong> — 3-5 por papila. Somos as principais responsáveis pela gustação na ponta da língua.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Papilas Valadas / Circunvaladas</div>
+    <div class="speech-body">
+      <p>— Nós somos as <strong>Papilas Valadas</strong> — também chamadas <strong>Circunvaladas</strong> — <em>vallum</em>, latim, "muro, trincheira". Somos apenas <strong>7 a 12</strong> em número — uma elite exclusiva — mas as maiores de todas, dispostas em fila em V sobre o sulco terminal. Cada uma de nós carrega <strong>centenas de botões gustativos</strong> nas paredes do sulco que nos rodeia, protegidos pelo líquido das <strong>glândulas serosas de Ebner</strong>. Somos responsáveis principalmente pelo sabor <strong>amargo</strong> — um mecanismo de alarme de última hora antes de engolir substâncias potencialmente tóxicas.</p>
+      <p>— Clinicamente, a <strong>glossite migratória benigna</strong> — também chamada <strong>língua geográfica</strong> — produz lesões avermelhadas irregulares pela atrofia das papilas filiformes adjacentes, criando um mapa mutante na superfície da língua. Inofensiva mas de aparência dramática.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Papilas Foliadas</div>
+    <div class="speech-body">
+      <p>— Nós, as <strong>Papilas Foliadas</strong> — <em>folium</em>, latim, "folha" — somos dobras paralelas nas bordas posteriores da língua. Somos bem desenvolvidas em crianças, mas regredimos progressivamente nos adultos. Ainda contemos botões gustativos. Às vezes podemos ser confundidas com lesões suspeitas durante exame clínico — gerando alarme desnecessário. Paciência.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Botão Gustativo</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Botão Gustativo</strong> — <em>caliculus gustatorius</em>, latim, "cálice do paladar". Em inglês, <em>taste bud</em>. Sou um órgão receptor sensorial oval, semelhante a uma cebola cortada. Contenho cerca de <strong>50-100 células receptoras gustatórias</strong> (Tipo I, II e III), células de suporte e células basais.</p>
+      <p>— Reconheço <strong>cinco sabores primários</strong>: <strong>doce</strong> (receptor GPCR, família T1R); <strong>salgado</strong> (íons Na⁺ — canais iônicos ENaC); <strong>ácido</strong> (H⁺ — canais PKD2L1); <strong>amargo</strong> (receptor T2R, ~25 GPCRs diferentes); <strong>umami</strong> (glutamato — receptor T1R1/T1R3 GPCR).</p>
+      <p>— Existe crescente evidência para um sexto sabor: <strong>oleogustus</strong> (ácidos gordurosos de cadeia longa), e possivelmente um sétimo: <strong>kokumi</strong> (sensação de espessura e persistência).</p>
+      <p>— Clinicamente, a <strong>disgeusia</strong> — <em>dys</em>, grego, "alterado"; <em>geusis</em>, "paladar" — é a percepção gustativa alterada. Pode ser causada por deficiência de <strong>zinco</strong>, infecção por COVID-19, quimioterapia, radioterapia, hipotiroidismo. A <strong>ageusia</strong> — ausência de paladar — é sua forma extrema.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name green">Língua</div>
+    <div class="speech-body">
+      <p>— Agora, minha musculatura. Tenho <strong>músculos intrínsecos</strong> e <strong>músculos extrínsecos</strong>. TODOS os meus músculos são inervados pelo <strong>nervo hipoglosso</strong> (NC XII — <em>hypo</em>, abaixo; <em>glossa</em>, língua) — excepto o <strong>palatoglosso</strong>, que é inervado pelo nervo vago (X).</p>
+      <p>— Músculos intrínsecos: <strong>longitudinal superior</strong> (encurta, curva a ponta para cima), <strong>longitudinal inferior</strong> (curva a ponta para baixo), <strong>transverso</strong> (estreita e alonga), <strong>vertical</strong> (aplana e alarga).</p>
+      <p>— Músculos extrínsecos: <strong>genioglosso</strong> — <em>genion</em>, grego, "queixo" — origina-se na espinha do mento e projeta a língua para fora e para baixo. Se você pedir ao paciente para mostrar a língua e ela desviar para um lado, o <strong>nervo hipoglosso ipsilateral</strong> a essa direção está comprometido.</p>
+      <p>— E minha inervação sensitiva é uma obra de arte embrionária: os <strong>dois terços anteriores</strong> têm tato pelo <strong>nervo lingual</strong> (V3) e gustação pela <strong>corda do tímpano</strong> (VII). O <strong>um terço posterior</strong> tem toda a sensibilidade pelo <strong>nervo glossofaríngeo</strong> (NC IX). A base da língua tem contribuição do <strong>nervo vago</strong> (NC X) para a sensibilidade geral.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO IV ═══════════════════ -->
+<section id="acto4" class="act-block fade-in">
+  <div class="act-label">🎭 Acto IV</div>
+  <h2 class="act-title purple">O Laboratório Salivar: As Glândulas e a Saliva</h2>
+  <hr class="act-hr purple">
+
+  <div class="stage-dir">Um corredor lateral. Três edifícios imponentes — as glândulas salivares maiores — pulsam em actividade constante, produzindo o fluido mais subestimado do corpo humano.</div>
+
+  <div class="speech">
+    <div class="char-name orange">Glândula Parótida</div>
+    <div class="speech-body">
+      <p>— A maior delas sou eu. A <strong>Parótida</strong> — do grego <em>para</em>, ao lado; <em>ous, otos</em>, orelha: "ao lado da orelha". Sou a maior glândula salivar, pesando cerca de <strong>25-30 gramas</strong>. Localizo-me abaixo e à frente do pavilhão auricular, entre o masséter e o músculo esternocleidomastóideo. Meu ducto excretor — o <strong>Ducto de Stensen</strong> — abre-se no vestíbulo oral, ao nível do <strong>segundo molar superior</strong>.</p>
+      <p>— Histologicamente, sou uma <strong>glândula serosa pura</strong> — produz saliva aquosa, rica em proteínas, especialmente <strong>amilase salivar</strong>. Minhas células secretoras formam <strong>ácinos serosos</strong> — <em>acinus</em>, latim, "baga, uva".</p>
+      <p>— Clinicamente, sou o local da <strong>parotidite epidémica</strong> — a <strong>papeira/caxumba</strong> — causada pelo <strong>vírus da parotidite</strong> (Paramyxovirus). A vacina <strong>MMR</strong> (Measles-Mumps-Rubella) previne isso. Sou também local de origem de <strong>tumores salivares</strong> — o <strong>adenoma pleomórfico</strong> é o tumor benigno mais comum e o <strong>carcinoma mucoepidermóide</strong> é o maligno mais comum.</p>
+      <p>— Atenção: o <strong>nervo facial</strong> (NC VII) passa ATRAVÉS de mim. Toda cirurgia parotídea é um exercício de contenção de ansiedade cirúrgica, porque lesão do facial causa <strong>paralisia facial periférica</strong>.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Glândula Submandibular</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Glândula Submandibular</strong>. Sou a <strong>segunda maior</strong>, com cerca de <strong>8-10 gramas</strong>, mas sou responsável por <strong>70% da produção salivar em repouso</strong>. Sou mais importante funcionalmente do que a minha colega maior!</p>
+      <p>— Sou uma glândula <strong>mista</strong> — tenho ácinos serosos (maioria) e mucosos, além de <strong>demi-luas serosas</strong>. Meu ducto excretor — o <strong>Ducto de Wharton</strong> — abre-se na <strong>carúncula sublingual</strong>, ao lado do frênulo lingual.</p>
+      <p>— Clinicamente, sou o local mais comum de <strong>cálculos salivares</strong> (sialolitíase) — porque meu ducto é longo, sinuoso e minha saliva é mais viscosa e rica em cálcio. Um cálculo no Ducto de Wharton causa tumefacção dolorosa submandibular durante as refeições.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Glândula Sublingual</div>
+    <div class="speech-body">
+      <p>— E eu, a <strong>Sublingual</strong>, sou a menor das três. Localizo-me no soalho da boca, sob a mucosa. Tenho <strong>múltiplos pequenos ductos</strong> — os <strong>ductos de Rivinus</strong>. Sou predominantemente <strong>mucosa</strong> — minha saliva é espessa, viscosa, rica em mucinas. Produzo apenas <strong>5% da saliva total</strong>, mas minha contribuição para a lubrificação das mucosas é fundamental.</p>
+      <p>— O <strong>rânula</strong> — do latim <em>rana</em>, "rã" — é um cisto mucoso de retenção derivado de um dos meus ductos obstruídos. Tratamento: marsupialização cirúrgica ou remoção da glândula.</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">As três glândulas salivares juntam-se num grande caldeirão. Substâncias emergem do líquido resultante, cada uma apresentando-se.</div>
+
+  <div class="speech">
+    <div class="char-name blue">Saliva</div>
+    <div class="speech-body">
+      <p>— Produzimos juntos cerca de <strong>0,5 a 1,5 litros por dia</strong> de saliva — <em>saliva</em>, latim, possivelmente da raiz <em>sal</em>, sal. Em repouso: predomina a submandibular. Com estímulo: a parótida assume a liderança. Nossa composição:</p>
+      <p>— <strong>Água</strong>: ~99,5%. Essencial para dissolver moléculas gustativas, hidratar mucosas, diluir ácidos.</p>
+      <p>— <strong>Eletrólitos</strong>: sódio (Na⁺), potássio (K⁺), cloreto (Cl⁻), bicarbonato (HCO₃⁻), fosfato, cálcio, magnésio. O bicarbonato é nosso <strong>tampão</strong> — mantém o pH salivar entre <strong>6,0 e 7,4</strong>, protegendo o esmalte. <strong>pH crítico do esmalte = 5,5</strong>. Nossa missão: nunca deixar o pH oral cair abaixo disso.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name green">Amilase Salivar</div>
+    <div class="speech-body">
+      <p>— EU SOU A <strong>AMILASE SALIVAR</strong> — também chamada <strong>Ptialina</strong> — de <em>ptualon</em>, grego, "saliva". Sou uma <strong>endoglicosidase</strong> que cliva as ligações <strong>α-1,4-glicosídicas</strong> do amido e do glicogénio internamente, produzindo <strong>maltose</strong>, <strong>maltotriose</strong> e <strong>dextrinas limite</strong>.</p>
+      <p>— Meu mecanismo: com meus resíduos catalíticos — <strong>Asp197, Glu233 e Asp300</strong> no sítio activo — uso água para hidrolisar a ligação glicosídica. O produto? Açúcares menores que ficam na boca. Isso explica por que mastigar pão por tempo suficiente começa a adoçar — a maltose vai sendo liberada!</p>
+      <p>— Mas o ácido do estômago (pH &lt;4) me inactiva rapidamente. Clinicamente, a <strong>amilase sérica e urinária</strong> são marcadores de <strong>pancreatite aguda</strong>.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Mucinas</div>
+    <div class="speech-body">
+      <p>— Nós somos as <strong>Mucinas</strong> — de <em>mucus</em>, latim, "muco". Somos glicoproteínas de alto peso molecular com uma "espinha dorsal" proteica central densamente recoberta de cadeias de oligossacarídeos. As principais mucinas salivares são a <strong>MUC5B</strong> e a <strong>MUC7</strong>. Sem nós, a mucosa oral ressequiria, o bolo alimentar não escorregaria suavemente, a fala seria dolorosa.</p>
+      <p>— A <strong>xerostomia</strong> — <em>xeros</em>, grego, "seco"; <em>stoma</em>, boca — é causada por desidratação, medicamentos com efeito anticolinérgico, síndrome de Sjögren, radioterapia. É incapacitante: dificuldade de mastigar, engolir, falar; cárie dentária acelerada; infecção por <em>Candida</em> oral.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">IgA Secretora</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>IgA Secretora</strong> — sIgA — o anticorpo mais abundante das secreções mucosas do organismo. Sou uma <strong>IgA dimérica</strong> — duas moléculas de IgA unidas por uma <strong>cadeia J</strong> — com um <strong>componente secretor</strong> que me confere resistência à proteólise pelas enzimas digestivas.</p>
+      <p>— Ligo-me a <strong>antígenos bacterianos</strong> e virais, prevenindo sua adesão às mucosas — um mecanismo chamado <strong>exclusão imune</strong>. Sou a primeira linha de defesa imunológica da cavidade oral.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Lisozima</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Lisozima</strong> — <em>lysis</em>, grego, "dissolução"; <em>zyme</em>, "fermento, enzima". Também chamada <strong>muramidase</strong>. Descrita por Alexander Fleming em 1922. Meu substrato é o <strong>peptidoglicano</strong> da parede celular bacteriana — especificamente a ligação β-1,4 entre <em>N-acetilmuramato</em> e <em>N-acetilglucosamina</em>. Quando clivo essa ligação, a parede celular bacteriana colapsa osmoticamente. Estou também nas lágrimas, no muco nasal, no leite materno, nos neutrófilos.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Lactoferrina</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Lactoferrina</strong> — <em>lacto</em>, do leite; <em>ferrina</em>, de <em>ferrum</em>, latim, "ferro". Sou uma glicoproteína de ligação ao ferro. Meu mecanismo antimicrobiano é por <strong>privação de ferro</strong>: muitas bactérias patogénicas dependem do ferro livre para crescer — eu o sequestro, deixando-as sem o nutriente essencial. Estou também em alta concentração no <strong>colostro</strong> — explicando em parte sua função imunológica.</p>
+    </div>
+  </div>
+
+  <h3 class="section-head purple">⚙️ Regulação da Secreção Salivar</h3>
+
+  <div class="speech">
+    <div class="char-name green">Parassimpático</div>
+    <div class="speech-body">
+      <p>— Eu controlo a secreção salivar <strong>aquosa, abundante e rica em proteínas</strong>. Chego às glândulas salivares pelos nervos <strong>corda do tímpano (VII)</strong> para submandibular e sublingual, e pelo <strong>nervo auriculotemporal</strong> (de IX via gânglio ótico) para a parótida. Meu neurotransmissor é a <strong>acetilcolina</strong>, que actua em receptores <strong>muscarínicos M3</strong> das células acinares. A activação aumenta o cálcio intracelular (via IP3/DAG), abrindo canais de Cl⁻ apicais (TMEM16A). O resultado é fluxo maciço de água e secreção salivar copiosa.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Simpático</div>
+    <div class="speech-body">
+      <p>— E eu controlo uma secreção <strong>menor em volume, mas rica em mucinas e proteínas</strong>. Chego pelas fibras pós-ganglionares do <strong>gânglio cervical superior</strong>. Meu neurotransmissor é a <strong>noradrenalina</strong>, actuando em receptores <strong>β-adrenérgicos</strong> (estimulam exocitose de grânulos proteicos) e <strong>α-adrenérgicos</strong> (vasoconstricção, reduzindo o volume). Por isso, o <strong>medo e o estresse</strong> ressecam a boca — o simpático predomina. Estás a dar uma apresentação e a boca seca? É química.</p>
+      <p>— Clinicamente: medicamentos <strong>anticolinérgicos</strong> bloqueiam os receptores muscarínicos M3 e causam xerostomia. A <strong>pilocarpina</strong> — agonista muscarínico — é usada terapeuticamente para estimular a secreção salivar na síndrome de Sjögren e após radioterapia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO V ═══════════════════ -->
+<section id="acto5" class="act-block fade-in">
+  <div class="act-label">🎭 Acto V</div>
+  <h2 class="act-title orange">A Batalha da Mastigação</h2>
+  <hr class="act-hr orange">
+
+  <div class="stage-dir">Barulho de trovão. O BOLO ALIMENTAR chega como um alvoroço tumultuoso. Os dentes entram em posição de combate.</div>
+
+  <div class="speech">
+    <div class="char-name grey">Bolo Alimentar</div>
+    <div class="speech-body">
+      <p>— Ei! Ei! O que está acontecendo?! Acabei de entrar e todo mundo está me olhando com cara de fome! Literalmente!</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name orange">Masseter</div>
+    <div class="speech-body">
+      <p>— Bem-vindo. Eu sou o <strong>Masseter</strong> — do grego <em>masêtêr</em>, "o que mastiga", de <em>massaomai</em>. Sou o músculo de mastigação mais potente e superficial. Tenho origem no <strong>arco zigomático</strong> e inserção na <strong>face lateral do ramo da mandíbula</strong>. Sou inervado pelo nervo <strong>massetérico</strong> — ramo de V3. Minha contração <strong>eleva a mandíbula</strong> com força enorme. Posso gerar até <strong>70 kg de força nos molares</strong>.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Músculo Temporal</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Temporal</strong> — <em>temporalis</em>, do latim <em>tempus</em>, "tempo, têmpora". Sou um músculo em leque que origina-se em toda a fossa temporal e insere-se no processo coronóide da mandíbula. Tenho fibras:</p>
+      <div class="stage-dir">O Temporal abre o leque como num espectáculo.</div>
+      <p>— Fibras <strong>anteriores</strong>: <strong>elevam</strong> a mandíbula. Fibras <strong>médias</strong>: elevam e <strong>retruem</strong>. Fibras <strong>posteriores</strong>: <strong>retruem</strong> a mandíbula — puxam-na para trás. Sou o músculo primário de <strong>retrusão mandibular</strong>.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Pterigóideo Medial</div>
+    <div class="speech-body">
+      <p>— Sou o <strong>Pterigóideo Medial</strong> — <em>pterygos</em>, grego, "asa"; <em>medialis</em>, do lado de dentro. Juntamente com o masséter, formo um <em>sling</em> (suspensório) muscular que abraça o ângulo mandibular. Elevo a mandíbula e desvio-a lateralmente — contribuo para o movimento de <strong>lateralidade</strong> que tritura o alimento entre os molares.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Pterigóideo Lateral</div>
+    <div class="speech-body">
+      <p>— E eu sou o mais complexo de todos — o <strong>Pterigóideo Lateral</strong>. Tenho <strong>duas cabeças</strong> com funções diferentes:</p>
+      <div class="stage-dir">O Pterigóideo Lateral desdobra-se em dois personagens.</div>
+      <p>— Cabeça superior: insere-se na <strong>cápsula e disco articular</strong> da <strong>articulação temporomandibular (ATM)</strong>. Actua durante o fechamento, estabilizando o disco.</p>
+      <p>— Cabeça inferior: quando actuo bilateralmente, <strong>protruo</strong> a mandíbula. Quando actuo unilateralmente, <strong>desvio</strong> a mandíbula para o lado oposto. Sou o único músculo de mastigação que actua durante a <strong>abertura da boca</strong>.</p>
+      <p>— Clinicamente, a <strong>disfunção temporomandibular (DTM)</strong> frequentemente me envolve. O <strong>bruxismo</strong> — <em>brychein</em>, grego, "ranger os dentes" — leva a hipertrofia do masséter, desgaste dentário e dor muscular. Tratamento: placa oclusal, fisioterapia, toxina botulínica intramuscular.</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">O Bolo Alimentar é progressivamente processado, amassado, triturado, misturado com saliva.</div>
+
+  <div class="speech">
+    <div class="char-name grey">Bolo Alimentar</div>
+    <div class="speech-body">
+      <p>— Ok! Estou menor, mais uniforme, ensopado em saliva, com a amilase já a agir nos amidos... Onde é que eu vou agora?</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name green">Língua</div>
+    <div class="speech-body">
+      <p>— Agora você me pertence. Eu te formato, te posiciono, te compacto numa massa coesa entre mim e o palato duro. Isso é a <strong>fase oral da deglutição</strong>. Presta atenção porque a próxima sequência de eventos é uma das mais sofisticadas e rápidas do corpo humano.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO VI ═══════════════════ -->
+<section id="acto6" class="act-block fade-in">
+  <div class="act-label">🎭 Acto VI</div>
+  <h2 class="act-title cyan">A Grande Odisseia: A Deglutição</h2>
+  <hr class="act-hr cyan">
+
+  <div class="stage-dir">As luzes mudam para uma cor de acção. Uma música épica toca ao fundo. O centro de deglutição na medula oblonga acende-se como uma sala de controlo de missão espacial.</div>
+
+  <div class="speech">
+    <div class="char-name magenta">Centro de Deglutição da Medula</div>
+    <div class="speech-body">
+      <p>— Meu nome técnico é <strong>Núcleo do Trato Solitário</strong> e <strong>Núcleo Ambíguo</strong> da medula oblonga — juntos formamos o <strong>Padrão Gerador Central (CPG)</strong> da deglutição. Coordeno <strong>25 pares musculares diferentes</strong> em menos de <strong>1 segundo</strong> durante a fase faríngea. Nenhum movimento voluntário humano é tão coordenado e tão rápido. Recebo aferências via nervos IX e X, e envio eferências para os nervos cranianos V, VII, IX, X, XI e XII.</p>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header oral-prep">
+      <span>⚡ FASE 1 — ORAL PREPARATÓRIA</span>
+      <span class="phase-badge badge-vol">VOLUNTÁRIO</span>
+      <span>A Formação do Exército</span>
+    </div>
+    <div class="phase-body">
+      <div class="speech">
+        <div class="char-name green">Língua</div>
+        <div class="speech-body">
+          <p>— Esta fase é <strong>completamente voluntária</strong>. Eu organizo o bolo alimentar de tamanho, consistência e coesão adequados. Uso o <strong>palato duro como âncora</strong>, pressionando o bolo contra ele. Verifico a consistência: se não está adequado para deglutição, começo novamente. Quando o bolo está pronto — tipicamente 1-20 g de alimento triturado e embebido em saliva — passo para a fase seguinte.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header oral-prop">
+      <span>⚡ FASE 2 — ORAL PROPULSIVA</span>
+      <span class="phase-badge badge-vol">VOLUNTÁRIO → REFLEXO</span>
+      <span>O Lançamento</span>
+    </div>
+    <div class="phase-body">
+      <div class="speech">
+        <div class="char-name green">Língua</div>
+        <div class="speech-body">
+          <p>— Esta fase também é <strong>voluntária</strong>, mas transita para o reflexo faríngeo. Num movimento peristáltico anteroposterior — como espremer pasta de dentes do fundo do tubo — propulsiono o bolo em direcção à <strong>orofaringe</strong> com uma pressão de <strong>20-60 mmHg</strong>, durando apenas 0,5-1,5 segundos.</p>
+          <p>— Quando o bolo toca os <strong>pilares anteriores das fauces</strong> e a parede posterior da faringe, o reflexo de deglutição é <strong>disparado</strong>. A partir daqui, a deglutição é <strong>involuntária</strong> e praticamente não pode ser interrompida.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header faringea">
+      <span>⚡ FASE 3 — FARÍNGEA</span>
+      <span class="phase-badge badge-inv">INVOLUNTÁRIO</span>
+      <span>A Sequência de Combate</span>
+    </div>
+    <div class="phase-body">
+      <div class="speech">
+        <div class="char-name magenta">Centro de Deglutição</div>
+        <div class="speech-body">
+          <p>— ACTIVADO. Comandando 10 eventos em menos de 1 segundo:</p>
+          <ol class="event-list">
+            <li><span class="event-num">01</span><span class="event-text">Elevação do palato mole pelo <strong>levantador do véu palatino</strong> — fecha a comunicação com a nasofaringe. Pressão de vedação: ~80-100 mmHg. O bolo NÃO pode entrar nas cavidades nasais.</span></li>
+            <li><span class="event-num">02</span><span class="event-text">A língua retrai-se, comprimindo o bolo contra a parede posterior da faringe.</span></li>
+            <li><span class="event-num">03</span><span class="event-text">Os <strong>músculos constritores da faringe</strong> contraem-se em sequência peristáltica — superior, médio e inferior — em ondas de pressão de ~100-150 mmHg.</span></li>
+            <li><span class="event-num">04</span><span class="event-text">A laringe <strong>eleva-se e anterioriza-se</strong> — podes sentir isso colocando o dedo no pescoço e engolindo. Essa elevação traciona o EES para cima, facilitando sua abertura.</span></li>
+            <li><span class="event-num">05</span><span class="event-text">A <strong>epiglote</strong> cobre a entrada laríngea. A epiglote é a tampa do sistema respiratório durante a deglutição.</span></li>
+            <li><span class="event-num">06</span><span class="event-text">As <strong>pregas vocais verdadeiras</strong> aduzem e fecham a glote. As <strong>pregas vestibulares</strong> (falsas cordas vocais) também fecham. A via aérea está completamente selada. A respiração para por 0,5-1 segundo — a <strong>apneia deglutitória</strong>.</span></li>
+            <li><span class="event-num">07</span><span class="event-text">O <strong>esfíncter esofágico superior (EES)</strong> — normalmente fechado a 40-80 mmHg — RELAXA pela inibição do nervo vago. A faringe, com pressão alta, empurra o bolo através do EES aberto.</span></li>
+            <li><span class="event-num">08</span><span class="event-text">O bolo transita pela faringe em <strong>0,3-0,5 segundos</strong> — uma das passagens mais rápidas de qualquer substância pelo organismo.</span></li>
+            <li><span class="event-num">09</span><span class="event-text">O EES contrai-se novamente atrás do bolo — evita refluxo esofagofaríngeo.</span></li>
+            <li><span class="event-num">10</span><span class="event-text">A laringe desce, as pregas vocais abduzem, a respiração recomeça.</span></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Faringe</div>
+    <div class="speech-body">
+      <p>— Permita-me me apresentar enquanto o bolo passa por mim. Eu sou a <strong>Faringe</strong> — do grego <em>pharynx</em>, garganta, tubo. Sou um tubo muscular de <strong>12-14 cm</strong> que se estende da base do crânio até a margem inferior da cartilagem cricóidea (nível C6), onde me continuo com o esôfago. Sou o cruzamento mais crítico e perigoso do corpo humano: por aqui passam tanto o ar quanto o alimento, em direcções diferentes — e nunca ao mesmo tempo, graças ao sistema de reflexos que acabaste de testemunhar.</p>
+      <div class="stage-dir">A Faringe abre três portas diferentes.</div>
+      <p>— <strong>Nasofaringe</strong> — a parte superior, atrás das cavidades nasais, acima do palato mole. Contém as <strong>amígdalas faríngeas</strong> (adenóides). Possui as <strong>aberturas da tuba auditiva</strong> (tuba de Eustáquio) — que equilibra a pressão do ouvido médio. Na infância, a hipertrofia adenoideana oclui as tubas, causando <strong>otite média de repetição</strong>. Tratamento: adenoidectomia.</p>
+      <p>— <strong>Orofaringe</strong> — a parte média, posterior à cavidade oral. Contém as <strong>amígdalas palatinas</strong>. A <strong>amigdalite</strong> por <em>Streptococcus pyogenes</em> pode causar febre reumática se não tratada com penicilina. A <strong>mononucleose infecciosa</strong> pelo vírus de Epstein-Barr causa amigdalite exsudativa severa, esplenomegalia e linfocitose com linfócitos atípicos.</p>
+      <p>— <strong>Laringofaringe / Hipofaringe</strong> — a parte inferior, de C3 a C6. Os <strong>recessos piriformes</strong> — <em>pirus</em>, pereira — são sulcos laterais à laringe que canalizam o bolo para o EES, contornando a via aérea.</p>
+    </div>
+  </div>
+
+  <div class="phase-block">
+    <div class="phase-header esofagica">
+      <span>⚡ FASE 4 — ESOFÁGICA</span>
+      <span class="phase-badge badge-inv">INVOLUNTÁRIO</span>
+      <span>O Longo Corredor</span>
+    </div>
+    <div class="phase-body">
+      <div class="speech">
+        <div class="char-name cyan">EES — Esfíncter Esofágico Superior</div>
+        <div class="speech-body">
+          <p>— Eu sou o <strong>EES</strong> (<em>Upper Esophageal Sphincter</em> — UES). Anatomicamente, sou formado principalmente pelo <strong>músculo cricofaríngeo</strong>. Minha pressão de repouso é <strong>40-80 mmHg</strong> — estou sempre contraído para evitar que o bolo esofágico ou o ar entrem na faringe. Relaxo durante a deglutição, durante o <strong>arroto</strong> e durante o <strong>vómito</strong>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO VII ═══════════════════ -->
+<section id="acto7" class="act-block fade-in">
+  <div class="act-label">🎭 Acto VII</div>
+  <h2 class="act-title blue">O Longo Corredor: O Esôfago</h2>
+  <hr class="act-hr blue">
+
+  <div class="stage-dir">O bolo alimentar entra numa estrutura longa, escura, um corredor pulsante e ritmicamente ondulante.</div>
+
+  <div class="speech">
+    <div class="char-name blue">Esôfago</div>
+    <div class="speech-body">
+      <p>— Finalmente. Eu sou o <strong>Esôfago</strong> — do grego <em>oisophagos</em>, de <em>oison</em> (carregar) + <em>phagein</em> (comer): "aquilo que carrega a comida". Sou um tubo muscular de <strong>25 cm de comprimento</strong> no adulto, com diâmetro de <strong>2-3 cm</strong> quando distendido. Inicio-me no nível <strong>C6</strong> e termino no <strong>nível T11</strong>, onde entro no estômago pelo <strong>cárdia</strong>.</p>
+      <p>— Tenho três porções: <strong>cervical</strong> (~5 cm, de C6 a T1), <strong>torácica</strong> (~16 cm, de T1 a T10), <strong>abdominal</strong> (~2-3 cm, de T10 ao cárdia).</p>
+    </div>
+  </div>
+
+  <div class="card cyan">
+    <div class="card-title">⚡ Três Constrições Fisiológicas</div>
+    <p><strong>1ª — Cricofaríngea</strong> (C5-C6): diâmetro ~1,5 cm. Ponto mais estreito. A 15 cm dos dentes. Corpos estranhos frequentemente ficam retidos aqui.</p>
+    <p><strong>2ª — Aortobronquial</strong> (T4-T5): compressão pelo arco da aorta e brônquio principal esquerdo. A 25 cm dos dentes. Aneurisma da aorta pode comprimir o esôfago nesta região.</p>
+    <p><strong>3ª — Diafragmática</strong> (T10): cruzamento do hiato esofágico do diafragma. A 38-40 cm dos dentes. Região de maior importância clínica.</p>
+  </div>
+
+  <h3 class="section-head blue">Histologia em Quatro Camadas</h3>
+
+  <div class="speech">
+    <div class="char-name cyan">Mucosa</div>
+    <div class="speech-body">
+      <p>— Sou composta por: o <strong>epitélio estratificado pavimentoso não queratinizado</strong> (resistente ao atrito do bolo), a <strong>lâmina própria</strong> e a <strong>muscular da mucosa</strong> que cria pregas longitudinais quando o esôfago está vazio.</p>
+      <p>— Clinicamente: no <strong>Esófago de Barrett</strong> — complicação crónica da DRGE — meu epitélio pavimentoso é substituído por <strong>epitélio colunar com metaplasia intestinal</strong> (células caliciformes). Isso é uma <strong>metaplasia</strong>: adaptação celular protectora, mas que confere risco aumentado de <strong>adenocarcinoma esofágico</strong>.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Submucosa</div>
+    <div class="speech-body">
+      <p>— Sou tecido conjuntivo denso irregular com vasos, o <strong>plexo nervoso de Meissner</strong> (<em>plexus submucosus</em>) que controla a secreção e absorção, e as <strong>glândulas esofágicas propriamente ditas</strong> que secretam muco para lubrificação.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Muscular Externa</div>
+    <div class="speech-body">
+      <p>— Sou única no esôfago porque minha composição <strong>muda progressivamente ao longo do comprimento</strong>:</p>
+      <p>— <strong>Terço superior</strong>: <strong>músculo estriado esquelético</strong> — um remanescente embriológico da musculatura faríngea de origem braquial.</p>
+      <p>— <strong>Terço médio</strong>: <strong>músculo misto</strong> — fibras estriadas e lisas entrelaçadas.</p>
+      <p>— <strong>Terço inferior</strong>: <strong>músculo liso exclusivo</strong> — controlado pelo sistema nervoso entérico e autonômico.</p>
+      <p>— Tenho duas camadas: <strong>circular interna</strong> e <strong>longitudinal externa</strong>. Isso é o <strong>peristaltismo</strong> — <em>peristalsis</em>, grego, "comprimir ao redor, envolver".</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Adventícia / Serosa</div>
+    <div class="speech-body">
+      <p>— No esôfago <strong>torácico e cervical</strong>, sou <strong>adventícia</strong> — tecido conjuntivo frouxo sem serosa peritoneal. Isso significa que tumores esofágicos se disseminam rapidamente para os tecidos adjacentes sem barreira serosa. No pequeno segmento <strong>abdominal</strong>, sou <strong>serosa</strong>. A ausência de serosa na maior parte do esôfago facilita a <strong>invasão local</strong> dos tumores esofágicos.</p>
+    </div>
+  </div>
+
+  <h3 class="section-head cyan">🌊 O Peristaltismo: A Dança das Ondas</h3>
+
+  <div class="speech">
+    <div class="char-name blue">Peristaltismo Primário</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Peristaltismo Primário</strong> — desencadeado pela <strong>deglutição</strong>. Sou uma onda de contração coordenada que se propaga do EES ao EEI em <strong>8-10 segundos</strong> para líquidos e <strong>10-15 segundos</strong> para sólidos. Sou controlado pelo <strong>plexo de Auerbach</strong> (plexo mioentérico) modulado pelo nervo vago.</p>
+      <p>— Minha velocidade: <strong>3-4 cm/segundo</strong>. A pressão da onda peristáltica: <strong>40-80 mmHg</strong>. Ao atingir o EEI, este relaxa (mediado por <strong>óxido nítrico e VIP</strong> — Peptídeo Intestinal Vasoactivo — do nervo vagal inibitório NANC), permitindo que o bolo entre no estômago.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Peristaltismo Secundário</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Peristaltismo Secundário</strong> — desencadeado não pela deglutição, mas pela <strong>distensão do esôfago</strong> por resíduos alimentares ou refluxo de conteúdo gástrico. Não preciso de deglutição consciente. Minha função é limpar o esôfago de qualquer resíduo que tenha ficado para trás ou sido regurgitado. Sou o zelador do corredor.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Contrações Terciárias</div>
+    <div class="speech-body">
+      <p>— E eu? Sou as <strong>Contrações Terciárias</strong> — contrações esofágicas <strong>não peristálticas, simultâneas, descoordenadas</strong>. Normalmente patológicas. Vejo-me em idosos, em esôfago em "saca-rolha" (<em>corkscrew esophagus</em>) ou <strong>espasmo esofágico difuso</strong> — causa de dor torácica que pode mimetizar angina.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">EEI — Esfíncter Esofágico Inferior</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>EEI</strong> (<em>Lower Esophageal Sphincter</em> — LES). Tecnicamente, NÃO sou um esfíncter anatômico verdadeiro — sou um <strong>esfíncter fisiológico</strong>: uma zona de <strong>alta pressão</strong> de repouso de <strong>15-35 mmHg</strong>, mantida por tônus miogénico intrínseco modulado pelo sistema nervoso entérico.</p>
+      <p>— O diafragma contribui para meu mecanismo: suas fibras crurais comprimem o esôfago durante a inspiração. Além disso, o <strong>ângulo de His</strong> — ângulo agudo entre o esôfago e o estômago — e a presença de parte do esôfago abdominal contribuem para o mecanismo antirrefluxo.</p>
+      <p>— Meu relaxamento é mediado pelo <strong>óxido nítrico (NO)</strong> e pelo <strong>VIP</strong>. O NO activa a guanilato ciclase → GMPc → PKG → fosforila a cadeia leve de miosina fosfatase → desfosforilando a miosina → relaxamento muscular. Elegante.</p>
+      <p>— E minha fraqueza? Os <strong>Relaxamentos Transitórios do EEI</strong> — TLESRs — relaxamentos não relacionados à deglutição, mais prolongados (10-60 segundos). São responsáveis por <strong>90% dos episódios de refluxo fisiológico</strong>. São desencadeados pela <strong>distensão gástrica</strong> via reflexo vagovagal. O <strong>Baclofeno</strong>, agonista de GABA-B, reduz os TLESRs e é usado como tratamento adjuvante na DRGE refractária.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO VIII ═══════════════════ -->
+<section id="acto8" class="act-block fade-in">
+  <div class="act-label">🎭 Acto VIII</div>
+  <h2 class="act-title magenta">Os Vilões Entram em Cena: Fisiopatologia</h2>
+  <hr class="act-hr magenta">
+
+  <div class="stage-dir">O estômago, ao fundo do palco, começa a rugir. Uma luz vermelha pisca. O ácido gástrico ameaça vazar para o corredor.</div>
+
+  <div class="speech">
+    <div class="char-name magenta">Ácido Clorídrico (HCl)</div>
+    <div class="speech-body">
+      <p>— HAHAHAHA. Eu sou o <strong>Ácido Clorídrico</strong> — HCl, produzido pelas <strong>células parietais</strong> do estômago através da <strong>H⁺/K⁺-ATPase</strong> — a bomba de prótons. Meu pH gástrico é <strong>1,5 a 3,5</strong>. Minha função é activar o pepsinogénio em pepsina, esterilizar o conteúdo gástrico e facilitar a digestão de proteínas. Mas quando o EEI me deixa escapar para o esôfago...</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name orange">DRGE — Doença do Refluxo Gastroesofágico</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>DRGE</strong> (<em>Gastroesophageal Reflux Disease</em> — GERD). Sou a condição mais prevalente do trato digestório superior, afectando cerca de <strong>10-20% da população ocidental</strong>. Não sou causada por excesso de ácido per se — mas por uma <strong>barreira antirrefluxo incompetente</strong>: TLESRs excessivos, pressão de repouso do EEI reduzida, hérnia de hiato.</p>
+      <p>— Meus sintomas típicos: <strong>pirose</strong> — <em>pyrosis</em>, grego, "queimação". <strong>Regurgitação</strong> — retorno passivo do conteúdo gástrico à faringe e boca. Sintomas atípicos: tosse crónica, laringite posterior, asma piorada à noite, erosão dental, dor torácica (que pode mimetizar angina!).</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name gold">Esofagite Erosiva</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Esofagite Erosiva</strong> — erosões e úlceras do epitélio esofágico pelo ácido. Classificada pelo sistema de <strong>Los Angeles</strong>: Grau A (erosões &lt;5mm), B (erosões ≥5mm, não confluentes), C (erosões confluentes &lt;75% da circunferência), D (erosões &gt;75% da circunferência). Diagnosticada por endoscopia com biópsia.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Esôfago de Barrett</div>
+    <div class="speech-body">
+      <p>— E eu sou o <strong>Esôfago de Barrett</strong> — descrito por Norman Barrett em 1950 — a <strong>metaplasia intestinal</strong> do esôfago distal. O epitélio pavimentoso é substituído por <strong>epitélio colunar com células caliciformes</strong>. Sou uma adaptação protectora — mas aumento o risco de <strong>adenocarcinoma esofágico</strong> em <strong>0,1-0,5% por ano</strong> — 30-125 vezes a da população geral.</p>
+      <p>— Minha vigilância: endoscopia a cada <strong>3-5 anos</strong> (Barrett sem displasia), <strong>6-12 meses</strong> (com displasia de baixo grau), consideração para <strong>ablação por radiofrequência (RFA)</strong> ou <strong>mucosectomia endoscópica (EMR)</strong> na displasia de alto grau.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Acalásia</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Acalásia</strong> — do grego <em>a</em>, privação; <em>chalasis</em>, relaxamento: "incapacidade de relaxar". Sou um <strong>distúrbio motor primário do esôfago</strong> caracterizado pela <strong>falência do relaxamento do EEI</strong> e <strong>ausência de peristaltismo esofágico</strong>. A causa é a <strong>destruição dos neurónios ganglionares inibitórios</strong> (produtores de NO e VIP) do <strong>plexo de Auerbach</strong> — de etiologia autoimune.</p>
+      <p>— Nos países tropicais — como Moçambique — existe a <strong>Doença de Chagas</strong> (<em>Trypanosoma cruzi</em>) como causa secundária de acalásia — o chamado <strong>Mega-Esôfago Chagásico</strong>, onde o parasita destrói os plexos entéricos.</p>
+      <div class="stage-dir">A Acalásia mostra seu exame de eleição.</div>
+      <p>— Meu diagnóstico é estabelecido pela <strong>Manometria Esofágica de Alta Resolução</strong>. Pela <strong>Classificação de Chicago</strong> (versão 4.0, 2021), tenho três subtipos: Tipo I (acalásia clássica), Tipo II (com pressurização panesofágica, melhor resposta ao tratamento) e Tipo III (espástica).</p>
+      <p>— Meu exame radiológico mostra o clássico sinal da <strong>"bico de pássaro" / "cauda de rato"</strong> na transição esofagogástrica.</p>
+      <p>— Meu tratamento: <strong>dilatação pneumática endoscópica</strong>, <strong>miotomia de Heller laparoscópica</strong>, <strong>POEM</strong> (<em>Per-Oral Endoscopic Myotomy</em>), ou <strong>injecção de toxina botulínica</strong> no EEI.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">Divertículo de Zenker</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Divertículo de Zenker</strong> — descrito por Friedrich Albert von Zenker em 1877. Sou uma <strong>pseudo-hérnia</strong> que hernia através do <strong>triângulo de Killian</strong> — uma zona de fraqueza na parede posterior da hipofaringe, acima do EES.</p>
+      <p>— Manifesto-me com <strong>disfagia</strong>, <strong>regurgitação de alimento não digerido</strong> horas após as refeições, <strong>halitose</strong>, <strong>aspiração</strong> e <strong>tosse noturna</strong>. Diagnóstico: <strong>esofagograma baritado</strong>. Tratamento: <strong>diverticulotomia endoscópica</strong> ou cirúrgica (diverticulopexia + cricofaringomiotomia).</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name orange">Síndrome de Mallory-Weiss</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>Síndrome de Mallory-Weiss</strong> — laceração longitudinal da mucosa na <strong>junção esofagogástrica</strong> por aumento súbito de pressão intraluminal: vómitos prolongados e violentos, esforço de vómito, tosse intensa. Causa de <strong>hematémese</strong> (<em>haima</em>, sangue; <em>emesis</em>, vómito). Geralmente auto-limitada, raramente requer intervenção endoscópica.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name magenta">Síndrome de Boerhaave</div>
+    <div class="speech-body">
+      <p>— E eu, a <strong>Síndrome de Boerhaave</strong> — descrita por Hermann Boerhaave em 1724 — sou a <strong>perfuração espontânea de espessura total</strong> do esôfago por pressão extrema (vómitos incoercíveis). Causa <strong>mediastinite</strong> e é uma emergência cirúrgica com mortalidade altíssima se não tratada nas primeiras horas. O sinal de <strong>Hamman</strong> — crepitação mediastínica ao batimento cardíaco — é clássico.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO IX ═══════════════════ -->
+<section id="acto9" class="act-block fade-in">
+  <div class="act-label">🎭 Acto IX</div>
+  <h2 class="act-title gold">Os Investigadores: Os Exames Diagnósticos</h2>
+  <hr class="act-hr gold">
+
+  <div class="stage-dir">Uma nova equipa entra no teatro — figuras técnicas com equipamentos de diagnóstico.</div>
+
+  <div class="speech">
+    <div class="char-name gold">EDA — Endoscopia Digestiva Alta</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>EDA</strong> — <em>Esofagogastroduodenoscopia</em> (<em>endon</em>, grego, dentro; <em>skopein</em>, olhar). Em inglês, <strong>EGD</strong>. Sou o exame <strong>padrão-ouro</strong> para visualização directa da mucosa do esôfago, estômago e duodeno. Utilizo um <strong>endoscópio flexível</strong> com câmera de alta resolução, canal de trabalho para biópsia e terapêutica.</p>
+      <p>— Indico-me para: disfagia, odinofagia (<em>odyne</em>, dor; <em>phagia</em>, deglutição = deglutição dolorosa), hematémese, suspeita de Barrett, vigilância de Barrett, suspeita de neoplasia, extracção de corpo estranho, hemostase de varizes esofágicas, dilatação de estenoses. Realizo-me sob sedação consciente (midazolam + fentanil).</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name grey">Esofagograma Baritado</div>
+    <div class="speech-body">
+      <p>— Eu sou o <strong>Esofagograma Baritado</strong> — <em>barium</em>, do grego <em>barys</em>, "pesado". Faço o paciente ingerir contraste de sulfato de bário radiopaco e realizo série de radiografias fluoroscópicas. Sou especialmente útil para: Zenker (mostra a bolsa), acalásia (bico de pássaro), hérnia de hiato, neoplasias (falhas de enchimento), estenoses, fístulas esofagotraqueais.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name cyan">Manometria Esofágica de Alta Resolução (MAR)</div>
+    <div class="speech-body">
+      <p>— Eu sou a <strong>MAR</strong> — <em>High-Resolution Esophageal Manometry, HRM</em>. Introduzo uma sonda com <strong>36 sensores de pressão a cada 1 cm</strong> no esôfago. Meço simultaneamente as pressões ao longo de todo o esôfago, produzindo <strong>topogramas de pressão coloridos</strong> (<em>Esophageal Pressure Topography, EPT</em>) — escala de cores do azul (baixa pressão) ao vermelho/branco (alta pressão).</p>
+      <p>— A <strong>Classificação de Chicago</strong> (sistema de classificação dos distúrbios de motilidade esofágica) é o meu produto mais importante. Os diagnósticos que estabeleço incluem: acalásia (Tipos I, II, III), EEJ hipotensivo, espasmo esofágico difuso, esôfago em martelo pneumático (<em>jackhammer esophagus</em>), peristaltismo ausente.</p>
+    </div>
+  </div>
+
+  <div class="speech">
+    <div class="char-name purple">pH-Metria com Impedanciometria (MII-pH)</div>
+    <div class="speech-body">
+      <p>— Eu sou a investigação de última geração para DRGE. A <strong>pH-metria de 24 horas</strong> posiciona um sensor de pH no esôfago distal (5 cm acima do EEI). O refluxo ácido é definido como pH &lt;4. Os parâmetros incluem: percentagem de tempo total com pH &lt;4 (normal &lt;4,5%), número de episódios, escore de <strong>DeMeester</strong> (normal &lt;14,72). A <strong>impedância esofágica</strong> detecta refluxo não ácido, gasoso, misto — e correlaciona o refluxo com os sintomas do paciente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ACTO X ═══════════════════ -->
+<section id="acto10" class="act-block fade-in">
+  <div class="act-label">🎭 Acto X</div>
+  <h2 class="act-title green">Os Heróis Farmacológicos: Os Medicamentos</h2>
+  <hr class="act-hr green">
+
+  <div class="stage-dir">Um grupo de moléculas entra em marcha, cada uma com sua missão definida.</div>
+
+  <div class="drug-grid">
+    <div class="drug-card">
+      <div class="drug-name">IBP — Inibidores da Bomba de Prótons</div>
+      <div class="drug-class">PPI — Proton Pump Inhibitors</div>
+      <div class="drug-body">
+        <p>Alvo: <strong>H⁺/K⁺-ATPase</strong> das células parietais. Pró-fármacos activados em pH ácido → formam ligação <strong>covalente irreversível</strong> com resíduos de cisteína (Cys813, Cys822) da bomba. Inibição de 80-95% da secreção ácida.</p>
+        <p>Família: <strong>Omeprazol</strong> (primeiro da classe, 1989), <strong>Lansoprazol</strong>, <strong>Pantoprazol</strong>, <strong>Rabeprazol</strong>, <strong>Esomeprazol</strong> (S-enantiómero), <strong>Dexlansoprazol</strong>.</p>
+        <p><strong>Efeitos adversos:</strong> hipomagnesiemia, défice de B12 e ferro, <em>Clostridium difficile</em>, pneumonia. Tomar 30 min antes do café da manhã.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Bloqueadores H2 — Anti-H2</div>
+      <div class="drug-class">H2-Receptor Antagonists</div>
+      <div class="drug-body">
+        <p>Bloqueiam os <strong>receptores H2 da histamina</strong> nas células parietais → inibem a via AMPc/PKA/H⁺K⁺-ATPase. Inibem 70% da secreção ácida basal. Menos eficazes que IBP na secreção pós-prandial.</p>
+        <p>Família: <strong>Cimetidina</strong> (1977; interacções CYP450), <strong>Ranitidina</strong> (retirada em 2020 por NDMA), <strong>Famotidina</strong> (mais potente, sem efeito antiandrógeno), <strong>Nizatidina</strong>.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Antiácidos</div>
+      <div class="drug-class">Neutralizadores de HCl</div>
+      <div class="drug-body">
+        <p><strong>Al(OH)₃</strong>: reage com HCl → AlCl₃ + H₂O. Causa <strong>obstipação</strong>. Também tem propriedades antiulcerosas.</p>
+        <p><strong>Mg(OH)₂</strong>: reage com HCl → MgCl₂ + H₂O. Causa <strong>diarreia osmótica</strong>. Frequentemente combinado com alumínio.</p>
+        <p><strong>CaCO₃</strong>: rápido, potente, mas libera CO₂ → eructação. Pode causar alcalose e síndrome de leite e álcalis com uso crónico.</p>
+        <p><strong>NaHCO₃</strong>: rápido mas sistémico. Pode causar alcalose metabólica. Não recomendado para uso crónico.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Procinéticos</div>
+      <div class="drug-class">Pro + Kinesis</div>
+      <div class="drug-body">
+        <p><strong>Metoclopramida</strong>: antagonista D2 + agonista 5-HT4. Aumenta motilidade esofágica e gástrica, aumenta tônus do EEI. <strong>Efeitos adversos: efeitos extrapiramidais</strong> (distonia, acatisia, parkinsonismo), hiperprolactinemia (galactorreia, amenorreia).</p>
+        <p><strong>Domperidona</strong>: antagonista D2 periférico — menos EPS. <strong>Cuidado: prolonga QT</strong>.</p>
+        <p><strong>Eritromicina</strong>: agonista de <strong>motilina</strong>. Procinético em doses baixas para gastroparésia. Taquifilaxia com uso prolongado.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Baclofeno</div>
+      <div class="drug-class">Agonista GABA-B</div>
+      <div class="drug-body">
+        <p>Receptor GABA-B: metabotrópico Gi-acoplado → inibe adenilato ciclase + abre canais K⁺. Reduz os <strong>TLESRs</strong> no SNC e entérico. Usado como adjuvante na <strong>DRGE refractária</strong>. <strong>Efeitos adversos:</strong> sedação, confusão, tonturas.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Toxina Botulínica A</div>
+      <div class="drug-class">Neurotóxico Selectivo</div>
+      <div class="drug-body">
+        <p>Do <em>Clostridium botulinum</em>. Cliva a proteína <strong>SNAP-25</strong> do complexo SNARE → bloqueia irreversivelmente a exocitose de <strong>acetilcolina</strong>. Injectada no EEI na <strong>acalásia</strong> — bloqueia neurónios excitadores colinérgicos. Duração: 6-12 meses (depois há reinervação). Solução temporária para doentes de alto risco cirúrgico.</p>
+      </div>
+    </div>
+
+    <div class="drug-card">
+      <div class="drug-name">Sucralfato</div>
+      <div class="drug-class">Citoprotector de Mucosa</div>
+      <div class="drug-body">
+        <p>Sacarose octassulfato de alumínio. Em ambiente ácido forma <strong>gel viscoso</strong> que adere preferencialmente às ulcerações da mucosa → barreira física. Também estimula produção de prostaglandinas citoprotetoras e muco. Não absorvido sistemicamente. <strong>Precaução:</strong> interfere com absorção de outros fármacos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ EPÍLOGO ═══════════════════ -->
+<section id="epilogo" class="act-block fade-in">
+  <div class="act-label">🎭 Epílogo</div>
+  <h2 class="act-title cyan">O Bolo Alimentar Chega ao Destino</h2>
+  <hr class="act-hr cyan">
+
+  <div class="stage-dir">O Bolo Alimentar, depois de toda a odisseia — cortado pelos incisivos, rasgado pelos caninos, triturado pelos molares, embebido em saliva e amilase, propulsionado pela língua, disparado pela faringe, peristaltizado pelo esôfago — chega finalmente à transição esofagogástrica.</div>
+
+  <div class="speech">
+    <div class="char-name grey">Bolo Alimentar</div>
+    <div class="speech-body">
+      <p>— Eu... sobrevivi. Entrei como uma massa caótica e percorri um dos sistemas mais coordenados, molecularmente precisos e evolutivamente refinados do universo biológico. Fui cortado por 32 guerreiros cujas identidades numéricas seguem três sistemas de nomenclatura internacionais. Fui embebido numa solução de amilase que iniciou minha digestão molecular. Atravessei um cruzamento que coordenou 25 músculos em menos de um segundo, fechando simultaneamente minha única alternativa desastrosa — o aparelho respiratório. Percorri 25 centímetros de corredor muscular cujas paredes mudaram de estriado para liso, cujas ondas de pressão de 40-80 mmHg me empurraram com precisão de engenharia. E agora...</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">O EEI abre com uma reverência.</div>
+
+  <div class="speech">
+    <div class="char-name magenta">EEI</div>
+    <div class="speech-body">
+      <p>— Passe. O estômago te espera. E que o ácido clorídrico tenha misericórdia de ti.</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">O Bolo Alimentar desaparece. Pausa.</div>
+
+  <div class="speech">
+    <div class="char-name cyan">Cavidade Oral</div>
+    <div class="speech-body">
+      <p>— E assim termina a primeira etapa. Mas a história continua — no estômago, no duodeno, no jejuno, no íleo, no cólon — cada câmara com seus personagens, suas enzimas, seus nervos, seus vilões e seus heróis farmacológicos. Esta foi apenas a entrada. O verdadeiro drama do sistema digestório ainda está por vir.</p>
+    </div>
+  </div>
+
+  <div class="stage-dir">Aplausos da platéia celular.</div>
+</section>
+
+<!-- ═══════════════════ TABELAS ═══════════════════ -->
+<section id="tabelas" class="act-block fade-in">
+  <div class="act-label">📌 Tabelas Resumo</div>
+  <h2 class="act-title gold">Referência Rápida</h2>
+  <hr class="act-hr gold">
+
+  <h3 class="section-head gold">🦷 Nomenclatura Dentária</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Dente</th>
+          <th>FDI (adulto)</th>
+          <th>Função</th>
+          <th>Raízes (max/mand)</th>
+          <th>Erupção perm.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Incisivo central sup.</td><td>11 / 21</td><td>Corte</td><td>1 / 1</td><td>7-8 anos</td></tr>
+        <tr><td>Incisivo lateral sup.</td><td>12 / 22</td><td>Corte</td><td>1 / 1</td><td>8-9 anos</td></tr>
+        <tr><td>Canino</td><td>13/23/33/43</td><td>Rasgar</td><td>1 / 1</td><td>9-12 anos</td></tr>
+        <tr><td>Pré-molar 1</td><td>14/24/34/44</td><td>Misto</td><td>2 / 1</td><td>10-12 anos</td></tr>
+        <tr><td>Pré-molar 2</td><td>15/25/35/45</td><td>Misto</td><td>1-2 / 1</td><td>10-12 anos</td></tr>
+        <tr><td>Molar 1 ("6 anos")</td><td>16/26/36/46</td><td>Triturar</td><td>3 / 2</td><td>6 anos</td></tr>
+        <tr><td>Molar 2</td><td>17/27/37/47</td><td>Triturar</td><td>3 / 2</td><td>11-13 anos</td></tr>
+        <tr><td>Molar 3 (Siso)</td><td>18/28/38/48</td><td>Vestigial</td><td>3 (variável)</td><td>17-25 anos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="section-head cyan">⚡ Fases da Deglutição</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fase</th>
+          <th>Controlo</th>
+          <th>Duração</th>
+          <th>Nervos</th>
+          <th>Eventos-chave</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Oral preparatória</td><td>Voluntário</td><td>Variável</td><td>V, VII, XII</td><td>Mastigação, formação do bolo</td></tr>
+        <tr><td>Oral propulsiva</td><td>Voluntário (inicia reflexo)</td><td>~1 s</td><td>XII</td><td>Língua propulsiona bolo à faringe</td></tr>
+        <tr><td>Faríngea</td><td>Involuntário (reflexo)</td><td>~1 s</td><td>V, VII, IX, X, XI, XII</td><td>10 eventos coordenados, apneia deglutitória</td></tr>
+        <tr><td>Esofágica</td><td>Involuntário (entérico)</td><td>8-15 s</td><td>X, plexo de Auerbach</td><td>Peristaltismo, abertura EEI</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="section-head purple">🧬 Glândulas Salivares — Comparativo</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th>Parótida</th>
+          <th>Submandibular</th>
+          <th>Sublingual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Peso</td><td>25-30 g</td><td>8-10 g</td><td>3-4 g</td></tr>
+        <tr><td>Tipo histológico</td><td>Serosa pura</td><td>Mista (maioria serosa)</td><td>Mucosa pura</td></tr>
+        <tr><td>Ducto excretor</td><td>Stensen (2º molar sup.)</td><td>Wharton (carúncula)</td><td>Rivinus / Bartholin</td></tr>
+        <tr><td>Contribuição em repouso</td><td>~25%</td><td>~70%</td><td>~5%</td></tr>
+        <tr><td>Produto dominante</td><td>Amilase</td><td>Misto</td><td>Mucinas</td></tr>
+        <tr><td>Patologia típica</td><td>Parotidite, adenoma pleomórfico</td><td>Sialolitíase</td><td>Rânula</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="section-head magenta">💊 Fármacos na DRGE / Acalásia</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fármaco</th>
+          <th>Classe</th>
+          <th>Mecanismo</th>
+          <th>Uso</th>
+          <th>Efeito adverso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Omeprazol / Esomeprazol</td><td>IBP (PPI)</td><td>Bloqueia H⁺/K⁺-ATPase irreversivelmente</td><td>DRGE, úlcera, H. pylori</td><td>Hipomagnesiemia, défice B12</td></tr>
+        <tr><td>Famotidina</td><td>Anti-H2</td><td>Bloqueia receptor H2 histamínico</td><td>DRGE leve, dispepsia</td><td>Cefaleia</td></tr>
+        <tr><td>Al(OH)₃ + Mg(OH)₂</td><td>Antiácido</td><td>Neutraliza HCl</td><td>Alívio imediato</td><td>Obstipação / diarreia</td></tr>
+        <tr><td>Metoclopramida</td><td>Procinético</td><td>Antagonista D2, agonista 5-HT4</td><td>DRGE, gastroparésia</td><td>Distonia, hiperprolactinemia</td></tr>
+        <tr><td>Baclofeno</td><td>Agonista GABA-B</td><td>Reduz TLESRs</td><td>DRGE refractária</td><td>Sedação</td></tr>
+        <tr><td>Toxina Botulínica A</td><td>Neurotóxico selectivo</td><td>Bloqueia exocitose de ACh</td><td>Acalásia (temporário)</td><td>Disfagia transitória</td></tr>
+        <tr><td>Sucralfato</td><td>Citoprotector</td><td>Barreira mucosa + prostaglandinas</td><td>Esofagite, úlcera</td><td>Obstipação, interfere absorção</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div><!-- /content-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">DemilMed-UL</div>
+  <div class="footer-divider"></div>
+  <div class="footer-sub">
+    Elaborado por: <strong style="color:var(--neon-cyan)">Demil</strong> &nbsp;|&nbsp;
+    2º Ano de Medicina &nbsp;|&nbsp; 2026<br>
+    UL = Universidade Licungo — Faculdade de Medicina — Moçambique<br>
+    <span style="color:var(--neon-magenta)">demilmedul.blogspot.com</span>
+  </div>
+  <div class="footer-quote">
+    "Aprender deve ser a aventura mais emocionante da tua vida. Se não for, é porque ainda não encontraste o narrador certo."
+    <br><span style="font-style:normal; font-size:0.85rem; opacity:0.5;">— DemilMed-UL</span>
+  </div>
+</footer>
+
+<a class="back-top" id="backTop" href="#" title="Voltar ao topo">↑</a>
+
+<script>
+// ── SCROLL ANIMATIONS ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// ── BACK TO TOP ──
+const btn = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+  btn.classList.toggle('show', window.scrollY > 400);
+});
+
+btn.addEventListener('click', e => {
+  e.preventDefault();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>

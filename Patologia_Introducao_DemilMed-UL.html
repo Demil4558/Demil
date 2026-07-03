@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossiê Patológico Nº 001 — DemilMed-UL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rampart+One&family=Saira+Stencil+One&family=Space+Mono:wght@400;700&family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#08040f;
+  --bg1:#0d0620;
+  --bg2:#150a2e;
+  --bg3:#1c0f3a;
+  --panel:#170b30;
+  --ink:#f3eefc;
+  --ink-dim:#b6a7d6;
+  --ink-faint:#8577a8;
+  --pink:#ff2e88;
+  --pink-dim:#c21f68;
+  --cyan:#00e5ff;
+  --yellow:#f4ff2e;
+  --violet:#9d4edd;
+  --green:#39ff8a;
+  --line:rgba(157,78,221,.35);
+  --line-soft:rgba(157,78,221,.18);
+  --shadow-glow:0 0 24px rgba(0,229,255,.15);
+  --font-hero:'Rampart One',cursive;
+  --font-chapter:'Saira Stencil One',sans-serif;
+  --font-body:'Noto Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'Space Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--font-body);
+  line-height:1.75;
+  font-size:17px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 800px 500px at 10% -5%, rgba(255,46,136,.10), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 95% 10%, rgba(0,229,255,.09), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 50% 90%, rgba(157,78,221,.10), transparent 60%);
+  background-attachment:fixed;
+}
+::selection{background:var(--pink);color:var(--void)}
+a{color:var(--cyan)}
+
+/* halftone texture util */
+.halftone{
+  background-image:radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.4px);
+  background-size:7px 7px;
+  opacity:.06;
+  position:absolute;inset:0;
+  pointer-events:none;
+}
+.speedlines{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.035) 0deg 1.2deg, transparent 1.2deg 6deg);
+  mask-image:radial-gradient(circle at center, black 0%, transparent 72%);
+}
+
+/* ===== progress bar ===== */
+#progress{
+  position:fixed;top:0;left:0;height:4px;width:0%;
+  background:linear-gradient(90deg,var(--pink),var(--violet),var(--cyan));
+  z-index:9999;
+  box-shadow:0 0 12px rgba(0,229,255,.6);
+  transition:width .12s linear;
+}
+
+/* ===== top nav ===== */
+header.topnav{
+  position:sticky;top:0;z-index:900;
+  background:rgba(8,4,15,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:1180px;margin:0 auto;
+  display:flex;align-items:center;gap:14px;
+  padding:10px 18px;
+}
+.brand{
+  font-family:var(--font-chapter);
+  font-size:15px;letter-spacing:.5px;
+  color:var(--yellow);
+  white-space:nowrap;
+  text-shadow:0 0 10px rgba(244,255,46,.35);
+}
+.brand span{color:var(--ink-dim);font-family:var(--font-mono);font-size:11px;display:block;letter-spacing:1px}
+#chapNav{
+  display:flex;gap:4px;overflow-x:auto;flex:1;
+  scrollbar-width:thin;
+  padding-bottom:2px;
+}
+#chapNav::-webkit-scrollbar{height:4px}
+#chapNav::-webkit-scrollbar-thumb{background:var(--violet);border-radius:4px}
+#chapNav a{
+  font-family:var(--font-mono);font-size:11px;
+  color:var(--ink-faint);text-decoration:none;
+  white-space:nowrap;padding:6px 10px;border-radius:20px;
+  border:1px solid transparent;
+  transition:.2s;
+}
+#chapNav a:hover{color:var(--ink);border-color:var(--line)}
+#chapNav a.active{color:var(--void);background:var(--cyan);font-weight:700;box-shadow:0 0 14px rgba(0,229,255,.5)}
+.navToggle{display:none;background:none;border:1px solid var(--line);color:var(--ink);font-size:18px;padding:4px 10px;border-radius:8px;cursor:pointer}
+
+/* ===== hero ===== */
+.hero{
+  position:relative;overflow:hidden;
+  padding:90px 20px 70px;
+  text-align:center;
+  border-bottom:2px solid var(--line);
+  isolation:isolate;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:
+   radial-gradient(circle at 20% 20%, rgba(255,46,136,.20), transparent 45%),
+   radial-gradient(circle at 80% 30%, rgba(0,229,255,.18), transparent 45%),
+   radial-gradient(circle at 50% 90%, rgba(157,78,221,.22), transparent 50%);
+}
+.stamp{
+  display:inline-block;
+  font-family:var(--font-mono);font-size:11px;letter-spacing:3px;
+  color:var(--pink);border:1.5px dashed var(--pink);
+  padding:5px 14px;border-radius:3px;
+  transform:rotate(-3deg);
+  margin-bottom:22px;
+  text-transform:uppercase;
+}
+.hero h1{
+  font-family:var(--font-hero);
+  font-size:clamp(2.1rem,6.5vw,4.6rem);
+  line-height:1.08;
+  background:linear-gradient(92deg,var(--pink),var(--yellow) 45%,var(--cyan) 75%,var(--violet));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 18px rgba(255,46,136,.25));
+  letter-spacing:1px;
+}
+.hero .sub{
+  font-family:var(--font-chapter);
+  font-size:clamp(1rem,2.4vw,1.35rem);
+  color:var(--ink-dim);
+  margin-top:16px;letter-spacing:.5px;
+}
+.hero p.lede{
+  max-width:640px;margin:26px auto 0;
+  color:var(--ink-dim);font-size:.98rem;
+}
+.hero .meta{
+  margin-top:30px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);
+}
+.hero .meta span{border:1px solid var(--line);padding:5px 10px;border-radius:20px}
+
+/* ===== layout ===== */
+main{max-width:900px;margin:0 auto;padding:10px 20px 40px}
+section.chapter{
+  position:relative;
+  padding:64px 0 30px;
+  border-bottom:1px dashed var(--line-soft);
+}
+section.chapter:last-of-type{border-bottom:none}
+.chap-eyebrow{
+  font-family:var(--font-mono);font-size:12px;color:var(--cyan);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;
+}
+.chap-eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+.chap-num{
+  font-family:var(--font-hero);
+  font-size:clamp(2.6rem,7vw,4.2rem);
+  color:transparent;-webkit-text-stroke:1.5px var(--violet);
+  position:absolute;right:0;top:36px;opacity:.5;
+  line-height:1;
+  z-index:0;
+}
+h2.chap-title{
+  font-family:var(--font-chapter);
+  font-size:clamp(1.5rem,4vw,2.3rem);
+  color:var(--ink);
+  position:relative;z-index:1;
+  margin-bottom:6px;
+  text-shadow:0 0 20px rgba(157,78,221,.35);
+}
+h2.chap-title em{
+  font-style:normal;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.chap-kicker{color:var(--ink-faint);font-size:.92rem;margin-bottom:28px;max-width:560px}
+
+h3.sec{
+  font-family:var(--font-chapter);
+  font-size:1.25rem;color:var(--yellow);
+  margin:34px 0 12px;
+  display:flex;align-items:center;gap:8px;
+}
+h3.sec .ico{font-size:1.1em}
+h4.sub{font-family:var(--font-mono);font-size:.85rem;letter-spacing:1px;color:var(--cyan);text-transform:uppercase;margin:22px 0 8px}
+
+p{margin-bottom:16px;color:#e9e2f7}
+strong{color:var(--yellow);font-weight:700}
+ul,ol{margin:0 0 16px 22px}
+li{margin-bottom:8px;color:#e9e2f7}
+li::marker{color:var(--pink)}
+
+/* etymology / glossary term */
+.term{
+  border-bottom:2px dotted var(--cyan);
+  cursor:pointer;color:var(--cyan);font-weight:600;
+  position:relative;
+}
+.term:hover{color:var(--ink)}
+.tip{
+  display:none;position:absolute;left:0;top:calc(100% + 8px);
+  width:min(300px,80vw);
+  background:var(--bg3);border:1.5px solid var(--cyan);
+  border-radius:10px 10px 10px 2px;
+  padding:12px 14px;font-family:var(--font-body);font-weight:400;
+  font-size:.86rem;color:var(--ink);line-height:1.55;
+  box-shadow:0 8px 30px rgba(0,0,0,.5), 0 0 20px rgba(0,229,255,.25);
+  z-index:50;
+}
+.tip b{color:var(--yellow);font-family:var(--font-mono);font-size:.75rem;display:block;margin-bottom:4px;letter-spacing:1px}
+.term.open .tip{display:block}
+
+/* dossie / evidence card */
+.dossie{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-left:4px solid var(--cyan);
+  border-radius:4px;
+  padding:20px 22px;margin:24px 0;
+  position:relative;
+}
+.dossie::before{
+  content:attr(data-tag);
+  position:absolute;top:-11px;left:16px;
+  background:var(--cyan);color:var(--void);
+  font-family:var(--font-mono);font-size:10px;font-weight:700;
+  letter-spacing:1.5px;padding:3px 10px;border-radius:3px;
+  text-transform:uppercase;
+}
+.dossie.pearl{border-left-color:var(--yellow)}
+.dossie.pearl::before{background:var(--yellow)}
+.dossie.trap{border-left-color:var(--pink)}
+.dossie.trap::before{background:var(--pink)}
+.dossie.mech{border-left-color:var(--green)}
+.dossie.mech::before{background:var(--green)}
+.dossie p:last-child{margin-bottom:0}
+
+/* comic relief bubble */
+.mascot{
+  display:flex;gap:14px;align-items:flex-start;
+  margin:30px 0;
+}
+.mascot .avatar{
+  flex:none;width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #2a1550, var(--bg3));
+  border:2px solid var(--yellow);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;
+  box-shadow:0 0 16px rgba(244,255,46,.3);
+}
+.mascot .bubble{
+  background:var(--bg2);
+  border:1.5px solid var(--yellow);
+  border-radius:2px 16px 16px 16px;
+  padding:14px 16px;font-size:.92rem;color:var(--ink-dim);
+  position:relative;flex:1;
+}
+.mascot .bubble b{color:var(--yellow);font-family:var(--font-mono);font-size:.72rem;letter-spacing:1.5px;display:block;margin-bottom:4px}
+
+/* classification table */
+.tblwrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:480px}
+thead th{
+  background:var(--bg3);color:var(--cyan);
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:1px;text-transform:uppercase;
+  text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);
+}
+tbody td{padding:10px 12px;border-bottom:1px solid var(--line-soft);color:#e0d8f2;vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(157,78,221,.06)}
+
+/* pipeline / timeline */
+.pipeline{margin:26px 0;position:relative;padding-left:28px}
+.pipeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--pink),var(--cyan),var(--violet))}
+.pstep{position:relative;margin-bottom:22px}
+.pstep::before{
+  content:attr(data-n);
+  position:absolute;left:-28px;top:0;width:20px;height:20px;
+  background:var(--void);border:2px solid var(--cyan);border-radius:50%;
+  font-family:var(--font-mono);font-size:10px;color:var(--cyan);
+  display:flex;align-items:center;justify-content:center;font-weight:700;
+}
+.pstep h5{font-family:var(--font-chapter);font-size:1.05rem;color:var(--ink);margin-bottom:4px}
+.pstep p{font-size:.92rem;margin-bottom:6px}
+
+/* accordion (flashcards) */
+.flash{
+  border:1px solid var(--line);background:var(--panel);
+  border-radius:8px;margin-bottom:10px;overflow:hidden;cursor:pointer;
+}
+.flash .q{
+  padding:14px 46px 14px 16px;font-weight:700;color:var(--ink);position:relative;font-size:.95rem;
+}
+.flash .q::after{
+  content:"+";position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  color:var(--yellow);font-size:1.3rem;transition:.25s;font-family:var(--font-mono);
+}
+.flash.open .q::after{transform:translateY(-50%) rotate(45deg);color:var(--pink)}
+.flash .a{
+  max-height:0;overflow:hidden;transition:max-height .3s ease;
+  color:var(--ink-dim);font-size:.9rem;
+}
+.flash.open .a{max-height:400px}
+.flash .a-inner{padding:0 16px 16px;border-top:1px dashed var(--line-soft);padding-top:10px}
+
+/* stain swatch grid */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:22px 0}
+.swatch{
+  border:1px solid var(--line);border-radius:8px;padding:14px;background:var(--panel);
+}
+.swatch .bar{height:8px;border-radius:4px;margin-bottom:10px}
+.swatch h6{font-family:var(--font-chapter);font-size:1rem;color:var(--ink);margin-bottom:4px}
+.swatch p{font-size:.82rem;color:var(--ink-dim);margin-bottom:0}
+
+/* recap box */
+.recap{
+  background:linear-gradient(135deg, rgba(0,229,255,.06), rgba(255,46,136,.06));
+  border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-top:30px;
+}
+.recap h5{font-family:var(--font-mono);font-size:.75rem;letter-spacing:2px;color:var(--cyan);text-transform:uppercase;margin-bottom:10px}
+.recap ul{margin:0 0 0 18px}
+.recap li{font-size:.9rem;color:var(--ink-dim);margin-bottom:6px}
+
+/* refs */
+.refs{font-size:.82rem;color:var(--ink-faint);border-top:1px solid var(--line-soft);margin-top:20px;padding-top:14px}
+.refs p{color:var(--ink-faint);font-size:.8rem;margin-bottom:6px}
+
+footer{
+  text-align:center;padding:50px 20px 60px;
+  border-top:2px solid var(--line);margin-top:20px;
+  position:relative;
+}
+footer .stamp2{
+  font-family:var(--font-mono);font-size:12px;letter-spacing:2px;color:var(--violet);
+  border:1px dashed var(--violet);display:inline-block;padding:8px 20px;border-radius:4px;
+  transform:rotate(-1.5deg);margin-bottom:14px;
+}
+footer p{color:var(--ink-faint);font-size:.8rem;margin-bottom:4px}
+footer .brandline{font-family:var(--font-chapter);color:var(--yellow);font-size:1.05rem;margin-bottom:8px;text-shadow:0 0 12px rgba(244,255,46,.3)}
+
+.toc-jump{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:30px 0 10px;
+}
+.toc-jump a{
+  text-decoration:none;color:var(--ink);
+  background:var(--panel);border:1px solid var(--line);border-radius:8px;
+  padding:14px 16px;display:block;transition:.2s;
+}
+.toc-jump a:hover{border-color:var(--cyan);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,229,255,.15)}
+.toc-jump .tn{font-family:var(--font-mono);color:var(--pink);font-size:.72rem;letter-spacing:1px}
+.toc-jump .tt{font-family:var(--font-chapter);font-size:1rem;margin-top:3px}
+
+@media(max-width:720px){
+  .navToggle{display:inline-block}
+  #chapNav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--void);flex-direction:column;border-bottom:1px solid var(--line);padding:8px}
+  #chapNav.show{display:flex}
+  #chapNav a{padding:10px}
+  .chap-num{display:none}
+  body{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<header class="topnav">
+  <div class="nav-inner">
+    <div class="brand">DemilMed-UL <span>DOSSIÊ Nº 001 · 2026</span></div>
+    <button class="navToggle" id="navToggle" aria-label="abrir índice">☰</button>
+    <nav id="chapNav">
+      <a href="#prologo">Prólogo</a>
+      <a href="#cap1">I</a>
+      <a href="#cap2">II</a>
+      <a href="#cap3">III</a>
+      <a href="#cap4">IV</a>
+      <a href="#cap5">V</a>
+      <a href="#cap6">VI</a>
+      <a href="#cap7">VII</a>
+      <a href="#epilogo">Epílogo</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="halftone"></div>
+  <div class="stamp">Confidencial · Uso Académico · UniLicungo</div>
+  <h1>PATOLOGIA:<br>Arquivos da Verdade Oculta</h1>
+  <div class="sub">— uma investigação sobre a ciência que lê o corpo como uma cena de crime —</div>
+  <p class="lede">Todo o tecido tem uma história para contar. A patologia é a arte e a ciência de a fazer falar — desde o corte macroscópico até à última molécula corada ao microscópio. Bem-vindo ao teu primeiro turno no laboratório.</p>
+  <div class="meta">
+    <span>🩸 Patologia Geral — Introdução</span>
+    <span>🔬 Técnicas Laboratoriais</span>
+    <span>🏥 Serviço de Anatomia Patológica</span>
+  </div>
+</section>
+
+<main>
+
+<div class="toc-jump">
+  <a href="#prologo"><div class="tn">DOSSIÊ 000</div><div class="tt">Prólogo — O que é a Patologia?</div></a>
+  <a href="#cap1"><div class="tn">DOSSIÊ 001</div><div class="tt">As Divisões da Patologia</div></a>
+  <a href="#cap2"><div class="tn">DOSSIÊ 002</div><div class="tt">O Serviço de Anatomia Patológica</div></a>
+  <a href="#cap3"><div class="tn">DOSSIÊ 003</div><div class="tt">Tipos de Amostra</div></a>
+  <a href="#cap4"><div class="tn">DOSSIÊ 004</div><div class="tt">Do Tecido à Lâmina</div></a>
+  <a href="#cap5"><div class="tn">DOSSIÊ 005</div><div class="tt">Microscopia: As Lentes da Verdade</div></a>
+  <a href="#cap6"><div class="tn">DOSSIÊ 006</div><div class="tt">Corantes e Técnicas Especiais</div></a>
+  <a href="#cap7"><div class="tn">DOSSIÊ 007</div><div class="tt">Imunohistoquímica e Patologia Molecular</div></a>
+  <a href="#epilogo"><div class="tn">ENCERRAMENTO</div><div class="tt">Porque tudo isto salva vidas</div></a>
+</div>
+
+<section class="chapter" id="prologo">
+  <div class="chap-eyebrow">Abertura do processo</div>
+  <h2 class="chap-title">Prólogo — O que é, afinal, a <em>Patologia</em>?</h2>
+  <p class="chap-kicker">Antes de abrirmos o primeiro dossiê, precisamos de saber que tipo de investigador estamos a treinar-nos para ser.</p>
+
+  <p>Repara na palavra. <span class="term">Patologia<span class="tip"><b>ETIMOLOGIA</b>Do grego <i>páthos</i> (πάθος) — "sofrimento, aquilo que se padece, emoção" — e <i>lógos</i> (λόγος) — "estudo, discurso, razão". Literalmente, "o discurso sobre o sofrimento". Repara que <i>páthos</i> é o mesmo radical de "patético" e de "empatia" (sentir junto) — a patologia nasce, etimologicamente, de tentar compreender aquilo que o corpo sofre.</span></span> não nasceu num laboratório: nasceu na língua grega, muito antes de existir um microscópio. Isso já nos diz algo importante — a patologia é, antes de tudo, uma tentativa humana de <strong>dar sentido ao sofrimento do corpo</strong>, transformando-o em algo que se pode nomear, prever e, sempre que possível, tratar.</p>
+
+  <p>Em termos formais, a Patologia é a disciplina médica que estuda as <strong>alterações estruturais, bioquímicas e funcionais</strong> das células, tecidos e órgãos que estão na base da doença. É frequentemente descrita como a <strong>ponte entre a ciência básica e a prática clínica</strong> (Robbins, Bases Patológicas das Doenças) — de um lado, a bioquímica, a biologia molecular, a fisiologia e a genética; do outro, o doente à tua frente, com sinais, sintomas e uma pergunta na cara: <i>"o que é que eu tenho, doutor(a)?"</i>. É o(a) patologista que traduz o mundo invisível das moléculas e das células para a linguagem clínica do diagnóstico.</p>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI · TÉCNICO DE HISTOLOGIA, ANO 1</b>Primeira lição que aprendi aqui: em patologia, ninguém "acha" nada. A gente <i>descreve</i>, <i>compara</i> e <i>prova</i>. Se ouvires um patologista a dizer "acho que é cancro", foge — ele está a brincar contigo (ou é estagiário, como eu era).</div>
+  </div>
+
+  <h3 class="sec"><span class="ico">🕵️</span> A lógica de qualquer investigação patológica</h3>
+  <p>Todo o processo de doença, seja qual for o órgão, pode ser desmontado nas mesmas quatro perguntas fundamentais. Este é o esqueleto lógico que vais reencontrar em <strong>todas as disciplinas de patologia especial</strong> que vieres a estudar — por isso vale a pena gravá-lo já, aqui no início:</p>
+
+  <div class="pipeline">
+    <div class="pstep" data-n="1">
+      <h5>Etiologia — a causa</h5>
+      <p>Do grego <i>aitía</i> (causa) + <i>lógos</i>. Pergunta: <strong>o que iniciou isto?</strong> Pode ser genética (herdada), adquirida (infecciosa, nutricional, química, física, imunológica) ou, na maioria das doenças comuns, multifactorial — uma combinação de predisposição genética com factores ambientais.</p>
+    </div>
+    <div class="pstep" data-n="2">
+      <h5>Patogénese — o mecanismo</h5>
+      <p>Do grego <i>páthos</i> + <i>génesis</i> (origem). Pergunta: <strong>por que caminho molecular e celular a causa produz a doença?</strong> É a sequência cronológica de eventos — bioquímicos, celulares, teciduais — que liga a exposição inicial ao resultado final. É o "enredo" da história que vamos contar em cada tema futuro.</p>
+    </div>
+    <div class="pstep" data-n="3">
+      <h5>Alterações morfológicas</h5>
+      <p>Pergunta: <strong>que marcas estruturais isto deixa na célula ou no tecido?</strong> São essas marcas — visíveis ao olho nu (macroscopia) ou ao microscópio (histopatologia) — que permitem, muitas vezes, fazer o diagnóstico definitivo.</p>
+    </div>
+    <div class="pstep" data-n="4">
+      <h5>Significado clínico</h5>
+      <p>Pergunta: <strong>o que é que tudo isto significa para o doente?</strong> As alterações estruturais e funcionais traduzem-se em sinais, sintomas, curso da doença, complicações e prognóstico — é aqui que a patologia se encontra, finalmente, com a semiologia e a terapêutica.</p>
+    </div>
+  </div>
+
+  <div class="dossie mech" data-tag="lógica clínica">
+    <p>Repara que esta sequência é sempre a mesma, seja qual for a doença: <strong>causa → mecanismo → estrutura alterada → consequência funcional/clínica</strong>. Sempre que estudares uma doença nova, tenta encaixá-la nestas quatro caixas — é a forma mais rápida de organizar mentalmente qualquer capítulo de patologia especial, e é exactamente assim que o Robbins estrutura cada doença que descreve.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">📜</span> Um instante de história</h3>
+  <p>Dois nomes valem a pena reter, porque marcam duas viragens conceptuais na forma como se pensa a doença:</p>
+  <ul>
+    <li><strong>Giovanni Battista Morgagni</strong> (1682–1771) é considerado o pai da anatomia patológica moderna. Na sua obra <i>De Sedibus et Causis Morborum per Anatomen Indagatis</i> (1761) — "As sedes e causas das doenças investigadas pela anatomia" — correlacionou, pela primeira vez de forma sistemática, os sintomas que o doente apresentava em vida com as lesões encontradas na autópsia. Nasce aqui a ideia revolucionária de que <strong>a doença tem uma localização anatómica concreta</strong>.</li>
+    <li><strong>Rudolf Virchow</strong> (1821–1902) deslocou o foco do órgão para a célula, com a célebre máxima <i>"omnis cellula e cellula"</i> ("toda a célula vem de uma célula"). Fundou a patologia celular: a doença não é apenas uma questão de "órgão doente", mas de <strong>células individuais que adoecem</strong> — o que prepara directamente o terreno para tudo o que estudarás sobre lesão celular.</li>
+  </ul>
+
+  <div class="mascot">
+    <div class="avatar">💀</div>
+    <div class="bubble"><b>PAUSA PARA RESPIRAR</b>Curiosidade macabra (mas verdadeira): antes do microscópio ser comum, os patologistas do século XIX diagnosticavam muita coisa só pelo <i>cheiro</i>, <i>cor</i> e <i>textura</i> à autópsia. Hoje temos PCR e imunohistoquímica. Se um dia achares a aula difícil, lembra-te: já foi pior — bem pior.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>Patologia</strong> = <i>páthos</i> (sofrimento) + <i>lógos</i> (estudo) — a ponte entre ciência básica e clínica.</li>
+      <li>Toda a doença pode ser lida em quatro etapas: <strong>etiologia → patogénese → morfologia → significado clínico</strong>.</li>
+      <li><strong>Morgagni</strong> = anatomia patológica (lesão tem sede); <strong>Virchow</strong> = patologia celular (a célula é a unidade da doença).</li>
+    </ul>
+  </div>
+</section>
+
+<section class="chapter" id="cap1">
+  <div class="chap-num">01</div>
+  <div class="chap-eyebrow">Dossiê Nº 001</div>
+  <h2 class="chap-title">As <em>Divisões</em> da Patologia</h2>
+  <p class="chap-kicker">Antes de entrarmos no laboratório, precisamos de um mapa do território — quem faz o quê, e onde, dentro desta ciência.</p>
+
+  <p>A Patologia não é um bloco único: é uma família de subdisciplinas organizadas segundo dois grandes eixos de classificação, que respondem a duas perguntas diferentes. O primeiro eixo pergunta <strong>"que tipo de conhecimento estamos a construir?"</strong>; o segundo pergunta <strong>"que tipo de amostra estamos a analisar?"</strong>. Vamos abrir os dois dossiês.</p>
+
+  <h3 class="sec"><span class="ico">🧩</span> Eixo 1 — Patologia Geral vs. Patologia Sistémica (Especial)</h3>
+  <p>Esta é a divisão conceptual clássica, usada pela generalidade dos manuais (Robbins incluído), e é provavelmente a mais importante para organizares o teu estudo ao longo do curso.</p>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>Divisão</th><th>O que estuda</th><th>Exemplo de conteúdo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Patologia Geral</strong></td><td>Os mecanismos <strong>básicos e comuns</strong> a praticamente qualquer doença, independentemente do órgão afectado.</td><td>Lesão e morte celular, inflamação e reparação, distúrbios hemodinâmicos (edema, trombose, embolia, enfarte, choque), neoplasia, distúrbios genéticos e imunológicos.</td></tr>
+        <tr><td><strong>Patologia Sistémica</strong> (ou Especial)</td><td>A <strong>aplicação</strong> desses mecanismos gerais a um órgão ou sistema específico.</td><td>Patologia cardiovascular, patologia renal, patologia respiratória, patologia do sistema nervoso, etc.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="dossie mech" data-tag="lógica do curso">
+    <p>Esta é a razão pela qual o teu curso começa sempre pela Patologia Geral: a inflamação que vais estudar de forma abstracta agora é <strong>literalmente o mesmo processo molecular</strong> que mais tarde vais reencontrar dentro de uma pneumonia, de uma apendicite ou de uma glomerulonefrite. Aprender bem os mecanismos gerais é como aprender o alfabeto antes de leres o romance inteiro — cada "capítulo especial" é apenas uma nova combinação das mesmas letras.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🏥</span> Eixo 2 — Patologia Anatómica vs. Patologia Clínica</h3>
+  <p>Este é o eixo <strong>organizacional e prático</strong> — como o trabalho está, de facto, dividido dentro de um hospital. É o eixo mais relevante para os próximos capítulos deste dossiê, porque é ele que determina que tipo de amostra, técnica e profissional está envolvido.</p>
+
+  <h4 class="sub">▸ Patologia Anatómica (Anatomic Pathology)</h4>
+  <p>Estuda as alterações estruturais <strong>visíveis</strong> — a olho nu ou ao microscópio — em órgãos, tecidos e células. Divide-se em três ramos principais:</p>
+  <ul>
+    <li><strong>Histopatologia / Patologia Cirúrgica</strong> — o exame de biópsias e peças cirúrgicas (tecido sólido, processado em blocos e cortado em lâminas). É o ramo que vamos detalhar nos próximos capítulos.</li>
+    <li><strong>Citopatologia</strong> — o exame de <strong>células isoladas</strong>, esfoliadas ou aspiradas, sem a arquitectura tecidual completa (por exemplo, o esfregaço de Papanicolau ou a citologia aspirativa por agulha fina).</li>
+    <li><strong>Autópsia (ou Necrópsia)</strong> — o exame do corpo após a morte. A própria palavra é reveladora: <span class="term">autópsia<span class="tip"><b>ETIMOLOGIA</b>Do grego <i>autós</i> (próprio, o próprio) + <i>ópsis</i> (visão, o acto de ver). Literalmente, "ver com os próprios olhos" — a ideia de não confiar apenas no relato alheio, mas verificar directamente a causa da morte.</span></span> significa "ver por si mesmo". Um subtipo particular é a <strong>patologia forense (ou médico-legal)</strong>, dedicada a mortes de causa suspeita, violenta ou de interesse judicial.</li>
+  </ul>
+
+  <h4 class="sub">▸ Patologia Clínica (Clinical / Laboratory Pathology)</h4>
+  <p>Estuda amostras biológicas <strong>líquidas ou fluidas</strong> — sangue, urina, líquor, secreções — através de métodos bioquímicos, microbiológicos e imunológicos, geralmente sem análise morfológica directa do tecido. Inclui:</p>
+  <ul>
+    <li><strong>Hematologia laboratorial</strong> — hemograma, estudo da coagulação, morfologia das células sanguíneas.</li>
+    <li><strong>Bioquímica clínica</strong> — doseamento de enzimas, electrólitos, hormonas, marcadores tumorais.</li>
+    <li><strong>Microbiologia</strong> — cultura e identificação de agentes infecciosos.</li>
+    <li><strong>Imunologia clínica</strong> — auto-anticorpos, complemento, imunodeficiências.</li>
+  </ul>
+
+  <div class="dossie pearl" data-tag="pérola clínica">
+    <p>Na prática hospitalar, se um cirurgião envia "um pedaço de tecido" para o laboratório, esse pedido segue para a <strong>Anatomia Patológica</strong>. Se envia "um tubo de sangue", segue para a <strong>Patologia Clínica</strong>. É uma distinção simples, mas que organiza fisicamente todo o fluxo de trabalho de um hospital — e é a distinção que vamos seguir a partir daqui, porque este dossiê é dedicado à Anatomia Patológica.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🧬</span> Um terceiro eixo, cada vez mais relevante: a Patologia Molecular</h3>
+  <p>Nas últimas décadas surgiu um ramo transversal — a <strong>Patologia Molecular (ou Genómica)</strong> — que usa técnicas de biologia molecular (PCR, sequenciação, hibridização in situ) tanto sobre tecido como sobre sangue, para identificar mutações, rearranjos génicos ou agentes infecciosos ao nível do <strong>DNA e RNA</strong>. Não substitui a Anatomia Patológica clássica — soma-se a ela, permitindo diagnósticos mais precisos e terapêuticas dirigidas ("medicina de precisão"). Vamos voltar a este tema no Capítulo VII.</p>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI</b>Resumindo para quem está com sono: "Anatómica" olha para o <i>sólido</i> (pedaços de gente), "Clínica" olha para o <i>líquido</i> (fluidos de gente), e "Molecular" olha para o que nenhum dos dois consegue ver a olho nu — o próprio código genético. Três formas diferentes de fazer a mesma pergunta: "o que se passa aqui?"</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>Eixo conceptual:</strong> Patologia Geral (mecanismos universais) vs. Patologia Sistémica (aplicação por órgão).</li>
+      <li><strong>Eixo organizacional:</strong> Patologia Anatómica (tecido/células — histopatologia, citopatologia, autópsia) vs. Patologia Clínica (fluidos — hematologia, bioquímica, microbiologia, imunologia).</li>
+      <li><strong>Eixo emergente:</strong> Patologia Molecular — DNA/RNA como nova fonte de diagnóstico.</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes principais deste dossiê: Kumar, Abbas &amp; Aster, <i>Robbins &amp; Cotran — Bases Patológicas das Doenças</i>, capítulo introdutório sobre a natureza da doença; convenções organizacionais descritas em manuais de histotecnologia (Bancroft &amp; Layton, <i>Theory and Practice of Histological Techniques</i>; Suvarna, Layton &amp; Bancroft — <i>Bancroft's</i>, para a estrutura dos serviços de Anatomia Patológica).</p>
+  </div>
+</section>
+
+<section class="chapter" id="cap2">
+  <div class="chap-num">02</div>
+  <div class="chap-eyebrow">Dossiê Nº 002</div>
+  <h2 class="chap-title">O <em>Serviço</em> de Anatomia Patológica no Hospital</h2>
+  <p class="chap-kicker">Entramos agora fisicamente no laboratório. Quem trabalha ali? Por onde entra e sai uma amostra? E porque é que um erro de etiquetagem pode ser tão perigoso como um erro cirúrgico?</p>
+
+  <p>Um Serviço de Anatomia Patológica é, essencialmente, uma <strong>linha de produção do diagnóstico</strong> — mas uma linha de produção onde cada peça é única, insubstituível, e muitas vezes irrepetível (uma vez consumido, um pequeno fragmento de biópsia não pode ser "colhido outra vez" sem sujeitar o doente a um novo procedimento). Isso muda tudo em termos de rigor.</p>
+
+  <h3 class="sec"><span class="ico">🗺️</span> O percurso físico de uma amostra</h3>
+  <p>Independentemente do hospital, o desenho básico do serviço segue sempre a mesma lógica sequencial — cada sala existe para uma etapa específica do processamento que vamos detalhar no Capítulo IV:</p>
+
+  <div class="pipeline">
+    <div class="pstep" data-n="1"><h5>Receção e registo</h5><p>A amostra chega acompanhada de uma requisição com dados clínicos, identificação do doente e do local de colheita. É atribuído um <strong>número de processo único</strong> — a partir daqui, este número acompanha a amostra em cada etiqueta, cassete e lâmina até ao relatório final.</p></div>
+    <div class="pstep" data-n="2"><h5>Sala de macroscopia (grossing room)</h5><p>Onde o patologista ou o técnico descrevem, medem, fotografam e seccionam a peça, seleccionando os fragmentos representativos que seguem para processamento.</p></div>
+    <div class="pstep" data-n="3"><h5>Laboratório de histotecnologia</h5><p>Onde ocorre o processamento automatizado (desidratação, diafanização, impregnação), a inclusão em parafina, a microtomia e a coloração.</p></div>
+    <div class="pstep" data-n="4"><h5>Sala de leitura / gabinete do patologista</h5><p>Onde as lâminas coradas são examinadas ao microscópio, correlacionadas com a informação clínica, e o diagnóstico é redigido.</p></div>
+    <div class="pstep" data-n="5"><h5>Arquivo e biobanco</h5><p>Blocos de parafina e lâminas são arquivados durante anos (frequentemente décadas, por exigência legal e clínica), permitindo revisões futuras, novos estudos moleculares ou ensino.</p></div>
+  </div>
+
+  <h3 class="sec"><span class="ico">👥</span> Quem trabalha ali dentro?</h3>
+  <div class="swatches">
+    <div class="swatch"><div class="bar" style="background:var(--pink)"></div><h6>Patologista</h6><p>Médico especialista. Interpreta as lâminas, correlaciona com a clínica, assina o relatório final e assume a responsabilidade legal do diagnóstico.</p></div>
+    <div class="swatch"><div class="bar" style="background:var(--cyan)"></div><h6>Técnico de Anatomia Patológica</h6><p>Processa o tecido: corta no micrótomo, cora as lâminas, mantém os equipamentos, executa colorações especiais.</p></div>
+    <div class="swatch"><div class="bar" style="background:var(--yellow)"></div><h6>Citotécnico</h6><p>Especializado na triagem de amostras citológicas (por exemplo, esfregaços cervicovaginais), sinalizando ao patologista os casos suspeitos.</p></div>
+    <div class="swatch"><div class="bar" style="background:var(--violet)"></div><h6>Auxiliar de necrópsia</h6><p>Assiste o patologista durante autópsias, incluindo preparação e eviceração do corpo sob supervisão médica.</p></div>
+    <div class="swatch"><div class="bar" style="background:var(--green)"></div><h6>Administrativo / secretariado</h6><p>Regista amostras, garante a cadeia de identificação, transcreve e organiza relatórios.</p></div>
+  </div>
+
+  <h3 class="sec"><span class="ico">🛡️</span> Biossegurança e identificação — onde o erro é proibido</h3>
+  <p>Toda a amostra biológica é tratada como <strong>potencialmente infecciosa</strong>, até prova em contrário. Isto implica:</p>
+  <ul>
+    <li>Uso de <strong>equipamento de protecção individual</strong> (luvas, bata, óculos) em todas as etapas de manuseio de tecido fresco.</li>
+    <li>Manuseamento do formol (formaldeído) em <strong>hotes de exaustão</strong> — os vapores são irritantes das mucosas e classificados como potencialmente carcinogénicos em exposição crónica ocupacional.</li>
+    <li><strong>Identificação inequívoca</strong> em cada etapa: doente → frasco → cassete → lâmina → relatório. Um simples erro de troca de etiquetas pode significar diagnosticar cancro à pessoa errada — por isso, a verificação cruzada de identidade é um dos pontos de controlo de qualidade mais vigiados em qualquer laboratório de patologia.</li>
+  </ul>
+
+  <div class="dossie trap" data-tag="armadilha comum">
+    <p>Um erro clássico de estudante: pensar que o trabalho do laboratório é "só técnico" e que o verdadeiro raciocínio clínico só começa quando o patologista olha para a lâmina. Na realidade, <strong>a qualidade do diagnóstico começa muito antes</strong> — numa colheita bem feita, numa fixação correcta, numa macroscopia bem descrita. Um excelente patologista não consegue "salvar" uma amostra mal processada. É por isso que este dossiê dedica tanto espaço às etapas anteriores ao microscópio.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">⚡</span> O serviço de biópsia de congelação (exame extemporâneo)</h3>
+  <p>Existe uma ligação directa e em tempo real entre o bloco operatório e o laboratório de patologia: a <strong>biópsia de congelação</strong> (também chamada exame extemporâneo). Durante uma cirurgia, o cirurgião pode enviar um fragmento de tecido fresco para resposta imediata — tipicamente em cerca de <strong>15 a 20 minutos</strong> — enquanto o doente permanece sob anestesia. Vamos detalhar a técnica no Capítulo IV, mas o essencial aqui é compreender <strong>porquê</strong> este serviço existe: permite decisões cirúrgicas em tempo real, como confirmar se uma margem cirúrgica está livre de tumor, se um gânglio sentinela tem metástases, ou simplesmente identificar que tipo de tecido está a ser removido.</p>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI</b>A biópsia de congelação é, sem exagero, o momento mais "cinema de acção" da patologia. O cirurgião está literalmente à espera, de bisturi na mão, do teu telefonema. Nunca vi ninguém correr tão depressa por um corredor de hospital como um técnico com uma amostra de congelação atrasada.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li>Percurso da amostra: <strong>receção → macroscopia → histotecnologia → leitura microscópica → arquivo</strong>.</li>
+      <li>Equipa multidisciplinar: patologista, técnico de anatomia patológica, citotécnico, auxiliar de necrópsia, administrativo.</li>
+      <li>Identificação inequívoca em cada etapa é a principal barreira contra erros diagnósticos graves.</li>
+      <li>A biópsia de congelação liga o laboratório ao bloco operatório em tempo real (~15–20 min).</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes: Suvarna, Layton &amp; Bancroft, <i>Bancroft's Theory and Practice of Histological Techniques</i> (organização de serviços e biossegurança); Kumar, Abbas &amp; Aster, <i>Robbins — Bases Patológicas das Doenças</i> (papel clínico do exame extemporâneo).</p>
+  </div>
+</section>
+
+<section class="chapter" id="cap3">
+  <div class="chap-num">03</div>
+  <div class="chap-eyebrow">Dossiê Nº 003</div>
+  <h2 class="chap-title">Tipos de <em>Amostra</em> e Vias de Colheita</h2>
+  <p class="chap-kicker">Nem todas as "provas" chegam da mesma forma à cena do crime. Antes de processar, é preciso saber que tipo de espécime temos nas mãos.</p>
+
+  <h3 class="sec"><span class="ico">🔪</span> Biópsia</h3>
+  <p>A palavra <span class="term">biópsia<span class="tip"><b>ETIMOLOGIA</b>Do grego <i>bíos</i> (vida) + <i>ópsis</i> (ver). Literalmente, "ver o vivo" — colher e examinar tecido de um organismo vivo, em contraste com a autópsia, que examina o morto.</span></span> designa a colheita de uma amostra de tecido de um doente vivo, para fins diagnósticos. Consoante a extensão da lesão removida, distinguem-se:</p>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>Tipo</th><th>O que é</th><th>Uso típico</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Incisional</strong></td><td>Remove apenas uma <i>parte</i> da lesão.</td><td>Lesões grandes, onde a excisão completa exigiria cirurgia maior antes de se confirmar o diagnóstico.</td></tr>
+        <tr><td><strong>Excisional</strong></td><td>Remove a lesão <i>na sua totalidade</i>, geralmente com margem de tecido são.</td><td>Lesões pequenas e acessíveis (nevos suspeitos, nódulos superficiais).</td></tr>
+        <tr><td><strong>Punch (em saca-bocado)</strong></td><td>Instrumento cilíndrico que remove um pequeno cilindro de tecido.</td><td>Dermatologia — lesões cutâneas.</td></tr>
+        <tr><td><strong>Agulha grossa (core needle)</strong></td><td>Agulha calibrosa que retira um cilindro fino de tecido, frequentemente guiada por imagem (ecografia, mamografia, TC).</td><td>Mama, próstata, fígado, rim — lesões profundas não acessíveis a cirurgia directa.</td></tr>
+        <tr><td><strong>Endoscópica</strong></td><td>Colhida através de um endoscópio, com pinça de biópsia.</td><td>Tubo digestivo, árvore brônquica.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sec"><span class="ico">🫀</span> Peças cirúrgicas (ressecções)</h3>
+  <p>Correspondem à remoção de um órgão inteiro ou de parte significativa dele durante uma cirurgia major — por exemplo, uma mastectomia, uma colectomia ou uma nefrectomia. Ao contrário da biópsia (que procura <strong>confirmar</strong> um diagnóstico), a peça cirúrgica permite avaliar a <strong>extensão total da doença</strong>: tamanho do tumor, invasão de estruturas vizinhas, estado das margens cirúrgicas e dos gânglios linfáticos — informação essencial para o estadiamento oncológico.</p>
+
+  <h3 class="sec"><span class="ico">🧫</span> Citologia — quando a arquitectura não importa (tanto)</h3>
+  <p>Enquanto a histopatologia estuda o tecido com a sua arquitectura preservada, a <strong>citologia</strong> estuda células isoladas, dispersas, sem o contexto estrutural completo. Tem duas grandes origens:</p>
+  <ul>
+    <li><strong>Citologia esfoliativa</strong> — células que se desprendem naturalmente de uma superfície epitelial, como no clássico <strong>esfregaço de Papanicolau</strong> (rastreio do cancro do colo do útero), ou colhidas de expectoração, urina ou líquidos de lavagem.</li>
+    <li><strong>Citologia aspirativa</strong> — obtida por <strong>Punção Aspirativa por Agulha Fina (PAAF)</strong>, ou <i>Fine Needle Aspiration (FNA)</i> em inglês: uma agulha muito fina aspira células directamente de um nódulo (tiroide, gânglio linfático, massa mamária ou de partes moles), frequentemente guiada por ecografia.</li>
+  </ul>
+
+  <div class="dossie pearl" data-tag="pérola clínica">
+    <p>A PAAF é rápida, pouco invasiva e barata — um excelente primeiro passo diagnóstico, por exemplo perante um nódulo da tiroide. Mas tem uma limitação lógica importante: como não preserva a arquitectura tecidual, <strong>não consegue, por si só, distinguir uma lesão benigna encapsulada de um carcinoma invasivo</strong> em certos contextos (como no carcinoma folicular da tiroide, cujo diagnóstico depende de provar invasão capsular ou vascular — algo que só se vê num corte histológico completo). Por isso, resultados "suspeitos" em citologia frequentemente exigem confirmação por biópsia ou peça cirúrgica.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">⚰️</span> Autópsia</h3>
+  <p>Já vimos a etimologia no capítulo anterior — "ver por si mesmo". Distinguem-se dois grandes tipos, consoante a finalidade:</p>
+  <ul>
+    <li><strong>Autópsia clínica</strong> — realizada com consentimento da família, para esclarecer a causa de morte, avaliar a eficácia terapêutica ou para fins de ensino e investigação. É voluntária e cada vez mais rara na prática moderna.</li>
+    <li><strong>Autópsia médico-legal (forense)</strong> — ordenada judicialmente perante morte súbita, violenta, suspeita ou de causa indeterminada. Aqui, o patologista actua como perito, e a cadeia de custódia da prova tem valor legal.</li>
+  </ul>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI</b>Regra de ouro que me ensinaram no primeiro dia: "biópsia" é ver o vivo, "autópsia" é ver o morto — mas em ambos os casos, é sempre o tecido que fala primeiro. Nós só temos de saber ouvir.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>Biópsia</strong> (tecido vivo): incisional, excisional, punch, agulha grossa, endoscópica.</li>
+      <li><strong>Peça cirúrgica</strong>: ressecção completa, permite estadiamento.</li>
+      <li><strong>Citologia</strong>: esfoliativa (Papanicolau) ou aspirativa (PAAF/FNA) — sem arquitectura tecidual completa.</li>
+      <li><strong>Autópsia</strong>: clínica (consentida) vs. forense (médico-legal).</li>
+    </ul>
+  </div>
+</section>
+
+<section class="chapter" id="cap4">
+  <div class="chap-num">04</div>
+  <div class="chap-eyebrow">Dossiê Nº 004 · O coração do laboratório</div>
+  <h2 class="chap-title">A <em>Jornada</em> da Amostra: Do Tecido à Lâmina</h2>
+  <p class="chap-kicker">Este é o capítulo mais longo do dossiê — e com razão. Cada etapa aqui descrita, se falhar, destrói silenciosamente a fiabilidade de tudo o que vem depois. Vamos segui-la em ordem cronológica rigorosa, do momento em que o bisturi corta até ao momento em que os olhos do patologista pousam na lâmina.</p>
+
+  <div class="dossie mech" data-tag="lógica geral">
+    <p>Existe uma ideia central que organiza este capítulo inteiro: assim que um tecido é separado do corpo, perde o seu fornecimento de oxigénio e nutrientes. As bombas iónicas dependentes de <span class="term">ATP<span class="tip"><b>ATP</b>Adenosine Triphosphate (inglês) / Trifosfato de Adenosina (português) — a molécula universal de armazenamento e transferência de energia química na célula.</span></span> param, o cálcio intracelular acumula-se, e enzimas líticas (proteases, nucleases, fosfolipases) começam a <strong>autodigerir</strong> a própria célula — um processo chamado <span class="term">autólise<span class="tip"><b>ETIMOLOGIA</b>Do grego <i>autós</i> (próprio) + <i>lýsis</i> (dissolução, quebra). "Dissolução de si mesmo" — a célula literalmente digere-se com as suas próprias enzimas.</span></span>. Paralelamente, bactérias presentes no tecido (ou no ambiente) iniciam a <strong>putrefacção</strong>. Toda a primeira metade deste capítulo é, no fundo, uma corrida contra estes dois relógios biológicos.</p>
+  </div>
+
+  <div class="pipeline">
+
+    <div class="pstep" data-n="1">
+      <h5>Colheita e transporte</h5>
+      <p>A amostra deve ser colocada em fixador <strong>o mais rapidamente possível</strong> após a colheita — idealmente em minutos. O atraso permite a autólise instalar-se, o que degrada a morfologia celular e destrói antigénios que mais tarde poderiam ser necessários para imunohistoquímica. Peças cirúrgicas grandes são frequentemente orientadas com suturas ou marcações do próprio cirurgião, para que o patologista saiba exactamente qual a margem superior, inferior, medial ou lateral — informação que pode determinar se o doente precisa de reoperação.</p>
+    </div>
+
+    <div class="pstep" data-n="2">
+      <h5>Fixação</h5>
+      <p>A fixação tem dois objectivos simultâneos: <strong>impedir a autólise e a putrefacção</strong>, e <strong>estabilizar</strong> a estrutura tecidual para que sobreviva às etapas químicas agressivas seguintes.</p>
+      <p>O fixador universal em histopatologia de rotina é o <strong>formol tamponado a 10%</strong> (uma solução aquosa de formaldeído a cerca de 4%, tamponada para manter pH neutro e evitar a formação de pigmento de formalina). O mecanismo é elegante: o formaldeído (CH₂O) reage com os grupos amina livres das proteínas (sobretudo resíduos de lisina), formando <strong>pontes de metileno</strong> que ligam covalentemente proteínas vizinhas entre si. O resultado é uma malha tridimensional rígida que "congela" a arquitectura tecidual no lugar, ao mesmo tempo que desnatura e inactiva as enzimas autolíticas e inibe o crescimento bacteriano.</p>
+      <p>A penetração do fixador não é instantânea — segue aproximadamente uma relação em que a profundidade alcançada é proporcional à <strong>raiz quadrada do tempo</strong> (regra prática atribuída a Medawar). Na prática clínica, isto tem uma consequência muito concreta: <strong>fatias de tecido demasiado espessas fixam mal no centro</strong>, mesmo que a superfície pareça bem fixada. Por isso, na macroscopia (próxima etapa), seccionam-se as peças em fatias de cerca de 3 a 4 milímetros, e usa-se um volume de fixador de pelo menos 10 a 20 vezes o volume do tecido.</p>
+
+      <div class="dossie trap" data-tag="armadilha comum">
+        <p>Existe um equilíbrio delicado: <strong>pouca fixação</strong> deixa autólise e compromete a morfologia e a antigenicidade; <strong>fixação excessiva</strong> (formol durante semanas, por exemplo) cria um excesso de pontes cruzadas que pode "esconder" epítopos proteicos, dificultando reacções de imunohistoquímica mais tarde. É por isso que existem técnicas de recuperação antigénica (que vamos ver no Capítulo VII) — elas existem precisamente para desfazer parcialmente o excesso de reticulação criado pelo formol.</p>
+      </div>
+
+      <p>Nem todos os contextos usam formol. Para <strong>microscopia electrónica</strong>, prefere-se o <strong>glutaraldeído</strong>, que forma pontes cruzadas mais extensas e rápidas (melhor preservação ultraestrutural), mas penetra mal — por isso só se usa em fragmentos muito pequenos (cerca de 1 mm³). Para citologia e alguns estudos moleculares, usam-se fixadores à base de álcool, que preservam melhor os ácidos nucleicos. Para a biópsia de congelação e para a imunofluorescência (por exemplo, em biópsias renais), o tecido é simplesmente <strong>congelado fresco, sem qualquer fixador químico</strong>.</p>
+    </div>
+
+    <div class="pstep" data-n="3">
+      <h5>Exame macroscópico (macroscopia / <i>grossing</i>)</h5>
+      <p>O patologista (ou um assistente de patologia treinado) descreve a peça: cor, consistência, dimensões, peso, presença de lesões visíveis. A peça é fotografada, e as margens cirúrgicas são frequentemente <strong>marcadas com tinta-da-índia</strong> de cores diferentes — uma técnica simples mas engenhosa que permite, mais tarde, ao microscópio, saber exactamente qual a margem que está a ser observada, mesmo depois de a peça ter sido cortada em vários pedaços.</p>
+      <p>A peça é então seccionada em fatias finas ("fatiada", à semelhança de um pão — por vezes chamada, informalmente, a <i>técnica do pão fatiado</i>), e são seleccionados os fragmentos representativos, que são colocados em pequenas cápsulas plásticas perfuradas chamadas <strong>cassetes</strong>, cada uma identificada com o número do processo.</p>
+
+      <div class="dossie pearl" data-tag="pérola clínica">
+        <p>Este é, sem exagero, o passo mais subestimado — e mais decisivo — de todo o processo. Diz-se com frequência nos laboratórios: <strong>"a patologia é tão boa quanto a amostragem que a sustenta"</strong>. Se a área exacta onde está o tumor invasivo não for seleccionada para as cassetes, o diagnóstico pode ser subestimado, com consequências directas no estadiamento, na decisão terapêutica e no prognóstico do doente.</p>
+      </div>
+    </div>
+
+    <div class="pstep" data-n="4">
+      <h5>Processamento tecidual (desidratação → diafanização → impregnação)</h5>
+      <p>As cassetes entram num <strong>processador de tecidos automático</strong>, que as faz percorrer uma sequência de banhos químicos, tipicamente durante a noite (8 a 12 horas):</p>
+      <ul>
+        <li><strong>Desidratação</strong> — série ascendente de banhos de etanol (por exemplo, 70% → 80% → 95% → 100%), que removem progressivamente a água do tecido. Isto é indispensável porque a parafina é hidrofóbica e não consegue infiltrar um tecido ainda húmido.</li>
+        <li><strong>Diafanização (clarificação)</strong> — banhos de <strong>xilol</strong> (xileno), um solvente miscível tanto com o álcool como com a parafina, que substitui o álcool e torna o tecido translúcido — literalmente "aclara-o" (daí o nome), sinal visual de que está pronto para a etapa seguinte.</li>
+        <li><strong>Impregnação (infiltração)</strong> — o tecido é imerso em <strong>parafina fundida</strong> (cerca de 56 a 60 °C), que substitui o xilol e preenche todos os espaços intracelulares e intercelulares, criando um suporte firme e homogéneo que tornará possível cortar fatias extremamente finas na etapa seguinte.</li>
+      </ul>
+    </div>
+
+    <div class="pstep" data-n="5">
+      <h5>Inclusão (embedding)</h5>
+      <p>O tecido impregnado é orientado manualmente dentro de um pequeno molde com parafina fresca, formando o <strong>bloco de parafina</strong> — a unidade física que será arquivada durante anos. A orientação importa muito: por exemplo, uma biópsia cutânea em <i>punch</i> deve ser incluída "em pé" (de lado), para que um único corte capture toda a espessura, da epiderme até ao tecido subcutâneo.</p>
+    </div>
+
+    <div class="pstep" data-n="6">
+      <h5>Microtomia</h5>
+      <p>O bloco é montado num <strong>micrótomo</strong> (aparelho de precisão com uma lâmina de aço ou descartável), que corta fatias extraordinariamente finas — tipicamente entre <strong>3 e 5 micrómetros</strong> (µm) de espessura, uma fracção do diâmetro de uma única célula. As fatias formam uma fita contínua que é cuidadosamente flutuada num <strong>banho-maria</strong> a cerca de 40–45 °C: a tensão superficial da água quente estica a secção e elimina rugas, antes de ser "pescada" sobre uma lâmina de vidro (frequentemente com revestimento especial que melhora a aderência do tecido) e seca em estufa.</p>
+    </div>
+
+    <div class="pstep" data-n="7">
+      <h5>Coloração</h5>
+      <p>Antes de qualquer corante poder actuar, é preciso <strong>remover a parafina</strong> (desparafinação, com xilol) e depois <strong>reidratar</strong> progressivamente o tecido (série descendente de álcoois, até à água) — porque a maioria dos corantes histológicos é dissolvida em soluções aquosas. Só então se aplica a coloração (detalhada extensamente no Capítulo VI), seguida de nova desidratação, diafanização e, finalmente, montagem.</p>
+    </div>
+
+    <div class="pstep" data-n="8">
+      <h5>Montagem (coverslipping)</h5>
+      <p>Aplica-se uma resina de montagem (com índice de refracção semelhante ao do vidro) e uma lamela de vidro sobre a secção corada. Isto protege fisicamente o tecido e garante que a luz atravessa a preparação sem distorções ópticas indesejadas — um detalhe minúsculo, mas que faz toda a diferença na nitidez da imagem ao microscópio.</p>
+    </div>
+
+    <div class="pstep" data-n="9">
+      <h5>Leitura microscópica e diagnóstico</h5>
+      <p>O patologista examina a lâmina, correlaciona os achados morfológicos com a informação clínica fornecida na requisição, decide se são necessárias colorações especiais ou imunohistoquímica adicionais, e redige o relatório final — habitualmente estruturado em descrição macroscópica, descrição microscópica e diagnóstico (frequentemente acompanhado de dados sinópticos de estadiamento, nos casos oncológicos).</p>
+    </div>
+
+    <div class="pstep" data-n="10">
+      <h5>Arquivo</h5>
+      <p>Blocos e lâminas são guardados durante longos períodos — muitas vezes décadas, por exigência legal e clínica — permitindo revisões diagnósticas futuras, novos estudos moleculares sobre o mesmo material, investigação e ensino. É, no fundo, a "biblioteca da verdade" do hospital.</p>
+    </div>
+
+  </div>
+
+  <h3 class="sec"><span class="ico">❄️</span> Um desvio rápido e urgente: a biópsia de congelação</h3>
+  <p>Já falámos do <strong>porquê</strong> deste serviço no capítulo anterior — decisões cirúrgicas em tempo real. Tecnicamente, é um atalho radical a todo o processo acima: o tecido fresco (sem qualquer fixação química) é rapidamente arrefecido num <strong>criostato</strong> (um micrótomo dentro de uma câmara refrigerada, a cerca de -20 a -25 °C), habitualmente embebido num meio de suporte chamado <strong>OCT</strong> (<i>Optimal Cutting Temperature compound</i> — composto de temperatura ótima de corte), cortado directamente no estado congelado, corado em poucos minutos com uma versão rápida de hematoxilina-eosina, e examinado de imediato.</p>
+
+  <div class="dossie trap" data-tag="armadilha comum">
+    <p>A congelação introduz <strong>artefactos de cristais de gelo</strong> que distorcem os detalhes finos, nucleares e citoplasmáticos, reduzindo a resolução morfológica em comparação com um corte de parafina convencional. Por isso, o resultado da congelação é sempre considerado <strong>preliminar</strong> — o diagnóstico definitivo é sempre confirmado, dias depois, no material processado da forma clássica (fixado, incluído em parafina). A taxa de discordância entre o resultado extemporâneo e o definitivo é, aliás, um dos indicadores de qualidade mais monitorizados em qualquer serviço de patologia cirúrgica.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🦴</span> Um segundo desvio: a descalcificação</h3>
+  <p>Tecido ósseo, ou qualquer tecido mole com depósitos de cálcio (por exemplo, em certas calcificações patológicas), <strong>não pode ser cortado directamente</strong> — os cristais de hidroxiapatite de cálcio são duros o suficiente para danificar a lâmina do micrótomo e rasgar o tecido durante o corte. É necessária uma etapa extra, chamada <strong>descalcificação</strong>, geralmente com ácidos (como o ácido nítrico, rápido mas mais agressivo para a morfologia) ou com agentes quelantes como o <span class="term">EDTA<span class="tip"><b>EDTA</b>Ethylenediaminetetraacetic Acid (inglês) / Ácido Etilenodiaminotetracético (português) — uma molécula que "agarra" (quela) iões metálicos como o cálcio, retirando-os da estrutura óssea sem danificar tanto as proteínas.</span></span> (mais lento, mas preserva melhor a antigenicidade e a morfologia), antes de o tecido poder seguir o percurso normal de processamento.</p>
+
+  <div class="mascot">
+    <div class="avatar">😅</div>
+    <div class="bubble"><b>PAUSA PARA RESPIRAR</b>Se um dia te mandarem "descalcificar uma amostra óssea urgente", já sabes: não há atalho. É como pedir ao teu professor mais rigoroso para "corrigir mais depressa" — a química tem o seu próprio ritmo, e ninguém a apressa com boa vontade.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese — a jornada completa</h5>
+    <ul>
+      <li><strong>Colheita → Fixação</strong> (formol 10%, pontes de metileno, regra da raiz quadrada do tempo) <strong>→ Macroscopia</strong> (descrição, tinta nas margens, cassetes) <strong>→ Processamento</strong> (desidratação → diafanização → impregnação) <strong>→ Inclusão</strong> (bloco de parafina) <strong>→ Microtomia</strong> (3–5 µm) <strong>→ Coloração → Montagem → Leitura → Arquivo</strong>.</li>
+      <li>A <strong>biópsia de congelação</strong> salta a fixação química a favor da congelação física — rápida, mas com pior resolução morfológica.</li>
+      <li>Tecido calcificado exige <strong>descalcificação</strong> antes de poder ser processado normalmente.</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes: Suvarna, Layton &amp; Bancroft, <i>Bancroft's Theory and Practice of Histological Techniques</i> (fixação, processamento, microtomia — referência internacional de histotecnologia); Culling, <i>Handbook of Histopathological and Histochemical Techniques</i>; Kumar, Abbas &amp; Aster, <i>Robbins — Bases Patológicas das Doenças</i> (correlação clínica da biópsia de congelação e da amostragem macroscópica).</p>
+  </div>
+</section>
+
+<section class="chapter" id="cap5">
+  <div class="chap-num">05</div>
+  <div class="chap-eyebrow">Dossiê Nº 005</div>
+  <h2 class="chap-title">Microscopia: As <em>Lentes</em> da Verdade</h2>
+  <p class="chap-kicker">Uma lâmina perfeitamente processada ainda não é nada sem o instrumento certo para a "ler". Cada tipo de microscópio faz uma pergunta diferente à mesma amostra.</p>
+
+  <h3 class="sec"><span class="ico">💡</span> Microscopia óptica de campo claro — a base de tudo</h3>
+  <p>É o microscópio de rotina, que usa luz visível transmitida através da preparação. A sua resolução — a menor distância entre dois pontos que ainda conseguimos distinguir como separados — é limitada por um princípio físico elegante, o <strong>limite de difracção de Abbe</strong>: quanto menor o comprimento de onda da luz usada e maior a capacidade da lente em captar essa luz (a chamada <span class="term">abertura numérica<span class="tip"><b>CONCEITO</b>A abertura numérica (NA) descreve o "cone" de luz que uma lente consegue captar. Quanto maior a NA, mais luz entra, e maior a resolução possível.</span></span>), mais fina é a resolução alcançável.</p>
+  <p>Na prática, isto significa que a luz visível (com comprimentos de onda entre ~400 e ~700 nanómetros) permite, no melhor cenário — com objectiva de imersão em óleo — resolver estruturas de aproximadamente <strong>0,2 micrómetros</strong>. É suficiente para ver células, núcleos, a maioria das organelas maiores e bactérias — mas <strong>não</strong> é suficiente para ver vírus individuais ou a ultraestrutura de organelas como as cristas mitocondriais. Essa limitação física é, precisamente, a razão de existir da microscopia electrónica, que veremos já a seguir.</p>
+
+  <div class="dossie mech" data-tag="princípio físico">
+    <p>Pensa assim: tentar "ver" algo mais pequeno do que o comprimento de onda da luz usada é como tentar sentir a forma de um grão de areia usando as pontas dos dedos de luvas de boxe — a "ferramenta" é fisicamente grande demais para captar o detalhe. Para ver algo mais pequeno, precisamos de uma "onda" mais pequena — e é exactamente isso que os electrões oferecem em relação aos fotões de luz visível.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🌗</span> Microscopia de polarização — cristais e fibras que "brilham"</h3>
+  <p>Alguns materiais biológicos têm uma organização molecular tão regular e alinhada que se comportam como cristais em relação à luz: são <strong>birrefringentes</strong> — dividem a luz polarizada em dois raios que viajam a velocidades diferentes, produzindo padrões de cor e brilho característicos quando observados entre dois filtros polarizadores cruzados.</p>
+  <ul>
+    <li>O <strong>amilóide</strong>, corado com Vermelho Congo, mostra uma birrefringência verde-maçã absolutamente característica sob luz polarizada — um dos achados mais citados (e mais "bonitos", esteticamente) em toda a patologia, e um critério diagnóstico-chave para amiloidose.</li>
+    <li>Os <strong>cristais articulares</strong> nas artropatias por depósito distinguem-se pela birrefringência: os cristais de urato monossódico (gota) são <strong>negativamente birrefringentes</strong> e em forma de agulha; os de pirofosfato de cálcio di-hidratado (pseudogota / condrocalcinose) são <strong>positivamente birrefringentes</strong> e romboidais.</li>
+  </ul>
+
+  <div class="dossie pearl" data-tag="pérola clínica">
+    <p>Este é um dos exemplos mais elegantes de física aplicada directamente à cabeceira do doente: perante um doente com uma monoartrite aguda, uma simples gota de líquido sinovial examinada ao microscópio de polarização pode, em minutos, distinguir gota de pseudogota — duas doenças com tratamentos e implicações metabólicas completamente diferentes.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">✨</span> Microscopia de fluorescência e imunofluorescência</h3>
+  <p>Certas moléculas — os <strong>fluorocromos</strong> — absorvem luz de um comprimento de onda específico e reemitem-na, quase instantaneamente, num comprimento de onda maior (menor energia). O microscópio de fluorescência ilumina a amostra com a luz de excitação correcta e filtra apenas a luz emitida, criando imagens de altíssimo contraste sobre fundo escuro.</p>
+  <p>Em patologia diagnóstica, a aplicação mais importante é a <strong>imunofluorescência (IF)</strong>: anticorpos ligados a um fluorocromo detectam a presença e a localização exacta de proteínas específicas no tecido.</p>
+  <ul>
+    <li><strong>IF directa</strong> — o próprio anticorpo primário já está marcado com fluorocromo.</li>
+    <li><strong>IF indirecta</strong> — usa-se um anticorpo primário não marcado, seguido de um anticorpo secundário marcado que se liga ao primeiro; isto amplifica o sinal, tornando a técnica mais sensível.</li>
+  </ul>
+
+  <div class="dossie pearl" data-tag="pérola clínica">
+    <p>Duas aplicações que qualquer estudante deveria guardar: na <strong>biópsia renal</strong>, a IF revela o padrão de depósito de imunoglobulinas e complemento (IgG, IgA, IgM, C3, C1q) na membrana basal glomerular ou no mesângio, sendo muitas vezes decisiva para classificar o tipo exacto de glomerulonefrite. Na <strong>dermatopatologia</strong>, distingue doenças bolhosas autoimunes: um padrão intercelular "em rede de galinheiro" sugere pênfigo vulgar, enquanto um padrão linear ao longo da membrana basal sugere penfigóide bolhoso.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">⚛️</span> Microscopia electrónica — quando nem a luz chega lá</h3>
+  <p>Em vez de fotões, a microscopia electrónica usa feixes de <strong>electrões</strong>, cujo comprimento de onda efectivo é milhares de vezes menor do que o da luz visível — daí a resolução extraordinária, chegando à escala do nanómetro (e, em certos contextos, quase ao ångström).</p>
+  <p>Isto exige uma preparação completamente diferente da rotina: fixação preferencialmente com <strong>glutaraldeído</strong> (melhor preservação ultraestrutural), pós-fixação com <strong>tetróxido de ósmio</strong> (que também confere contraste ao ligar-se a lípidos de membrana), inclusão não em parafina mas em <strong>resina epóxi</strong> (muito mais rígida), corte em secções ultra-finas (60 a 90 nanómetros) com facas de vidro ou diamante — a chamada <strong>ultramicrotomia</strong> — e coloração com sais de metais pesados (acetato de uranilo, citrato de chumbo) que geram contraste ao desviar diferencialmente o feixe de electrões.</p>
+  <ul>
+    <li><strong>Microscopia electrónica de transmissão (TEM)</strong> — os electrões atravessam a secção ultra-fina, gerando uma imagem bidimensional da ultraestrutura interna. Aplicações clínicas clássicas: avaliação da membrana basal glomerular e localização exacta de depósitos electrodensos na patologia renal (subepiteliais na glomerulonefrite pós-infecciosa, subendoteliais no lúpus, intramembranosos ou mesangiais noutras entidades); estudo da ultraestrutura ciliar (arranjo de microtúbulos "9+2") em suspeita de discinesia ciliar primária; identificação de grânulos citoplasmáticos característicos, como os grânulos de Birbeck (em forma de raquete de ténis) nas células de Langerhans.</li>
+    <li><strong>Microscopia electrónica de varrimento (SEM)</strong> — os electrões varrem a superfície da amostra, gerando uma imagem tridimensional da topografia externa. Uso predominantemente em investigação.</li>
+  </ul>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI</b>Se a microscopia óptica é como ler um livro a olho nu, a electrónica é como ler a mesma página com uma lupa de joalheiro — mas custa muito mais, demora muito mais, e só se justifica quando a pergunta clínica realmente exige esse nível de detalhe.</div>
+  </div>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>Técnica</th><th>Princípio</th><th>Uso clínico típico</th></tr></thead>
+      <tbody>
+        <tr><td>Campo claro</td><td>Luz visível transmitida</td><td>Rotina diagnóstica (H&amp;E e a maioria das colorações)</td></tr>
+        <tr><td>Polarização</td><td>Birrefringência de estruturas ordenadas</td><td>Amilóide (Vermelho Congo); cristais articulares (gota/pseudogota)</td></tr>
+        <tr><td>Fluorescência / IF</td><td>Excitação e emissão de fluorocromos ligados a anticorpos</td><td>Biópsia renal (depósitos imunes); doenças bolhosas autoimunes</td></tr>
+        <tr><td>Electrónica (TEM/SEM)</td><td>Feixe de electrões, resolução nanométrica</td><td>Ultraestrutura glomerular, cílios, grânulos citoplasmáticos diagnósticos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>Campo claro</strong>: rotina, limitada pelo comprimento de onda da luz (~0,2 µm no melhor caso).</li>
+      <li><strong>Polarização</strong>: birrefringência — amilóide (verde-maçã), cristais de gota/pseudogota.</li>
+      <li><strong>Fluorescência/IF</strong>: localização de proteínas específicas — essencial em nefropatologia e dermatopatologia.</li>
+      <li><strong>Electrónica</strong>: resolução ultraestrutural, preparação totalmente distinta (glutaraldeído, resina epóxi, ultramicrotomia).</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes: Boron &amp; Boulpaep, <i>Fisiologia Médica</i>, 3ª edição (princípios ópticos e biofísicos); Suvarna, Layton &amp; Bancroft, <i>Bancroft's Theory and Practice of Histological Techniques</i> (preparação para microscopia electrónica); Kumar, Abbas &amp; Aster, <i>Robbins — Bases Patológicas das Doenças</i> (correlações clínicas de nefropatologia e dermatopatologia).</p>
+  </div>
+</section>
+
+<section class="chapter" id="cap6">
+  <div class="chap-num">06</div>
+  <div class="chap-eyebrow">Dossiê Nº 006</div>
+  <h2 class="chap-title">Corantes: A <em>Paleta</em> que Revela o Invisível</h2>
+  <p class="chap-kicker">Tecido fresco, ao microscópio, é quase transparente e sem contraste. Os corantes são o que transforma um pedaço incolor de matéria em texto legível.</p>
+
+  <h3 class="sec"><span class="ico">🩷</span> Hematoxilina &amp; Eosina (H&amp;E) — o alfabeto universal</h3>
+  <p>Se só pudesses aprender uma coloração em toda a patologia, seria esta — é a coloração de rotina em praticamente 100% das lâminas diagnósticas, e a partir dela decide-se se são precisas colorações adicionais.</p>
+  <p>A <strong>hematoxilina</strong> deriva do cerne da árvore <i>Haematoxylum campechianum</i> (o "pau-campeche", nativo da América Central) — o próprio nome já entrega a etimologia: <span class="term">hematoxilina<span class="tip"><b>ETIMOLOGIA</b>Do grego <i>haima</i> (sangue) + <i>xýlon</i> (madeira) — "madeira de sangue", em referência à cor vermelho-escura do cerne desta árvore.</span></span>. Oxidada em <strong>hemateína</strong> e combinada com um <strong>mordente</strong> (geralmente um sal de alumínio), forma um complexo corante-metal com carga positiva (catiónico), capaz de se ligar a estruturas ricas em cargas negativas — sobretudo os grupos fosfato dos ácidos nucleicos (DNA e RNA). Por isso, cora de <strong>azul-arroxeado</strong> os núcleos (ricos em DNA) e o citoplasma rico em ribossomas/retículo endoplasmático rugoso — estruturas ditas <strong>basófilas</strong>.</p>
+  <p>A <strong>eosina</strong>, por sua vez, é um corante sintético aniónico (carga negativa), que se liga a estruturas ricas em grupos amina carregados positivamente — principalmente <strong>proteínas citoplasmáticas</strong>, fibras de colagénio e músculo — estruturas ditas <strong>acidófilas ou eosinófilas</strong>, coradas em tons de <strong>rosa a vermelho</strong>.</p>
+
+  <div class="dossie mech" data-tag="princípio químico">
+    <p>Todo o "código de cores" da H&amp;E resume-se, no fundo, a um único princípio físico-químico: <strong>cargas opostas atraem-se</strong>. Estruturas com excesso de carga negativa (ácidos nucleicos, ricos em fosfato) atraem o corante catiónico (hematoxilina) → <strong>azul</strong>. Estruturas com excesso de carga positiva (proteínas) atraem o corante aniónico (eosina) → <strong>rosa/vermelho</strong>. Um pequeno exercício mental: da próxima vez que vires uma lâmina de H&amp;E, tenta "ler" a imagem só com esta regra — o núcleo azul-escuro (DNA compactado), o citoplasma rosa (proteína), o colagénio rosa-pálido (proteína menos densa) — vais perceber que grande parte da histologia começa a "fazer sentido" só com esta lógica de cargas.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🎨</span> Para além do H&amp;E — as colorações especiais</h3>
+  <p>Quando o H&amp;E não é suficiente para responder a uma pergunta específica (há glicogénio aqui? há fibrose? há um fungo escondido?), o patologista solicita uma <strong>coloração especial</strong> — cada uma desenhada para destacar uma classe química precisa de moléculas.</p>
+
+  <div class="swatches">
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#ff2e88,#c21f68)"></div>
+      <h6>PAS (Ácido Periódico de Schiff)</h6>
+      <p><i>Periodic Acid–Schiff</i>. O ácido periódico oxida os grupos hidroxilo vicinais dos açúcares a aldeídos, que reagem com o reagente de Schiff produzindo cor magenta. Destaca <strong>glicogénio</strong>, <strong>membranas basais</strong> e <strong>fungos</strong> (paredes ricas em polissacáridos). Combinada com digestão por diastase (PAS-D), distingue glicogénio (digerido, desaparece) de outras substâncias PAS-positivas.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#00e5ff,#0891a8)"></div>
+      <h6>Tricrómio de Masson</h6>
+      <p>Combina três corantes de tamanhos moleculares diferentes para separar tecidos por afinidade selectiva: cora o <strong>colagénio de azul/verde</strong>, o <strong>músculo e citoplasma de vermelho</strong>, e os <strong>núcleos de negro/castanho</strong>. Essencial para avaliar fibrose — cirrose hepática, fibrose miocárdica pós-enfarte.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#9d4edd,#5a2a8a)"></div>
+      <h6>Reticulina</h6>
+      <p>Impregnação argêntica que evidencia fibras de colagénio tipo III (reticulares), revelando a "arquitectura" de suporte de fígado, baço, medula óssea e tumores endócrinos — útil para detectar colapso da rede reticular (cirrose) ou "perda de reticulina" (padrão sugestivo de carcinoma hepatocelular).</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#39ff8a,#1a9c4c)"></div>
+      <h6>Vermelho Congo</h6>
+      <p>Liga-se à estrutura em folha-beta cruzada característica das fibrilhas de <strong>amilóide</strong>, produzindo — sob luz polarizada — a clássica <strong>birrefringência verde-maçã</strong> (ver Capítulo V). Praticamente patognomónico de amiloidose.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#f4ff2e,#b5c400)"></div>
+      <h6>Ziehl-Neelsen (BAAR)</h6>
+      <p>Cora <strong>bacilos álcool-ácido resistentes</strong> (<i>Acid-Fast Bacilli, AFB</i>). A carbol-fucsina, uma vez ligada à parede celular rica em ácidos micólicos da <i>Mycobacterium</i>, resiste à descoloração por álcool-ácido — daí o nome — surgindo como bacilos vermelho-vivos sobre fundo azul. Diagnóstico de tuberculose e outras micobacterioses em tecido.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#ff2e88,#9d4edd)"></div>
+      <h6>Grocott (GMS)</h6>
+      <p><i>Grocott's Methenamine Silver</i> / Prata-Metenamina de Grocott. Impregnação de prata que enegrece as paredes fúngicas ricas em polissacáridos, sobre fundo esverdeado — a coloração de eleição para <i>Aspergillus</i>, <i>Candida</i>, <i>Pneumocystis jirovecii</i>, <i>Histoplasma</i> e outros fungos em tecido.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#00e5ff,#9d4edd)"></div>
+      <h6>Perls (Azul da Prússia)</h6>
+      <p>O ferrocianeto de potássio reage com ferro férrico (Fe³⁺) tecidual, formando um precipitado azul-Prússia. Detecta depósitos de <strong>hemossiderina</strong> — sobrecarga de ferro (hemocromatose), ou macrófagos carregados de hemossiderina após hemorragia.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#8577a8,#3a2e5a)"></div>
+      <h6>Von Kossa</h6>
+      <p>Detecta calcificações — mas atenção à pegadinha clássica: a prata não reage directamente com o cálcio, e sim com os <strong>grupos fosfato e carbonato</strong> associados ao cálcio, precipitando um composto de prata enegrecido sob luz. Usada em calcificações metastáticas e distróficas, e em estudos de mineralização óssea.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#39ff8a,#00e5ff)"></div>
+      <h6>Azul Alciano</h6>
+      <p>Corante catiónico que, a pH controlado, se liga a <strong>mucinas ácidas</strong> (sulfatadas e carboxiladas). Distingue mucina ácida de mucina neutra (PAS-positiva) — muito usado em patologia gastrointestinal, nomeadamente na identificação de metaplasia intestinal.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#f4ff2e,#ff2e88)"></div>
+      <h6>Mucicarmina</h6>
+      <p>Cora mucina epitelial de rosa/vermelho-carmim. Confirma produção de mucina em tumores (por exemplo, carcinoma de células em anel de sinete) e evidencia a cápsula do <i>Cryptococcus</i>.</p>
+    </div>
+    <div class="swatch">
+      <div class="bar" style="background:linear-gradient(90deg,#ff2e88,#f4ff2e)"></div>
+      <h6>Oil Red O</h6>
+      <p>Cora gordura (lípidos neutros) de vermelho-alaranjado. Só pode ser aplicada em <strong>tecido fresco congelado</strong> — nunca em parafina — porque o próprio processamento de rotina (álcoois e xilol) dissolve e remove completamente os lípidos do tecido. Um exemplo perfeito de como a técnica de processamento (Capítulo IV) condiciona directamente que perguntas se podem ainda fazer à amostra.</p>
+    </div>
+  </div>
+
+  <div class="dossie pearl" data-tag="pérola clínica">
+    <p>Repara no padrão lógico: cada coloração especial existe porque uma classe química específica de molécula (glicogénio, colagénio, amilóide, lípidos, ferro, cálcio, mucina, parede fúngica ou micobacteriana) tem uma reactividade química própria, e cada corante foi desenhado para "conversar" quimicamente com essa classe. Nunca precisas de decorar cegamente — pergunta sempre: <strong>"que molécula este corante está realmente a detectar, e porquê é que reage com ela?"</strong> A resposta quase sempre explica também a indicação clínica.</p>
+  </div>
+
+  <div class="mascot">
+    <div class="avatar">🎨</div>
+    <div class="bubble"><b>PAUSA PARA RESPIRAR</b>Se algum dia sentires que decorar corantes é impossível, pensa nisto: os antigos patologistas inventaram estas receitas décadas antes de perceberem por completo a química por trás delas — foi tentativa, erro e muita paciência. Tu já começas com a explicação pronta. É basicamente batota histórica a teu favor.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>H&amp;E</strong>: hematoxilina (catiónica) → núcleos/basófilos em azul; eosina (aniónica) → proteínas/acidófilos em rosa. Princípio: cargas opostas atraem-se.</li>
+      <li><strong>PAS</strong> → glicogénio, membranas basais, fungos. <strong>Tricrómio</strong> → fibrose. <strong>Reticulina</strong> → arquitectura de suporte.</li>
+      <li><strong>Vermelho Congo</strong> → amilóide (birrefringência verde-maçã). <strong>Ziehl-Neelsen</strong> → micobactérias. <strong>Grocott</strong> → fungos.</li>
+      <li><strong>Perls</strong> → ferro. <strong>Von Kossa</strong> → fosfato/cálcio. <strong>Alciano/Mucicarmina</strong> → mucinas. <strong>Oil Red O</strong> → lípidos (só em tecido congelado).</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes: Suvarna, Layton &amp; Bancroft, <i>Bancroft's Theory and Practice of Histological Techniques</i> (química das colorações); Kumar, Abbas &amp; Aster, <i>Robbins — Bases Patológicas das Doenças</i> (correlações clínicas de amiloidose, fibrose hepática e infecções fúngicas/micobacterianas).</p>
+  </div>
+</section>
+
+<section class="chapter" id="cap7">
+  <div class="chap-num">07</div>
+  <div class="chap-eyebrow">Dossiê Nº 007</div>
+  <h2 class="chap-title"><em>Imunohistoquímica</em> e Patologia Molecular</h2>
+  <p class="chap-kicker">O último nível de detalhe: quando saber "que tecido é este" já não basta, e é preciso perguntar "que proteína exacta — ou que mutação exacta — está aqui presente?"</p>
+
+  <h3 class="sec"><span class="ico">🎯</span> Imunohistoquímica (IHC)</h3>
+  <p>A <span class="term">Imunohistoquímica<span class="tip"><b>IHQ / IHC</b>ImmunoHistoChemistry (inglês) / Imunohistoquímica (português).</span></span> explora a mesma lógica da imunofluorescência (Capítulo V), mas com um sistema de detecção diferente, visível ao microscópio óptico comum. Um anticorpo primário liga-se especificamente a uma proteína-alvo no tecido; um sistema secundário, ligado a uma enzima (tipicamente a <strong>peroxidase</strong>), amplifica o sinal ao catalisar a conversão de um <strong>cromogénio</strong> — mais frequentemente a <strong>DAB</strong> (<i>diaminobenzidine / diaminobenzidina</i>) — num precipitado castanho, visível sobre um contra-corante habitual de hematoxilina.</p>
+
+  <div class="dossie mech" data-tag="ligação ao capítulo IV">
+    <p>Lembras-te do excesso de pontes cruzadas criado pelo formol, no Capítulo IV, que pode "esconder" epítopos proteicos? É exactamente por isso que, antes da IHC, quase sempre se aplica uma etapa de <strong>recuperação antigénica</strong> — normalmente por calor, em tampão de citrato (<i>Heat-Induced Epitope Retrieval, HIER</i>), que rompe parcialmente essas pontes de metileno e "liberta" os epítopos para que o anticorpo os consiga reconhecer. É um óptimo exemplo de como um detalhe aparentemente pequeno, lá atrás na fixação, condiciona directamente o que é (ou não) possível fazer semanas depois.</p>
+  </div>
+
+  <p>As aplicações clínicas da IHC são vastíssimas:</p>
+  <ul>
+    <li><strong>Determinar a origem de um tumor</strong> — citoqueratinas apontam para origem epitelial, vimentina para origem mesenquimatosa, o antigénio leucocitário comum (CD45/LCA) para origem linfóide, e marcadores como S100, Melan-A ou HMB45 para origem melanocítica. Extremamente útil perante uma metástase de "primário desconhecido".</li>
+    <li><strong>Guiar directamente a terapêutica</strong> — o exemplo mais citado em toda a medicina é o cancro da mama: os estados de <strong>receptores de estrogénio (ER)</strong>, <strong>receptores de progesterona (PR)</strong> e <strong>HER2</strong> (determinados por IHC, complementados por vezes com FISH) decidem se a doente será candidata a hormonoterapia ou a terapêutica-alvo anti-HER2 (como o trastuzumab). Este é o elo directo e concreto entre uma técnica de laboratório e a prescrição médica que o doente recebe.</li>
+    <li><strong>Identificar agentes infecciosos</strong> específicos em tecido, quando as colorações clássicas não são suficientemente específicas (por exemplo, IHC para citomegalovírus ou vírus herpes simplex).</li>
+  </ul>
+
+  <h3 class="sec"><span class="ico">🧬</span> Patologia molecular — a fronteira do DNA e do RNA</h3>
+  <p>Enquanto a IHC detecta proteínas, a patologia molecular vai um nível mais fundo, ao ácido nucleico:</p>
+  <ul>
+    <li><strong>FISH</strong> (<i>Fluorescence In Situ Hybridization / Hibridização in situ por Fluorescência</i>) — sondas de DNA marcadas com fluorocromo emparelham (hibridizam) com sequências cromossómicas complementares, permitindo visualizar directamente amplificações génicas (por exemplo, amplificação de <i>HER2</i>) ou translocações (por exemplo, a translocação <i>BCR-ABL</i> característica da leucemia mielóide crónica).</li>
+    <li><strong>PCR</strong> (<i>Polymerase Chain Reaction / Reacção em Cadeia da Polimerase</i>) e sequenciação dirigida — detectam mutações pontuais específicas, como as mutações de <i>EGFR</i> ou <i>KRAS</i> no cancro do pulmão, que determinam directamente se o doente responderá a determinadas terapêuticas-alvo.</li>
+    <li><strong>Sequenciação de nova geração</strong> (<i>Next-Generation Sequencing, NGS</i>) — permite analisar simultaneamente dezenas a centenas de genes num único ensaio, sendo a base da chamada "medicina de precisão" em oncologia.</li>
+  </ul>
+
+  <div class="mascot">
+    <div class="avatar">🔬</div>
+    <div class="bubble"><b>KENJI</b>Se o H&amp;E te diz "que bairro da cidade é este", a IHC diz-te "que rua exactamente", e a biologia molecular diz-te "o número da porta e o nome escrito na campainha". Cada nível de detalhe custa mais tempo e mais reagente — por isso, nunca se salta directamente para o mais caro sem primeiro deixar o H&amp;E fazer o trabalho inicial de triagem.</div>
+  </div>
+
+  <div class="recap">
+    <h5>Ficha de síntese</h5>
+    <ul>
+      <li><strong>IHC</strong>: anticorpo + enzima + cromogénio (DAB) → detecta proteínas específicas; requer, muitas vezes, recuperação antigénica prévia.</li>
+      <li>Aplicações-chave: origem tumoral (citoqueratinas, vimentina, CD45, S100), terapêutica dirigida (ER/PR/HER2 na mama), identificação de agentes infecciosos.</li>
+      <li><strong>FISH</strong> → amplificações/translocações; <strong>PCR/sequenciação</strong> → mutações pontuais; <strong>NGS</strong> → painéis multigénicos — a base da medicina de precisão.</li>
+    </ul>
+  </div>
+
+  <div class="refs">
+    <p>Fontes: Kumar, Abbas &amp; Aster, <i>Robbins — Bases Patológicas das Doenças</i> (aplicações diagnósticas e terapêuticas da IHC e da patologia molecular); Suvarna, Layton &amp; Bancroft, <i>Bancroft's Theory and Practice of Histological Techniques</i> (fundamentos técnicos de IHC e recuperação antigénica).</p>
+  </div>
+</section>
+
+<section class="chapter" id="epilogo">
+  <div class="chap-eyebrow">Encerramento do processo</div>
+  <h2 class="chap-title">Epílogo — Porque é que <em>tudo isto</em> salva vidas</h2>
+  <p class="chap-kicker">Um fecho para ligar todos os dossiês anteriores a uma única ideia central.</p>
+
+  <p>Repara no fio condutor que atravessou este dossiê inteiro: <strong>toda</strong> decisão clínica em oncologia, em doença infecciosa, em nefrologia, em dermatologia — praticamente em qualquer especialidade — depende, em algum ponto, de um pequeno pedaço de tecido que foi colhido, fixado, processado, cortado, corado e interpretado correctamente. Um erro em <strong>qualquer</strong> uma destas etapas — uma fixação tardia, uma amostragem macroscópica incompleta, uma etiqueta trocada, uma coloração mal executada — pode alterar silenciosamente o resultado final, muito antes de o patologista sequer olhar para o microscópio.</p>
+
+  <div class="dossie pearl" data-tag="a ideia central">
+    <p>É por isso que a Anatomia Patológica é, muitas vezes, chamada de <strong>"especialidade do especialista"</strong> — o cirurgião confia no patologista, o oncologista confia no patologista, o próprio doente (sem saber) confia inteiramente na cadeia de qualidade descrita neste dossiê. Compreender esta cadeia — não apenas decorá-la — é o que separa um(a) estudante que sabe "o nome das colorações" de um(a) futuro(a) médico(a) que sabe verdadeiramente <strong>o que pedir, quando pedir, e porquê</strong> perante um doente real.</p>
+  </div>
+
+  <h3 class="sec"><span class="ico">🗂️</span> Ficha de revisão rápida — testa-te</h3>
+  <p class="chap-kicker" style="margin-bottom:18px">Toca em cada pergunta para revelar a resposta.</p>
+
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">1. Qual a diferença etimológica e conceptual entre "biópsia" e "autópsia"?</div>
+    <div class="a"><div class="a-inner">Biópsia = <i>bíos</i> (vida) + <i>ópsis</i> (ver) → ver o vivo, tecido de doente vivo. Autópsia = <i>autós</i> (próprio) + <i>ópsis</i> (ver) → ver por si mesmo, exame do corpo após a morte.</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">2. Porque é que o formol impede a autólise?</div>
+    <div class="a"><div class="a-inner">O formaldeído forma pontes de metileno entre proteínas (via grupos amina de resíduos de lisina), criando uma malha rígida que desnatura e inactiva as enzimas líticas responsáveis pela autodigestão celular.</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">3. Porque é que a Oil Red O não pode ser usada em tecido processado de rotina (parafina)?</div>
+    <div class="a"><div class="a-inner">Porque as etapas de desidratação (álcoois) e diafanização (xilol) do processamento de rotina dissolvem e removem os lípidos do tecido — a Oil Red O exige tecido fresco congelado.</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">4. Qual o princípio químico por trás das cores da hematoxilina e da eosina?</div>
+    <div class="a"><div class="a-inner">Cargas opostas atraem-se: a hematoxilina é catiónica e liga-se a estruturas ácidas/negativas (ácidos nucleicos → azul); a eosina é aniónica e liga-se a estruturas básicas/positivas (proteínas → rosa/vermelho).</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">5. Que corante detecta amilóide, e como se confirma o diagnóstico ao microscópio?</div>
+    <div class="a"><div class="a-inner">Vermelho Congo — sob luz polarizada, o amilóide mostra a birrefringência verde-maçã característica.</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">6. Porque é que a biópsia de congelação nunca é considerada o diagnóstico definitivo?</div>
+    <div class="a"><div class="a-inner">Porque a congelação rápida introduz artefactos de cristais de gelo, que distorcem os detalhes nucleares e citoplasmáticos — o diagnóstico final é sempre confirmado no material fixado e incluído em parafina.</div></div>
+  </div>
+  <div class="flash" onclick="this.classList.toggle('open')">
+    <div class="q">7. Que exame determina se uma doente com cancro da mama é candidata a trastuzumab?</div>
+    <div class="a"><div class="a-inner">A imunohistoquímica para HER2 (por vezes complementada com FISH, se o resultado de IHC for equívoco) — se positivo, a doente pode beneficiar de terapêutica-alvo anti-HER2.</div></div>
+  </div>
+
+  <div class="mascot">
+    <div class="avatar">🎓</div>
+    <div class="bubble"><b>KENJI · MENSAGEM FINAL</b>Se chegaste até aqui, já sabes mais sobre o "backstage" da patologia do que a maioria das pessoas jamais saberá. Da próxima vez que um relatório de anatomia patológica chegar às tuas mãos, vais lê-lo de forma diferente — não como um papel misterioso, mas como o resultado final de uma investigação inteira, com dezenas de mãos e etapas por trás de cada palavra. Boa sorte no resto do curso — e bem-vindo(a) oficialmente ao lado negro (leia-se: violeta-néon) da medicina.</div>
+  </div>
+</section>
+
+
+</main>
+
+<footer>
+  <div class="halftone" style="opacity:.04"></div>
+  <div class="stamp2">Processo encerrado · Dossiê Nº 001</div>
+  <div class="brandline">Feito por: Demil | UL = UNILICUNGO</div>
+  <p>DemilMed-UL — Materiais Académicos · Universidade Licungo</p>
+  <p>Introdução à Patologia — Divisões, Serviço de Anatomia Patológica e Técnicas Laboratoriais</p>
+  <p>© 2026 · Uso académico e educacional</p>
+</footer>
+
+<script>
+// barra de progresso + navegação activa
+const chapters = document.querySelectorAll('section.chapter');
+const navLinks = document.querySelectorAll('#chapNav a');
+const progress = document.getElementById('progress');
+
+function onScroll(){
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  progress.style.width = (docHeight > 0 ? (scrollTop/docHeight)*100 : 0) + '%';
+
+  let currentId = '';
+  chapters.forEach(sec=>{
+    const rect = sec.getBoundingClientRect();
+    if(rect.top <= 140 && rect.bottom > 140){ currentId = sec.id; }
+  });
+  navLinks.forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href') === '#' + currentId);
+  });
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+// toggle nav mobile
+document.getElementById('navToggle').addEventListener('click', ()=>{
+  document.getElementById('chapNav').classList.toggle('show');
+});
+navLinks.forEach(a=>a.addEventListener('click', ()=>{
+  document.getElementById('chapNav').classList.remove('show');
+}));
+
+// tooltips de etimologia — clique para abrir/fechar
+document.querySelectorAll('.term').forEach(term=>{
+  term.addEventListener('click', function(e){
+    e.stopPropagation();
+    const wasOpen = this.classList.contains('open');
+    document.querySelectorAll('.term.open').forEach(t=>t.classList.remove('open'));
+    if(!wasOpen) this.classList.add('open');
+  });
+});
+document.addEventListener('click', ()=>{
+  document.querySelectorAll('.term.open').forEach(t=>t.classList.remove('open'));
+});
+</script>
+
+</body>
+</html>

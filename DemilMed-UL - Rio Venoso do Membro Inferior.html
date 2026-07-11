@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Rio Venoso — Sistema Venoso do Membro Inferior | DemilMed-UL</title>
+<style>
+
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root{
+  --bg-0:#060b12;
+  --bg-1:#0a121c;
+  --bg-2:#0e1a27;
+  --bg-3:#13233333;
+  --ink-0:#eaf2f6;
+  --ink-1:#a9bccb;
+  --ink-2:#6d8494;
+  --linha:#1c2e3d;
+
+  --profundo:#ff2d55;      /* sistema venoso profundo */
+  --profundo-glow:#ff5470;
+  --superficial:#20e3b2;   /* sistema venoso superficial */
+  --superficial-glow:#4bf6cf;
+  --comunicante:#ffb703;   /* perfurantes / válvulas */
+  --comunicante-glow:#ffd166;
+  --arterial-ref:#5b8cff; /* referência arterial, só contraste */
+
+  --serif:'Source Serif 4','Iowan Old Style','Palatino Linotype',Georgia,serif;
+  --sans:'Inter','Segoe UI',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono','SFMono-Regular',Consolas,monospace;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:
+    radial-gradient(ellipse 1200px 700px at 15% -10%, #0d2233 0%, transparent 60%),
+    radial-gradient(ellipse 1000px 800px at 100% 20%, #1a0d1f 0%, transparent 55%),
+    var(--bg-0);
+  color:var(--ink-0);
+  font-family:var(--sans);
+  line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{background:var(--comunicante);color:#0a0a0a;}
+
+/* scrollbar */
+::-webkit-scrollbar{width:11px;}
+::-webkit-scrollbar-track{background:var(--bg-0);}
+::-webkit-scrollbar-thumb{background:var(--linha);border-radius:6px;border:2px solid var(--bg-0);}
+::-webkit-scrollbar-thumb:hover{background:#28405a;}
+
+a{color:inherit;}
+
+/* ============================================================
+   TIPOGRAFIA GLOBAL
+   ============================================================ */
+h1,h2,h3,h4{font-family:var(--serif);font-weight:600;letter-spacing:-0.01em;color:var(--ink-0);}
+p{color:var(--ink-1);margin:0 0 1.1em 0;}
+.eyebrow{
+  font-family:var(--mono);
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.72rem;
+  color:var(--ink-2);
+}
+.lede{font-size:1.15rem;color:var(--ink-0);}
+
+/* ============================================================
+   LAYOUT GERAL
+   ============================================================ */
+.wrap{max-width:920px;margin:0 auto;padding:0 28px;}
+.wrap-wide{max-width:1180px;margin:0 auto;padding:0 28px;}
+
+section{padding:88px 0;border-bottom:1px solid var(--linha);}
+section:last-of-type{border-bottom:none;}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid var(--linha);
+  padding:60px 0 70px;
+}
+.hero-bg-river{
+  position:absolute;inset:0;
+  opacity:.5;
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:2;}
+.hero .eyebrow{margin-bottom:22px;display:flex;gap:10px;align-items:center;}
+.dot-pulse{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--comunicante);
+  box-shadow:0 0 0 0 rgba(255,183,3,.5);
+  animation:pulse 2.2s infinite;
+  display:inline-block;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,183,3,.45);}
+  70%{box-shadow:0 0 0 10px rgba(255,183,3,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,183,3,0);}
+}
+.hero h1{
+  font-size:clamp(2.4rem,6vw,4.6rem);
+  line-height:1.04;
+  margin:0 0 26px 0;
+  max-width:920px;
+}
+.hero h1 .accent-sup{color:var(--superficial);}
+.hero h1 .accent-prof{color:var(--profundo);}
+.hero-sub{max-width:640px;font-size:1.14rem;color:var(--ink-1);margin-bottom:38px;}
+
+.legend-row{display:flex;gap:26px;flex-wrap:wrap;margin-top:8px;}
+.legend-chip{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:.82rem;color:var(--ink-1);
+}
+.legend-swatch{width:22px;height:5px;border-radius:3px;flex-shrink:0;}
+
+/* ============================================================
+   NAV FLUTUANTE (índice de segmentos)
+   ============================================================ */
+.segnav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(6,11,18,.86);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--linha);
+}
+.segnav-inner{
+  max-width:1180px;margin:0 auto;padding:0 28px;
+  display:flex;gap:2px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.segnav-inner::-webkit-scrollbar{display:none;}
+.segnav a{
+  white-space:nowrap;
+  font-family:var(--mono);
+  font-size:.76rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  text-decoration:none;
+  padding:16px 14px;
+  border-bottom:2px solid transparent;
+  transition:color .2s, border-color .2s;
+}
+.segnav a:hover{color:var(--ink-0);border-color:var(--comunicante);}
+
+/* ============================================================
+   RIO INTERATIVO (SVG)
+   ============================================================ */
+.rio-secao{padding-top:64px;}
+.rio-grid{
+  display:grid;
+  grid-template-columns:minmax(280px,380px) 1fr;
+  gap:40px;
+  align-items:start;
+}
+@media (max-width:860px){
+  .rio-grid{grid-template-columns:1fr;}
+}
+.rio-svg-holder{
+  position:sticky;top:70px;
+  background:var(--bg-1);
+  border:1px solid var(--linha);
+  border-radius:18px;
+  padding:18px 10px 24px;
+}
+.rio-svg-holder svg{width:100%;height:auto;display:block;}
+
+.rio-node{cursor:pointer;transition:filter .15s;}
+.rio-node:hover{filter:brightness(1.35);}
+.rio-node.active{filter:brightness(1.5);}
+
+.rio-label{
+  font-family:var(--mono);
+  font-size:9.5px;
+  fill:var(--ink-2);
+  pointer-events:none;
+  transition:fill .15s;
+}
+.rio-label.active{fill:var(--ink-0);font-weight:600;}
+
+.rio-panel{min-height:560px;}
+.rio-panel-empty{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:420px;
+  border:1px dashed var(--linha);
+  border-radius:16px;
+  color:var(--ink-2);
+  font-family:var(--mono);
+  font-size:.85rem;
+  text-align:center;
+  padding:30px;
+}
+
+.card-vaso{
+  background:var(--bg-1);
+  border:1px solid var(--linha);
+  border-radius:16px;
+  padding:30px 32px;
+  animation:fadein .3s ease;
+}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.card-vaso-tag{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.68rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:4px 10px;
+  border-radius:100px;
+  margin-bottom:14px;
+}
+.tag-profundo{background:rgba(255,45,85,.14);color:var(--profundo-glow);border:1px solid rgba(255,45,85,.35);}
+.tag-superficial{background:rgba(32,227,178,.13);color:var(--superficial-glow);border:1px solid rgba(32,227,178,.35);}
+.tag-comunicante{background:rgba(255,183,3,.14);color:var(--comunicante-glow);border:1px solid rgba(255,183,3,.35);}
+
+.card-vaso h3{font-size:1.55rem;margin:0 0 4px 0;}
+.card-vaso .nome-en{font-family:var(--mono);color:var(--ink-2);font-size:.82rem;margin-bottom:20px;}
+
+.vaso-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media (max-width:600px){.vaso-grid{grid-template-columns:1fr;}}
+.vaso-attr{border-left:2px solid var(--linha);padding-left:14px;}
+.vaso-attr b{display:block;font-family:var(--mono);font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);margin-bottom:5px;}
+.vaso-attr span{color:var(--ink-0);font-size:.95rem;}
+
+.clin-box{
+  margin-top:20px;
+  padding:16px 18px;
+  background:rgba(255,183,3,.06);
+  border:1px solid rgba(255,183,3,.22);
+  border-radius:10px;
+  font-size:.92rem;
+}
+.clin-box b{color:var(--comunicante-glow);font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:6px;}
+
+/* ============================================================
+   BLOCOS DE CONTEÚDO (texto corrido exaustivo)
+   ============================================================ */
+.section-head{margin-bottom:44px;}
+.section-num{font-family:var(--mono);color:var(--comunicante);font-size:.85rem;letter-spacing:.06em;}
+h2.title-secao{font-size:clamp(1.7rem,3.4vw,2.5rem);margin:10px 0 0 0;}
+
+.sub h3{font-size:1.35rem;margin:2.2em 0 .5em;color:var(--superficial-glow);}
+.sub h3.prof{color:var(--profundo-glow);}
+.sub h4{font-size:1.08rem;color:var(--ink-0);margin:1.6em 0 .4em;font-family:var(--sans);font-weight:700;}
+
+.etimo{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.86rem;
+  color:var(--comunicante-glow);
+  background:rgba(255,183,3,.08);
+  border-radius:6px;
+  padding:1px 7px;
+  margin:0 2px;
+}
+
+.sigla{border-bottom:1px dotted var(--ink-2);cursor:help;}
+
+blockquote{
+  margin:26px 0;
+  padding:18px 22px;
+  border-left:3px solid var(--superficial);
+  background:var(--bg-1);
+  border-radius:0 10px 10px 0;
+  font-style:italic;
+  color:var(--ink-0);
+}
+blockquote.prof{border-left-color:var(--profundo);}
+blockquote.com{border-left-color:var(--comunicante);}
+
+.tabela-wrap{overflow-x:auto;margin:28px 0;border:1px solid var(--linha);border-radius:12px;}
+table{width:100%;border-collapse:collapse;font-size:.92rem;min-width:560px;}
+th{
+  background:var(--bg-2);
+  font-family:var(--mono);
+  font-size:.72rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:var(--ink-2);
+  text-align:left;
+  padding:12px 16px;
+  border-bottom:1px solid var(--linha);
+}
+td{padding:12px 16px;border-bottom:1px solid var(--linha);color:var(--ink-1);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td b, td strong{color:var(--ink-0);}
+
+.callout{
+  margin:30px 0;
+  border-radius:14px;
+  padding:24px 26px;
+  border:1px solid var(--linha);
+  background:linear-gradient(145deg, var(--bg-1), var(--bg-2));
+}
+.callout .lbl{
+  font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;
+  margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.callout.fisio .lbl{color:var(--superficial-glow);}
+.callout.clinica .lbl{color:var(--comunicante-glow);}
+.callout.fisica .lbl{color:var(--arterial-ref);}
+.callout.classif .lbl{color:var(--profundo-glow);}
+
+.exercicio{
+  margin:20px 0;
+  padding:18px 20px;
+  border:1px dashed var(--linha);
+  border-radius:10px;
+  font-family:var(--sans);
+}
+.exercicio b{font-family:var(--mono);color:var(--comunicante);font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:8px;}
+
+ul,ol{color:var(--ink-1);padding-left:1.3em;}
+li{margin-bottom:.5em;}
+li b, li strong{color:var(--ink-0);}
+
+.timeline{
+  position:relative;
+  margin:30px 0;
+  padding-left:28px;
+  border-left:2px solid var(--linha);
+}
+.tl-item{position:relative;padding-bottom:26px;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{
+  content:'';
+  position:absolute;left:-34px;top:4px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--bg-0);
+  border:2px solid var(--superficial);
+}
+.tl-item.prof::before{border-color:var(--profundo);}
+.tl-item.com::before{border-color:var(--comunicante);}
+.tl-t{font-family:var(--mono);font-size:.74rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.06em;}
+.tl-item p{margin-top:4px;}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:26px 0;}
+@media(max-width:760px){.grid-2{grid-template-columns:1fr;}}
+.mini-card{background:var(--bg-1);border:1px solid var(--linha);border-radius:12px;padding:20px 22px;}
+.mini-card h4{margin-top:0;}
+
+.ref{font-size:.8rem;color:var(--ink-2);}
+.ref-list{list-style:none;padding-left:0;margin-top:14px;}
+.ref-list li{
+  padding:10px 0;border-top:1px solid var(--linha);
+  font-size:.85rem;color:var(--ink-2);
+}
+.ref-list li:first-child{border-top:none;}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer{
+  padding:60px 0 90px;
+  text-align:center;
+}
+.footer-mark{
+  font-family:var(--serif);
+  font-size:1.4rem;
+  color:var(--ink-0);
+  margin-bottom:6px;
+}
+.footer-sub{font-family:var(--mono);font-size:.78rem;color:var(--ink-2);}
+.footer-river{width:100%;max-width:400px;height:2px;margin:24px auto;
+  background:linear-gradient(90deg, var(--superficial), var(--comunicante), var(--profundo));
+  border-radius:2px;opacity:.6;}
+
+/* toggle mobile do índice — simplificação */
+@media (max-width:600px){
+  section{padding:60px 0;}
+  .wrap,.wrap-wide{padding:0 18px;}
+  .card-vaso{padding:24px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<div class="hero">
+  <svg class="hero-bg-river" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <linearGradient id="gradSup" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#20e3b2" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#20e3b2" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="gradProf" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ff2d55" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#ff2d55" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="M 780 -20 C 760 150, 850 250, 800 420 C 760 560, 830 650, 790 820" stroke="url(#gradSup)" stroke-width="10" fill="none"/>
+    <path d="M 620 -20 C 640 180, 560 300, 610 460 C 650 600, 580 680, 620 820" stroke="url(#gradProf)" stroke-width="16" fill="none"/>
+  </svg>
+
+  <div class="wrap hero-inner">
+    <div class="eyebrow"><span class="dot-pulse"></span> DEMILMED-UL &nbsp;·&nbsp; ANATOMIA & FISIOLOGIA VASCULAR &nbsp;·&nbsp; MÓDULO INTERATIVO</div>
+    <h1>O Rio Venoso: <span class="accent-sup">sistema superficial</span>, <span class="accent-prof">sistema profundo</span> e as comportas que os unem</h1>
+    <p class="hero-sub">Uma cartografia completa das veias do membro inferior — do capilar do hálux até a veia cava inferior — construída como você constrói a memória de um rio: por onde nasce, por onde corre, onde recebe afluentes, e para onde tudo, inevitavelmente, deságua.</p>
+
+    <div class="legend-row">
+      <div class="legend-chip"><span class="legend-swatch" style="background:var(--superficial)"></span> Sistema venoso superficial (epifascial)</div>
+      <div class="legend-chip"><span class="legend-swatch" style="background:var(--profundo)"></span> Sistema venoso profundo (subfascial)</div>
+      <div class="legend-chip"><span class="legend-swatch" style="background:var(--comunicante)"></span> Veias perfurantes (comunicantes)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAV DE SEGMENTOS
+     ============================================================ -->
+<nav class="segnav">
+  <div class="segnav-inner">
+    <a href="#rio">O Mapa Interativo</a>
+    <a href="#logica">A Lógica do Sistema</a>
+    <a href="#pe">Pé & Tornozelo</a>
+    <a href="#perna">Perna</a>
+    <a href="#joelho">Joelho</a>
+    <a href="#coxa">Coxa</a>
+    <a href="#safeno-femoral">Confluência Safeno-Femoral</a>
+    <a href="#perfurantes">Perfurantes</a>
+    <a href="#valvulas">Válvulas & Fisiologia</a>
+    <a href="#bomba">A Bomba Muscular</a>
+    <a href="#classificacoes">Classificações</a>
+    <a href="#clinica">Clínica Integrada</a>
+    <a href="#referencias">Referências</a>
+  </div>
+</nav>
+
+<!-- ============================================================
+     SEÇÃO: MAPA INTERATIVO (O RIO)
+     ============================================================ -->
+<section class="rio-secao" id="rio">
+  <div class="wrap-wide">
+    <div class="section-head">
+      <div class="section-num">01 — CARTOGRAFIA</div>
+      <h2 class="title-secao">Toque em qualquer vaso do rio</h2>
+      <p class="lede" style="max-width:680px;">Este diagrama não é decorativo — é topologicamente fiel. A distância vertical representa a altura real do membro (pé embaixo, virilha em cima), e cada linha nasce, percorre e termina exatamente onde nasce, percorre e termina no corpo. Clique em qualquer segmento para abrir a ficha completa: origem, trajeto, terminação, relações e clínica.</p>
+    </div>
+
+    <div class="rio-grid">
+      <div class="rio-svg-holder">
+        <svg id="rioSvg" viewBox="0 0 380 900" xmlns="http://www.w3.org/2000/svg">
+
+          <!-- eixo de referência sutil -->
+          <line x1="190" y1="10" x2="190" y2="890" stroke="#132333" stroke-width="1" stroke-dasharray="2 6"/>
+
+          <!-- ===== SISTEMA PROFUNDO (vermelho) — tronco central ===== -->
+          <path d="M 200 860 L 198 760 L 196 700" stroke="var(--profundo)" stroke-width="5" fill="none" class="rio-node" id="v-tibiais" />
+          <path d="M 196 700 L 194 600 L 192 520" stroke="var(--profundo)" stroke-width="6" fill="none" class="rio-node" id="v-poplitea" />
+          <path d="M 192 520 L 190 430 L 188 300" stroke="var(--profundo)" stroke-width="7" fill="none" class="rio-node" id="v-femoral" />
+          <path d="M 188 300 L 186 220 L 184 150" stroke="var(--profundo)" stroke-width="8" fill="none" class="rio-node" id="v-femoral-comum" />
+          <path d="M 184 150 L 182 90 L 180 40" stroke="var(--profundo)" stroke-width="9" fill="none" class="rio-node" id="v-iliaca" />
+
+          <!-- veia femoral profunda (afluente profundo) -->
+          <path d="M 188 300 C 160 320, 150 360, 158 400" stroke="var(--profundo)" stroke-width="3.5" fill="none" class="rio-node" id="v-femoral-profunda" opacity="0.85"/>
+
+          <!-- ===== SISTEMA SUPERFICIAL (turquesa) ===== -->
+          <!-- Veia safena magna: do pé até a virilha -->
+          <path d="M 240 870 C 250 800, 235 720, 245 640 C 255 560, 235 460, 250 360 C 260 290, 235 220, 220 160 L 195 145"
+                stroke="var(--superficial)" stroke-width="4" fill="none" class="rio-node" id="v-safena-magna"/>
+
+          <!-- Veia safena parva: do pé até a poplítea -->
+          <path d="M 150 870 C 140 780, 155 700, 148 620 C 143 560, 165 530, 190 522"
+                stroke="var(--superficial)" stroke-width="3" fill="none" class="rio-node" id="v-safena-parva"/>
+
+          <!-- arco venoso dorsal do pé -->
+          <path d="M 120 875 C 160 890, 220 890, 260 875"
+                stroke="var(--superficial)" stroke-width="3" fill="none" class="rio-node" id="v-arco-dorsal"/>
+
+          <!-- ===== PERFURANTES (âmbar) — pontes entre sistemas ===== -->
+          <line x1="245" y1="640" x2="196" y2="640" stroke="var(--comunicante)" stroke-width="3" class="rio-node" id="v-perf-cockett" stroke-linecap="round"/>
+          <line x1="250" y1="400" x2="191" y2="405" stroke="var(--comunicante)" stroke-width="3" class="rio-node" id="v-perf-hunter" stroke-linecap="round"/>
+          <line x1="190" y1="522" x2="150" y2="540" stroke="var(--comunicante)" stroke-width="3" class="rio-node" id="v-perf-boyd" stroke-linecap="round"/>
+          <line x1="220" y1="160" x2="184" y2="150" stroke="var(--comunicante)" stroke-width="3" class="rio-node" id="v-perf-dodd" stroke-linecap="round"/>
+
+          <!-- nós/confluências (círculos) -->
+          <circle cx="195" cy="145" r="7" fill="var(--comunicante)" class="rio-node" id="v-croça-safena" />
+          <circle cx="190" cy="522" r="6" fill="var(--profundo)" class="rio-node" id="v-croça-parva" />
+
+          <!-- válvulas simbólicas -->
+          <g stroke="var(--ink-0)" stroke-width="1.4" opacity="0.85">
+            <path d="M 240 700 l 8 -6 M 240 700 l 8 6" fill="none"/>
+            <path d="M 235 500 l 8 -6 M 235 500 l 8 6" fill="none"/>
+            <path d="M 192 620 l 8 -6 M 192 620 l 8 6" fill="none"/>
+          </g>
+
+          <!-- LABELS -->
+          <text x="205" y="885" class="rio-label" id="lbl-arco-dorsal">Arco dorsal</text>
+          <text x="264" y="700" class="rio-label" id="lbl-safena-magna">V. Safena Magna</text>
+          <text x="95" y="700" class="rio-label" id="lbl-safena-parva">V. Safena Parva</text>
+          <text x="120" y="705" class="rio-label" id="lbl-tibiais">Tibiais Ant./Post. + Fibular</text>
+          <text x="205" y="600" class="rio-label" id="lbl-poplitea">V. Poplítea</text>
+          <text x="205" y="430" class="rio-label" id="lbl-femoral">V. Femoral</text>
+          <text x="115" y="370" class="rio-label" id="lbl-femoral-profunda">V. Femoral Profunda</text>
+          <text x="205" y="215" class="rio-label" id="lbl-femoral-comum">V. Femoral Comum</text>
+          <text x="205" y="70" class="rio-label" id="lbl-iliaca">V. Ilíaca Externa</text>
+          <text x="200" y="130" class="rio-label" id="lbl-croça-safena">Crossa Safeno-Femoral</text>
+          <text x="150" y="510" class="rio-label" id="lbl-croça-parva">Crossa Safeno-Poplítea</text>
+          <text x="255" y="650" class="rio-label" id="lbl-perf-cockett">Perf. Cockett</text>
+          <text x="255" y="395" class="rio-label" id="lbl-perf-hunter">Perf. de Hunter</text>
+          <text x="95" y="555" class="rio-label" id="lbl-perf-boyd">Perf. de Boyd</text>
+          <text x="230" y="175" class="rio-label" id="lbl-perf-dodd">Perf. de Dodd</text>
+
+          <!-- marcos anatômicos de referência -->
+          <text x="10" y="878" class="rio-label" style="fill:#3a5468">PÉ</text>
+          <text x="10" y="640" class="rio-label" style="fill:#3a5468">PERNA</text>
+          <text x="10" y="518" class="rio-label" style="fill:#3a5468">JOELHO</text>
+          <text x="10" y="300" class="rio-label" style="fill:#3a5468">COXA</text>
+          <text x="10" y="145" class="rio-label" style="fill:#3a5468">VIRILHA</text>
+          <text x="10" y="45" class="rio-label" style="fill:#3a5468">PELVE</text>
+
+        </svg>
+      </div>
+
+      <div class="rio-panel" id="rioPanel">
+        <div class="rio-panel-empty">
+          ↖ Clique em qualquer traçado ou nó do rio para abrir a ficha completa do vaso.<br><br>
+          Comece pela <b style="color:var(--comunicante-glow)">Crossa Safeno-Femoral</b> — é o ponto mais cobrado em provas e o local mais operado da cirurgia venosa mundial.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: A LÓGICA DO SISTEMA
+     ============================================================ -->
+<section id="logica">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">02 — POR QUE O SISTEMA É ASSIM</div>
+      <h2 class="title-secao">A lógica evolutiva e física por trás de dois sistemas paralelos</h2>
+    </div>
+
+    <p class="lede">Antes de decorar um único nome, é preciso responder a uma pergunta que a maioria dos estudantes nunca faz: <b>por que existem duas redes venosas separadas na perna, e não uma só?</b> A resposta explica praticamente tudo o que vem depois — trajetos, válvulas, varizes, tromboses e a lógica das cirurgias.</p>
+
+    <h3 class="prof">O problema físico que o membro inferior precisa resolver</h3>
+    <p>O sangue venoso do pé precisa vencer, em pé e parado, cerca de 1,2 a 1,3 metro de altura até o átrio direito — contra a gravidade, com uma bomba cardíaca que, à distância, gera pouquíssima pressão residual no lado venoso (a pressão venosa central gira em torno de apenas 2 a 8 mmHg). Isto é uma tarefa hemodinamicamente absurda se dependesse só do coração. A evolução resolveu isto com três adaptações que caminham juntas: (1) um sistema de <span class="etimo">válvulas</span> (do latim <i>valva</i>, "folha de porta de duas partes que se abre e fecha") unidirecionais que fracionam a coluna de sangue em segmentos curtos; (2) uma bomba muscular periférica — a panturrilha funciona como um "segundo coração" periférico; e (3) uma arquitetura em <b>dois compartimentos</b>, um superficial frouxo e complacente (reservatório de volume, termorregulação) e um profundo rígido, encaixado dentro do músculo (via de drenagem principal, de alta capacidade e alta pressão gerada pela contração muscular).</p>
+
+    <div class="callout fisica">
+      <div class="lbl">◆ Princípio físico — Lei de Poiseuille e complacência</div>
+      <p style="margin:0;">O sistema profundo fica dentro da fáscia muscular rígida (a <span class="etimo">fáscia</span>, do latim <i>fascia</i>, "faixa, tira") — por isso, quando o músculo contrai, a pressão gerada dentro do compartimento é enorme (pode ultrapassar 200-300 mmHg localmente durante a marcha) e é essa pressão que "empurra" o sangue para cima em cada passo. O sistema superficial fica no tecido subcutâneo frouxo, fora da fáscia, e por isso não recebe esse impulso direto — ele funciona como um sistema de baixa pressão que se esvazia PARA o sistema profundo, nunca o contrário em condições normais. As perfurantes são a única ponte física entre os dois mundos, e suas válvulas garantem que o fluxo seja sempre unidirecional: superficial → profundo.</p>
+    </div>
+
+    <h3>A regra de ouro que organiza tudo</h3>
+    <blockquote>Todo sangue venoso do membro inferior, não importa por qual caminho comece, termina obrigatoriamente no sistema profundo antes de chegar ao coração. O sistema superficial é <b>afluente</b>; o sistema profundo é o <b>rio principal</b>.</blockquote>
+    <p>Se você guardar apenas uma frase deste módulo inteiro, guarde esta. Ela explica por que retirar a veia safena magna (na cirurgia de varizes) não compromete a drenagem do membro — o sistema profundo, responsável por cerca de 85 a 90% do retorno venoso em condições normais, assume integralmente a função. Ela também explica por que uma trombose venosa profunda (TVP) é uma emergência e uma trombose venosa superficial (TVS) quase nunca é: obstruir o rio principal é catastrófico; obstruir um afluente é, na maioria das vezes, apenas incômodo.</p>
+
+    <div class="exercicio">
+      <b>Exercício de raciocínio clínico</b>
+      Um paciente de 45 anos, obeso, com história de cirurgia ortopédica recente no joelho, apresenta edema unilateral doloroso da perna direita, com aumento da temperatura local e sinal de Homans positivo. Antes de qualquer exame de imagem, qual sistema você suspeita estar comprometido, e por quê? <i>Resposta esperada: sistema profundo — pela tríade de Virchow (estase por imobilização, lesão endotelial por cirurgia, e possível estado de hipercoagulabilidade), e porque o edema significativo e a dor intensa raramente acompanham uma TVS isolada, que tende a ser mais localizada e superficial à palpação, sem edema difuso importante.</i>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: PÉ E TORNOZELO
+     ============================================================ -->
+<section id="pe">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">03 — ONDE O RIO NASCE</div>
+      <h2 class="title-secao">Pé e tornozelo: a nascente do sistema</h2>
+    </div>
+
+    <p class="lede">Tudo começa nos plexos venosos subcutâneos e subungueais dos dedos — redes microscópicas sem nome próprio que convergem para formar as primeiras estruturas nomeadas do sistema.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-t">Passo 1 — Plexos digitais</div>
+        <p>Nos leitos ungueais e polpas digitais, uma rede densa de vênulas pós-capilares recolhe o sangue desoxigenado dos tecidos moles. Estas vênulas convergem nas faces dorsal e plantar de cada dedo, formando pequenas <b>veias digitais dorsais e plantares</b>.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-t">Passo 2 — Arco venoso dorsal do pé</div>
+        <p>As veias digitais dorsais unem-se nos espaços interdigitais e desenham, sobre o dorso do pé, o <b>arco venoso dorsal</b> (<i>arcus venosus dorsalis pedis</i>) — uma estrutura em forma de arco, transversal, situada logo abaixo da pele, imediatamente proximal às cabeças dos metatarsais. Este arco é o berço anatômico dos dois grandes rios superficiais da perna: sua extremidade medial se prolonga como veia marginal medial (que ascende e se torna a veia safena magna), e sua extremidade lateral se prolonga como veia marginal lateral (que ascende e se torna a veia safena parva).</p>
+      </div>
+      <div class="tl-item com">
+        <div class="tl-t">Passo 3 — Rede plantar profunda</div>
+        <p>Na planta do pé, uma rede análoga forma o <b>arco venoso plantar profundo</b>, que acompanha o arco arterial plantar profundo e já se comunica, através de veias plantares, diretamente com as veias tibiais posteriores — ou seja, aqui já nasce o sistema profundo, em paralelo ao superficial, desde o primeiro centímetro do membro.</p>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="mini-card">
+        <h4 style="color:var(--superficial-glow);">Veia marginal medial</h4>
+        <p style="margin:0;">Origina-se na extremidade medial do arco venoso dorsal, passa anteriormente ao maléolo medial (a proeminência óssea medial do tornozelo, do latim <i>malleolus</i>, "pequeno martelo") e torna-se, a partir deste ponto, a <b>veia safena magna</b>.</p>
+      </div>
+      <div class="mini-card">
+        <h4 style="color:var(--superficial-glow);">Veia marginal lateral</h4>
+        <p style="margin:0;">Origina-se na extremidade lateral do arco venoso dorsal, passa posteriormente ao maléolo lateral e torna-se, a partir deste ponto, a <b>veia safena parva</b>.</p>
+      </div>
+    </div>
+
+    <div class="callout clinica">
+      <div class="lbl">✚ Aplicação clínica — Acesso venoso e punção</div>
+      <p style="margin:0;">O arco venoso dorsal do pé é um dos locais clássicos de <b>acesso venoso periférico</b> em neonatos e lactentes, e também um ponto tradicional de coleta de gasometria venosa em determinados protocolos. Em pacientes com edema periférico muito importante, ele frequentemente permanece visível quando as veias do dorso da mão já colabaram, tornando-se um acesso de resgate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: PERNA
+     ============================================================ -->
+<section id="perna">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">04 — O RIO GANHA VOLUME</div>
+      <h2 class="title-secao">Perna: tibiais, fibular e o par safeno</h2>
+    </div>
+
+    <p class="lede">Aqui, pela primeira vez, os dois sistemas correm literalmente em paralelo — o profundo dentro dos compartimentos musculares, protegido pela fáscia crural; o superficial logo abaixo da pele, visível e palpável em muitas pessoas.</p>
+
+    <h3 class="prof">Sistema profundo da perna</h3>
+    <p>Cada artéria da perna é acompanhada por <b>duas veias satélites</b> (veias comitantes, do latim <i>comitari</i>, "acompanhar") que a envolvem como um par de trilhos — esta duplicação é uma adaptação elegante: as pulsações da própria artéria, transmitidas mecanicamente às veias adjacentes, ajudam a "ordenhar" o sangue venoso para cima, um mecanismo auxiliar chamado bombeamento arteriovenoso.</p>
+
+    <ul>
+      <li><b>Veias tibiais anteriores</b> — drenam o compartimento anterior da perna (músculos extensores), acompanham a artéria tibial anterior, que atravessa a membrana interóssea logo abaixo da cabeça da fíbula.</li>
+      <li><b>Veias tibiais posteriores</b> — recebem diretamente as veias plantares vindas do pé (por trás do maléolo medial, no chamado <i>túnel do tarso</i>), drenam o compartimento posterior profundo.</li>
+      <li><b>Veias fibulares (peroneais)</b> — drenam o compartimento lateral e parte do posterior profundo, correm ao longo da fíbula.</li>
+    </ul>
+
+    <p>Estes três pares convergem, na região abaixo do joelho, para formar o <b>tronco tibiofibular (tibioperoneiro)</b>, que se une às veias tibiais anteriores para formar a <b>veia poplítea</b> — o primeiro grande "afluente confirmado" do rio profundo principal.</p>
+
+    <h3>Sistema superficial da perna</h3>
+    <p>A <b>veia safena magna</b> (do grego <span class="etimo">σαφής / saphenós</span>, "visível, claro, evidente" — um nome que já é, em si, uma descrição clínica: é a veia superficial mais visível do corpo humano) ascende pela face medial da perna, imediatamente anterior ao maléolo medial, depois posteriormente ao côndilo medial da tíbia, sempre no subcutâneo, dentro de um envelope fascial próprio chamado <i>fáscia safena</i> — uma bainha fibrosa que a separa do tecido gorduroso subcutâneo comum e que é, inclusive, um marcador ultrassonográfico ("sinal do olho egípcio") usado para diferenciá-la de veias tributárias.</p>
+
+    <p>A <b>veia safena parva</b> ascende pela face posterior da perna, na linha média, entre as duas cabeças do músculo gastrocnêmio (a <span class="etimo">rafe</span> mediana), até a fossa poplítea.</p>
+
+    <div class="callout classif">
+      <div class="lbl">▤ Classificação — Nomenclatura internacional (2001-2005)</div>
+      <p style="margin:0;">A Sociedade Internacional de Flebologia padronizou, em consenso, os termos "veia safena magna" (<i>vena saphena magna</i>) e "veia safena parva" (<i>vena saphena parva</i>) para substituir definitivamente os antigos "safena interna" e "safena externa" — termos ainda usados na prática, mas considerados obsoletos na nomenclatura anatômica oficial (Caggiati et al., <i>J Vasc Surg</i>, 2002).</p>
+    </div>
+
+    <div class="tabela-wrap">
+      <table>
+        <tr><th>Vaso</th><th>Trajeto</th><th>Compartimento</th><th>Recebe de</th></tr>
+        <tr><td><b>V. Tibial anterior</b></td><td>Compartimento anterior, ao lado da artéria homônima</td><td>Profundo</td><td>Veias do dorso do pé via v. dorsal do pé</td></tr>
+        <tr><td><b>V. Tibial posterior</b></td><td>Posterior ao maléolo medial, sobe no compartimento posterior profundo</td><td>Profundo</td><td>Veias plantares</td></tr>
+        <tr><td><b>V. Fibular</b></td><td>Compartimento lateral/posterior profundo, junto à fíbula</td><td>Profundo</td><td>Compartimento lateral</td></tr>
+        <tr><td><b>V. Safena magna</b></td><td>Anterior ao maléolo medial → face medial da perna e coxa</td><td>Superficial</td><td>V. marginal medial, tributárias, perfurantes</td></tr>
+        <tr><td><b>V. Safena parva</b></td><td>Posterior ao maléolo lateral → linha média posterior da perna</td><td>Superficial</td><td>V. marginal lateral</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: JOELHO
+     ============================================================ -->
+<section id="joelho">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">05 — A PRIMEIRA GRANDE CONFLUÊNCIA</div>
+      <h2 class="title-secao">Joelho: a fossa poplítea e a crossa safeno-poplítea</h2>
+    </div>
+
+    <p class="lede">A fossa poplítea (do latim <i>poples</i>, "parte posterior do joelho") é um losango anatômico de importância desproporcional ao seu tamanho — é aqui que o segundo grande afluente superficial se entrega ao rio profundo.</p>
+
+    <h4>A veia poplítea</h4>
+    <p>Formada pela junção do tronco tibiofibular com as veias tibiais anteriores, a <b>veia poplítea</b> atravessa a fossa poplítea numa relação anatômica que todo estudante de medicina deve memorizar com precisão cirúrgica: de superficial para profundo, encontram-se o <b>nervo tibial</b>, depois a <b>veia poplítea</b>, e por fim, mais profunda e medial, a <b>artéria poplítea</b> — mnemônico clássico "NAV" de fora para dentro não se aplica aqui tal como no membro superior; na fossa poplítea a ordem correta, de posterior/superficial para anterior/profundo, é Nervo → Veia → Artéria.</p>
+
+    <div class="callout fisio">
+      <div class="lbl">◆ Por que essa ordem importa</div>
+      <p style="margin:0;">Na avaliação de um aneurisma da artéria poplítea ou numa trombose venosa poplítea, a via de acesso cirúrgico posterior precisa respeitar exatamente esta estratificação. Além disso, em traumatismos por hiperextensão do joelho (como em luxações do joelho — uma verdadeira emergência vascular), a artéria poplítea é a estrutura mais fixa e menos móvel das três, presa proximalmente pelo anel do adutor magno e distalmente pelo arco do sóleo, o que a torna a mais vulnerável à lesão por estiramento nesse tipo de trauma.</p>
+    </div>
+
+    <h4>Crossa (croça) safeno-poplítea</h4>
+    <p>A <span class="etimo">crossa</span> (do francês <i>crosse</i>, "bengala recurvada", pela forma em gancho que o vaso desenha ao se curvar para desaguar em outro) é o ponto exato onde a veia safena parva perfura a fáscia poplítea e se junta à veia poplítea. A localização deste ponto é <b>extremamente variável</b> entre indivíduos — pode ocorrer a qualquer altura entre o terço médio da perna e a coxa distal, e em uma minoria de pessoas a safena parva nem sequer termina na poplítea, drenando em vez disso diretamente na safena magna (via veia de Giacomini) ou em veias glúteas.</p>
+
+    <div class="exercicio">
+      <b>Por que isso importa na sala de cirurgia</b>
+      Antes de qualquer procedimento sobre a veia safena parva (ablação térmica, escleroterapia, ligadura), o cirurgião vascular realiza obrigatoriamente um mapeamento por ultrassom Doppler para localizar a crossa safeno-poplítea individual daquele paciente — jamais assumindo a posição "clássica" de manual, justamente por causa desta variabilidade anatômica documentada em até 20-40% dos indivíduos, dependendo da série estudada.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: COXA
+     ============================================================ -->
+<section id="coxa">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">06 — O RIO GANHA SEU MAIOR AFLUENTE</div>
+      <h2 class="title-secao">Coxa: veia femoral, femoral profunda e a longa jornada da safena magna</h2>
+    </div>
+
+    <h3 class="prof">Sistema profundo da coxa</h3>
+    <p>Ao entrar no canal adutor (canal de Hunter — uma passagem fascial na face medial da coxa, entre os músculos vasto medial, adutor longo e adutor magno, por onde também passam a artéria femoral e o nervo safeno), a veia poplítea muda de nome e passa a se chamar <b>veia femoral</b>. É crucial entender: a veia femoral é <b>inteiramente profunda</b> — o antigo nome "veia femoral superficial", usado erroneamente em décadas passadas por alguns serviços de ultrassom, foi oficialmente abolido em 2003 pela Sociedade Americana de Radiologia e pelo Colégio Americano de Radiologia justamente porque causava confusão perigosa: médicos chegavam a classificar uma trombose desta veia profunda como "superficial" e, portanto, de baixo risco, quando na realidade se trata de uma autêntica TVP com risco embólico pulmonar real.</p>
+
+    <div class="callout clinica">
+      <div class="lbl">✚ Alerta clínico de nomenclatura</div>
+      <p style="margin:0;">Se você ver, em um laudo antigo ou em literatura desatualizada, o termo "veia femoral superficial", saiba que se refere à mesma veia femoral profunda de sempre — o termo correto e atual é simplesmente <b>veia femoral</b>. Uma trombose aqui é sempre uma TVP verdadeira, com a mesma gravidade e mesma indicação de anticoagulação que qualquer outra trombose do sistema profundo proximal.</p>
+    </div>
+
+    <p>A cerca de 3-4 cm abaixo do ligamento inguinal, a veia femoral recebe a <b>veia femoral profunda</b> (<i>vena profunda femoris</i>) — um vaso robusto que drena os músculos posteriores e profundos da coxa (isquiotibiais, adutores, porção posterior do quadríceps) através de veias perfurantes musculares próprias. A partir desta junção, o vaso passa a se chamar <b>veia femoral comum</b>, que sobe mais alguns centímetros até passar sob o ligamento inguinal e se tornar <b>veia ilíaca externa</b>.</p>
+
+    <h3>Sistema superficial da coxa — a grande safena magna</h3>
+    <p>A veia safena magna percorre toda a face medial da coxa em direção oblíqua ascendente, situada sempre dentro do seu compartimento fascial característico, recebendo ao longo do trajeto numerosas tributárias superficiais que drenam a pele e o tecido subcutâneo da coxa — incluindo, próximo à sua terminação, duas tributárias de grande relevância clínica e cirúrgica:</p>
+
+    <ul>
+      <li><b>Veia circunflexa ilíaca superficial</b> — drena a região da crista ilíaca e parte inferior do abdome.</li>
+      <li><b>Veia epigástrica superficial</b> — drena a parede abdominal inferior, e é clinicamente relevante porque sua trombose superficial pode, raramente, mimetizar quadros de abdome agudo na parede.</li>
+      <li><b>Veia pudenda externa</b> — drena parte da genitália externa.</li>
+    </ul>
+
+    <p>Estas três tributárias terminais convergem exatamente no ponto onde a safena magna perfura a fáscia cribriforme (uma área da fáscia lata perfurada por múltiplos pequenos vasos, daí o nome, do latim <i>cribrum</i>, "peneira") para desaguar na veia femoral comum.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: CROSSA SAFENO-FEMORAL
+     ============================================================ -->
+<section id="safeno-femoral">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">07 — A GRANDE FOZ</div>
+      <h2 class="title-secao">Crossa safeno-femoral: onde o maior afluente superficial encontra o rio principal</h2>
+    </div>
+
+    <p class="lede">Se este módulo tivesse um único ponto de exame obrigatório, seria este: a crossa (junção) safeno-femoral, localizada cerca de 3-4 cm abaixo e lateralmente à espinha do púbis, na região do trígono femoral (triângulo de Scarpa).</p>
+
+    <div class="grid-2">
+      <div class="mini-card">
+        <h4>Relações anatômicas do trígono femoral</h4>
+        <p style="margin:0;">O trígono femoral é delimitado superiormente pelo ligamento inguinal, lateralmente pelo músculo sartório, e medialmente pelo músculo adutor longo. Dentro dele, de lateral para medial, dispõem-se — em outro mnemônico clássico, "NAVEL" (Nervo, Artéria, Veia, Espaço vazio/linfático, Linfonodo de Cloquet) — as estruturas femorais na chamada bainha femoral.</p>
+      </div>
+      <div class="mini-card">
+        <h4>Por que essa disposição importa</h4>
+        <p style="margin:0;">A veia femoral fica medial à artéria femoral neste nível — daí a regra prática de punção venosa femoral guiada por referência anatômica: "medial ao pulso arterial". Esta relação é também a base da compressão manual em sangramentos e da técnica de punção ecoguiada em UTI.</p>
+      </div>
+    </div>
+
+    <h4>Por que a crossa é o alvo cirúrgico central</h4>
+    <p>Na doença varicosa por insuficiência da safena magna, é precisamente aqui — na incompetência valvular da crossa safeno-femoral — que se origina o refluxo que, por gravidade, "cai" para toda a extensão da veia abaixo, distendendo-a progressivamente e formando as varizes visíveis. Por isso, historicamente, a cirurgia clássica de varizes (safenectomia com crossectomia) sempre incluiu a ligadura cuidadosa de <b>todas</b> as tributárias que desaguam neste ponto — deixar uma tributária ligada de forma incompleta é a causa mais comum de recidiva varicosa pós-operatória, um fenômeno estudado e denominado neovascularização da crossa.</p>
+
+    <div class="callout classif">
+      <div class="lbl">▤ Classificação CEAP da doença venosa crônica</div>
+      <p style="margin:0;">C0 (sem sinais visíveis) · C1 (telangiectasias/veias reticulares) · C2 (varizes) · C3 (edema) · C4 (alterações cutâneas — pigmentação, eczema, lipodermatoesclerose) · C5 (úlcera cicatrizada) · C6 (úlcera ativa) — sistema Clínico-Etiológico-Anatômico-Patofisiológico, revisado pelo American Venous Forum (2020), usado mundialmente para estadiar a insuficiência venosa crônica e guiar a decisão terapêutica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: PERFURANTES
+     ============================================================ -->
+<section id="perfurantes">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">08 — AS COMPORTAS</div>
+      <h2 class="title-secao">Veias perfurantes: as pontes obrigatórias entre os dois rios</h2>
+    </div>
+
+    <p class="lede">As perfurantes (também chamadas comunicantes) atravessam literalmente a fáscia profunda — perfuram-na, daí o nome — para ligar o sistema superficial ao profundo. Elas são poucas, nomeadas, previsíveis em localização, e clinicamente decisivas.</p>
+
+    <div class="tabela-wrap">
+      <table>
+        <tr><th>Perfurante</th><th>Localização típica</th><th>Conecta</th><th>Relevância clínica</th></tr>
+        <tr><td><b>Perfurante de Cockett (I, II, III)</b></td><td>Face medial da perna, 7-18 cm acima do maléolo medial</td><td>Safena magna (via v. arqueada posterior) ↔ v. tibial posterior</td><td>Principal sítio de incompetência associada a úlceras venosas maleolares mediais</td></tr>
+        <tr><td><b>Perfurante de Boyd</b></td><td>Logo abaixo do joelho, face medial</td><td>Safena magna ↔ v. tibial posterior</td><td>Alvo cirúrgico clássico em varizes recidivantes infrapatelares</td></tr>
+        <tr><td><b>Perfurante de Hunter (canal dos adutores)</b></td><td>Terço distal da coxa medial</td><td>Safena magna ↔ v. femoral</td><td>Ponto de refluxo em insuficiência de coxa isolada</td></tr>
+        <tr><td><b>Perfurante de Dodd</b></td><td>Terço médio da coxa medial</td><td>Safena magna ↔ v. femoral</td><td>Frequentemente associada a varizes de coxa proximal</td></tr>
+      </table>
+    </div>
+
+    <div class="callout fisio">
+      <div class="lbl">◆ A física da válvula perfurante</div>
+      <p style="margin:0;">Cada perfurante possui uma ou mais válvulas orientadas para permitir fluxo em uma única direção: superficial → profundo. Isto é essencial porque, durante a contração muscular da panturrilha, a pressão dentro do compartimento profundo pode disparar para valores extremamente altos — sem essas válvulas, esse pico de pressão seria transmitido diretamente ao sistema superficial de baixa resistência, distendendo-o de forma progressiva e irreversível a cada passo dado. Quando essas válvulas perfurantes falham (incompetência valvular), o fenômeno inverso passa a ocorrer — refluxo profundo→superficial durante a contração muscular, chamado de "jato de perfurante" (<i>blow-out</i>), que injeta sangue a alta pressão diretamente no subcutâneo. É esse jato repetitivo, batendo sempre no mesmo ponto da pele a cada passo, que explica por que as úlceras venosas se formam classicamente na região maleolar medial — exatamente onde ficam concentradas as perfurantes de Cockett.</p>
+    </div>
+
+    <div class="exercicio">
+      <b>Conectando anatomia à úlcera venosa</b>
+      Por que praticamente todas as úlceras venosas de perna se localizam na face medial do terço distal, próximo ao maléolo medial, e quase nunca no terço proximal da coxa? <i>Resposta: porque é exatamente nesta região que se concentram as perfurantes de Cockett, o ponto de maior densidade de comunicação superficial-profunda sujeito a maior pressão hidrostática (é o ponto mais baixo do sistema, com a maior coluna de sangue acima) e ao maior número de ciclos de "jato" por incompetência valvular ao longo da vida.</i>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: VÁLVULAS
+     ============================================================ -->
+<section id="valvulas">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">09 — A ENGENHARIA MOLECULAR E MECÂNICA DA VÁLVULA</div>
+      <h2 class="title-secao">Válvulas venosas: estrutura, ciclo e falência</h2>
+    </div>
+
+    <h3>Histologia da válvula</h3>
+    <p>Cada válvula venosa é formada por um par de <b>cúspides</b> (folhetos), projeções bicôncavas da própria túnica íntima do vaso, reforçadas por uma fina camada de colágeno e revestidas, na superfície luminal, por endotélio contínuo — o mesmo tipo celular que reveste todo o restante do sistema circulatório, uma monocamada de células poligonais achatadas, unidas por junções de oclusão (<i>tight junctions</i>) e junções aderentes, apoiadas sobre uma lâmina basal rica em colágeno tipo IV e laminina.</p>
+
+    <p>Na base de cada cúspide existe uma dilatação da parede venosa chamada <b>seio valvular</b> — é aqui que se formam pequenos redemoinhos (vórtices) de sangue durante o fechamento valvular, um fenômeno estudado em dinâmica de fluidos que, paradoxalmente, protege o endotélio local ao evitar estase completa e ao distribuir de forma mais homogênea o estresse de cisalhamento (<i>shear stress</i>) sobre as células endoteliais.</p>
+
+    <div class="callout fisica">
+      <div class="lbl">◆ Princípio físico — mecânica de abertura e fechamento</div>
+      <p style="margin:0;">O ciclo valvular obedece a um gradiente de pressão simples: quando a pressão abaixo da válvula supera a pressão acima dela (por exemplo, durante a contração muscular da panturrilha empurrando sangue para cima), as cúspides se afastam da parede e se abrem, permitindo fluxo anterógrado. No instante seguinte, quando o músculo relaxa, a coluna de sangue tende a refluir por gravidade; esse refluxo momentâneo enche os seios valvulares e empurra as cúspides uma contra a outra na linha média, fechando completamente o lúmen — de forma semelhante, guardadas as diferenças estruturais, ao fechamento das válvulas semilunares cardíacas (aórtica e pulmonar), obedecendo ao mesmo princípio fundamental: diferença de pressão transvalvular determina abertura ou fechamento.</p>
+    </div>
+
+    <h3 class="prof">O que acontece quando a válvula falha</h3>
+    <p>A <b>incompetência valvular</b> ocorre por dois mecanismos principais, cuja distinção tem implicações terapêuticas diferentes:</p>
+
+    <div class="grid-2">
+      <div class="mini-card">
+        <h4 style="color:var(--profundo-glow);">Incompetência primária</h4>
+        <p style="margin:0;">Degeneração intrínseca da parede venosa e das cúspides valvulares — perda progressiva de fibras de colágeno tipo I e aumento relativo de colágeno tipo III (mais frágil), associada a fatores genéticos, idade, gestações múltiplas (por ação hormonal da progesterona relaxando a musculatura lisa venosa) e ortostatismo prolongado. As cúspides tornam-se redundantes e não conseguem mais se aproximar completamente na linha média.</p>
+      </div>
+      <div class="mini-card">
+        <h4 style="color:var(--profundo-glow);">Incompetência secundária</h4>
+        <p style="margin:0;">Consequência direta de uma trombose venosa profunda prévia — o trombo organiza-se, retrai-se, e no processo de recanalização (síndrome pós-trombótica) destrói mecanicamente as cúspides valvulares originais. É irreversível e frequentemente mais grave e extensa que a forma primária.</p>
+      </div>
+    </div>
+
+    <div class="callout clinica">
+      <div class="lbl">✚ Consequência clínica direta — hipertensão venosa ambulatória</div>
+      <p style="margin:0;">Quando múltiplas válvulas falham em sequência (efeito cascata, pois a falência de uma válvula sobrecarrega e acelera a falência da válvula imediatamente abaixo), instala-se a <b>hipertensão venosa ambulatória</b> — a pressão venosa do tornozelo, que numa pessoa saudável cai de forma acentuada durante a caminhada (de ~90 mmHg em repouso ortostático para ~20-30 mmHg durante o exercício, graças à bomba muscular eficiente), permanece patologicamente elevada mesmo durante a marcha. É essa pressão sustentada, transmitida aos capilares dérmicos, que desencadeia a cascata fisiopatológica da insuficiência venosa crônica: extravasamento de macromoléculas e hemácias para o interstício, ativação de leucócitos, fibrose dérmica (lipodermatoesclerose), hiperpigmentação por depósito de hemossiderina, e, no extremo, ulceração.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: BOMBA MUSCULAR
+     ============================================================ -->
+<section id="bomba">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">10 — O MOTOR PERIFÉRICO</div>
+      <h2 class="title-secao">A bomba muscular da panturrilha: o "segundo coração"</h2>
+    </div>
+
+    <p class="lede">Nenhuma discussão sobre veias do membro inferior está completa sem entender o mecanismo que, na prática, faz o sangue subir: a bomba muscular da panturrilha (<i>calf muscle pump</i>), responsável isoladamente por cerca de 65% de toda a força de propulsão do retorno venoso do membro inferior.</p>
+
+    <h3>Sequência cronológica de um único ciclo de marcha</h3>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-t">T = 0 — Fase de repouso / apoio inicial</div>
+        <p>Com o músculo tríceps sural (gastrocnêmio + sóleo) relaxado, as veias profundas intramusculares (especialmente os seios venosos do sóleo, grandes reservatórios sinusoidais de baixa pressão dentro do próprio ventre muscular) estão repletas de sangue, preenchidas passivamente pelo fluxo arterial e pela drenagem superficial via perfurantes.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-t">T = 1 — Contração muscular (flexão plantar / propulsão)</div>
+        <p>O tríceps sural contrai-se e comprime mecanicamente as veias intramusculares e a veia poplítea contra a rigidez da fáscia crural. A pressão intracompartimental sobe abruptamente. As válvulas localizadas logo acima se abrem (gradiente de pressão favorável ascendente); as válvulas logo abaixo, incluindo as das perfurantes, fecham-se (impedindo refluxo tanto para baixo quanto para o sistema superficial).</p>
+      </div>
+      <div class="tl-item com">
+        <div class="tl-t">T = 2 — Ejeção</div>
+        <p>Um bolus de sangue é literalmente ejetado para cima, em direção à veia poplítea e depois femoral — de forma mecanicamente análoga à sístole ventricular, daí a alcunha "coração periférico" ou "segundo coração" atribuída a este mecanismo desde os trabalhos clássicos de fisiologia venosa do século XX.</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-t">T = 3 — Relaxamento muscular (balanço / diástole venosa)</div>
+        <p>O músculo relaxa, a pressão intracompartimental cai a valores próximos de zero ou até discretamente negativos, criando um efeito de sucção (vis a fronte, "força a partir da frente") que ajuda a reencher os seios venosos do sóleo a partir do sistema superficial, através das perfurantes agora reabertas, e a partir do fluxo arterial capilar contínuo.</p>
+      </div>
+    </div>
+
+    <div class="callout fisio">
+      <div class="lbl">◆ Por que a imobilização é tão perigosa</div>
+      <p style="margin:0;">Quando este ciclo não ocorre — paciente acamado, pós-operatório prolongado, imobilização gessada, viagens de longa duração sentado — o sangue estagna nos seios venosos do sóleo, que são o local anatômico mais comum de início de uma trombose venosa profunda (mais de 90% das TVPs começam justamente nestes seios). Isto integra diretamente o primeiro componente da tríade de Virchow (estase sanguínea), e é a razão fisiológica direta por trás da recomendação universal de deambulação precoce no pós-operatório e do uso de meias de compressão elástica graduada e dispositivos de compressão pneumática intermitente em pacientes imobilizados.</p>
+    </div>
+
+    <div class="exercicio">
+      <b>Aplicação prática — por que a meia de compressão funciona</b>
+      As meias de compressão elástica graduada aplicam a maior pressão no tornozelo (tipicamente 20-30 ou 30-40 mmHg, dependendo da classe de compressão prescrita) e uma pressão progressivamente menor subindo pela perna. Isto reduz o diâmetro efetivo das veias superficiais e profundas dilatadas, o que — pela Lei de Laplace (tensão da parede é proporcional ao raio do vaso, para uma dada pressão transmural) — reduz diretamente a tensão sobre a parede venosa e sobre as cúspides valvulares já fragilizadas, além de aumentar a velocidade do fluxo venoso (reduzindo o componente de estase da tríade de Virchow) e diminuir o extravasamento capilar de fluido para o interstício.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: CLASSIFICAÇÕES
+     ============================================================ -->
+<section id="classificacoes">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">11 — SISTEMAS DE ORGANIZAÇÃO DO CONHECIMENTO</div>
+      <h2 class="title-secao">Todas as classificações relevantes, reunidas</h2>
+    </div>
+
+    <h4>1. Classificação anatômica-funcional (a mais fundamental)</h4>
+    <ul>
+      <li><b>Sistema profundo</b> — subfascial, acompanha artérias, drena ~85-90% do retorno venoso normal.</li>
+      <li><b>Sistema superficial</b> — epifascial, subcutâneo, reservatório de volume e termorregulação.</li>
+      <li><b>Sistema perfurante (comunicante)</b> — pontes valvuladas unidirecionais entre os dois anteriores.</li>
+    </ul>
+
+    <h4>2. Classificação CEAP (doença venosa crônica)</h4>
+    <p>Já detalhada na seção da crossa safeno-femoral — sistema clínico-etiológico-anatômico-patofisiológico usado mundialmente para estadiamento e decisão terapêutica da insuficiência venosa crônica.</p>
+
+    <h4>3. Classificação etiológica da doença venosa</h4>
+    <ul>
+      <li><b>Congênita</b> — malformações venosas presentes desde o nascimento (ex.: síndrome de Klippel-Trénaunay).</li>
+      <li><b>Primária</b> — degeneração intrínseca da parede/válvulas sem causa identificável (a mais comum, ligada a predisposição genética e fatores de risco como ortostatismo prolongado).</li>
+      <li><b>Secundária</b> — pós-trombótica, decorrente de TVP prévia com recanalização e destruição valvular.</li>
+    </ul>
+
+    <h4>4. Classificação de Wells (probabilidade clínica de TVP)</h4>
+    <p>Sistema de escore clínico que estratifica a probabilidade pré-teste de trombose venosa profunda com base em fatores como câncer ativo, imobilização recente, edema unilateral, dor à palpação do trajeto venoso profundo e história prévia de TVP — orienta a necessidade e a urgência de exames confirmatórios como o ultrassom Doppler venoso e a dosagem de D-dímero.</p>
+
+    <h4>5. Classificação da síndrome pós-trombótica (Escore de Villalta)</h4>
+    <p>Avalia sintomas (dor, cãibras, peso, prurido, parestesias) e sinais (edema pré-tibial, endurecimento cutâneo, hiperpigmentação, ectasia venosa, dor à compressão da panturrilha) para quantificar a gravidade das sequelas crônicas após uma TVP.</p>
+
+    <h4>6. Classificação morfológica das varizes (ultrassonográfica)</h4>
+    <ul>
+      <li><b>Tronculares</b> — envolvendo diretamente o tronco da safena magna ou parva.</li>
+      <li><b>Tributárias (colaterais)</b> — envolvendo ramos secundários sem refluxo do tronco principal.</li>
+      <li><b>Reticulares</b> — veias subdérmicas dilatadas, 1-3 mm, sem tortuosidade importante.</li>
+      <li><b>Telangiectasias</b> — vênulas intradérmicas dilatadas, menores que 1 mm ("aranhas vasculares").</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================
+     SEÇÃO: CLÍNICA INTEGRADA
+     ============================================================ -->
+<section id="clinica">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">12 — TUDO CONECTA AO LEITO</div>
+      <h2 class="title-secao">Síntese clínica integrada</h2>
+    </div>
+
+    <h4>Trombose venosa profunda (TVP)</h4>
+    <p>Formação de trombo dentro do sistema profundo, classicamente iniciada nos seios venosos do sóleo (ver seção da bomba muscular). Clinicamente: edema unilateral, dor à palpação do trajeto venoso profundo, aumento da temperatura local, e o sinal de Homans (dor à dorsiflexão passiva do pé — hoje considerado pouco sensível e pouco específico isoladamente, não devendo ser usado como critério isolado de exclusão ou confirmação). O exame de escolha é o ultrassom Doppler venoso com compressão; a incapacidade de comprimir totalmente o lúmen venoso sob a sonda é o achado mais confiável. O risco mais temido é a embolia pulmonar, quando um fragmento do trombo se solta, viaja pela veia femoral → ilíaca → cava inferior → átrio direito → ventrículo direito → artérias pulmonares.</p>
+
+    <h4>Trombose venosa superficial (TVS / tromboflebite superficial)</h4>
+    <p>Trombo confinado ao sistema superficial, tipicamente na safena magna ou em suas tributárias. Apresenta-se como cordão palpável, endurecido, doloroso e eritematoso ao longo do trajeto venoso superficial, geralmente sem edema difuso importante do membro. Embora historicamente considerada benigna, sabe-se hoje que a TVS da safena magna próxima à crossa safeno-femoral (dentro de cerca de 3 cm) carrega risco não desprezível de extensão para o sistema profundo, justificando vigilância ultrassonográfica e, em alguns casos, anticoagulação profilática.</p>
+
+    <h4>Insuficiência venosa crônica e úlcera venosa</h4>
+    <p>Via final comum da hipertensão venosa ambulatória sustentada (ver seção de válvulas) — localização quase patognomônica na região maleolar medial, bordas irregulares, exsudativa, geralmente indolor ou pouco dolorosa comparada à úlcera arterial (que é tipicamente muito mais dolorosa, de bordas bem definidas "em saca-bocado", e localiza-se em áreas de pressão ou extremidades distais dos dedos).</p>
+
+    <h4>Varizes e a lógica do tratamento</h4>
+    <p>O tratamento moderno (ablação térmica endovenosa por laser ou radiofrequência, escleroterapia com espuma, ou cirurgia clássica) tem como alvo eliminar o segmento de veia superficial com refluxo patológico documentado por Doppler — preservando, sempre que possível, os segmentos competentes, precisamente porque compreendemos hoje que o sistema superficial mantém função relevante mesmo na doença, e que a ablação seletiva guiada por mapeamento é superior à retirada cega e completa de toda a extensão da safena.</p>
+
+    <div class="ref" style="margin-top:24px;">
+      <i>Nota pedagógica: este módulo integra anatomia descritiva clássica com fisiologia aplicada e correlação clínica direta, seguindo o padrão de profundidade recomendado para formação em clínica médica e terapia intensiva — mas não substitui a leitura dos textos-fonte citados abaixo nem a prática clínica supervisionada.</i>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     REFERÊNCIAS
+     ============================================================ -->
+<section id="referencias">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-num">13 — FONTES</div>
+      <h2 class="title-secao">Referências e leituras recomendadas</h2>
+    </div>
+    <ul class="ref-list">
+      <li><b>Moore, K. L.; Dalley, A. F.; Agur, A. M. R.</b> — <i>Clinically Oriented Anatomy</i>, 8ª edição, Wolters Kluwer. Capítulo de membro inferior, sistema venoso.</li>
+      <li><b>Standring, S. (Ed.)</b> — <i>Gray's Anatomy: The Anatomical Basis of Clinical Practice</i>, 42ª edição, Elsevier. Seção de sistema venoso dos membros inferiores.</li>
+      <li><b>Caggiati, A. et al.</b> — "Nomenclature of the veins of the lower limbs: an international interdisciplinary consensus statement." <i>Journal of Vascular Surgery</i>, 2002; 36(2):416-422.</li>
+      <li><b>Lurie, F. et al.</b> — "The 2020 update of the CEAP classification system and reporting standards." <i>Journal of Vascular Surgery: Venous and Lymphatic Disorders</i>, 2020.</li>
+      <li><b>Meissner, M. H.</b> — "Lower extremity venous anatomy." <i>Seminars in Interventional Radiology</i>, 2005; 22(3):147-156.</li>
+      <li><b>Kearon, C. et al.</b> — American College of Chest Physicians (ACCP) Guidelines — "Antithrombotic Therapy for VTE Disease." <i>Chest</i>, edição vigente.</li>
+      <li><b>Boron, W. F.; Boulpaep, E. L.</b> — <i>Medical Physiology</i>, 3ª edição, Elsevier. Capítulo de hemodinâmica venosa e retorno venoso.</li>
+      <li><b>Robbins & Cotran</b> — <i>Pathologic Basis of Disease</i>, edição vigente. Capítulo de patologia vascular — trombose e tromboembolismo.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-river"></div>
+  <div class="footer-mark">DemilMed · UL</div>
+  <div class="footer-sub">Feito por: Demil &nbsp;|&nbsp; UL = UNILICUNGO</div>
+</footer>
+
+<script>
+/* ============================================================
+   DADOS DOS VASOS
+   ============================================================ */
+const VASOS = {
+  "v-safena-magna": {
+    tag:"superficial", tipo:"Sistema Superficial",
+    nome:"Veia Safena Magna", nomeEn:"Great Saphenous Vein (GSV)",
+    origem:"Extremidade medial do arco venoso dorsal do pé, como continuação da veia marginal medial.",
+    trajeto:"Ascende anteriormente ao maléolo medial → face medial da perna → posteriormente ao côndilo medial da tíbia → face medial da coxa, dentro de compartimento fascial próprio (fáscia safena).",
+    terminacao:"Perfura a fáscia cribriforme na região do trígono femoral e desagua na veia femoral comum, formando a crossa (croça) safeno-femoral.",
+    relacoes:"Acompanhada pelo nervo safeno (ramo do nervo femoral) na perna — por isso a retirada cirúrgica (stripping) abaixo do joelho carrega risco de parestesia na face medial da perna.",
+    clinica:"Veia mais frequentemente acometida por varizes primárias; principal alvo da ablação térmica endovenosa (laser/radiofrequência) no tratamento moderno da insuficiência venosa; usada classicamente como enxerto autólogo em cirurgia de revascularização miocárdica (ponte de safena) e periférica."
+  },
+  "v-safena-parva": {
+    tag:"superficial", tipo:"Sistema Superficial",
+    nome:"Veia Safena Parva", nomeEn:"Small Saphenous Vein (SSV)",
+    origem:"Extremidade lateral do arco venoso dorsal do pé, como continuação da veia marginal lateral.",
+    trajeto:"Ascende posteriormente ao maléolo lateral → face posterior da perna, na linha média, entre as duas cabeças do músculo gastrocnêmio.",
+    terminacao:"Perfura a fáscia poplítea e desagua na veia poplítea (crossa safeno-poplítea) — localização variável, podendo ocorrer entre o terço médio da perna e a coxa distal; em variantes, drena via veia de Giacomini para a safena magna.",
+    relacoes:"Relação íntima com o nervo sural (formado por ramos do nervo tibial e fibular comum) — risco de lesão nervosa em procedimentos cirúrgicos sobre este vaso.",
+    clinica:"Mapeamento por Doppler obrigatório antes de qualquer intervenção, dada a alta variabilidade do ponto de junção com o sistema profundo."
+  },
+  "v-arco-dorsal": {
+    tag:"superficial", tipo:"Sistema Superficial — Nascente",
+    nome:"Arco Venoso Dorsal do Pé", nomeEn:"Dorsal Venous Arch of the Foot",
+    origem:"Confluência das veias digitais dorsais nos espaços interdigitais.",
+    trajeto:"Trajeto transversal, subcutâneo, sobre o dorso do pé, proximal às cabeças dos metatarsais.",
+    terminacao:"Extremidade medial origina a veia safena magna; extremidade lateral origina a veia safena parva.",
+    relacoes:"Superficial, imediatamente visível sob a pele em muitos indivíduos, especialmente em pé.",
+    clinica:"Local clássico de acesso venoso periférico em neonatos e de coleta de sangue quando outros acessos estão indisponíveis."
+  },
+  "v-tibiais": {
+    tag:"profundo", tipo:"Sistema Profundo",
+    nome:"Veias Tibiais Anteriores, Posteriores e Fibulares", nomeEn:"Anterior/Posterior Tibial & Fibular (Peroneal) Veins",
+    origem:"Continuação das veias plantares (tibiais posteriores) e das veias do dorso do pé (tibiais anteriores).",
+    trajeto:"Pares satélites (veias comitantes) acompanhando as artérias homônimas dentro dos respectivos compartimentos musculares da perna, protegidas pela fáscia crural.",
+    terminacao:"Convergem para formar o tronco tibiofibular, que se une às tibiais anteriores para formar a veia poplítea.",
+    relacoes:"Íntima relação com as artérias correspondentes — o pulso arterial transmitido auxilia no retorno venoso (bombeamento arteriovenoso).",
+    clinica:"Sítio de origem da maioria das tromboses venosas profundas distais, frequentemente a partir dos seios venosos do sóleo."
+  },
+  "v-poplitea": {
+    tag:"profundo", tipo:"Sistema Profundo",
+    nome:"Veia Poplítea", nomeEn:"Popliteal Vein",
+    origem:"União do tronco tibiofibular com as veias tibiais anteriores, na perna proximal.",
+    trajeto:"Atravessa a fossa poplítea; relação de fora para dentro: nervo tibial → veia poplítea → artéria poplítea (mais profunda e medial).",
+    terminacao:"Ao entrar no canal adutor (canal de Hunter), passa a se chamar veia femoral.",
+    relacoes:"Recebe a crossa safeno-poplítea (desembocadura da veia safena parva).",
+    clinica:"TVP poplítea é considerada proximal (maior risco embólico que TVP distal isolada) — geralmente indica anticoagulação terapêutica plena."
+  },
+  "v-femoral": {
+    tag:"profundo", tipo:"Sistema Profundo",
+    nome:"Veia Femoral", nomeEn:"Femoral Vein",
+    origem:"Continuação da veia poplítea ao nível do canal adutor (canal de Hunter).",
+    trajeto:"Ascende pela face medial da coxa, no compartimento profundo, acompanhando a artéria femoral.",
+    terminacao:"Recebe a veia femoral profunda cerca de 3-4 cm abaixo do ligamento inguinal, passando a se chamar veia femoral comum.",
+    relacoes:"Nome antigo incorreto 'veia femoral superficial' — ABOLIDO desde 2003. É inteiramente parte do sistema profundo.",
+    clinica:"Trombose aqui é sempre TVP verdadeira e proximal — nunca deve ser classificada como 'superficial' apesar do nome antigo confuso."
+  },
+  "v-femoral-comum": {
+    tag:"profundo", tipo:"Sistema Profundo",
+    nome:"Veia Femoral Comum", nomeEn:"Common Femoral Vein",
+    origem:"União da veia femoral com a veia femoral profunda.",
+    trajeto:"Curto segmento na região do trígono femoral, medial à artéria femoral comum.",
+    terminacao:"Passa sob o ligamento inguinal e torna-se veia ilíaca externa.",
+    relacoes:"Recebe a crossa safeno-femoral (desembocadura da veia safena magna) — local de máxima confluência do membro inferior.",
+    clinica:"Local de punção venosa central (acesso femoral) em UTI — referência: medial ao pulso arterial palpável, 1-2 cm abaixo do ligamento inguinal."
+  },
+  "v-femoral-profunda": {
+    tag:"profundo", tipo:"Sistema Profundo",
+    nome:"Veia Femoral Profunda", nomeEn:"Deep (Profunda) Femoral Vein",
+    origem:"Confluência de veias perfurantes musculares da coxa posterior.",
+    trajeto:"Trajeto curto e profundo na face posterior da coxa.",
+    terminacao:"Une-se à veia femoral para formar a veia femoral comum.",
+    relacoes:"Drena os músculos isquiotibiais, adutores e porção posterior do quadríceps.",
+    clinica:"Frequentemente poupada em tromboses limitadas, mas seu envolvimento aumenta a extensão e complexidade do quadro trombótico."
+  },
+  "v-iliaca": {
+    tag:"profundo", tipo:"Sistema Profundo — Tronco Central",
+    nome:"Veia Ilíaca Externa", nomeEn:"External Iliac Vein",
+    origem:"Continuação da veia femoral comum ao passar sob o ligamento inguinal.",
+    trajeto:"Ascende na pelve, junto à artéria ilíaca externa.",
+    terminacao:"Une-se à veia ilíaca interna para formar a veia ilíaca comum, que por sua vez forma a veia cava inferior.",
+    relacoes:"A veia ilíaca comum esquerda é comprimida entre a artéria ilíaca comum direita e a coluna vertebral — base anatômica da síndrome de May-Thurner, causa de TVP iliofemoral esquerda predominante.",
+    clinica:"TVP iliofemoral é a forma mais extensa e de maior risco de síndrome pós-trombótica grave e de flegmasia cerulea dolens em casos extremos."
+  },
+  "v-croça-safena": {
+    tag:"comunicante", tipo:"Confluência Valvulada",
+    nome:"Crossa (Croça) Safeno-Femoral", nomeEn:"Saphenofemoral Junction (SFJ)",
+    origem:"Ponto terminal da veia safena magna.",
+    trajeto:"Curto trajeto de perfuração da fáscia cribriforme no trígono femoral.",
+    terminacao:"Desagua na veia femoral comum, cerca de 3-4 cm abaixo do ligamento inguinal.",
+    relacoes:"Recebe, próximo a este ponto, as veias circunflexa ilíaca superficial, epigástrica superficial e pudenda externa.",
+    clinica:"Origem mais comum do refluxo varicoso primário; alvo cirúrgico da crossectomia clássica; sítio de recidiva por neovascularização se ligadura incompleta."
+  },
+  "v-croça-parva": {
+    tag:"profundo", tipo:"Confluência Valvulada",
+    nome:"Crossa (Croça) Safeno-Poplítea", nomeEn:"Saphenopopliteal Junction (SPJ)",
+    origem:"Ponto terminal da veia safena parva.",
+    trajeto:"Perfuração da fáscia poplítea, localização anatomicamente variável.",
+    terminacao:"Desagua na veia poplítea.",
+    relacoes:"Pode estar ausente como tal em variantes anatômicas, com drenagem alternativa via veia de Giacomini.",
+    clinica:"Mapeamento ultrassonográfico individual obrigatório antes de qualquer intervenção sobre a safena parva, dada a variabilidade documentada em até 20-40% dos indivíduos."
+  },
+  "v-perf-cockett": {
+    tag:"comunicante", tipo:"Veia Perfurante",
+    nome:"Perfurantes de Cockett (I, II, III)", nomeEn:"Cockett's Perforators",
+    origem:"Ramos da veia arqueada posterior (tributária da safena magna) na face medial da perna distal.",
+    trajeto:"Trajeto curto e direto, perfurando a fáscia crural entre 7 e 18 cm acima do maléolo medial.",
+    terminacao:"Desaguam na veia tibial posterior.",
+    relacoes:"Concentram-se na região de maior pressão hidrostática do membro em ortostatismo.",
+    clinica:"Sítio anatômico mais associado a úlceras venosas maleolares mediais quando incompetentes — o 'jato' repetitivo de refluxo atinge sempre a mesma área de pele."
+  },
+  "v-perf-hunter": {
+    tag:"comunicante", tipo:"Veia Perfurante",
+    nome:"Perfurante de Hunter", nomeEn:"Hunter's Perforator",
+    origem:"Ramo da veia safena magna no terço distal da coxa.",
+    trajeto:"Perfura a fáscia dentro do canal adutor (canal de Hunter).",
+    terminacao:"Desagua na veia femoral.",
+    relacoes:"Localizada no mesmo canal por onde passam a artéria femoral e o nervo safeno.",
+    clinica:"Ponto de refluxo relevante em padrões de insuficiência venosa limitados à coxa, sem envolvimento da crossa safeno-femoral."
+  },
+  "v-perf-boyd": {
+    tag:"comunicante", tipo:"Veia Perfurante",
+    nome:"Perfurante de Boyd", nomeEn:"Boyd's Perforator",
+    origem:"Ramo da veia safena magna logo abaixo do joelho.",
+    trajeto:"Trajeto curto, face medial, região infrapatelar.",
+    terminacao:"Desagua na veia tibial posterior.",
+    relacoes:"Localizada próxima à crossa safeno-poplítea, região de alta densidade de tributárias.",
+    clinica:"Alvo cirúrgico clássico em casos de varizes recidivantes na região infrapatelar após cirurgia prévia."
+  },
+  "v-perf-dodd": {
+    tag:"comunicante", tipo:"Veia Perfurante",
+    nome:"Perfurante de Dodd", nomeEn:"Dodd's Perforator",
+    origem:"Ramo da veia safena magna no terço médio da coxa medial.",
+    trajeto:"Trajeto curto, perfurando a fáscia lata na face medial da coxa.",
+    terminacao:"Desagua na veia femoral.",
+    relacoes:"Localizada no trajeto médio do canal subsartorial.",
+    clinica:"Frequentemente associada a varizes localizadas na porção proximal e medial da coxa."
+  }
+};
+
+/* ============================================================
+   RENDER DO PAINEL
+   ============================================================ */
+const tagLabels = {profundo:"Sistema Profundo", superficial:"Sistema Superficial", comunicante:"Veia Perfurante / Comunicante"};
+const tagClass = {profundo:"tag-profundo", superficial:"tag-superficial", comunicante:"tag-comunicante"};
+
+function renderVaso(id){
+  const v = VASOS[id];
+  if(!v) return;
+  const panel = document.getElementById('rioPanel');
+  panel.innerHTML = `
+    <div class="card-vaso">
+      <span class="card-vaso-tag ${tagClass[v.tag]}">${v.tipo}</span>
+      <h3>${v.nome}</h3>
+      <div class="nome-en">${v.nomeEn}</div>
+
+      <div class="vaso-grid">
+        <div class="vaso-attr"><b>Origem</b><span>${v.origem}</span></div>
+        <div class="vaso-attr"><b>Trajeto</b><span>${v.trajeto}</span></div>
+        <div class="vaso-attr"><b>Terminação</b><span>${v.terminacao}</span></div>
+        <div class="vaso-attr"><b>Relações</b><span>${v.relacoes}</span></div>
+      </div>
+
+      <div class="clin-box">
+        <b>✚ Relevância clínica</b>
+        ${v.clinica}
+      </div>
+    </div>
+  `;
+}
+
+/* liga cliques a todos os nós do rio e aos labels correspondentes */
+document.querySelectorAll('.rio-node').forEach(node=>{
+  node.addEventListener('click', ()=>{
+    document.querySelectorAll('.rio-node').forEach(n=>n.classList.remove('active'));
+    document.querySelectorAll('.rio-label').forEach(l=>l.classList.remove('active'));
+    node.classList.add('active');
+    const lbl = document.getElementById('lbl-'+node.id.replace('v-',''));
+    if(lbl) lbl.classList.add('active');
+    renderVaso(node.id);
+  });
+});
+</script>
+
+</body>
+</html>
